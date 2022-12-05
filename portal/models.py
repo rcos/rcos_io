@@ -88,11 +88,31 @@ class User(TimestampedModel):
         return (self.first_name + " " + self.last_name).strip()
 
     @property
+    def display_name(self):
+        chunks = []
+
+        if self.first_name:
+            chunks.append(self.first_name)
+        if self.last_name:
+            chunks.append(self.last_name[0])
+        
+        if self.role == User.RPI:
+            if self.graduation_year:
+                chunks.append(f"'{str(self.graduation_year)[2:]}")
+            if self.rcs_id:
+                chunks.append(f"({self.rcs_id})")
+
+        if len(chunks) == 0:
+            chunks.append(self.email)
+
+        return " ".join(chunks).strip()
+
+    @property
     def is_setup(self):
         return self.first_name and self.last_name and self.github_username and self.discord_user_id
 
     def __str__(self) -> str:
-        return self.email
+        return self.display_name
 
     class Meta:
         ordering = ["rcs_id", "first_name", "last_name"]

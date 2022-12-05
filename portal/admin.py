@@ -26,9 +26,10 @@ class SemesterAdmin(admin.ModelAdmin):
     inlines = [EnrollmentInline]
 
 class UserAdmin(admin.ModelAdmin):
-    list_display = ("is_approved", "full_name", "role", "email")
+    list_display = ("first_name", "last_name", "role", "email", "is_approved")
     search_fields = ("first_name", "last_name", "email", "rcs_id")
     list_filter = ("role", "is_approved", "enrollments__semester__name")
+    inlines = [EnrollmentInline]
 
 class ProjectAdmin(admin.ModelAdmin):
     list_display = ("name", "tagline")
@@ -37,7 +38,7 @@ class ProjectAdmin(admin.ModelAdmin):
     inlines = [EnrollmentInline]
 
 class EnrollmentAdmin(admin.ModelAdmin):
-    list_display = ("semester", "user", "project")
+    list_display = ("user", "semester", "project")
     list_filter = ("semester__name", "credits", "is_for_pay", "is_project_lead", "is_coordinator")
 
 class MeetingAdmin(admin.ModelAdmin):
