@@ -31,6 +31,9 @@ class Semester(TimestampedModel):
         help_text="The last day of the semester according to the RPI Academic Calendar: https://info.rpi.edu/registrar/academic-calendar",
     )
 
+    def __str__(self) -> str:
+        return self.name
+
 
 class User(TimestampedModel):
     RPI = "rpi"
@@ -41,8 +44,8 @@ class User(TimestampedModel):
     role = models.CharField(choices=ROLE_CHOICES, max_length=30)
 
     # Profile
-    first_name = models.CharField(max_length=100, null=True)
-    last_name = models.CharField(max_length=100, null=True)
+    first_name = models.CharField(max_length=100, blank=True)
+    last_name = models.CharField(max_length=100, blank=True)
     email = models.EmailField(
         unique=True,
         help_text="The user's primary email, used for logging in and sending communications. Can change.",
@@ -50,21 +53,29 @@ class User(TimestampedModel):
 
     # Set for RPI users only
     rcs_id = models.CharField(
-        null=True, max_length=30, help_text="If the user is an RPI user, their RCS ID."
+        blank=True,
+        max_length=30,
+        help_text="If the user is an RPI user, their RCS ID.",
+        verbose_name="RCS ID",
     )
     graduation_year = models.PositiveIntegerField(
-        null=True, help_text="If the user is an RPI user, their graduation year."
+        null=True,
+        blank=True,
+        help_text="If the user is an RPI user, their graduation year.",
     )
 
     # Account integrations
     discord_user_id = models.CharField(
-        null=True,
+        blank=True,
         max_length=200,
         help_text="The user's Discord account ID from the Discord API",
     )
     github_username = models.CharField(
-        null=True, max_length=200, help_text="The user's GitHub username (not user ID)"
+        blank=True, max_length=200, help_text="The user's GitHub username (not user ID)"
     )
+
+    def __str__(self) -> str:
+        return self.email
 
     class Meta:
         ordering = ["rcs_id", "first_name", "last_name"]
@@ -100,6 +111,9 @@ class Project(TimestampedModel):
     # Relationships
     enrollments = models.ManyToManyField(User, through="Enrollment")
 
+    def __str__(self) -> str:
+        return self.name
+
     class Meta:
         ordering = ["name"]
         get_latest_by = "created_at"
@@ -108,7 +122,9 @@ class Project(TimestampedModel):
 class Enrollment(TimestampedModel):
     semester = models.ForeignKey(Semester, on_delete=models.CASCADE)
     user = models.ForeignKey(User, on_delete=models.CASCADE, related_name="enrollments")
-    project = models.ForeignKey(Project, null=True, on_delete=models.SET_NULL)
+    project = models.ForeignKey(
+        Project, null=True, blank=True, on_delete=models.SET_NULL
+    )
     credits = models.IntegerField(
         default=0,
         help_text="How many course credits the user is participating in RCOS for this semester. 0 means just for experience.",
@@ -120,6 +136,9 @@ class Enrollment(TimestampedModel):
     is_project_lead = models.BooleanField(default=False)
     is_faculty_advisor = models.BooleanField(default=False)
     is_faculty_advisor = models.BooleanField(default=False)
+
+    def __str__(self) -> str:
+        return f"{self.semester.name} - {self.user} - {self.project or 'No project'}"
 
     class Meta:
         ordering = ["semester"]
