@@ -38,7 +38,7 @@ class Semester(TimestampedModel):
 
     @property
     def project_count(self):
-        return "???"
+        return self.enrollments.distinct("project").order_by().count()
 
     def __str__(self) -> str:
         return self.name
@@ -160,6 +160,7 @@ class Enrollment(TimestampedModel):
         return f"{self.semester.name} - {self.user} - {self.project or 'No project'}"
 
     class Meta:
+        unique_together = ("semester", "user")
         ordering = ["semester"]
         get_latest_by = ["semester"]
 
