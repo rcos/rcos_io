@@ -28,7 +28,7 @@ class User(TimestampedModel):
     ROLE_CHOICES = ((RPI, "RPI"), (EXTERNAL, "External"))
 
     is_approved = models.BooleanField(default=False)
-    role = models.CharField(choices=ROLE_CHOICES)
+    role = models.CharField(choices=ROLE_CHOICES, max_length=30)
 
     # Profile
     first_name = models.CharField(max_length=100, null=True)
@@ -36,20 +36,22 @@ class User(TimestampedModel):
     email = models.EmailField(unique=True)
 
     # Set for RPI users only
-    rcs_id = models.CharField(null=True)
-    graduation_year = models.PositiveIntegerField(min=1900, null=True)
+    rcs_id = models.CharField(null=True, max_length=30)
+    graduation_year = models.PositiveIntegerField(null=True)
 
     # Account integrations
-    discord_user_id = models.CharField(null=True)
-    github_username = models.CharField(null=True)
+    discord_user_id = models.CharField(null=True, max_length=200)
+    github_username = models.CharField(null=True, max_length=200)
 
-    # Relationships
-    enrollments = models.ManyToManyField("Project", through="Enrollment")
+    class Meta:
+        ordering = ["rcs_id", "first_name", "last_name"]
 
 
 class Project(TimestampedModel):
     name = models.CharField(max_length=100, unique=True)
-    owner = models.ForeignKey(User, on_delete=models.SET_NULL)
+    owner = models.ForeignKey(
+        User, null=True, on_delete=models.SET_NULL, related_name="owned_projects"
+    )
     is_approved = models.BooleanField(default=False)
     tagline = models.CharField(max_length=200)
     description_markdown = models.TextField(max_length=10000)
@@ -62,10 +64,10 @@ class Project(TimestampedModel):
 
 
 class Enrollment(TimestampedModel):
-    semester = models.ForeignKey(Semester, on_delete=models.SET_NULL)
-    user = models.ForeignKey(User, on_delete=models.CASCADE)
-    project = models.ForeignKey(Project, on_delete=models.SET_NULL)
-    credits = models.IntegerField(min=0, max=4, default=0)
+    semester = models.ForeignKey(Semester, on_delete=models.CASCADE)
+    user = models.ForeignKey(User, on_delete=models.CASCADE, related_name="enrollments")
+    project = models.ForeignKey(Project, null=True, on_delete=models.SET_NULL)
+    credits = models.IntegerField(default=0)
     is_for_pay = models.BooleanField(default=False)
     is_project_lead = models.BooleanField(default=False)
     is_faculty_advisor = models.BooleanField(default=False)
