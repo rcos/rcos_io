@@ -95,7 +95,7 @@ class User(TimestampedModel):
             chunks.append(self.first_name)
         if self.last_name:
             chunks.append(self.last_name[0])
-        
+
         if self.role == User.RPI:
             if self.graduation_year:
                 chunks.append(f"'{str(self.graduation_year)[2:]}")
@@ -109,7 +109,12 @@ class User(TimestampedModel):
 
     @property
     def is_setup(self):
-        return self.first_name and self.last_name and self.github_username and self.discord_user_id
+        return (
+            self.first_name
+            and self.last_name
+            and self.github_username
+            and self.discord_user_id
+        )
 
     def __str__(self) -> str:
         return self.display_name
@@ -157,11 +162,16 @@ class Project(TimestampedModel):
 
 
 class Enrollment(TimestampedModel):
-    semester = models.ForeignKey(Semester, on_delete=models.CASCADE, related_name="enrollments")
+    semester = models.ForeignKey(
+        Semester, on_delete=models.CASCADE, related_name="enrollments"
+    )
     user = models.ForeignKey(User, on_delete=models.CASCADE, related_name="enrollments")
     project = models.ForeignKey(
-        Project, null=True, blank=True, on_delete=models.SET_NULL,
-        related_name="enrollments"
+        Project,
+        null=True,
+        blank=True,
+        on_delete=models.SET_NULL,
+        related_name="enrollments",
     )
     credits = models.IntegerField(
         default=0,
@@ -184,6 +194,7 @@ class Enrollment(TimestampedModel):
         ordering = ["semester"]
         get_latest_by = ["semester"]
 
+
 class Meeting(TimestampedModel):
     SMALL_GROUP = "small_group"
     LARGE_GROUP = "large_group"
@@ -195,29 +206,81 @@ class Meeting(TimestampedModel):
         (LARGE_GROUP, "Large Group"),
         (WORKSHOP, "Workshop"),
         (MENTOR, "Mentor"),
-        (COORDINATOR, "Coordinator")
+        (COORDINATOR, "Coordinator"),
     )
 
-    semester = models.ForeignKey(Semester, on_delete=models.CASCADE, related_name="meetings")
-    name = models.CharField(max_length=100, blank=True, help_text="The optional title of the meeting")
-    host = models.ForeignKey(User, null=True, blank=True, on_delete=models.SET_NULL, help_text="Optional host for the meeting (e.g. mentor hosting a workshop")
+    semester = models.ForeignKey(
+        Semester, on_delete=models.CASCADE, related_name="meetings"
+    )
+    name = models.CharField(
+        max_length=100, blank=True, help_text="The optional title of the meeting"
+    )
+    host = models.ForeignKey(
+        User,
+        null=True,
+        blank=True,
+        on_delete=models.SET_NULL,
+        help_text="Optional host for the meeting (e.g. mentor hosting a workshop",
+    )
     type = models.CharField(choices=TYPE_CHOICES, max_length=100)
-    is_published = models.BooleanField("published?", default=False, help_text="Whether the meeting is visible to users")
+    is_published = models.BooleanField(
+        "published?", default=False, help_text="Whether the meeting is visible to users"
+    )
     starts_at = models.DateTimeField(help_text="When the meeting starts")
     ends_at = models.DateTimeField(help_text="When the meeting ends")
-    location = models.CharField(max_length=500, blank=True, help_text="Where the meeting takes place either physically or virtually")
-    description_markdown = models.TextField(max_length=10000, blank=True, help_text="Optional publicly displayed description for the meeting. Supports Markdown.")
+    location = models.CharField(
+        max_length=500,
+        blank=True,
+        help_text="Where the meeting takes place either physically or virtually",
+    )
+    description_markdown = models.TextField(
+        max_length=10000,
+        blank=True,
+        help_text="Optional publicly displayed description for the meeting. Supports Markdown.",
+    )
 
     # Relationships
-    attendances = models.ManyToManyField(User, through="MeetingAttendance", related_name="meeting_attendances")
+    attendances = models.ManyToManyField(
+        User, through="MeetingAttendance", related_name="meeting_attendances"
+    )
 
     def __str__(self) -> str:
-        return f"{self.name} - {self.get_type_display()} - {self.starts_at.strftime('%a %b %-d %Y @ %-I:%M %p')}" 
+        return f"{self.name} - {self.get_type_display()} - {self.starts_at.strftime('%a %b %-d %Y @ %-I:%M %p')}"
 
     class Meta:
         ordering = ["starts_at"]
 
+
 class MeetingAttendance(TimestampedModel):
     meeting = models.ForeignKey(Meeting, on_delete=models.CASCADE)
     user = models.ForeignKey(User, on_delete=models.CASCADE)
-    is_added_by_admin = models.BooleanField(default=False, help_text="Whether this attendance was added by an admin instead of by the user")
+    is_added_by_admin = models.BooleanField(
+        default=False,
+        help_text="Whether this attendance was added by an admin instead of by the user",
+    )
+
+
+class SmallGroup(TimestampedModel):
+    semester = models.ForeignKey(Semester, on_delete=models.CASCADE, related_name="small_groups")
+    name = models.CharField(
+        max_length=100, blank=True, help_text="Public-facing name of the Small Group"
+    )
+    location = models.CharField(
+        max_length=200,
+        help_text="The location the Small Group meets for Small Group meetings",
+    )
+    discord_category_id = models.CharField(max_length=200, blank=True)
+    discord_role_id = models.CharField(max_length=200, blank=True)
+
+    projects = models.ManyToManyField(Project, related_name="small_groups")
+    mentors = models.ManyToManyField(User, related_name="mentored_small_groups")
+
+    @property
+    def display_name(self):
+        return self.name or self.location or "Unnamed Small Group"
+
+    def __str__(self) -> str:
+        return self.display_name
+
+    class Meta:
+        ordering = ["semester", "name", "location"]
