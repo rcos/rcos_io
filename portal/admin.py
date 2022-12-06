@@ -21,9 +21,20 @@ class StatusUpdateSubmissionInline(admin.StackedInline):
     extra = 1
 
 
+class ProjectProposalInline(admin.TabularInline):
+    model = ProjectProposal
+    extra = 1
+
+
+class ProjectPresentationline(admin.TabularInline):
+    model = ProjectPresentation
+    extra = 1
+
+
 # Model Admins
 
 
+@admin.register(Semester)
 class SemesterAdmin(admin.ModelAdmin):
     fieldsets = (
         (None, {"fields": ["id", "name"]}),
@@ -38,9 +49,10 @@ class SemesterAdmin(admin.ModelAdmin):
         "project_count",
     )
     search_fields = ("name",)
-    inlines = (EnrollmentInline,)
+    inlines = (EnrollmentInline, ProjectProposalInline, ProjectPresentationline)
 
 
+@admin.register(User)
 class UserAdmin(admin.ModelAdmin):
     list_display = ("first_name", "last_name", "role", "email", "is_approved")
     search_fields = ("first_name", "last_name", "email", "rcs_id")
@@ -48,13 +60,15 @@ class UserAdmin(admin.ModelAdmin):
     inlines = (EnrollmentInline,)
 
 
+@admin.register(Project)
 class ProjectAdmin(admin.ModelAdmin):
-    list_display = ("name", "tagline")
-    search_fields = ("name", "tagline")
+    list_display = ("name", "summary")
+    search_fields = ("name", "summary")
     list_filter = ("is_approved", "enrollments__semester__name")
-    inlines = (EnrollmentInline,)
+    inlines = (EnrollmentInline, ProjectProposalInline, ProjectPresentationline)
 
 
+@admin.register(Enrollment)
 class EnrollmentAdmin(admin.ModelAdmin):
     list_display = ("user", "semester", "project")
     list_filter = (
@@ -66,6 +80,7 @@ class EnrollmentAdmin(admin.ModelAdmin):
     )
 
 
+@admin.register(Meeting)
 class MeetingAdmin(admin.ModelAdmin):
     list_display = ("name", "type", "starts_at", "is_published")
     search_fields = ("name", "type")
@@ -73,23 +88,16 @@ class MeetingAdmin(admin.ModelAdmin):
     inlines = (MeetingAttendanceInline,)
 
 
+@admin.register(SmallGroup)
 class SmallGroupAdmin(admin.ModelAdmin):
     list_display = ("display_name", "location", "semester")
     search_fields = ("name", "location")
     list_filter = ("semester",)
 
 
+@admin.register(StatusUpdate)
 class StatusUpdateAdmin(admin.ModelAdmin):
     list_display = ("display_name", "semester", "opens_at", "closes_at")
     search_fields = ("name", "location")
     list_filter = ("semester", "opens_at")
     inlines = (StatusUpdateSubmissionInline,)
-
-
-admin.site.register(Semester, SemesterAdmin)
-admin.site.register(User, UserAdmin)
-admin.site.register(Project, ProjectAdmin)
-admin.site.register(Enrollment, EnrollmentAdmin)
-admin.site.register(Meeting, MeetingAdmin)
-admin.site.register(SmallGroup, SmallGroupAdmin)
-admin.site.register(StatusUpdate, StatusUpdateAdmin)

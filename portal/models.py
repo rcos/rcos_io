@@ -123,6 +123,10 @@ class User(TimestampedModel):
         ordering = ["rcs_id", "first_name", "last_name"]
 
 
+class ProjectTag(TimestampedModel):
+    name = models.CharField(max_length=100)
+
+
 class Project(TimestampedModel):
     name = models.CharField(
         max_length=100, unique=True, help_text="The project's unique name"
@@ -138,20 +142,35 @@ class Project(TimestampedModel):
         default=False,
         help_text="Whether the project has been approved by Mentors/Coordinators to participate in RCOS",
     )
-    tagline = models.CharField(
-        max_length=200, help_text="A one-line description of the project"
+    summary = models.CharField(
+        max_length=200, help_text="A one-line summary of the project"
     )
     description_markdown = models.TextField(
         max_length=10000,
         help_text="A long description of the project. Supports Markdown.",
     )
     is_seeking_members = models.BooleanField(
+        "seeking members?",
         default=False,
         help_text="Whether the project is actively looking for new members to join",
     )
 
-    # Relationships
-    # enrollments = models.ManyToManyField(User, through="Enrollment")
+    external_chat_url = models.URLField(
+        blank=True, help_text="Optional URL to an external chat that this project uses"
+    )
+
+    homepage_url = models.URLField(
+        blank=True,
+        help_text="Optional URL to a homepage for the project, potentially where it is deloyed",
+    )
+
+    tags = models.ManyToManyField(ProjectTag, related_name="projects")
+
+    discord_role_id = models.CharField(max_length=200, blank=True)
+
+    discord_text_id = models.CharField(max_length=200, blank=True)
+
+    discord_voice_id = models.CharField(max_length=200, blank=True)
 
     def __str__(self) -> str:
         return self.name
@@ -159,6 +178,71 @@ class Project(TimestampedModel):
     class Meta:
         ordering = ["name"]
         get_latest_by = "created_at"
+
+
+class ProjectRepository(TimestampedModel):
+    project = models.ForeignKey(
+        Project, on_delete=models.CASCADE, related_name="repositories"
+    )
+    repository_url = models.URLField(help_text="URL of GitHub repository")
+
+
+class ProjectProposal(TimestampedModel):
+    semester = models.ForeignKey(
+        Semester, on_delete=models.CASCADE, related_name="project_proposals"
+    )
+    project = models.ForeignKey(
+        Project, on_delete=models.CASCADE, related_name="proposals"
+    )
+    proposal_url = models.URLField(help_text="Link to the actual proposal document")
+
+    grade = models.DecimalField(
+        max_digits=3,
+        blank=True,
+        decimal_places=1,
+        help_text="The grade assigned to this proposal",
+    )
+    grader = models.ForeignKey(
+        User,
+        null=True,
+        blank=True,
+        on_delete=models.SET_NULL,
+        related_name="graded_project_proposals",
+    )
+    grader_comments = models.TextField(
+        max_length=10000,
+        blank=True,
+        help_text="Optional comments from the grader",
+    )
+
+
+class ProjectPresentation(TimestampedModel):
+    semester = models.ForeignKey(
+        Semester, on_delete=models.CASCADE, related_name="project_presentations"
+    )
+    project = models.ForeignKey(
+        Project, on_delete=models.CASCADE, related_name="presentations"
+    )
+    presentation_url = models.URLField(help_text="Link to the actual presentation")
+
+    grade = models.DecimalField(
+        max_digits=3,
+        blank=True,
+        decimal_places=1,
+        help_text="The grade assigned to this presentation",
+    )
+    grader = models.ForeignKey(
+        User,
+        null=True,
+        blank=True,
+        on_delete=models.SET_NULL,
+        related_name="graded_project_presentations",
+    )
+    grader_comments = models.TextField(
+        max_length=10000,
+        blank=True,
+        help_text="Optional comments from the grader",
+    )
 
 
 class Enrollment(TimestampedModel):
@@ -185,6 +269,14 @@ class Enrollment(TimestampedModel):
     is_project_lead = models.BooleanField("project lead?", default=False)
     is_coordinator = models.BooleanField("coordinator?", default=False)
     is_faculty_advisor = models.BooleanField("faculty advisor?", default=False)
+
+    final_grade = models.DecimalField(
+        max_digits=3,
+        decimal_places=2,
+        help_text="The user's final grade for this semester (if taken for credits)",
+        null=True,
+        blank=True,
+    )
 
     def __str__(self) -> str:
         return f"{self.semester.name} - {self.user} - {self.project or 'No project'}"
@@ -330,6 +422,7 @@ class StatusUpdateSubmission(TimestampedModel):
 
     grade = models.DecimalField(
         max_digits=1,
+        null=True,
         blank=True,
         decimal_places=1,
         help_text="The grade assigned to this submission",
