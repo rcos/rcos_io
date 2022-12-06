@@ -261,7 +261,9 @@ class MeetingAttendance(TimestampedModel):
 
 
 class SmallGroup(TimestampedModel):
-    semester = models.ForeignKey(Semester, on_delete=models.CASCADE, related_name="small_groups")
+    semester = models.ForeignKey(
+        Semester, on_delete=models.CASCADE, related_name="small_groups"
+    )
     name = models.CharField(
         max_length=100, blank=True, help_text="Public-facing name of the Small Group"
     )
@@ -284,3 +286,69 @@ class SmallGroup(TimestampedModel):
 
     class Meta:
         ordering = ["semester", "name", "location"]
+
+
+class StatusUpdate(TimestampedModel):
+    semester = models.ForeignKey(
+        Semester, on_delete=models.CASCADE, related_name="status_updates"
+    )
+    name = models.CharField(
+        max_length=200,
+        blank=True,
+        help_text="Optional title to display on Status Update page",
+    )
+    opens_at = models.DateTimeField(
+        help_text="The date and time the status update opens for submissions"
+    )
+    closes_at = models.DateTimeField(
+        help_text="The date and time the status update stops accepting submissions"
+    )
+
+    @property
+    def display_name(self):
+        return (self.name or "Status Update") + " " + self.opens_at.strftime("%x")
+
+    def __str__(self) -> str:
+        return self.display_name
+
+    class Meta:
+        ordering = ("semester", "opens_at")
+        get_latest_by = "opens_at"
+
+
+class StatusUpdateSubmission(TimestampedModel):
+    user = models.ForeignKey(
+        User, on_delete=models.CASCADE, related_name="status_update_submissions"
+    )
+    status_update = models.ForeignKey(
+        StatusUpdate, on_delete=models.CASCADE, related_name="submissions"
+    )
+
+    previous_week = models.TextField(max_length=10000)
+    next_week = models.TextField(max_length=10000)
+    blockers = models.TextField(max_length=10000)
+
+    grade = models.DecimalField(
+        max_digits=1,
+        blank=True,
+        decimal_places=1,
+        help_text="The grade assigned to this submission",
+    )
+    grader = models.ForeignKey(
+        User,
+        null=True,
+        blank=True,
+        on_delete=models.SET_NULL,
+        related_name="graded_status_update_submissions",
+    )
+    grader_comments = models.TextField(
+        max_length=10000,
+        blank=True,
+        help_text="Optional comments from the grader to the submitter",
+    )
+
+    def __str__(self) -> str:
+        return f"{self.user.display_name} submission for {self.status_update}"
+
+    class Meta:
+        ordering = ["created_at"]

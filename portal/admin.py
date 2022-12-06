@@ -16,6 +16,11 @@ class MeetingAttendanceInline(admin.TabularInline):
     extra = 1
 
 
+class StatusUpdateSubmissionInline(admin.StackedInline):
+    model = StatusUpdateSubmission
+    extra = 1
+
+
 # Model Admins
 
 
@@ -74,9 +79,17 @@ class SmallGroupAdmin(admin.ModelAdmin):
     list_filter = ("semester",)
 
 
+class StatusUpdateAdmin(admin.ModelAdmin):
+    list_display = ("display_name", "semester", "opens_at", "closes_at")
+    search_fields = ("name", "location")
+    list_filter = ("semester", "opens_at")
+    inlines = (StatusUpdateSubmissionInline,)
+
+
 admin.site.register(Semester, SemesterAdmin)
 admin.site.register(User, UserAdmin)
 admin.site.register(Project, ProjectAdmin)
 admin.site.register(Enrollment, EnrollmentAdmin)
 admin.site.register(Meeting, MeetingAdmin)
 admin.site.register(SmallGroup, SmallGroupAdmin)
+admin.site.register(StatusUpdate, StatusUpdateAdmin)
