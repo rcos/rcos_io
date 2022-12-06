@@ -139,6 +139,7 @@ class Project(TimestampedModel):
         help_text="The user that can make edits to the project",
     )
     is_approved = models.BooleanField(
+        "approved?",
         default=False,
         help_text="Whether the project has been approved by Mentors/Coordinators to participate in RCOS",
     )
