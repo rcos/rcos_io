@@ -5,6 +5,6 @@
             {{ semester }}
         </option>
         {% endfor %}
-        <option value="">All Semesters</option>
+        <option value="" {% if not target_semester %}selected{% endif%}>All Semesters</option>
     </select>
 </div>
