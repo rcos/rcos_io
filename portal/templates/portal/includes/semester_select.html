@@ -1,0 +1,10 @@
+<div class="select">
+    <select name="semester">
+        {% for semester in semesters %}
+        <option value="{{ semester.id }}" {% if semester == target_semester %} selected {% endif %}>
+            {{ semester }}
+        </option>
+        {% endfor %}
+        <option value="">All Semesters</option>
+    </select>
+</div>

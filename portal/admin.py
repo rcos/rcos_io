@@ -7,11 +7,13 @@ admin.site.site_title = "RCOS IO"
 
 # Actions
 
-@admin.action(description='Mark selected as approved')
+
+@admin.action(description="Mark selected as approved")
 def make_approved(modeladmin, request, queryset):
     queryset.update(is_approved=True)
 
-@admin.action(description='Mark selected as published')
+
+@admin.action(description="Mark selected as published")
 def make_published(modeladmin, request, queryset):
     queryset.update(is_published=True)
 

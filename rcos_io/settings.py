@@ -69,6 +69,7 @@ TEMPLATES = [
                 "django.template.context_processors.request",
                 "django.contrib.auth.context_processors.auth",
                 "django.contrib.messages.context_processors.messages",
+                "portal.views.load_semesters",
             ],
         },
     },
@@ -91,7 +92,7 @@ DATABASES = {
     }
 }
 
-AUTH_USER_MODEL = 'portal.User'
+AUTH_USER_MODEL = "portal.User"
 
 # Password validation
 # https://docs.djangoproject.com/en/4.1/ref/settings/#auth-password-validators
