@@ -1,0 +1,51 @@
+[
+    {
+        "model": "portal.semester",
+        "pk": "202301",
+        "fields": {
+            "name": "Spring 2023",
+            "is_accepting_new_projects": true,
+            "start_date": "2023-01-09",
+            "end_date": "2023-5-05",
+            "updated_at": "2022-12-21T02:30:00+0000",
+            "created_at": "2022-12-21T02:30:00+0000"
+        }
+    },
+    {
+        "model": "portal.semester",
+        "pk": "202208",
+        "fields": {
+            "name": "Fall 2022",
+            "is_accepting_new_projects": false,
+            "start_date": "2022-08-29",
+            "end_date": "2022-12-20",
+            "updated_at": "2022-12-21T02:30:00+0000",
+            "created_at": "2022-12-21T02:30:00+0000"
+        }
+    },
+    {
+        "model": "portal.semester",
+        "pk": "202201",
+        "fields": {
+            "name": "Spring 2022",
+            "is_accepting_new_projects": false,
+            "start_date": "2022-01-09",
+            "end_date": "2022-5-05",
+            "updated_at": "2022-12-21T02:30:00+0000",
+            "created_at": "2022-12-21T02:30:00+0000"
+        }
+    },
+    {
+        "model": "portal.project",
+        "pk": 1,
+        "fields": {
+            "name": "RCOS IO",
+            "is_approved": true,
+            "summary": "The RCOS website.",
+            "description_markdown": "Long description here.",
+            "is_seeking_members": false,
+            "updated_at": "2022-12-21T02:30:00+0000",
+            "created_at": "2022-12-21T02:30:00+0000"
+        }
+    }
+]
