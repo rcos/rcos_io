@@ -5,6 +5,17 @@ from .models import *
 admin.site.site_header = "RCOS IO Administration"
 admin.site.site_title = "RCOS IO"
 
+# Actions
+
+@admin.action(description='Mark selected as approved')
+def make_approved(modeladmin, request, queryset):
+    queryset.update(is_approved=True)
+
+@admin.action(description='Mark selected as published')
+def make_published(modeladmin, request, queryset):
+    queryset.update(is_published=True)
+
+
 # Inlines
 class EnrollmentInline(admin.TabularInline):
     model = Enrollment
@@ -58,6 +69,7 @@ class UserAdmin(admin.ModelAdmin):
     search_fields = ("first_name", "last_name", "email", "rcs_id")
     list_filter = ("role", "is_approved", "enrollments__semester__name")
     inlines = (EnrollmentInline,)
+    actions = (make_approved,)
 
 
 @admin.register(Project)
@@ -66,6 +78,7 @@ class ProjectAdmin(admin.ModelAdmin):
     search_fields = ("name", "summary", "tags__name")
     list_filter = ("is_approved", "enrollments__semester__name", "tags__name")
     inlines = (EnrollmentInline, ProjectProposalInline, ProjectPresentationline)
+    actions = (make_approved,)
 
 
 @admin.register(Enrollment)
@@ -86,6 +99,7 @@ class MeetingAdmin(admin.ModelAdmin):
     search_fields = ("name", "type")
     list_filter = ("starts_at", "type", "is_published")
     inlines = (MeetingAttendanceInline,)
+    actions = (make_published,)
 
 
 @admin.register(SmallGroup)
