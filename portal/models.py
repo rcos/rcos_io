@@ -1,5 +1,5 @@
 from django.db import models
-
+from django.contrib.auth.models import AbstractUser
 
 class TimestampedModel(models.Model):
     created_at = models.DateTimeField(auto_now_add=True)
@@ -44,21 +44,13 @@ class Semester(TimestampedModel):
         return self.name
 
 
-class User(TimestampedModel):
+class User(AbstractUser, TimestampedModel):
     RPI = "rpi"
     EXTERNAL = "external"
     ROLE_CHOICES = ((RPI, "RPI"), (EXTERNAL, "External"))
 
     is_approved = models.BooleanField("approved?", default=False)
     role = models.CharField(choices=ROLE_CHOICES, max_length=30)
-
-    # Profile
-    first_name = models.CharField(max_length=100, blank=True)
-    last_name = models.CharField(max_length=100, blank=True)
-    email = models.EmailField(
-        unique=True,
-        help_text="The user's primary email, used for logging in and sending communications. Can change.",
-    )
 
     # Set for RPI users only
     rcs_id = models.CharField(
@@ -82,10 +74,6 @@ class User(TimestampedModel):
     github_username = models.CharField(
         blank=True, max_length=200, help_text="The user's GitHub username (not user ID)"
     )
-
-    @property
-    def full_name(self):
-        return (self.first_name + " " + self.last_name).strip()
 
     @property
     def display_name(self):
@@ -169,9 +157,9 @@ class Project(TimestampedModel):
 
     discord_role_id = models.CharField(max_length=200, blank=True)
 
-    discord_text_id = models.CharField(max_length=200, blank=True)
+    discord_text_channel_id = models.CharField(max_length=200, blank=True)
 
-    discord_voice_id = models.CharField(max_length=200, blank=True)
+    discord_voice_channel_id = models.CharField(max_length=200, blank=True)
 
     def __str__(self) -> str:
         return self.name
