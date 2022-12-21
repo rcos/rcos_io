@@ -1,0 +1,9 @@
+{% extends "portal/base.html" %}
+
+{% block content %}
+<h1>Meetings</h1>
+
+{% for meeting in meetings %}
+<li><a href="{% url 'meetings_detail' meeting.id %}">{{ meeting }}</a></li>
+{% endfor %}
+{% endblock %}
