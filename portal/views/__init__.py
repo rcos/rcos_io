@@ -1,11 +1,22 @@
 from typing import Any, Dict
-from django.views.generic import ListView
+from django.views.generic import ListView, DetailView
 from ..models import Semester, User
 from django.shortcuts import get_object_or_404
 
 
 def load_semesters(request):
     return {"semesters": Semester.objects.all()}
+
+
+class SemesterFilteredDetailView(DetailView):
+    def get_context_data(self, **kwargs):
+        data = super().get_context_data(**kwargs)
+
+        semester_id = self.request.GET.get("semester")
+        if semester_id:
+            data["target_semester"] = get_object_or_404(Semester, pk=semester_id)
+
+        return data
 
 
 class SemesterFilteredListView(ListView):

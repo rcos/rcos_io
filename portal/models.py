@@ -1,5 +1,6 @@
 from django.db import models
 from django.contrib.auth.models import AbstractUser
+from django.urls import reverse
 
 
 class TimestampedModel(models.Model):
@@ -105,11 +106,14 @@ class User(AbstractUser, TimestampedModel):
             and self.discord_user_id
         )
 
+    def get_absolute_url(self):
+        return reverse("users_detail", args=[str(self.id)])
+
     def __str__(self) -> str:
         return self.display_name
 
     class Meta:
-        ordering = ["rcs_id", "first_name", "last_name"]
+        ordering = ["first_name", "last_name", "username", "email"]
 
 
 class ProjectTag(TimestampedModel):
@@ -161,6 +165,9 @@ class Project(TimestampedModel):
     discord_text_channel_id = models.CharField(max_length=200, blank=True)
 
     discord_voice_channel_id = models.CharField(max_length=200, blank=True)
+
+    def get_absolute_url(self):
+        return reverse("projects_detail", args=[str(self.id)])
 
     def __str__(self) -> str:
         return self.name
@@ -268,6 +275,13 @@ class Enrollment(TimestampedModel):
         blank=True,
     )
 
+    def get_absolute_url(self):
+        return (
+            reverse("users_detail", args=[str(self.user.id)])
+            + "?semester="
+            + self.semester.id
+        )
+
     def __str__(self) -> str:
         return f"{self.semester.name} - {self.user} - {self.project or 'No project'}"
 
@@ -325,6 +339,9 @@ class Meeting(TimestampedModel):
     attendances = models.ManyToManyField(
         User, through="MeetingAttendance", related_name="meeting_attendances"
     )
+
+    def get_absolute_url(self):
+        return reverse("meetings_detail", args=[str(self.id)])
 
     def __str__(self) -> str:
         return f"{self.name} - {self.get_type_display()} - {self.starts_at.strftime('%a %b %-d %Y @ %-I:%M %p')}"

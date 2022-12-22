@@ -25,8 +25,9 @@
             </div>
         </form>
 
+        <p class="has-text-grey mb-2">{{projects|length }} results</p>
         {% for project in projects %}
-        <li><a href="{% url 'projects_detail' project.id %}">{{ project }}</a></li>
+        <li><a href="{% url 'projects_detail' project.id %}{% if target_semester %}?semester={{target_semester.id}}{% endif %}">{{ project }}</a></li>
         {% endfor %}
     </div>
 </section>

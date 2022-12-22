@@ -19,8 +19,9 @@
             </div>
         </form>
 
+        <p class="has-text-grey mb-2">{{users|length }} results</p>
         {% for user in users %}
-        <li><a href="{% url 'users_detail' user.id %}">{{ user }}</a></li>
+        <li><a href="{% url 'users_detail' user.id %}{% if target_semester %}?semester={{target_semester.id}}{% endif %}">{{ user }}</a></li>
         {% endfor %}
     </div>
 </section>

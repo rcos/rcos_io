@@ -1,6 +1,4 @@
-from django.views.generic import DetailView
-
-from . import SemesterFilteredListView
+from . import SemesterFilteredListView, SemesterFilteredDetailView
 from ..models import Project
 
 
@@ -13,7 +11,7 @@ class ProjectIndexView(SemesterFilteredListView):
     semester_filter_key = "enrollments__semester"
 
 
-class ProjectDetailView(DetailView):
+class ProjectDetailView(SemesterFilteredDetailView):
     template_name = "portal/projects/detail.html"
     model = Project
     context_object_name = "project"
