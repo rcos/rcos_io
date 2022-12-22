@@ -5,9 +5,43 @@
     <div class="container">
         <h1 class="title">Meetings</h1>
 
-        {% for meeting in meetings %}
-        <li><a href="{% url 'meetings_detail' meeting.id %}">{{ meeting }}</a></li>
-        {% endfor %}
+        <div class="columns">
+            <div class="column is-one-third">
+                <h2 class="title is-4">Next Up</h2>
+
+                {% for meeting in meetings %}
+                <div class="card mb-2">
+                    <div class="card-content">
+                        <h3 class="subtitle mb-1"><a href="{{ meeting.get_absolute_url }}">{{ meeting.display_name }}</a></h3>
+                        
+                        <p class="mb-2">{{ meeting.starts_at|date:"l, n/j" }} @ {{ meeting.starts_at|date:"P" }} - {{ meeting.ends_at|date:"P" }}</p>
+                        <span class="tag" style="border: 1px solid {{ meeting.color }}">{{ meeting.get_type_display }}</span>
+                        <span class="tag">{{ meeting.location|default:"Location Not Specified" }}</span>
+                        {% if meeting.host %}
+                        <span class="tag">Hosted by&nbsp;<a href="{{ meeting.host.get_absolute_url }}">{{ meeting.host }}</a></span>
+                        {% endif %}
+                    </div>
+                </div>
+                {% endfor %}
+            </div>
+            <div class="column">
+                <div id="calendar"></div>
+            </div>
+        </div>
     </div>
 </section>
+
+<script src="https://cdn.jsdelivr.net/npm/fullcalendar@6.0.1/index.global.min.js"
+    integrity="sha256-wKSlmJX2aO3MGLwAyZeYmYpSBBI42kGszk55a52vKqs=" crossorigin="anonymous"></script>
+
+<script>
+    document.addEventListener("DOMContentLoaded", function () {
+        var calendarEl = document.getElementById("calendar");
+        var calendar = new FullCalendar.Calendar(calendarEl, {
+            initialView: "dayGridMonth",
+            events: "/api/meetings"
+        });
+        calendar.render();
+    });
+</script>
 {% endblock %}

@@ -304,6 +304,13 @@ class Meeting(TimestampedModel):
         (MENTOR, "Mentor"),
         (COORDINATOR, "Coordinator"),
     )
+    TYPE_COLORS = {
+        SMALL_GROUP: "red",
+        LARGE_GROUP: "blue",
+        WORKSHOP: "gold",
+        MENTOR: "purple",
+        COORDINATOR: "orange"
+    }
 
     semester = models.ForeignKey(
         Semester, on_delete=models.CASCADE, related_name="meetings"
@@ -339,6 +346,14 @@ class Meeting(TimestampedModel):
     attendances = models.ManyToManyField(
         User, through="MeetingAttendance", related_name="meeting_attendances"
     )
+
+    @property
+    def display_name(self):
+        return self.name or self.get_type_display()
+
+    @property
+    def color(self):
+        return Meeting.TYPE_COLORS[self.type] if self.type in Meeting.TYPE_COLORS else "grey"
 
     def get_absolute_url(self):
         return reverse("meetings_detail", args=[str(self.id)])

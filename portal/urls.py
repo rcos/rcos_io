@@ -12,6 +12,6 @@ urlpatterns = [
     path("projects/", ProjectIndexView.as_view(), name="projects_index"),
     path("projects/<int:pk>", ProjectDetailView.as_view(), name="projects_detail"),
     path("meetings/", MeetingIndexView.as_view(), name="meetings_index"),
-    path("meetings/api", meetings_api, name="meetings_api"),
+    path("api/meetings", meetings_api, name="meetings_api"),
     path("meetings/<int:pk>", MeetingDetailView.as_view(), name="meetings_detail"),
 ]
