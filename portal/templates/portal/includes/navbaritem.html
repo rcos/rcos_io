@@ -1,0 +1,4 @@
+{% url view_name as href %}
+<a href="{{ href }}" class="navbar-item {% if href == request.path or href in request.path %}is-active{% endif %}">
+    {{ display }}
+</a>

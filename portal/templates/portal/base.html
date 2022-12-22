@@ -9,8 +9,11 @@
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bulma@0.9.4/css/bulma.min.css">
 </head>
 
-<body>
+<body class="has-navbar-fixed-top">
+    {% include "portal/includes/navbar.html" %}
+
     {% block content %}{% endblock %}
+    
     {% include "portal/includes/footer.html" %}
 </body>
 
