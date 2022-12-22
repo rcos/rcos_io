@@ -43,6 +43,7 @@ INSTALLED_APPS = [
     "django.contrib.messages",
     "whitenoise.runserver_nostatic",
     "django.contrib.staticfiles",
+    "markdownify.apps.MarkdownifyConfig",
 ]
 
 MIDDLEWARE = [
@@ -148,3 +149,28 @@ SECURE_HSTS_SECONDS = 2, 592, 000
 SECURE_HSTS_INCLUDE_SUBDOMAINS = True
 
 SECURE_HSTS_PRELOAD = True
+
+MARKDOWNIFY = {
+    "default": {
+        "WHITELIST_TAGS": [
+            "h1",
+            "h2",
+            "h3",
+            "h4",
+            "h5",
+            "h6",
+            "a",
+            "abbr",
+            "acronym",
+            "b",
+            "blockquote",
+            "em",
+            "i",
+            "li",
+            "ol",
+            "p",
+            "strong",
+            "ul",
+        ]
+    }
+}

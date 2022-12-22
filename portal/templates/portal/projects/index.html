@@ -12,13 +12,13 @@
             </div>
             <div class="column is-narrow">
                 <label class="checkbox">
-                    <input type="checkbox" name="is_seeking_members" value="yes">
+                    <input type="checkbox" name="is_seeking_members" value="yes" {% if is_seeking_members %}checked{% endif %}>
                     Seeking Members?
                 </label>
             </div>
             <div class="column">
                 <input type="search" id="search" name="search" class="input"
-                    placeholder="By name, project lead, tags" />
+                    placeholder="By name, project lead, tags" value="{{ search }}" />
             </div>
             <div class="column is-narrow">
                 <button type="submit" class="button">Filter</button>
@@ -26,9 +26,37 @@
         </form>
 
         <p class="has-text-grey mb-2">{{projects|length }} results</p>
-        {% for project in projects %}
-        <li><a href="{% url 'projects_detail' project.id %}{% if target_semester %}?semester={{target_semester.id}}{% endif %}">{{ project }}</a></li>
-        {% endfor %}
+
+        <table class="table is-fullwidth">
+            <thead>
+                <tr>
+                    <th></th>
+                    <th>Name</th>
+                    <th>Summary</th>
+                    <th>Tags</th>
+                    <th>Project Lead</th>
+                    <th>Semester Count</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for project in projects %}
+                <tr>
+                    <td>
+                        {% if project.is_seeking_members %}
+                        <span class="tag is-warning" title="Seeking new members!">👥</span>
+                        {% endif %}
+                    </td>
+                    <td>
+                        <a href="{{ project.get_absolute_url }}{% if target_semester %}?semester={{target_semester.id}}{% endif %}">{{ project }}</a>
+                    </td>
+                    <td>{{ project.summary }}</td>
+                    <td>{{ project.tags.all|join:", "|default:"-" }}</td>
+                    <td>{{ project.owner }}</td>
+                    <td>0</td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
     </div>
 </section>
 {% endblock %}
