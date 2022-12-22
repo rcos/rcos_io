@@ -4,6 +4,7 @@ from django.views.generic import ListView, DetailView
 from django.utils import timezone
 from ..models import Meeting
 
+
 def meeting_to_event(meeting: Meeting) -> Dict[str, Any]:
     return {
         "id": meeting.id,
@@ -11,8 +12,9 @@ def meeting_to_event(meeting: Meeting) -> Dict[str, Any]:
         "start": meeting.starts_at,
         "end": meeting.ends_at,
         "url": meeting.get_absolute_url(),
-        "color": meeting.color
+        "color": meeting.color,
     }
+
 
 class MeetingIndexView(ListView):
     template_name = "portal/meetings/index.html"
@@ -21,10 +23,15 @@ class MeetingIndexView(ListView):
     # Fetch 5 most recent published meetings, calendar will fetch all from API separately
     def get_queryset(self):
         today = timezone.datetime.today()
-        this_morning = timezone.datetime.combine(today, timezone.datetime.min.time(), tzinfo=today.tzinfo)
+        this_morning = timezone.datetime.combine(
+            today, timezone.datetime.min.time(), tzinfo=today.tzinfo
+        )
         print(this_morning)
-        queryset = Meeting.objects.filter(is_published=True, starts_at__gte=this_morning)[:5]
+        queryset = Meeting.objects.filter(
+            is_published=True, starts_at__gte=this_morning
+        )[:5]
         return queryset
+
 
 class MeetingDetailView(DetailView):
     template_name = "portal/meetings/detail.html"

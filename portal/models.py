@@ -309,7 +309,7 @@ class Meeting(TimestampedModel):
         LARGE_GROUP: "blue",
         WORKSHOP: "gold",
         MENTOR: "purple",
-        COORDINATOR: "orange"
+        COORDINATOR: "orange",
     }
 
     semester = models.ForeignKey(
@@ -353,7 +353,11 @@ class Meeting(TimestampedModel):
 
     @property
     def color(self):
-        return Meeting.TYPE_COLORS[self.type] if self.type in Meeting.TYPE_COLORS else "grey"
+        return (
+            Meeting.TYPE_COLORS[self.type]
+            if self.type in Meeting.TYPE_COLORS
+            else "grey"
+        )
 
     def get_absolute_url(self):
         return reverse("meetings_detail", args=[str(self.id)])
