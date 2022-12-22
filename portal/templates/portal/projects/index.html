@@ -1,24 +1,34 @@
-{% extends "portal/base.html" %}
-
-{% block content %}
+{% extends "portal/base.html" %} {% block content %}
 <section class="section">
-    <div class="container">
+    <div class="container-fluid">
         <h1 class="title">Projects</h1>
         <h2 class="subtitle">{{ target_semester|default:"All Semesters" }}</h2>
-
         <form class="columns is-vcentered">
             <div class="column is-narrow">
                 {% include "portal/includes/semester_select.html" %}
             </div>
             <div class="column is-narrow">
                 <label class="checkbox">
-                    <input type="checkbox" name="is_seeking_members" value="yes" {% if is_seeking_members %}checked{% endif %}>
+                    <input
+                        type="checkbox"
+                        name="is_seeking_members"
+                        value="yes"
+                        {% if is_seeking_members %}
+                        checked
+                        {% endif %}
+                    />
                     Seeking Members?
                 </label>
             </div>
             <div class="column">
-                <input type="search" id="search" name="search" class="input"
-                    placeholder="By name, project lead, tags" value="{{ search }}" />
+                <input
+                    type="search"
+                    id="search"
+                    name="search"
+                    class="input"
+                    placeholder="By name, project lead, tags"
+                    value="{{ search|default:'' }}"
+                />
             </div>
             <div class="column is-narrow">
                 <button type="submit" class="button">Filter</button>
@@ -35,7 +45,9 @@
                     <th>Summary</th>
                     <th>Tags</th>
                     <th>Project Lead</th>
-                    <th>Semester Count</th>
+                    {% if not target_semester %}
+                    <th>Active During</th>
+                    {% endif %}
                 </tr>
             </thead>
             <tbody>
@@ -43,16 +55,29 @@
                 <tr>
                     <td>
                         {% if project.is_seeking_members %}
-                        <span class="tag is-warning" title="Seeking new members!">👥</span>
+                        <span
+                            class="tag is-warning"
+                            title="Seeking new members!"
+                            >👥</span
+                        >
                         {% endif %}
                     </td>
                     <td>
-                        <a href="{{ project.get_absolute_url }}{% if target_semester %}?semester={{target_semester.id}}{% endif %}">{{ project }}</a>
+                        <a
+                            href="{{ project.get_absolute_url }}{% if target_semester %}?semester={{target_semester.id}}{% endif %}"
+                            >{{ project }}</a
+                        >
                     </td>
                     <td>{{ project.summary }}</td>
                     <td>{{ project.tags.all|join:", "|default:"-" }}</td>
-                    <td>{{ project.owner }}</td>
-                    <td>0</td>
+                    <td>{{ project.owner|default:"-" }}</td>
+                    {% if not target_semester %}
+                    <td>
+                        {% for semester in project.get_active_semesters %}
+                        <a class="is-block" href="{{ project.get_absolute_url }}?semester={{ semester.id }}">{{ semester }}</a>
+                        {% endfor %}
+                    </td>
+                    {% endif%}
                 </tr>
                 {% endfor %}
             </tbody>

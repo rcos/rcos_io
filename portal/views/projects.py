@@ -33,7 +33,7 @@ class ProjectIndexView(SemesterFilteredListView):
                 ),
             ).filter(search=self.search)
 
-        return queryset
+        return queryset.distinct()
 
     def get_context_data(self, **kwargs):
         data = super().get_context_data(**kwargs)

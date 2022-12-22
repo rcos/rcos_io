@@ -166,6 +166,22 @@ class Project(TimestampedModel):
 
     discord_voice_channel_id = models.CharField(max_length=200, blank=True)
 
+    def get_semester_count(self):
+        return (
+            Project.objects.filter(id=self.id, enrollments__semester__isnull=False)
+            .order_by("enrollments__semester")
+            .distinct("enrollments__semester")
+            .values("enrollments__semester_id")
+            .count()
+        )
+
+    def get_active_semesters(self):
+        return (
+            Semester.objects.filter(enrollments__project=self.id)
+            .order_by("-start_date")
+            .distinct()
+        )
+
     def get_absolute_url(self):
         return reverse("projects_detail", args=[str(self.id)])
 
