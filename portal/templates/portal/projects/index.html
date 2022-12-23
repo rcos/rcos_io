@@ -1,4 +1,6 @@
-{% extends "portal/base.html" %} {% block content %}
+{% extends "portal/base.html" %}
+{% load project_extras %}
+{% block content %}
 <section class="section">
     <div class="container-fluid">
         <h1 class="title">Projects</h1>
@@ -48,10 +50,14 @@
                     <th>Name</th>
                     <th>Summary</th>
                     <th>Tags</th>
-                    <th>Project Lead</th>
-                    {% if not target_semester %}
+                    {% if target_semester %}
+                    <th>Lead</th>
+                    <th>Team Size</th>
+                    {% else %}
+                    <th>Owner</th>
                     <th>Active During</th>
                     {% endif %}
+
                 </tr>
             </thead>
             <tbody>
@@ -76,8 +82,18 @@
                     </td>
                     <td>{{ project.summary }}</td>
                     <td>{{ project.tags.all|join:", "|default:"-" }}</td>
-                    <td>{{ project.owner|default:"-" }}</td>
-                    {% if not target_semester %}
+                    {% if target_semester %}
+                    <td>
+                        {% project_leads project target_semester as project_leads %}
+                        {% for project_lead in project_leads %}
+                        <a href="{{ project_lead.get_absolute_url }}">{{ project_lead.user }}</a>
+                        {% empty %}
+                        -
+                        {% endfor %}
+                    </td>
+                    <td>{% enrollment_count project.enrollments target_semester %}</td>
+                    {% else %}
+                    <td><a href="{{ project.owner.get_absolute_url }}">{{ project.owner|default:"-" }}</a></td>
                     <td>
                         {% for semester in project.get_active_semesters %}
                         <a class="is-block" href="{{ project.get_absolute_url }}?semester={{ semester.id }}">{{ semester }}</a>

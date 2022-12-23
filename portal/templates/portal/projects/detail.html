@@ -1,11 +1,15 @@
 {% extends "portal/base.html" %}
 
 {% block content %}
+
+<section class="hero is-dark">
+    <div class="hero-body">
+        <h1 class="title">{{ project }}</h1>
+        <h2 class="subtitle">{{ target_semester|default:"All Semesters" }}</h2>    </div>
+</section>
+
 <section class="section">
     <div class="container-fluid">
-        <h1 class="title">{{ project }}</h1>
-        <h2 class="subtitle">{{ target_semester|default:"All Semesters" }}</h2>
-
         {% include "portal/projects/sections/overview.html" %}
     </div>
 </section>
