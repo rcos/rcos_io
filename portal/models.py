@@ -221,6 +221,7 @@ class ProjectPitch(TimestampedModel):
     )
     url = models.URLField(help_text="Link to the pitch presentation")
 
+
 class ProjectProposal(TimestampedModel):
     semester = models.ForeignKey(
         Semester, on_delete=models.CASCADE, related_name="project_proposals"
@@ -232,6 +233,7 @@ class ProjectProposal(TimestampedModel):
 
     grade = models.DecimalField(
         max_digits=3,
+        null=True,
         blank=True,
         decimal_places=1,
         help_text="The grade assigned to this proposal",
@@ -261,6 +263,7 @@ class ProjectPresentation(TimestampedModel):
 
     grade = models.DecimalField(
         max_digits=3,
+        null=True,
         blank=True,
         decimal_places=1,
         help_text="The grade assigned to this presentation",

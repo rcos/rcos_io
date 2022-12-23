@@ -20,6 +20,7 @@
                     {% if target_semester %}
                     <th>Lead</th>
                     <th>Team Size</th>
+                    <th>🔗</th>
                     {% else %}
                     <th>Owner</th>
                     <th>Active Semesters</th>
@@ -59,6 +60,18 @@
                         {% endfor %}
                     </td>
                     <td>{% enrollment_count project.enrollments target_semester %}</td>
+                    <td>
+                        {% project_documents project target_semester as project_docs %}
+                        {% if project_docs.pitch %}
+                        <a class="is-block" href="{{ project_docs.pitch.url }}" target="_blank">Pitch Deck</a>
+                        {% endif %}
+                        {% if project_docs.proposal %}
+                        <a class="is-block" href="{{ project_docs.proposal.url }}" target="_blank">Proposal</a>
+                        {% endif %}
+                        {% if project_docs.presentation %}
+                        <a class="is-block" href="{{ project_docs.presentation.url }}" target="_blank">Final Presentation</a>
+                        {% endif %}
+                    </td>
                     {% else %}
                     <td><a href="{{ project.owner.get_absolute_url }}">{{ project.owner|default:"-" }}</a></td>
                     <td>

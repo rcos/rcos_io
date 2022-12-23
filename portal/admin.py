@@ -33,9 +33,11 @@ class StatusUpdateSubmissionInline(admin.StackedInline):
     model = StatusUpdateSubmission
     extra = 1
 
+
 class ProjectPitchInline(admin.TabularInline):
     model = ProjectPitch
     extra = 1
+
 
 class ProjectProposalInline(admin.TabularInline):
     model = ProjectProposal
@@ -70,7 +72,12 @@ class SemesterAdmin(admin.ModelAdmin):
         "project_count",
     )
     search_fields = ("name",)
-    inlines = (EnrollmentInline, ProjectPitchInline, ProjectProposalInline, ProjectPresentationInline)
+    inlines = (
+        EnrollmentInline,
+        ProjectPitchInline,
+        ProjectProposalInline,
+        ProjectPresentationInline,
+    )
 
 
 @admin.register(User)
