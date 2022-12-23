@@ -58,9 +58,9 @@ class ProjectDetailView(SemesterFilteredDetailView):
         else:
             enrollments_by_semester = {}
             for enrollment in self.object.enrollments.all():
-                if enrollment.semester.name not in enrollments_by_semester:
-                    enrollments_by_semester[enrollment.semester.name] = []
-                enrollments_by_semester[enrollment.semester.name].append(enrollment)
+                if enrollment.semester not in enrollments_by_semester:
+                    enrollments_by_semester[enrollment.semester] = []
+                enrollments_by_semester[enrollment.semester].append(enrollment)
             data["enrollments_by_semester"] = enrollments_by_semester
             print(data["enrollments_by_semester"])
         client = github.client_factory()

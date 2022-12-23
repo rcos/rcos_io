@@ -146,11 +146,7 @@ class Project(TimestampedModel):
         help_text="Whether the project has been approved by Mentors/Coordinators to participate in RCOS",
     )
     summary = models.CharField(
-        max_length=200, help_text="A one-line summary of the project"
-    )
-    description_markdown = models.TextField(
-        max_length=10000,
-        help_text="A long description of the project. Supports Markdown.",
+        max_length=100, help_text="A one-line summary of the project"
     )
     is_seeking_members = models.BooleanField(
         "seeking members?",
