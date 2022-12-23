@@ -5,41 +5,8 @@
     <div class="container-fluid">
         <h1 class="title">Projects</h1>
         <h2 class="subtitle">{{ target_semester|default:"All Semesters" }}</h2>
-        <form class="columns is-vcentered">
-            <div class="column is-narrow">
-                {% include "portal/includes/semester_select.html" %}
-            </div>
-            {% if target_semester and target_semester.is_active %}
-            <div class="column is-narrow">
-                <label class="checkbox">
-                    <input
-                        type="checkbox"
-                        name="is_seeking_members"
-                        value="yes"
-                        {% if is_seeking_members %}
-                        checked
-                        {% endif %}
-                    />
-                    Seeking Members?
-                </label>
-            </div>
-            {% endif %}
-            <div class="column">
-                <input
-                    type="search"
-                    id="search"
-                    name="search"
-                    class="input"
-                    placeholder="By name, project lead, tags"
-                    value="{{ search|default:'' }}"
-                />
-            </div>
-            <div class="column is-narrow">
-                <button type="submit" class="button">Filter</button>
-            </div>
-        </form>
-
-        <p class="has-text-grey mb-2">{{projects|length }} results</p>
+        
+        {% include "./filters.html" %}
 
         <table class="table is-fullwidth">
             <thead>
@@ -65,7 +32,7 @@
                 <tr>
                     {% if target_semester and target_semester.is_active %}
                     <td>
-                        {% if target_semester and target_semester.is_activeproject.is_seeking_members %}
+                        {% if project.is_seeking_members %}
                         <span
                             class="tag is-warning"
                             title="Seeking new members!"

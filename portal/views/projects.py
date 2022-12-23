@@ -29,7 +29,6 @@ class ProjectIndexView(SemesterFilteredListView):
                     "owner__first_name",
                     "owner__last_name",
                     "summary",
-                    "description_markdown",
                     "tags__name",
                 ),
             ).filter(search=self.search)
