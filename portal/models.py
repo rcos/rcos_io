@@ -212,6 +212,15 @@ class ProjectRepository(TimestampedModel):
     url = models.URLField(help_text="URL of GitHub repository")
 
 
+class ProjectPitch(TimestampedModel):
+    semester = models.ForeignKey(
+        Semester, on_delete=models.CASCADE, related_name="project_pitches"
+    )
+    project = models.ForeignKey(
+        Project, on_delete=models.CASCADE, related_name="pitches"
+    )
+    url = models.URLField(help_text="Link to the pitch presentation")
+
 class ProjectProposal(TimestampedModel):
     semester = models.ForeignKey(
         Semester, on_delete=models.CASCADE, related_name="project_proposals"
@@ -219,7 +228,7 @@ class ProjectProposal(TimestampedModel):
     project = models.ForeignKey(
         Project, on_delete=models.CASCADE, related_name="proposals"
     )
-    proposal_url = models.URLField(help_text="Link to the actual proposal document")
+    url = models.URLField(help_text="Link to the actual proposal document")
 
     grade = models.DecimalField(
         max_digits=3,
@@ -248,7 +257,7 @@ class ProjectPresentation(TimestampedModel):
     project = models.ForeignKey(
         Project, on_delete=models.CASCADE, related_name="presentations"
     )
-    presentation_url = models.URLField(help_text="Link to the actual presentation")
+    url = models.URLField(help_text="Link to the actual presentation")
 
     grade = models.DecimalField(
         max_digits=3,
