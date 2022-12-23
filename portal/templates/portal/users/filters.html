@@ -3,27 +3,14 @@
         <input type="hidden" name="semester" value="{{ target_semester.id|default:'' }}">
         <div class="level-item">
             <p class="subtitle is-6">
-                <strong>{{ projects|length }}</strong> result{{ projects|pluralize }}
+                <strong>{{ users|length }}</strong> result{{ users|pluralize }}
             </p>
         </div>
-        {% if target_semester and target_semester.is_active %}
-        <div class="level-item">
-            <label class="checkbox">
-                <input
-                    type="checkbox"
-                    name="is_seeking_members"
-                    value="yes"
-                    {% if is_seeking_members %} checked {% endif %}
-                />
-                Seeking Members?
-            </label>
-        </div>
-        {% endif %}
         <div class="level-item">
             <div class="field has-addons">
                 <p class="control">
                     <input type="search" id="search" name="search" class="input"
-                        placeholder="By name, project lead, tags" value="{{ search|default:'' }}" />
+                        placeholder="By name, graduation year, etc." value="{{ search|default:'' }}" />
                 </p>
                 <p class="control">
                     <button class="button">
@@ -51,6 +38,5 @@
             <strong>All Semesters</strong>
             {% endif %}
         </p>
-        <p class="level-item"><a class="button is-success" disabled>Propose Project</a></p>
     </div>
 </nav>
