@@ -37,6 +37,7 @@ def target_semester_query(context):
         return "?semester=" + context["target_semester"].id
     return ""
 
-@register.filter(name='to_date')
+
+@register.filter(name="to_date")
 def to_date(date_string: str):
     return timezone.datetime.strptime(date_string, "%Y-%m-%dT%H:%M:%SZ")
