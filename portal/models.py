@@ -206,7 +206,7 @@ class ProjectRepository(TimestampedModel):
     project = models.ForeignKey(
         Project, on_delete=models.CASCADE, related_name="repositories"
     )
-    repository_url = models.URLField(help_text="URL of GitHub repository")
+    url = models.URLField(help_text="URL of GitHub repository")
 
 
 class ProjectProposal(TimestampedModel):
