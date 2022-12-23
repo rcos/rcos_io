@@ -1,38 +1,40 @@
 <nav class="navbar is-danger is-fixed-top" role="navigation" aria-label="main navigation">
-    <div class="navbar-brand">
-        <a class="navbar-item" href="/">
-            <img style="border-radius: 5px;" src="https://github.com/rcos/rcos-branding/blob/master/img/pill-white.png?raw=true" height="28">
-        </a>
-
-        <a role="button" class="navbar-burger" aria-label="menu" aria-expanded="false"
-            data-target="navbarBasicExample">
-            <span aria-hidden="true"></span>
-            <span aria-hidden="true"></span>
-            <span aria-hidden="true"></span>
-        </a>
-    </div>
-
-    <div id="navbarBasicExample" class="navbar-menu">
-        <div class="navbar-start">
-            {% include "portal/includes/navbaritem.html" with view_name="users_index" display="Users" %}
-            {% include "portal/includes/navbaritem.html" with view_name="projects_index" display="Projects" %}
-            {% include "portal/includes/navbaritem.html" with view_name="meetings_index" display="Meetings" %}
-            <a href="https://handbook.rcos.io/" target="_blank" class="navbar-item">
-                Handbook
+    <div class="container">
+        <div class="navbar-brand">
+            <a class="navbar-item" href="/">
+                <img style="border-radius: 5px;" src="https://github.com/rcos/rcos-branding/blob/master/img/pill-white.png?raw=true" height="28">
+            </a>
+    
+            <a role="button" class="navbar-burger" aria-label="menu" aria-expanded="false"
+                data-target="navbarBasicExample">
+                <span aria-hidden="true"></span>
+                <span aria-hidden="true"></span>
+                <span aria-hidden="true"></span>
             </a>
         </div>
-
-        <!-- <div class="navbar-end">
-            <div class="navbar-item">
-                <div class="buttons">
-                    <a href="#" class="button is-primary">
-                        <strong>Sign up</strong>
-                    </a>
-                    <a href="#" class="button is-light">
-                        Log in
-                    </a>
-                </div>
+    
+        <div id="navbarBasicExample" class="navbar-menu">
+            <div class="navbar-start">
+                {% include "portal/includes/navbaritem.html" with view_name="users_index" display="Users" %}
+                {% include "portal/includes/navbaritem.html" with view_name="projects_index" display="Projects" %}
+                {% include "portal/includes/navbaritem.html" with view_name="meetings_index" display="Meetings" %}
+                <a href="https://handbook.rcos.io/" target="_blank" class="navbar-item">
+                    Handbook
+                </a>
             </div>
-        </div> -->
+    
+            <!-- <div class="navbar-end">
+                <div class="navbar-item">
+                    <div class="buttons">
+                        <a href="#" class="button is-primary">
+                            <strong>Sign up</strong>
+                        </a>
+                        <a href="#" class="button is-light">
+                            Log in
+                        </a>
+                    </div>
+                </div>
+            </div> -->
+        </div>
     </div>
 </nav>

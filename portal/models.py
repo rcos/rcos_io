@@ -296,6 +296,8 @@ class Enrollment(TimestampedModel):
         blank=True,
     )
 
+    notes_markdown = models.TextField(max_length=10000, blank=True, help_text="Private notes for admins about this user for this semester")
+
     def get_absolute_url(self):
         return (
             reverse("users_detail", args=[str(self.user.id)])
