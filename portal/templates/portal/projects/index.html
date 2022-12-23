@@ -7,6 +7,7 @@
             <div class="column is-narrow">
                 {% include "portal/includes/semester_select.html" %}
             </div>
+            {% if target_semester and target_semester.is_active %}
             <div class="column is-narrow">
                 <label class="checkbox">
                     <input
@@ -20,6 +21,7 @@
                     Seeking Members?
                 </label>
             </div>
+            {% endif %}
             <div class="column">
                 <input
                     type="search"
@@ -40,7 +42,9 @@
         <table class="table is-fullwidth">
             <thead>
                 <tr>
+                    {% if target_semester and target_semester.is_active %}
                     <th></th>
+                    {% endif %}
                     <th>Name</th>
                     <th>Summary</th>
                     <th>Tags</th>
@@ -53,8 +57,9 @@
             <tbody>
                 {% for project in projects %}
                 <tr>
+                    {% if target_semester and target_semester.is_active %}
                     <td>
-                        {% if project.is_seeking_members %}
+                        {% if target_semester and target_semester.is_activeproject.is_seeking_members %}
                         <span
                             class="tag is-warning"
                             title="Seeking new members!"
@@ -62,6 +67,7 @@
                         >
                         {% endif %}
                     </td>
+                    {% endif %}
                     <td>
                         <a
                             href="{{ project.get_absolute_url }}{% if target_semester %}?semester={{target_semester.id}}{% endif %}"

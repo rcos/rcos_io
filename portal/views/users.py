@@ -19,10 +19,7 @@ class UserIndexView(SemesterFilteredListView):
         if self.search:
             queryset = queryset.annotate(
                 search=SearchVector(
-                    "first_name",
-                    "last_name",
-                    "rcs_id",
-                    "graduation_year"
+                    "first_name", "last_name", "rcs_id", "graduation_year"
                 ),
             ).filter(search=self.search)
 

@@ -5,7 +5,11 @@ from django.shortcuts import get_object_or_404
 
 
 def load_semesters(request):
-    return {"semesters": Semester.objects.all()}
+    semesters = Semester.objects.all()
+    active_semester = next(
+        (semester for semester in semesters if semester.is_active), None
+    )
+    return {"semesters": semesters, "active_semester": active_semester}
 
 
 class SemesterFilteredDetailView(DetailView):

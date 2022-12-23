@@ -1,0 +1,5 @@
+{% load markdownify %}
+<div class="content">
+    <p class="mb-5"><em>"{{ project.summary }}"</em></p>
+    <p>{{ project.description_markdown|markdownify }}</p>
+</div>

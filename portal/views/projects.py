@@ -1,6 +1,7 @@
 from django.contrib.postgres.search import SearchVector
 from . import SemesterFilteredListView, SemesterFilteredDetailView
-from ..models import Project
+from ..models import Enrollment, Project
+from .. import github
 
 
 class ProjectIndexView(SemesterFilteredListView):
@@ -46,3 +47,21 @@ class ProjectDetailView(SemesterFilteredDetailView):
     template_name = "portal/projects/detail.html"
     model = Project
     context_object_name = "project"
+
+    def get_context_data(self, **kwargs):
+        data = super().get_context_data(**kwargs)
+
+        if "target_semester" in data:
+            data["target_semester_enrollments"] = Enrollment.objects.filter(
+                semester=data["target_semester"], project=self.object
+            )
+
+        client = github.client_factory()
+        data["repositories"] = [
+            github.get_repository_details(client, repo.repository_url)["repository"]
+            for repo in self.object.repositories.all()
+        ]
+
+        print(data)
+
+        return data

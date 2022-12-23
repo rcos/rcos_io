@@ -39,8 +39,13 @@ class ProjectProposalInline(admin.TabularInline):
     extra = 1
 
 
-class ProjectPresentationline(admin.TabularInline):
+class ProjectPresentationInline(admin.TabularInline):
     model = ProjectPresentation
+    extra = 1
+
+
+class ProjectRepositoryInline(admin.TabularInline):
+    model = ProjectRepository
     extra = 1
 
 
@@ -62,7 +67,7 @@ class SemesterAdmin(admin.ModelAdmin):
         "project_count",
     )
     search_fields = ("name",)
-    inlines = (EnrollmentInline, ProjectProposalInline, ProjectPresentationline)
+    inlines = (EnrollmentInline, ProjectProposalInline, ProjectPresentationInline)
 
 
 @admin.register(User)
@@ -79,7 +84,12 @@ class ProjectAdmin(admin.ModelAdmin):
     list_display = ("name", "summary", "created_at", "is_approved")
     search_fields = ("name", "summary", "tags__name")
     list_filter = ("is_approved", "enrollments__semester__name", "tags__name")
-    inlines = (EnrollmentInline, ProjectProposalInline, ProjectPresentationline)
+    inlines = (
+        ProjectRepositoryInline,
+        EnrollmentInline,
+        ProjectProposalInline,
+        ProjectPresentationInline,
+    )
     actions = (make_approved,)
 
 

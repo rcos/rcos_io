@@ -1,5 +1,4 @@
 {% extends "portal/base.html" %}
-{% load markdownify %}
 
 {% block content %}
 <section class="section">
@@ -7,25 +6,34 @@
         <h1 class="title">{{ project }}</h1>
         <h2 class="subtitle">{{ target_semester|default:"All Semesters" }}</h2>
 
-
-
-        <div class="columns">
-            <div class="column">
-                <div class="box">
-                    <div class="content">
-                        <p class="mb-5"><em>"{{ project.summary }}"</em></p>
-                        <p>{{ project.description_markdown|markdownify }}</p>
-                    </div>
-                </div>
-            </div>
-            {% if target_semester%}
-            {# Display details for project for this particular semester#}
-            <div class="column"></div>
-            {% else %}
-            {# Display details for project across all semesters #}
-
-            {% endif %}
-        </div>
+        {% include "portal/projects/sections/overview.html" %}
     </div>
 </section>
+
+<section class="hero is-light">
+    <div class="hero-body">
+        <h1 class="title">Repositories</h1>
+    </div>
+</section>
+<section class="section">
+    <div class="container-fluid">
+        {% for repository in repositories %}
+            {% include "./sections/repository.html" %}
+        {% endfor %}
+    </div>
+</section>
+
+{% if target_semester %}
+<section class="hero is-light">
+    <div class="hero-body">
+        <h1 class="title">{{ target_semester }} Team</h1>
+    </div>
+</section>
+<section class="section">
+    <div class="container-fluid">
+        {% include "portal/projects/sections/team.html" %}
+    </div>
+</section>
+{% else %}
+{% endif %}
 {% endblock %}

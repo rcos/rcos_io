@@ -1,0 +1,17 @@
+{% load humanize %}
+<div class="box">
+    <h1 class="title is-4"><a href="{{ repository.url }}" target="_blank">{{ repository.owner.login }}/{{ repository.name }}</a>
+        <span class="tag" style="background-color: {{ repository.primaryLanguage.color }}">{{ repository.primaryLanguage.name }}</span>
+        <span class="tag is-warning">{{ repository.stargazerCount }} stars</span>
+    </h1>
+
+
+    <div>
+        <strong>Recent Activity</strong>
+        <ul>
+            {% for commit in repository.defaultBranchRef.target.history.nodes %}
+            <li><a href="{{ commit.url }}" target="_blank" class="mr-2">{{ commit.messageHeadline }}</a> <span class="has-text-success">+{{ commit.additions }}</span><span class="has-text-danger">-{{ commit.deletions }}</span> <small class="has-text-grey">{{ commit.authoredDate|naturaltime }}</small></li>
+            {% endfor %}
+        </ul>
+    </div>
+</div>

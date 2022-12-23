@@ -1,6 +1,7 @@
 from django.db import models
 from django.contrib.auth.models import AbstractUser
 from django.urls import reverse
+from django.utils import timezone
 
 
 class TimestampedModel(models.Model):
@@ -42,8 +43,16 @@ class Semester(TimestampedModel):
     def project_count(self):
         return self.enrollments.distinct("project").order_by().count()
 
+    @property
+    def is_active(self):
+        now = timezone.now().date()
+        return self.start_date <= now <= self.end_date
+
     def __str__(self) -> str:
         return self.name
+
+    class Meta:
+        ordering = ["-start_date"]
 
 
 class User(AbstractUser, TimestampedModel):

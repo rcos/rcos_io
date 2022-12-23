@@ -1,0 +1,20 @@
+<table class="table">
+    <thead>
+        <th></th>
+        <th>User</th>
+        <th>Credits</th>
+    </thead>
+    <tbody>
+        {% for enrollment in target_semester_enrollments %}
+        <tr>
+            <td>
+                {% if enrollment.is_project_lead %}
+                <span title="Project Lead">🫅</span>
+                {% endif %}
+            </td>
+            <td><a href="{{ enrollment.get_absolute_url }}">{{ enrollment.user }}</a></td>
+            <td>{{ enrollment.credits }}</td>
+        </tr>
+        {% endfor %}
+    </tbody>
+</table>
