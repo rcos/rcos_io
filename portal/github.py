@@ -42,16 +42,21 @@ def get_repository_details(client: Client, repo_url: str):
                 defaultBranchRef {
                 target {
                     ... on Commit {
-                    history(first: 10) {
+                    history(first: 5) {
                         nodes {
                         url
                         author {
                             name
+                            user {
+                                login
+                            }
+                            avatarUrl
                         }
                         authoredDate
                         additions
                         deletions
                         messageHeadline
+                        messageBody
                         }
                     }
                     }

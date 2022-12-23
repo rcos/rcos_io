@@ -1,5 +1,6 @@
 from typing import Any, Dict
 from django import template
+from django.utils import timezone
 
 register = template.Library()
 
@@ -35,3 +36,7 @@ def target_semester_query(context):
     if context["target_semester"]:
         return "?semester=" + context["target_semester"].id
     return ""
+
+@register.filter(name='to_date')
+def to_date(date_string: str):
+    return timezone.datetime.strptime(date_string, "%Y-%m-%dT%H:%M:%SZ")

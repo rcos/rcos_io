@@ -1,4 +1,5 @@
 {% extends "portal/base.html" %}
+{% load portal_extras %}
 
 {% block content %}
 
@@ -7,14 +8,13 @@
         <div class="container">
             <div class="columns is-vcentered">
                 <div class="column">
-                    <h1 class="title is-1">{{ project }}</h1>
-                    <h2 class="subtitle is-3">{{ target_semester|default:"All Semesters" }}</h2>
-                    
-                    <nav class="breadcrumb" aria-label="breadcrumbs">
+                    <h1 class="title is-1 mb-2">{{ project }}</h1>
+                    <nav class="breadcrumb is-2" aria-label="breadcrumbs">
                         <ul>
                             {% for semester in project.get_active_semesters %}
-                            <li class="{% if target_semester == semester %}is-active has-text-weight-semibold{% endif%}"><a href="?semester={{ semester.id }}">{{ semester }}</a></li>
+                            <li class="{% if target_semester == semester %}is-active has-text-weight-bold{% endif %}"><a href="?semester={{ semester.id }}">{{ semester }}</a></li>
                             {% endfor %}
+                            <li class="{% if not target_semester %}is-active has-text-weight-bold{% endif %}"><a href="?semester=">All Semesters</a></li>
                         </ul>
                       </nav>
     
@@ -31,28 +31,6 @@
     </div>
 </section>
 
-<!-- <section class="section">
-    <div class="container">
-    </div>
-</section> -->
-
-<section class="hero is-light">
-    <div class="hero-body">
-        <div class="container">
-            <h1 class="title">Repositor{{ repositories|length|pluralize:"y,ies" }}</h1>
-        </div>
-    </div>
-</section>
-<section class="section">
-    <div class="container">
-        {% for repository in repositories %}
-            {% include "./sections/repository.html" %}
-        {% empty %}
-        <p class="has-text-grey"><b>{{ project }}</b> has no source code repositories listed yet!</p>
-        {% endfor %}
-    </div>
-</section>
-
 {% if target_semester %}
 <section class="hero is-light">
     <div class="hero-body">
@@ -63,7 +41,19 @@
 </section>
 <section class="section">
     <div class="container">
+        {% if target_semester.is_active and project.is_seeking_members %}
+        {% project_leads project target_semester as project_leads %}
+        <div class="notification is-warning">
+            <strong>{{ project }}</strong> is seeking new members to join their team! If interested, reach out to Project Lead{{ project_leads|length|pluralize }}
+            {% for enrollment in project_leads %}
+            <a href="{{ enrollment.get_absolute_url }}">{{ enrollment.user }}</a>
+            {% endfor %}
+            to determine if this project is the right fit for you.
+        </div>
+        {% endif %}
+
         {% include "portal/projects/sections/team.html" with enrollments=target_semester_enrollments %}
+
         {% if target_semester_enrollments|length == 0 %}
         <p class="has-text-grey"><b>{{ project }}</b> has no team for <b>{{ target_semester }}</b>!</p>
         {% endif %}
@@ -88,4 +78,22 @@
     </div>
 </section>
 {% endif %}
+
+<section class="hero is-light">
+    <div class="hero-body">
+        <div class="container">
+            <h1 class="title">Repositor{{ repositories|length|pluralize:"y,ies" }}</h1>
+        </div>
+    </div>
+</section>
+<section class="section">
+    <div class="container">
+        {% for repository in repositories %}
+            {% include "./sections/repository.html" %}
+        {% empty %}
+        <p class="has-text-grey"><b>{{ project }}</b> has no source code repositories listed yet!</p>
+        {% endfor %}
+    </div>
+</section>
+
 {% endblock %}

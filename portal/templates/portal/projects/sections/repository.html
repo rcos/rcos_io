@@ -1,4 +1,5 @@
 {% load humanize %}
+{% load portal_extras %}
 <div class="box">
     <h1 class="title is-4"><a href="{{ repository.url }}" target="_blank">{{ repository.owner.login }}/{{ repository.name }}</a>
         <span class="tag" style="background-color: {{ repository.primaryLanguage.color }}">{{ repository.primaryLanguage.name }}</span>
@@ -7,11 +8,36 @@
 
 
     <div>
-        <strong>Recent Activity</strong>
-        <ul>
-            {% for commit in repository.defaultBranchRef.target.history.nodes %}
-            <li><a href="{{ commit.url }}" target="_blank" class="mr-2">{{ commit.messageHeadline }}</a> <span class="has-text-success">+{{ commit.additions }}</span><span class="has-text-danger">-{{ commit.deletions }}</span> <small class="has-text-grey">{{ commit.authoredDate|naturaltime }}</small></li>
-            {% endfor %}
-        </ul>
+        {% for commit in repository.defaultBranchRef.target.history.nodes %}
+        <article class="media">
+            <div class="media-left">
+                <p class="image is-64x64">
+                    <img src="{{ commit.author.avatarUrl }}" alt="">
+                </p>
+            </div>
+            <div class="media-content">
+                <div class="content">
+                    <p>
+                        <strong><a href="{{ commit.url }}" target="_blank">{{ commit.messageHeadline }}</a></strong> <small>@{{ commit.author.user.login }}</small>
+                        <br>
+                        {{ commit.messageBody }}
+                    </p>
+                </div>
+                <nav class="level is-mobile is-size-6">
+                    <div class="level-left">
+                        <p href="#" class="level-item">
+                            <span class="has-text-success">+{{ commit.additions }}</span>
+                        </p>
+                        <p href="#" class="level-item">
+                            <span class="has-text-danger">-{{ commit.deletions }}</span>
+                        </p>
+                        <p class="level-item">
+                            <small>{{ commit.authoredDate|to_date|naturaltime }}</small>
+                        </p>
+                    </div>
+                </nav>
+            </div>
+        </article>
+        {% endfor %}
     </div>
 </div>
