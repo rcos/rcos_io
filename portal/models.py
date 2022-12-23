@@ -115,6 +115,13 @@ class User(AbstractUser, TimestampedModel):
             and self.discord_user_id
         )
 
+    def get_active_semesters(self):
+        return (
+            Semester.objects.filter(enrollments__user=self.id)
+            .order_by("-start_date")
+            .distinct()
+        )
+
     def get_absolute_url(self):
         return reverse("users_detail", args=[str(self.id)])
 
@@ -296,7 +303,11 @@ class Enrollment(TimestampedModel):
         blank=True,
     )
 
-    notes_markdown = models.TextField(max_length=10000, blank=True, help_text="Private notes for admins about this user for this semester")
+    notes_markdown = models.TextField(
+        max_length=10000,
+        blank=True,
+        help_text="Private notes for admins about this user for this semester",
+    )
 
     def get_absolute_url(self):
         return (

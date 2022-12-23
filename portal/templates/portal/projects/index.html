@@ -1,5 +1,5 @@
 {% extends "portal/base.html" %}
-{% load project_extras %}
+{% load portal_extras %}
 {% block content %}
 <section class="section">
     <div class="container">
@@ -43,7 +43,7 @@
                     {% endif %}
                     <td>
                         <a
-                            href="{{ project.get_absolute_url }}{% if target_semester %}?semester={{target_semester.id}}{% endif %}"
+                            href="{{ project.get_absolute_url }}{% target_semester_query %}"
                             >{{ project }}</a
                         >
                     </td>

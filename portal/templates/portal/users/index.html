@@ -1,4 +1,5 @@
 {% extends "portal/base.html" %}
+{% load portal_extras %}
 
 {% block content %}
 <section class="section">
@@ -8,9 +9,51 @@
 
         {% include "./filters.html" %}
 
-        {% for user in users %}
-        <li><a href="{% url 'users_detail' user.id %}{% if target_semester %}?semester={{target_semester.id}}{% endif %}">{{ user }}</a></li>
-        {% endfor %}
+        <table class="table is-fullwidth">
+            <thead>
+                <tr>
+                    <th></th>
+                    <th>Name</th>
+                    {% if target_semester %}
+                    <th>Project</th>
+                    <th>Credits</th>
+                    {% else %}
+                    <th>Active Semesters</th>
+                    {% endif %}
+                </tr>
+            </thead>
+            <tbody>
+                {% for user in users %}
+                {% user_enrollment user target_semester as enrollment %}
+                <tr>
+                    <td>
+                        {% if target_semester %}
+                        {% if enrollment.is_project_lead %}
+                        <span class="" title="Project Lead">🫅</span>
+                        {% endif %}
+                        {% endif %}
+                    </td>
+                    <td><a href="{{ user.get_absolute_url }}{% target_semester_query %}">{{ user }}</a></td>
+                    {% if target_semester %}
+                    <td>
+                        <a href="{{ enrollment.project.get_absolute_url }}{% target_semester_query %}">
+                            {{ enrollment.project }}
+                        </a>
+                    </td>
+                    <td>{{ enrollment.credits }}</td>
+                    {% else %}
+                    <td>
+                        {% for enrollment in user.enrollments.all %}
+                        <a class="is-block" href="{{ enrollment.get_absolute_url }}">{{ enrollment.semester }} ({{ enrollment.project }})</a>
+                        {% empty %}
+                        -
+                        {% endfor %}
+                    </td>
+                    {% endif %}
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
     </div>
 </section>
 {% endblock %}
