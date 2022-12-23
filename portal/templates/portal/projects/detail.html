@@ -19,6 +19,8 @@
     <div class="container-fluid">
         {% for repository in repositories %}
             {% include "./sections/repository.html" %}
+        {% empty %}
+        <p class="has-text-grey"><b>{{ project }}</b> has no source code repositories listed yet!</p>
         {% endfor %}
     </div>
 </section>
@@ -31,9 +33,27 @@
 </section>
 <section class="section">
     <div class="container-fluid">
-        {% include "portal/projects/sections/team.html" %}
+        {% include "portal/projects/sections/team.html" with enrollments=target_semester_enrollments %}
+        {% if target_semester_enrollments|length == 0 %}
+        <p class="has-text-grey"><b>{{ project }}</b> has no team for <b>{{ target_semester }}</b>!</p>
+        {% endif %}
     </div>
 </section>
 {% else %}
+<section class="hero is-light">
+    <div class="hero-body">
+        <h1 class="title">Teams</h1>
+    </div>
+</section>
+<section class="section">
+    <div class="container-fluid">
+        {% for semester_name, enrollments in enrollments_by_semester.items %}
+        <h2 class="subtitle">{{ semester_name }}</h2>
+        {% include "portal/projects/sections/team.html" %}
+        {% empty %}
+        <p class="has-text-grey"><b>{{ project }}</b> has not formed any teams yet!</p>
+        {% endfor %}
+    </div>
+</section>
 {% endif %}
 {% endblock %}
