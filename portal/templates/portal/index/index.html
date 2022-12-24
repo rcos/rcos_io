@@ -1,13 +1,51 @@
 {% extends "portal/base.html" %}
 
 {% block content %}
+<div class="hero is-danger">
+    <div class="hero-body">
+        <div class="container">
+            <h1 class="title is-1">Rensselaer Center for Open Source</h1>
+            <h2 class="subtitle">A community of motivated students at Rensselaer Polytechnic Institute who develop open source projects under the guidance of experienced instructors and student mentors.</h2>
+        </div>
+    </div>
+</div>
 <section class="section">
     <div class="container">
-        <h1 class="title">RCOS I/O</h1>
+        <nav class="level is-mobile">
+            <div class="level-item has-text-centered">
+                <div>
+                    <p class="heading">Semesters</p>
+                    <p class="title">{{ semesters|length }}+</p>
+                </div>
+            </div>
+            <div class="level-item has-text-centered">
+                <div>
+                    <p class="heading">Enrollments</p>
+                    <p class="title">{{ enrollment_count }}+</p>
+                </div>
+            </div>
+            <div class="level-item has-text-centered">
+                <div>
+                    <p class="heading">Projects</p>
+                    <p class="title">{{ project_count }}+</p>
+                </div>
+            </div>
+            <div class="level-item has-text-centered">
+                <div>
+                    <p class="heading">Open Source Contributions</p>
+                    <p class="title">50k+</p>
+                </div>
+            </div>
+        </nav>
 
-        <a href="{% url 'users_index' %}">Users</a>
+        <div class="columns">
+            <div class="column"></div>
+            <div class="column"></div>
+            <div class="column"></div>
+        </div>
+        <!-- <a href="{% url 'users_index' %}">Users</a>
         <a href="{% url 'projects_index' %}">Projects</a>
-        <a href="{% url 'meetings_index' %}">Meetings</a>
+        <a href="{% url 'meetings_index' %}">Meetings</a> -->
     </div>
 </section>
 {% endblock %}
