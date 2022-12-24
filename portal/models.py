@@ -2,6 +2,7 @@ from django.db import models
 from django.contrib.auth.models import AbstractUser
 from django.urls import reverse
 from django.utils import timezone
+from django.db.models import Q
 
 
 class TimestampedModel(models.Model):
@@ -47,6 +48,11 @@ class Semester(TimestampedModel):
     def is_active(self):
         now = timezone.now().date()
         return self.start_date <= now <= self.end_date
+
+    def get_admins(self):
+        return self.enrollments.filter(
+            Q(is_coordinator=True) | Q(is_faculty_advisor=True)
+        ).order_by("is_faculty_advisor")
 
     def __str__(self) -> str:
         return self.name
@@ -409,10 +415,19 @@ class Meeting(TimestampedModel):
         return reverse("meetings_detail", args=[str(self.id)])
 
     def __str__(self) -> str:
-        return f"{self.name} - {self.get_type_display()} - {self.starts_at.strftime('%a %b %-d %Y @ %-I:%M %p')}"
+        return f"{self.display_name} - {self.starts_at.strftime('%a %b %-d %Y @ %-I:%M %p')}"
+
+    @classmethod
+    def get_next(cls):
+        today = timezone.datetime.today()
+        this_morning = timezone.datetime.combine(
+            today, timezone.datetime.min.time(), tzinfo=today.tzinfo
+        )
+        return cls.objects.filter(starts_at__gte=this_morning).first()
 
     class Meta:
         ordering = ["starts_at"]
+        get_latest_by = ["starts_at"]
 
 
 class MeetingAttendance(TimestampedModel):

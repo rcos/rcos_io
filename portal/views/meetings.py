@@ -26,7 +26,7 @@ class MeetingIndexView(ListView):
         this_morning = timezone.datetime.combine(
             today, timezone.datetime.min.time(), tzinfo=today.tzinfo
         )
-        print(this_morning)
+
         queryset = Meeting.objects.filter(
             is_published=True, starts_at__gte=this_morning
         )[:5]

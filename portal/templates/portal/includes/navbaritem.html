@@ -1,4 +1,5 @@
+{% load portal_extras %}
 {% url view_name as href %}
-<a href="{{ href }}" class="navbar-item {% if href == request.path or href in request.path %}is-active{% endif %}">
+<a href="{{ href }}{% target_or_active_semester_query %}" class="navbar-item {% if href == request.path or href in request.path %}is-active{% endif %}">
     {{ display }}
 </a>
