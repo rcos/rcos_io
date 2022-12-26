@@ -1,8 +1,10 @@
 from django.db import models
-from django.contrib.auth.models import AbstractUser
+from django.contrib.auth.models import AbstractUser, BaseUserManager
 from django.urls import reverse
 from django.utils import timezone
 from django.db.models import Q
+
+from portal.services import discord
 
 
 class TimestampedModel(models.Model):
@@ -61,13 +63,50 @@ class Semester(TimestampedModel):
         ordering = ["-start_date"]
 
 
+class UserManager(BaseUserManager):
+    use_in_migrations = True
+
+    def _create_user(self, email, password, **extra_fields):
+        """Create and save a User with the given email and password."""
+        if not email:
+            raise ValueError("The given email must be set")
+        email = self.normalize_email(email)
+        user = self.model(email=email, **extra_fields)
+        user.set_password(password)
+        user.save(using=self._db)
+        return user
+
+    def create_user(self, email, password=None, **extra_fields):
+        """Create and save a regular User with the given email and password."""
+        extra_fields.setdefault("is_staff", False)
+        extra_fields.setdefault("is_superuser", False)
+        return self._create_user(email, password, **extra_fields)
+
+    def create_superuser(self, email, password, **extra_fields):
+        """Create and save a SuperUser with the given email and password."""
+        extra_fields.setdefault("is_staff", True)
+        extra_fields.setdefault("is_superuser", True)
+
+        if extra_fields.get("is_staff") is not True:
+            raise ValueError("Superuser must have is_staff=True.")
+        if extra_fields.get("is_superuser") is not True:
+            raise ValueError("Superuser must have is_superuser=True.")
+
+        return self._create_user(email, password, **extra_fields)
+
+
 class User(AbstractUser, TimestampedModel):
     RPI = "rpi"
     EXTERNAL = "external"
     ROLE_CHOICES = ((RPI, "RPI"), (EXTERNAL, "External"))
 
+    USERNAME_FIELD = "email"
+    REQUIRED_FIELDS = []
+
+    username = None
+    email = models.EmailField("primary email address", unique=True)
     is_approved = models.BooleanField("approved?", default=False)
-    role = models.CharField(choices=ROLE_CHOICES, max_length=30)
+    role = models.CharField(choices=ROLE_CHOICES, max_length=30, default=EXTERNAL)
 
     # Set for RPI users only
     rcs_id = models.CharField(
@@ -121,6 +160,9 @@ class User(AbstractUser, TimestampedModel):
             and self.discord_user_id
         )
 
+    def get_discord_user(self):
+        return discord.get_user(self.discord_user_id) if self.discord_user_id else None
+
     def get_active_semesters(self):
         return (
             Semester.objects.filter(enrollments__user=self.id)
@@ -134,8 +176,10 @@ class User(AbstractUser, TimestampedModel):
     def __str__(self) -> str:
         return self.display_name
 
+    objects = UserManager()
+
     class Meta:
-        ordering = ["first_name", "last_name", "username", "email"]
+        ordering = ["first_name", "last_name", "email"]
 
 
 class ProjectTag(TimestampedModel):

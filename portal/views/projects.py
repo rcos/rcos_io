@@ -1,7 +1,7 @@
 from django.contrib.postgres.search import SearchVector
 from . import SemesterFilteredListView, SemesterFilteredDetailView
 from ..models import Enrollment, Project
-from .. import github
+from portal.services import github
 
 
 class ProjectIndexView(SemesterFilteredListView):

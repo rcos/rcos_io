@@ -44,6 +44,7 @@ def active_semester_query(context):
         return "?semester=" + context["active_semester"].id
     return ""
 
+
 @register.simple_tag(takes_context=True)
 def target_or_active_semester_query(context):
     if "target_semester" in context and context["target_semester"]:
@@ -51,6 +52,7 @@ def target_or_active_semester_query(context):
     if "active_semester" in context and context["active_semester"]:
         return "?semester=" + context["active_semester"].id
     return ""
+
 
 @register.filter(name="to_date")
 def to_date(date_string: str):

@@ -82,7 +82,7 @@ class SemesterAdmin(admin.ModelAdmin):
 
 @admin.register(User)
 class UserAdmin(admin.ModelAdmin):
-    list_display = ("first_name", "last_name", "role", "email", "is_approved")
+    list_display = ("display_name", "role", "is_approved")
     search_fields = ("first_name", "last_name", "email", "rcs_id")
     list_filter = ("role", "is_approved", "enrollments__semester__name")
     inlines = (EnrollmentInline,)
