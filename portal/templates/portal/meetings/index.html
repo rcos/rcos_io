@@ -22,6 +22,8 @@
                         {% endif %}
                     </div>
                 </div>
+                {% empty %}
+                <p class="has-text-grey">No upcoming meetings are currently scheduled! Check back again later.</p>
                 {% endfor %}
             </div>
             <div class="column">
