@@ -8,7 +8,7 @@
         <div class="container">
             <div class="columns is-vcentered">
                 <div class="column">
-                    <h1 class="title is-1 mb-2">{{ project }}</h1>
+                    <h1 class="title is-1">{{ project }}</h1>
                     <nav class="breadcrumb is-2" aria-label="breadcrumbs">
                         <ul>
                             {% for semester in project.get_active_semesters %}
@@ -16,12 +16,7 @@
                             {% endfor %}
                             <li class="{% if not target_semester %}is-active has-text-weight-bold{% endif %}"><a href="?semester=">All Semesters</a></li>
                         </ul>
-                      </nav>
-    
-                    <div>
-                        
-                    </div>
-                    
+                    </nav>
                 </div>
                 <div class="column is-narrow">
                     {% include "portal/projects/sections/overview.html" %}

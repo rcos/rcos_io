@@ -1,10 +1,84 @@
 {% extends "portal/base.html" %}
 
 {% block content %}
+<section class="hero is-info">
+    <div class="hero-body">
+        <div class="container">
+            <div class="columns is-vcentered">
+                <div class="column">
+                    <h1 class="title is-1">{{ user.full_name }}</h1>
+            <nav class="breadcrumb is-2" aria-label="breadcrumbs">
+                <ul>
+                    {% for semester in user.get_active_semesters %}
+                    <li class="{% if target_semester == semester %}is-active has-text-weight-bold{% endif %}"><a href="?semester={{ semester.id }}">{{ semester }}</a></li>
+                    {% endfor %}
+                    <li class="{% if not target_semester %}is-active has-text-weight-bold{% endif %}"><a href="?semester=">All Semesters</a></li>
+                </ul>
+            </nav>
+                </div>
+                <div class="column is-5">
+                    <div class="box">
+                        <ul class="mb-3">
+                            <li>
+                                <span class="icon">📧</span>
+                                {% if request.user.is_authenticated %}
+                                <a href="mailto:{{ user.email }}">{{ user.email }}</a>
+                                {% else %}
+                                <span class="has-text-grey">Login to view email.</span>
+                                {% endif %}
+                            </li>
+                            <li><span class="icon">👤</span> {{ user.get_role_display }}</li>
+                            {% if user.graduation_year %}
+                            <li><span class="icon">🎓</span> Class of {{ user.graduation_year }}</li>
+                            {% endif %}
+                        </ul>
+                        <div class="columns">
+                            <div class="column">
+                                {% with user.get_discord_user as discord_user %}
+                                {% if discord_user %}
+                                <div class="box p-3 is-flex is-align-items-center">
+                                    <figure class="image is-32x32 mr-2">
+                                        <img class="is-rounded" src="https://cdn.discordapp.com/avatars/{{ discord_user.id }}/{{ discord_user.avatar }}.png?size=32" alt="Discord avatar">
+                                    </figure>
+                                    <div class="is-size-5">
+                                        <span class="has-text-weight-bold">@{{ discord_user.username }}</span><small class="has-text-grey">#{{ discord_user.discriminator }}</small>
+                                    </div>
+                                </div>
+                                {% else %}
+                                <p class="has-text-grey">Discord not yet linked.</p>
+                                {% endif %}
+                                {% endwith %}
+                            </div>
+                            <div class="column">
+                                {% if user.github_username %}
+                                <div class="box p-3 is-flex is-align-items-center">
+                                    <figure class="image is-32x32 mr-2">
+                                        <img class="is-rounded" src="https://github.com/{{ user.github_username }}.png?size=32" alt="GitHub avatar">
+                                    </figure>
+                                    <div class="is-size-5">
+                                        <span class="has-text-weight-bold"><a target="_blank" href="https://www.github.com/{{ user.github_username }}">{{ user.github_username }}</a></span>
+                                    </div>
+                                </div>
+                                {% else %}
+                                <p class="has-text-grey">GitHub not yet linked.</p>
+                                {% endif %}
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
 <section class="section">
     <div class="container">
-        <h1 class="title">{{ user }}</h1>
-        <h2 class="subtitle">{{ target_semester|default:"All Semesters" }}</h2>
+        <div class="columns">
+            <div class="column is-one-third">
+                
+            </div>
+            <div class="column"></div>
+        </div>
     </div>
 </section>
 {% endblock %}

@@ -132,6 +132,10 @@ class User(AbstractUser, TimestampedModel):
     )
 
     @property
+    def full_name(self):
+        return f"{self.first_name} {self.last_name}".strip() or "Unnamed User"
+
+    @property
     def display_name(self):
         chunks = []
 
