@@ -1,0 +1,17 @@
+[
+    {
+        "model": "portal.project",
+        "pk": 1,
+        "fields": {
+            "name": "RCOS IO",
+            "is_approved": true,
+            "summary": "The RCOS website.",
+            "tags": [
+                "python"
+            ],
+            "is_seeking_members": false,
+            "updated_at": "2022-12-21T02:30:00+0000",
+            "created_at": "2022-12-21T02:30:00+0000"
+        }
+    }
+]
