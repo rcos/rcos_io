@@ -19,7 +19,12 @@
                             <span class="has-text-grey">No location specified.</span>
                             {% endif %}
                         </li>
-                        <li class="mb-2">🕓 <span class="is-inline-block" style="vertical-align: top;">{{ meeting.starts_at|date:"l, n/j" }} <br> {{ meeting.starts_at|date:"P" }} - {{ meeting.ends_at|date:"P" }}</span></li>
+                        <li class="mb-2">🕓
+                            <span class="is-inline-block" style="vertical-align: top;">{{ meeting.starts_at|date:"l, n/j" }}
+                            <br>
+                            {{ meeting.starts_at|date:"P" }} - {{ meeting.ends_at|date:"P" }}
+                            </span>
+                        </li>
                         {% if meeting.host %}
                         <li class="mb-2">👤 <a href="{{ meeting.host.get_absolute_url }}">{{ meeting.host }}</a></li>
                         {% endif %}
