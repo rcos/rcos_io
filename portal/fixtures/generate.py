@@ -15,7 +15,7 @@ for i in range(2, 50):
                 "first_name": f.first_name(),
                 "last_name": f.last_name(),
                 "is_approved": random() > 0.1,
-                "role": "RPI",
+                "role": "rpi",
                 "rcs_id": f"student{i}",
                 "graduation_year": randint(2022, 2025),
                 "updated_at": "2022-12-29T02:30:00+0000",
@@ -27,7 +27,7 @@ for i in range(2, 50):
 # print(json.dumps(users))
 
 projects = []
-for i in range(50):
+for i in range(30):
     projects.append(
         {
             "model": "portal.Project",
@@ -45,11 +45,12 @@ for i in range(50):
     )
 
 enrollments = []
+pk = 1
 for user in users:
     enrollments.append(
         {
             "model": "portal.Enrollment",
-            "pk": user["pk"],
+            "pk": pk,
             "fields": {
                 "semester": "202301",
                 "user": user["pk"],
@@ -61,5 +62,39 @@ for user in users:
             },
         }
     )
+    pk += 1
+    enrollments.append(
+        {
+            "model": "portal.Enrollment",
+            "pk": pk,
+            "fields": {
+                "semester": "202208",
+                "user": user["pk"],
+                "project": choice(projects)["pk"],
+                "credits": randint(0, 4),
+                "is_project_lead": random() > 0.7,
+                "updated_at": "2022-12-29T02:30:00+0000",
+                "created_at": "2022-12-29T02:30:00+0000",
+            },
+        }
+    )
+    pk += 1
+    enrollments.append(
+        {
+            "model": "portal.Enrollment",
+            "pk": pk,
+            "fields": {
+                "semester": "202201",
+                "user": user["pk"],
+                "project": choice(projects)["pk"],
+                "credits": randint(0, 4),
+                "is_project_lead": random() > 0.7,
+                "updated_at": "2022-12-29T02:30:00+0000",
+                "created_at": "2022-12-29T02:30:00+0000",
+            },
+        }
+    )
+    pk += 1
+    
 
 print(json.dumps(users + projects + enrollments))

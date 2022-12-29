@@ -56,7 +56,6 @@ class SemesterFilteredListView(ListView):
         queryset = super().get_queryset()
 
         semester_id = self.request.GET.get("semester")
-        print("searching with ", semester_id)
         if semester_id:
             self.target_semester = get_object_or_404(Semester, pk=semester_id)
 
@@ -101,7 +100,6 @@ class SearchableListView(ListView):
 
         self.search = self.request.GET.get("search")
         if self.search:
-            print("searching with ", self.search_fields)
             queryset = queryset.annotate(
                 search=SearchVector(*self.search_fields),
             ).filter(search=self.search)

@@ -54,7 +54,7 @@
                     <td>
                         {% project_leads project target_semester as project_leads %}
                         {% for project_lead in project_leads %}
-                        <a href="{{ project_lead.get_absolute_url }}">{{ project_lead.user }}</a>
+                        <a href="{{ project_lead.get_absolute_url }}">{{ project_lead.user }}</a><br>
                         {% empty %}
                         -
                         {% endfor %}
