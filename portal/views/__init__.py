@@ -2,6 +2,7 @@ from typing import Any, Dict
 from django.views.generic import ListView, DetailView
 from ..models import Semester, User
 from django.shortcuts import get_object_or_404
+from django.contrib.postgres.search import SearchVector
 
 
 def load_semesters(request):
@@ -40,7 +41,7 @@ class SemesterFilteredListView(ListView):
         template_name = "portal/projects/index.html"
         context_object_name = "projects"
 
-        # Default to all approved users
+        # Default to all approved projects
         queryset = Project.objects.filter(is_approved=True)
         # Filter projects where `enrollments__semester` == the semester with the ID passed in the URL (if present)
         semester_filter_key = "enrollments__semester"
@@ -55,6 +56,7 @@ class SemesterFilteredListView(ListView):
         queryset = super().get_queryset()
 
         semester_id = self.request.GET.get("semester")
+        print("searching with ", semester_id)
         if semester_id:
             self.target_semester = get_object_or_404(Semester, pk=semester_id)
 
@@ -68,4 +70,45 @@ class SemesterFilteredListView(ListView):
         """Expose `target_semester` to the template if present."""
         data = super().get_context_data(**kwargs)
         data["target_semester"] = self.target_semester
+        return data
+
+
+class SearchableListView(ListView):
+    """
+    Render some list of objects, set by self.model or self.queryset. self.queryset can actually be any iterable of items, not just a queryset.
+
+    If `search` query parameter is present AND valid:
+        - filters queryset by searching through columns `self.search_fields`
+
+    Example:
+    ```
+    class ProjectIndexView(SearchableListView):
+        template_name = "portal/projects/index.html"
+        context_object_name = "projects"
+
+        # Default to all approved projects
+        queryset = Project.objects.filter(is_approved=True)
+        # If search is passed in URL, search that value on these fields
+        search_fields = ("name", "summary", "owner__rcs_id)
+    ```
+    """
+
+    search_fields = tuple()
+
+    def get_queryset(self):
+        """Apply search"""
+        queryset = super().get_queryset()
+
+        self.search = self.request.GET.get("search")
+        if self.search:
+            print("searching with ", self.search_fields)
+            queryset = queryset.annotate(
+                search=SearchVector(*self.search_fields),
+            ).filter(search=self.search)
+
+        return queryset.distinct()
+
+    def get_context_data(self, **kwargs):
+        data = super().get_context_data(**kwargs)
+        data["search"] = self.search
         return data
