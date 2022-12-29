@@ -118,7 +118,7 @@ class EnrollmentAdmin(admin.ModelAdmin):
 
 @admin.register(Meeting)
 class MeetingAdmin(admin.ModelAdmin):
-    list_display = ("name", "type", "starts_at", "is_published")
+    list_display = ("display_name", "type", "starts_at", "is_published")
     search_fields = ("name", "type")
     list_filter = ("starts_at", "type", "is_published")
     inlines = (MeetingAttendanceInline,)
