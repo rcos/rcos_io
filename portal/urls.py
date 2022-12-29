@@ -1,5 +1,7 @@
 from django.urls import path
 
+from portal.views.admin import upload_submitty_data
+
 from .views.index import IndexView
 from .views.meetings import MeetingIndexView, MeetingDetailView, meetings_api
 from .views.users import UserIndexView, UserDetailView
@@ -23,4 +25,5 @@ urlpatterns = [
     path("meetings/", MeetingIndexView.as_view(), name="meetings_index"),
     path("api/meetings", meetings_api, name="meetings_api"),
     path("meetings/<int:pk>", MeetingDetailView.as_view(), name="meetings_detail"),
+    path("admin/upload", upload_submitty_data, name="admin_upload")
 ]
