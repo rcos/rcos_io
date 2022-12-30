@@ -1,43 +1,58 @@
+{% load portal_extras %}
+{% user_enrollment request.user active_semester as enrollment %}
+{% project_leads enrollment.project active_semester as project_leads %}
+{% project_enrollments enrollment.project active_semester as project_enrollments %}
+{% project_small_group enrollment.project active_semester as small_group %}
+{% semester_admins active_semester as semester_admins %}
+
 <section class="hero is-dark">
     <div class="hero-body">
         <div class="container">
             <h1 class="title is-1">Your Dashboard</h1>
-            <h2 class="subtitle">{{ active_semester|default:"On Break" }}</h2>
+            <h2 class="subtitle is-3">{{ active_semester|default:"On Break" }}</h2>
         </div>
     </div>
 </section>
 
 <section class="section">
     <div class="container">
-
         <div class="tile is-ancestor">
-            
             <div class="tile is-3 is-vertical is-parent">
-
                 <div class="tile box is-child">
-                    <h2 class="subtitle">Your Project</h2>
+                    <h2 class="subtitle mb-2">{{ enrollment.project }}</h2>
     
                     <ul>
-                        <li>team member 1</li>
-                        <li>team member 2</li>
-                        <li>team member 3</li>
-                        <li>team member 4</li>
-                        
+                        {% for enrollment in project_enrollments %}
+                        <li>
+                            {% if enrollment.is_project_lead %}
+                            <span class="icon">👑</span>
+                            {% endif %}
+                            <a href="{{ enrollment.get_absolute_url }}">{{ enrollment.user }}</a>
+                        </li>
+                        {% endfor %}
+                    </ul>
+                    <hr>
+                    <ul>
+                        {% for repository in enrollment.project.repositories.all %}
+                        <li><a href="{{ repository.url }}" target="_blank">{{ repository.url|to_short_repository }}</a></li>
+                        {% endfor %}
                     </ul>
                 </div>
 
                 <div class="tile box is-child">
-                    <h2 class="subtitle">Small Group ?</h2>
+                    <h2 class="subtitle mb-1">{{ small_group }}</h2>
+                    <p class="has-text-grey"><span class="icon">🌎</span>{{ small_group.location }}</p>
+                    <hr>
                     <ul>
-                        <li>Mentor 1</li>
-                        <li>Mentor 2</li>
+                        {% for mentor in small_group.mentors.all %}
+                        <li><span class="icon">👩‍🏫</span> <a href="{{ mentor.get_absolute_url }}{% active_semester_query %}">{{ mentor }}</a></li>
+                        {% endfor %}
                     </ul>
-    
+                    <hr>
                     <ul>
-                        <li>Project 1</li>
-                        <li>Project 2</li>
-                        <li>Project 3</li>
-                        <li>Project 4</li>
+                        {% for project in small_group.projects.all %}
+                        <li><a href="{{ project.get_absolute_url }}{% active_semester_query %}">{{ project }}</a></li>
+                        {% endfor %}
                     </ul>
                 </div>
             </div>
@@ -56,7 +71,17 @@
                 </div>
             </div>
 
-            <div class="tile is-parent">
+            <div class="tile is-vertical is-parent">
+                <div class="tile is-child box">
+                    <h2 class="subtitle">Faculty Advisors & Coordinators</h2>
+                    <ul>
+                        {% for enrollment in semester_admins %}
+                        <li>
+                            <a href="{{ enrollment.get_absolute_url }}">{{ enrollment.user }}</a>
+                        </li>
+                        {% endfor %}
+                    </ul>
+                </div>
                 <div class="tile is-child box">
                     <div id="calendar"></div>
 

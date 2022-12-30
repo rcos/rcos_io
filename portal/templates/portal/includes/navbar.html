@@ -1,7 +1,7 @@
 <nav class="navbar is-danger is-fixed-top" role="navigation" aria-label="main navigation">
     <div class="container">
         <div class="navbar-brand">
-            <a class="navbar-item" href="/">
+            <a class="navbar-item {% if request.path == '/' %}is-active{% endif %}" href="/">
                 <img style="border-radius: 5px;"
                     src="https://github.com/rcos/rcos-branding/blob/master/img/pill-white.png?raw=true" height="28">
             </a>
@@ -18,6 +18,10 @@
                 {% include "portal/includes/navbaritem.html" with view_name="users_index" display="Users" %}
                 {% include "portal/includes/navbaritem.html" with view_name="projects_index" display="Projects" %}
                 {% include "portal/includes/navbaritem.html" with view_name="meetings_index" display="Meetings" %}
+                
+                {% if request.user.is_authenticated %}
+                {% include "portal/includes/navbaritem.html" with view_name="small_groups_index" display="Small Groups" %}
+                {% endif %}
                 <a href="https://handbook.rcos.io/" target="_blank" class="navbar-item">
                     Handbook
                 </a>

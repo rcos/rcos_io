@@ -2,6 +2,7 @@ from typing import Any, Dict
 from django.http import JsonResponse
 from django.views.generic import ListView, DetailView
 from django.utils import timezone
+from django.views.decorators.cache import cache_page
 from ..models import Meeting
 
 
@@ -14,7 +15,6 @@ def meeting_to_event(meeting: Meeting) -> Dict[str, Any]:
         "url": meeting.get_absolute_url(),
         "color": meeting.color,
     }
-
 
 class MeetingIndexView(ListView):
     template_name = "portal/meetings/index.html"
@@ -38,7 +38,7 @@ class MeetingDetailView(DetailView):
     model = Meeting
     context_object_name = "meeting"
 
-
+@cache_page(60 * 15)
 def meetings_api(request):
     start, end = request.GET.get("start"), request.GET.get("end")
 
