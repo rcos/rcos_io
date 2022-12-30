@@ -16,16 +16,20 @@
                         <h3 class="subtitle mb-1 is-4 mb-2"><a href="{{ meeting.get_absolute_url }}">{{ meeting.display_name }}</a></h3>
                         <ul class="is-size-6 mb-3">
                             <li>
-                                <div style="width: 10px; height: 10px; background-color: {{ meeting.color }}; border-radius: 50%;" class="mr-1 is-inline-block"></div>
+                                <span class="icon">
+                                    <div style="width: 15px; height: 15px; background-color: {{ meeting.color }}; border-radius: 50%;" class="mr-1 is-inline-block"></div>
+                                </span>
                                 {{ meeting.get_type_display }}
                             </li>
-                            <li>🕓
+                            <li>
+                                <span class="icon">🕓</span>
                                 <span class="is-inline-block" style="vertical-align: top;">{{ meeting.starts_at|date:"l, n/j" }}
                                 @
                                 {{ meeting.starts_at|date:"P" }} - {{ meeting.ends_at|date:"P" }}
                                 </span>
                             </li>
-                            <li>🌎
+                            <li>
+                                <span class="icon">🌎</span>
                                 {% if meeting.location %}
                                 {{ meeting.location }}
                                 {% else %}
@@ -33,7 +37,7 @@
                                 {% endif %}
                             </li>
                             {% if meeting.host %}
-                            <li>👤 <a href="{{ meeting.host.get_absolute_url }}">{{ meeting.host }}</a></li>
+                            <li><span class="icon">👤</span> <a href="{{ meeting.host.get_absolute_url }}">{{ meeting.host }}</a></li>
                             {% endif %}
                         </ul>
                         <small class="has-text-grey">{{ meeting.starts_at|naturaltime }}</small>
