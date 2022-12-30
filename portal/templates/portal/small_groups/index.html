@@ -1,10 +1,43 @@
 {% extends "portal/base.html" %}
+{% load portal_extras %}
 
 {% block content %}
 <section class="section">
     <div class="container">
         <h1 class="title">Small Groups</h1>
         <h2 class="subtitle">{{ target_semester|default:"All Semesters" }}</h2>
+
+        {% if target_semester %}
+        <div class="columns is-multiline">
+            {% for small_group in small_groups %}
+            <div class="column is-half">
+                <div class="box">
+                    <h2 class="title mb-1">{{ small_group }}</h2>
+                    <p class="mb-3 has-text-grey"><span class="icon">🌎</span> {{ small_group.location }}</p>
+                    <div class="columns">
+                        <div class="column">
+                            <h3 class="subtitle mb-1">Mentors</h3>
+                            <ul>
+                                {% for mentor in small_group.mentors.all %}
+                                <li><a href="{{ mentor.get_absolute_url }}{% target_semester_query %}">{{ mentor }}</a></li>
+                                {% endfor %}
+                            </ul>
+                        </div>
+                        <div class="column">
+                            <h3 class="subtitle mb-1">Projects</h3>
+                            <ul>
+                                {% for project in small_group.projects.all %}
+                                <li><a href="{{ project.get_absolute_url }}{% target_semester_query %}">{{ project }}</a></li>
+                                {% endfor %}
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+        {% else %}
+        {% endif %}
     </div>
 </section>
 {% endblock %}
