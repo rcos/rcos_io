@@ -7,14 +7,14 @@
             <div class="columns is-vcentered">
                 <div class="column">
                     <h1 class="title is-1">{{ user.full_name }}</h1>
-            <nav class="breadcrumb is-2" aria-label="breadcrumbs">
-                <ul>
-                    {% for semester in user.get_active_semesters %}
-                    <li class="{% if target_semester == semester %}is-active has-text-weight-bold{% endif %}"><a href="?semester={{ semester.id }}">{{ semester }}</a></li>
-                    {% endfor %}
-                    <li class="{% if not target_semester %}is-active has-text-weight-bold{% endif %}"><a href="?semester=">All Semesters</a></li>
-                </ul>
-            </nav>
+                    <nav class="breadcrumb is-2" aria-label="breadcrumbs">
+                        <ul>
+                            {% for semester in user.get_active_semesters %}
+                            <li class="{% if target_semester == semester %}is-active has-text-weight-bold{% endif %}"><a href="?semester={{ semester.id }}">{{ semester }}</a></li>
+                            {% endfor %}
+                            <li class="{% if not target_semester %}is-active has-text-weight-bold{% endif %}"><a href="?semester=">All Semesters</a></li>
+                        </ul>
+                    </nav>
                 </div>
                 <div class="column is-5">
                     <div class="box">

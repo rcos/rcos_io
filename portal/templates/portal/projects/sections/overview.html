@@ -1,4 +1,42 @@
-{% load markdownify %}
-<div class="content is-size-3 has-text-light">
-    <p><em>"{{ project.summary }}"</em></p>
+<div class="box">
+    <ul>
+        <li>
+            <span class="icon">❓</span>
+            {% if project.summary %}
+            {{ project.summary }}
+            {% else %}
+            <span class="has-text-grey">No description given.</span>
+            {% endif %}
+        </li>
+
+        <li>
+            <span class="icon">👑</span>
+            {% if project.owner %}
+            <a href="{{ project.owner.get_absolute_url }}">{{ project.owner }}</a>
+            {% else %}
+            <span class="has-text-grey">No owner.</span>
+            {% endif %}
+        </li>
+
+        {% if project.tags|length > 0 %}
+        <li>
+            <span class="icon">🏷</span>
+            {{ tags|join:", "|default:"No trags" }}
+        </li>
+        {% endif %}
+
+        {% if project.homepage_url %}
+        <li>
+            <span class="icon">🏠</span>
+            <a href="{{ project.homepage_url }}">{{ project.homepage_url }}</a>
+        </li>
+        {% endif %}
+        
+        {% if project.external_chat_url %}
+        <li>
+            <span class="icon">💬</span>
+            <a href="{{ project.external_chat_url }}">{{ project.external_chat_url }}</a>
+        </li>
+        {% endif %}
+    </ul>
 </div>
