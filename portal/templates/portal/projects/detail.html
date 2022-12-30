@@ -52,6 +52,19 @@
         {% if target_semester_enrollments|length == 0 %}
         <p class="has-text-grey"><b>{{ project }}</b> has no team for <b>{{ target_semester }}</b>!</p>
         {% endif %}
+
+        {% project_documents project target_semester as project_docs %}
+        <div id="documents">
+            {% if project_docs.pitch %}
+            <a href="{{ project_docs.pitch.url }}" class="button is-link" target="_blank"><span class="icon">🔗</span><span>Pitch Slides</span></a>
+            {% endif %}
+            {% if project_docs.proposal %}
+            <a href="{{ project_docs.proposal.url }}" class="button is-link" target="_blank"><span class="icon">🔗</span><span>Proposal</span></a>
+            {% endif %}
+            {% if project_docs.presentation %}
+            <a href="{{ project_docs.presentation.url }}" class="button is-link" target="_blank"><span class="icon">🔗</span><span>Final Presentation</span></a>
+            {% endif %}
+        </div>
     </div>
 </section>
 {% else %}
