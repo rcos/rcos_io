@@ -1,0 +1,81 @@
+<section class="hero is-dark">
+    <div class="hero-body">
+        <div class="container">
+            <h1 class="title is-1">Your Dashboard</h1>
+            <h2 class="subtitle">{{ active_semester|default:"On Break" }}</h2>
+        </div>
+    </div>
+</section>
+
+<section class="section">
+    <div class="container">
+
+        <div class="tile is-ancestor">
+            
+            <div class="tile is-3 is-vertical is-parent">
+
+                <div class="tile box is-child">
+                    <h2 class="subtitle">Your Project</h2>
+    
+                    <ul>
+                        <li>team member 1</li>
+                        <li>team member 2</li>
+                        <li>team member 3</li>
+                        <li>team member 4</li>
+                        
+                    </ul>
+                </div>
+
+                <div class="tile box is-child">
+                    <h2 class="subtitle">Small Group ?</h2>
+                    <ul>
+                        <li>Mentor 1</li>
+                        <li>Mentor 2</li>
+                    </ul>
+    
+                    <ul>
+                        <li>Project 1</li>
+                        <li>Project 2</li>
+                        <li>Project 3</li>
+                        <li>Project 4</li>
+                    </ul>
+                </div>
+            </div>
+
+            <div class="tile is-parent">
+                <div class="tile box is-child">
+                    <h2 class="subtitle">Your Contributions</h2>
+    
+                    <ul>
+                        <li>commit</li>
+                        <li>commit</li>
+                        <li>commit</li>
+                        <li>commit</li>
+                        <li>commit</li>
+                    </ul>
+                </div>
+            </div>
+
+            <div class="tile is-parent">
+                <div class="tile is-child box">
+                    <div id="calendar"></div>
+
+                    <script src="https://cdn.jsdelivr.net/npm/fullcalendar@6.0.1/index.global.min.js"
+                        integrity="sha256-wKSlmJX2aO3MGLwAyZeYmYpSBBI42kGszk55a52vKqs=" crossorigin="anonymous"></script>
+
+                    <script>
+                        document.addEventListener("DOMContentLoaded", function () {
+                            var calendarEl = document.getElementById("calendar");
+                            var calendar = new FullCalendar.Calendar(calendarEl, {
+                                initialView: "dayGridMonth",
+                                events: "/api/meetings"
+                            });
+                            calendar.render();
+                        });
+                    </script>
+                </div>
+            </div>
+        </div>
+
+    </div>
+</section>

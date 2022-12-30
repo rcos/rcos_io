@@ -1,0 +1,68 @@
+{% extends "portal/base.html" %}
+
+{% block content %}
+<div class="hero is-danger">
+    <div class="hero-body">
+        <div class="container">
+            <h1 class="title is-1">Rensselaer Center for Open Source</h1>
+            <h2 class="subtitle">A community of motivated students at Rensselaer Polytechnic Institute who develop open
+                source projects under the guidance of experienced instructors and student mentors.</h2>
+        </div>
+    </div>
+</div>
+<section class="hero is-light">
+    <div class="hero-body">
+
+        <div class="container">
+            <nav class="level">
+                <div class="level-item has-text-centered">
+                    <div>
+                        <p class="heading">Semesters</p>
+                        <p class="title">{{ semesters|length }}+</p>
+                    </div>
+                </div>
+                <div class="level-item has-text-centered">
+                    <div>
+                        <p class="heading">Enrollments</p>
+                        <p class="title">{{ enrollment_count }}+</p>
+                    </div>
+                </div>
+                <div class="level-item has-text-centered">
+                    <div>
+                        <p class="heading">Projects</p>
+                        <p class="title">{{ project_count }}+</p>
+                    </div>
+                </div>
+                <div class="level-item has-text-centered">
+                    <div>
+                        <p class="heading">Open Source Contributions</p>
+                        <p class="title">50k+</p>
+                    </div>
+                </div>
+            </nav>
+        </div>
+    </div>
+</section>
+{% if active_semester %}
+<section class="section">
+    <div class="container">
+        <div class="columns">
+            <div class="is-offset-2 column is-4 has-text-centered">
+                <h2 class="title is-4 mb-2">Current Leadership</h2>
+                <ul>
+                    {% for enrollment in active_semester.get_admins %}
+                    <li><a href="{{ enrollment.user.get_absolute_url }}">{{ enrollment.user }}</a></li>
+                    {% endfor %}
+                </ul>
+            </div>
+
+            <div class="column is-4 has-text-centered">
+                <h2 class="title is-4 mb-2">Next Meeting</h2>
+
+                <a href="{{ next_meeting.get_absolute_url }}">{{ next_meeting }}</a>
+            </div>
+        </div>
+    </div>
+</section>
+{% endif %}
+{% endblock %}
