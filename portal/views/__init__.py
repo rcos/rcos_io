@@ -1,6 +1,5 @@
-from typing import Any, Dict
 from django.views.generic import ListView, DetailView
-from ..models import Semester, User
+from ..models import Semester
 from django.shortcuts import get_object_or_404
 from django.contrib.postgres.search import SearchVector
 
@@ -47,7 +46,7 @@ class SemesterFilteredListView(ListView):
         semester_filter_key = "enrollments__semester"
     ```
     """
-
+    
     semester_filter_key = "semester"
     """The key to match with the semester object when filtering."""
 
