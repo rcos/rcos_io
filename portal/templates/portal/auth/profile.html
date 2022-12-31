@@ -10,11 +10,25 @@
 
             {{ form.non_field_errors }}
 
-            <div class="field">
-                <label class="label">Email</label>
-                <div class="control">
-                    <input type="text" class="input" value="{{ request.user.email }}" readonly disabled>
+            <div class="columns">
+                <div class="column">
+                    <div class="field">
+                        <label class="label">Email</label>
+                        <div class="control">
+                            <input type="text" class="input" value="{{ request.user.email }}" readonly disabled>
+                        </div>
+                    </div>
                 </div>
+                {% if user.role == "rpi" %}
+                <div class="column">
+                    <div class="field">
+                        <label class="label">RCS ID</label>
+                        <div class="control">
+                            <input type="text" class="input" value="{{ request.user.rcs_id }}" readonly disabled>
+                        </div>
+                    </div>
+                </div>
+                {% endif %}
             </div>
 
             <div class="columns">

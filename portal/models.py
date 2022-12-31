@@ -149,8 +149,10 @@ class User(AbstractUser, TimestampedModel):
         if self.role == User.RPI:
             if self.graduation_year:
                 chunks.append(f"'{str(self.graduation_year)[2:]}")
-            if self.rcs_id:
+            if len(chunks) > 0 and self.rcs_id:
                 chunks.append(f"({self.rcs_id})")
+            elif self.rcs_id:
+                chunks.append(self.rcs_id)
 
         if len(chunks) == 0:
             chunks.append(self.email)
@@ -196,6 +198,7 @@ def pre_save_user(instance, sender, *args, **kwargs):
     if instance._state.adding and instance.email.endswith("@rpi.edu"):
         instance.role = User.RPI
         instance.is_approved = True
+        instance.rcs_id = instance.email.removesuffix("@rpi.edu").lower()
 
 
 pre_save.connect(pre_save_user, sender=User)
