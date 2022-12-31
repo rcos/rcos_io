@@ -2,7 +2,7 @@ from django.urls import path
 
 from portal.views.admin import upload_submitty_data
 
-from .views.index import IndexView
+from .views.index import HandbookView, IndexView
 from .views.meetings import MeetingIndexView, MeetingDetailView, meetings_api
 from .views.users import UserIndexView, UserDetailView
 from .views.projects import ProjectDetailView, ProjectIndexView
@@ -11,6 +11,7 @@ from portal.views.small_groups import SmallGroupIndexView
 
 urlpatterns = [
     path("", IndexView.as_view(), name="index"),
+    path("handbook", HandbookView.as_view(), name="index"),
     path("auth/profile", profile, name="profile"),
     path("auth/impersonate", impersonate, name="impersonate"),
     path("auth/link/discord", start_discord_link, name="link_discord"),

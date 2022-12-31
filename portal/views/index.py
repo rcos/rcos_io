@@ -15,3 +15,7 @@ class IndexView(TemplateView):
         )
         data["next_meeting"] = Meeting.get_next()
         return data
+
+
+class HandbookView(TemplateView):
+    template_name = "portal/index/handbook.html"

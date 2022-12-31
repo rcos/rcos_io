@@ -22,9 +22,7 @@
                 {% if request.user.is_authenticated %}
                 {% include "portal/includes/navbaritem.html" with view_name="small_groups_index" display="Small Groups" %}
                 {% endif %}
-                <a href="https://handbook.rcos.io/" target="_blank" class="navbar-item">
-                    Handbook
-                </a>
+                {% include "portal/includes/navbaritem.html" with view_name="handbook" display="Handbook" %}
             </div>
 
             <div class="navbar-end">
