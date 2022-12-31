@@ -27,5 +27,5 @@ urlpatterns = [
     path("api/meetings", meetings_api, name="meetings_api"),
     path("meetings/<int:pk>", MeetingDetailView.as_view(), name="meetings_detail"),
     path("small_groups/", SmallGroupIndexView.as_view(), name="small_groups_index"),
-    path("admin/upload", upload_submitty_data, name="admin_upload")
+    path("admin/upload", upload_submitty_data, name="admin_upload"),
 ]

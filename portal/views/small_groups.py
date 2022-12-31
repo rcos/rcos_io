@@ -7,8 +7,4 @@ class SmallGroupIndexView(SearchableListView, SemesterFilteredListView):
     context_object_name = "small_groups"
 
     model = SmallGroup
-    search_fields = (
-        "name",
-        "projects__name",
-        "mentors__rcs_id"
-    )
+    search_fields = ("name", "projects__name", "mentors__rcs_id")

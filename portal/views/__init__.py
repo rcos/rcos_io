@@ -46,7 +46,7 @@ class SemesterFilteredListView(ListView):
         semester_filter_key = "enrollments__semester"
     ```
     """
-    
+
     semester_filter_key = "semester"
     """The key to match with the semester object when filtering."""
 

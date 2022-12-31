@@ -15,9 +15,8 @@ def upload_submitty_data(request):
             rows = TextIOWrapper(file, encoding="utf-8", newline="")
             for row in DictReader(rows):
                 users.append(row)
-            
 
     else:
         form = UploadSubmittyDataForm()
-    
+
     return render(request, "portal/admin/upload.html", {"form": form})

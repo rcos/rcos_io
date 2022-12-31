@@ -16,6 +16,7 @@ def meeting_to_event(meeting: Meeting) -> Dict[str, Any]:
         "color": meeting.color,
     }
 
+
 class MeetingIndexView(ListView):
     template_name = "portal/meetings/index.html"
     context_object_name = "meetings"
@@ -29,7 +30,7 @@ class MeetingIndexView(ListView):
 
         queryset = Meeting.objects.filter(
             is_published=True, starts_at__gte=this_morning
-        )[:5]
+        ).select_related()[:5]
         return queryset
 
 
@@ -37,6 +38,7 @@ class MeetingDetailView(DetailView):
     template_name = "portal/meetings/detail.html"
     model = Meeting
     context_object_name = "meeting"
+
 
 @cache_page(60 * 15)
 def meetings_api(request):

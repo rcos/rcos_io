@@ -95,6 +95,6 @@ for user in users:
         }
     )
     pk += 1
-    
+
 
 print(json.dumps(users + projects + enrollments))
