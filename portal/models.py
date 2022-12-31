@@ -532,6 +532,9 @@ class SmallGroup(TimestampedModel):
     def display_name(self):
         return self.name or self.location or "Unnamed Small Group"
 
+    def get_absolute_url(self):
+        return reverse("small_groups_detail", args=[str(self.id)])
+
     def __str__(self) -> str:
         return self.display_name
 

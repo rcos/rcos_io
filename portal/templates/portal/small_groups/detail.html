@@ -1,0 +1,48 @@
+{% extends "portal/base.html" %}
+{% load portal_extras %}
+
+{% block content %}
+<section class="hero is-dark">
+    <div class="hero-body">
+        <div class="container">
+            <h1 class="title is-1">{{ small_group }}</h1>
+            <h2 class="subtitle">{{ small_group.semester }}</h2>
+        </div>
+    </div>
+</section>
+<section class="section">
+    <div class="container">
+        <div class="columns">
+            <div class="column">
+                <h2 class="subtitle is-3">
+                    Projects
+                </h2>
+                
+                <ul>
+                    {% for project in small_group.projects.all %}
+                    <li><a href="{{ project.get_absolute_url }}?semester={{ small_group.semester.id }}">{{ project }}</a></li>
+                    {% endfor %}
+                </ul>
+            </div>
+            <div class="column">
+                <h2 class="subtitle is-3 mb-1">
+                    Team Members
+                </h2>
+                <small class="has-text-grey mb-2">0 total</small>
+                
+                <ul>
+                    {% for project in small_group.projects.all %}
+                    <li class="mt-2">
+                        <small class="has-text-grey">{{ project }}</small>
+                    </li>
+                    {% project_enrollments project small_group.semester as enrollments %}
+                    {% for enrollment in enrollments %}
+                    <li><a href="{{ enrollment.get_absolute_url }}">{{ enrollment.user }}</a></li>
+                    {% endfor %}
+                    {% endfor %}
+                </ul>
+            </div>
+        </div>
+    </div>
+</section>
+{% endblock %}
