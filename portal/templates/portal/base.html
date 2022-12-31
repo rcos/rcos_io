@@ -1,3 +1,4 @@
+{% load portal_extras %}
 <!DOCTYPE html>
 <html>
 
@@ -11,6 +12,19 @@
 
 <body class="has-navbar-fixed-top">
     {% include "portal/includes/navbar.html" %}
+
+    {% if messages %}
+    <div class="messages">
+            {% for message in messages %}
+            <div class="notification {{ message.tags }}">
+                <div class="container">
+                    {{ message }}
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+    </div>
+    {% endif %}
 
     {% block content %}{% endblock %}
     

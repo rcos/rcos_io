@@ -1,0 +1,57 @@
+{% extends "portal/base.html" %}
+
+{% block content %}
+<section class="section">
+    <div class="container">
+        <h1 class="title">Your Profile</h1>
+
+        <form method="post">
+            {% csrf_token %}
+
+            {{ form.non_field_errors }}
+
+            <div class="field">
+                <label class="label">Email</label>
+                <div class="control">
+                    <input type="text" class="input" value="{{ request.user.email }}" readonly disabled>
+                </div>
+            </div>
+
+            <div class="columns">
+                <div class="column">
+                    <div class="field">
+                        {{ form.first_name.errors }}
+                        <label for="{{ form.first_name.id_for_label  }}" class="label">{{ form.first_name.label }}</label>
+                        <div class="control">
+                            {{ form.first_name }}
+                        </div>
+                    </div>
+                </div>
+                <div class="column">
+                    <div class="field">
+                        {{ form.last_name.errors }}
+                        <label for="{{ form.last_name.id_for_label  }}" class="label">{{ form.last_name.label }}</label>
+                        <div class="control">
+                            {{ form.last_name }}
+                        </div>
+                    </div>
+                </div>
+                
+                {% if request.user.role == "rpi" %}
+                <div class="column">
+                    <div class="field">
+                        {{ form.graduation_year.errors }}
+                        <label for="{{ form.graduation_year.id_for_label  }}" class="label">{{ form.graduation_year.label }}</label>
+                        <div class="control">
+                            {{ form.graduation_year }}
+                        </div>
+                    </div>
+                </div>
+                {% endif %}
+            </div>
+            
+            <button type="submit" class="button">Save</button>
+        </form>
+    </div>
+</section>
+{% endblock %}

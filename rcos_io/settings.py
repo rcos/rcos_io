@@ -12,6 +12,7 @@ https://docs.djangoproject.com/en/4.1/ref/settings/
 from dotenv import load_dotenv
 import os
 from pathlib import Path
+from django.contrib.messages import constants as messages
 
 load_dotenv()
 
@@ -220,4 +221,12 @@ EMAIL_BACKEND = (
 ANYMAIL = {
     "MAILJET_API_KEY": os.environ["MAILJET_API_KEY"],
     "MAILJET_SECRET_KEY": os.environ["MAILJET_SECRET_KEY"],
+}
+
+MESSAGE_TAGS = {
+    messages.INFO: "is-info",
+    messages.DEBUG: "is-light",
+    messages.ERROR: "is-danger",
+    messages.SUCCESS: "is-success",
+    messages.WARNING: "is-warning",
 }

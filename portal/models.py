@@ -4,6 +4,7 @@ from django.urls import reverse
 from django.utils import timezone
 from django.db.models import Q
 from django.db.models.signals import pre_save
+from django.core.exceptions import ValidationError
 
 from portal.services import discord
 
@@ -182,6 +183,10 @@ class User(AbstractUser, TimestampedModel):
         return self.display_name
 
     objects = UserManager()
+
+    def clean(self):
+        if self.role != User.RPI and self.graduation_year is not None:
+            raise ValidationError("Only RPI users can have a graduation year set.")
 
     class Meta:
         ordering = ["first_name", "last_name", "email"]
