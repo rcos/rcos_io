@@ -40,7 +40,7 @@
                 </div>
 
                 <div class="tile box is-child">
-                    <h2 class="subtitle mb-1">{{ small_group }}</h2>
+                    <h2 class="subtitle mb-2">{{ small_group }}</h2>
                     <p class="has-text-grey"><span class="icon">🌎</span>{{ small_group.location }}</p>
                     <hr>
                     <ul>
@@ -59,21 +59,15 @@
 
             <div class="tile is-parent">
                 <div class="tile box is-child">
-                    <h2 class="subtitle">Your Contributions</h2>
+                    <h2 class="subtitle mb-2">Your Contributions This Week</h2>
     
-                    <ul>
-                        <li>commit</li>
-                        <li>commit</li>
-                        <li>commit</li>
-                        <li>commit</li>
-                        <li>commit</li>
-                    </ul>
+                    <p class="has-text-grey">Coming soon...</p>
                 </div>
             </div>
 
             <div class="tile is-vertical is-parent">
                 <div class="tile is-child box">
-                    <h2 class="subtitle">Faculty Advisors & Coordinators</h2>
+                    <h2 class="subtitle mb-2">Faculty Advisors & Coordinators</h2>
                     <ul>
                         {% for enrollment in semester_admins %}
                         <li>
