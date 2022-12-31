@@ -18,5 +18,6 @@ from django.urls import path, include
 
 urlpatterns = [
     path("", include("portal.urls")),
+    path("auth/", include("magiclink.urls", namespace="magiclink")),
     path("admin/", admin.site.urls),
 ]

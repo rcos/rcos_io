@@ -45,6 +45,7 @@ INSTALLED_APPS = [
     "whitenoise.runserver_nostatic",
     "django.contrib.staticfiles",
     "markdownify.apps.MarkdownifyConfig",
+    "magiclink",
 ]
 
 MIDDLEWARE = [
@@ -95,6 +96,11 @@ DATABASES = {
 }
 
 AUTH_USER_MODEL = "portal.User"
+
+AUTHENTICATION_BACKENDS = (
+    "magiclink.backends.MagicLinkBackend",
+    "django.contrib.auth.backends.ModelBackend",
+)
 
 # Password validation
 # https://docs.djangoproject.com/en/4.1/ref/settings/#auth-password-validators
@@ -151,6 +157,8 @@ SECURE_HSTS_INCLUDE_SUBDOMAINS = True
 
 SECURE_HSTS_PRELOAD = True
 
+INTERNAL_IPS = ["127.0.0.1", "localhost"]
+
 MARKDOWNIFY = {
     "default": {
         "WHITELIST_TAGS": [
@@ -187,3 +195,18 @@ DISCORD_BOT_TOKEN = os.environ["DISCORD_BOT_TOKEN"]
 DISCORD_SERVER_ID = os.environ["DISCORD_SERVER_ID"]
 
 DISCORD_REDIRECT_URL = os.environ["DISCORD_REDIRECT_URL"]
+
+LOGIN_URL = "magiclink:login"
+
+MAGICLINK_LOGIN_TEMPLATE_NAME = "portal/magiclink/login.html"
+MAGICLINK_LOGIN_SENT_TEMPLATE_NAME = "portal/magiclink/login_sent.html"
+MAGICLINK_LOGIN_FAILED_TEMPLATE_NAME = "portal/magiclink/login_failed.html"
+
+MAGICLINK_REQUIRE_SIGNUP = False  # First login will create user
+MAGICLINK_SIGNUP_TEMPLATE_NAME = "magiclink/signup.html"
+
+LOGIN_REDIRECT_URL = "/"
+MAGICLINK_SIGNUP_LOGIN_REDIRECT = "/"
+
+if DEBUG:
+    EMAIL_BACKEND = "django.core.mail.backends.console.EmailBackend"

@@ -58,7 +58,7 @@ def project_documents(project, semester) -> Dict[str, Any]:
 
 @register.simple_tag
 def project_small_group(project, semester) -> Dict[str, Any]:
-    if semester:
+    if semester and project:
         return project.small_groups.filter(semester=semester).first()
     return None
 

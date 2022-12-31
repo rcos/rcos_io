@@ -27,18 +27,25 @@
                 </a>
             </div>
 
-            <!-- <div class="navbar-end">
-                <div class="navbar-item">
-                    <div class="buttons">
-                        <a href="#" class="button is-primary">
-                            <strong>Sign up</strong>
-                        </a>
-                        <a href="#" class="button is-light">
-                            Log in
-                        </a>
+            <div class="navbar-end">
+                {% if request.user.is_authenticated %}
+                <div class="navbar-item has-dropdown is-hoverable">
+                    <a class="navbar-link">Logged in as&nbsp;<strong>{{ request.user }}</strong></a>
+
+                    <div class="navbar-dropdown">
+                        <a class="navbar-item">Profile</a>
+                        <hr class="navbar-divider">
+                        <a class="navbar-item" href="{% url 'magiclink:logout' %}?next=/">Logout</a>
                     </div>
                 </div>
-            </div> -->
+                {% else %}
+                <div class="navbar-item">
+                    <a href="{% url 'magiclink:login' %}" class="button is-primary">
+                        <strong>Log in</strong>
+                    </a>
+                </div>
+                {% endif %}
+            </div>
         </div>
     </div>
 </nav>

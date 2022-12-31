@@ -2,8 +2,19 @@ from django.shortcuts import redirect
 from django.core.exceptions import BadRequest
 from portal.services import discord
 from rcos_io import settings
+from portal.models import User
 from requests import HTTPError
 from django.contrib.auth.decorators import login_required
+from django.contrib.auth import login
+
+
+def impersonate(request):
+    if settings.DEBUG or request.user.is_superuser:
+        email = request.GET["email"]
+        user = User.objects.get(email=email)
+        login(request, user, backend="django.contrib.auth.backends.ModelBackend")
+
+    return redirect("/")
 
 
 @login_required
