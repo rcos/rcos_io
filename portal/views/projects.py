@@ -48,10 +48,12 @@ class ProjectDetailView(SemesterFilteredDetailView):
         if "target_semester" in data:
             data["target_semester_enrollments"] = Enrollment.objects.filter(
                 semester=data["target_semester"], project=self.object
-            )
+            ).order_by("-is_project_lead")
         else:
             enrollments_by_semester = {}
-            for enrollment in self.object.enrollments.all():
+            for enrollment in self.object.enrollments.order_by(
+                "-is_project_lead"
+            ).all():
                 if enrollment.semester not in enrollments_by_semester:
                     enrollments_by_semester[enrollment.semester] = []
                 enrollments_by_semester[enrollment.semester].append(enrollment)
