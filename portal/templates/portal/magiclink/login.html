@@ -5,25 +5,25 @@
     <div class="container">
         <h1 class="title">Login to RCOS IO</h1>
 
-        <form action="{% url 'magiclink:login' %}{% if request.GET.next %}?next={{ request.GET.next }}{% endif %}" method="post">
-            {% csrf_token %}
-            {{ login_form }}
-            <button type='submit'>Send login email</button>
-        </form>
-        {% if debug %}
-        <hr>
-        <p class="has-text-grey">or</p>
-        <hr>
-        <form action="/auth/impersonate">
-            <div class="field">
-                <label for="email" class="label">Email</label>
-                <div class="control">
-                    <input type="email" name="email" class="input" required>
-                </div>
+        <div class="columns">
+            <div class="column">
+                <form action="{% url 'magiclink:login' %}{% if request.GET.next %}?next={{ request.GET.next }}{% endif %}" method="post">
+                    {% csrf_token %}
+                    <div class="field">
+                        <label for="{{ login_form.email.id_for_label }}" class="label">{{ login_form.email.label }}</label>
+                        <div class="control">
+                            <input class="input" type="text" name="email" id="{{ login_form.email.id_for_label }}" placeholder="Enter your RPI email (or personal if you are a guest)" required>
+                        </div>
+                        <p class="help">Use your <b>@rpi.edu</b> email address if you are a student! Otherwise, use a personal email address.</p>
+                    </div>
+                    <button type="submit" class="button is-dark">Send login email</button>
+                    {% if debug %}
+                    <button type="submit" class="button is-dark is-outlined" formaction="{% url 'impersonate' %}">Login (admin)</button>
+                    {% endif %}
+                </form>
             </div>
-            <button type="submit" class="button">Login</button>
-        </form>
-        {% endif %}
+        </div>
+        
     </div>
 </section>
 {% endblock %}

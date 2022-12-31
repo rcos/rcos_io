@@ -27,7 +27,7 @@ def profile(request):
 
 def impersonate(request):
     if settings.DEBUG or request.user.is_superuser:
-        email = request.GET["email"]
+        email = request.POST["email"]
         user = User.objects.get(email=email)
         login(request, user, backend="django.contrib.auth.backends.ModelBackend")
 
