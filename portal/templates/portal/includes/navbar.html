@@ -33,7 +33,7 @@
                     <a class="navbar-link">Logged in as&nbsp;<strong>{{ request.user }}</strong></a>
 
                     <div class="navbar-dropdown">
-                        <a class="navbar-item" href="{% url 'profile' %}">Profile</a>
+                        <a class="navbar-item" href="{% url 'profile' %}">Your Profile</a>
                         <hr class="navbar-divider">
                         <a class="navbar-item" href="{% url 'magiclink:logout' %}?next=/">Logout</a>
                     </div>

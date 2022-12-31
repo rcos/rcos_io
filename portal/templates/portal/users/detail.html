@@ -1,6 +1,15 @@
 {% extends "portal/base.html" %}
 
 {% block content %}
+
+{% if not user.is_approved %}
+<div class="notification is-warning mb-0">
+    <div class="container">
+        <span class="icon">⚠</span> <strong>{{ user }}</strong> is being reviewed and has not yet been approved to participate in RCOS.
+    </div>
+</div>
+{% endif%}
+
 <section class="hero is-info">
     <div class="hero-body">
         <div class="container">

@@ -3,6 +3,14 @@
 
 {% block content %}
 
+{% if not project.is_approved %}
+<div class="notification is-warning mb-0">
+    <div class="container">
+        <span class="icon">⚠</span> <strong>{{ project }}</strong> is being reviewed and has not yet been approved to participate in RCOS.
+    </div>
+</div>
+{% endif%}
+
 <section class="hero is-dark">
     <div class="hero-body">
         <div class="container">

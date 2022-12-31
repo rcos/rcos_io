@@ -206,7 +206,7 @@ class ProjectTag(TimestampedModel):
 
 
 class Project(TimestampedModel):
-    slug = models.SlugField()
+    slug = models.SlugField(null=True)
     name = models.CharField(
         max_length=100, unique=True, help_text="The project's unique name"
     )
@@ -268,7 +268,7 @@ class Project(TimestampedModel):
         return reverse("projects_detail", kwargs={"slug": self.slug})
 
     def save(self, *args, **kwargs):
-        if not self.slug:
+        if not self.slug and self.is_approved:
             self.slug = slugify(self.name)
         return super().save(*args, **kwargs)
 
