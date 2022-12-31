@@ -17,17 +17,18 @@
 <section class="section">
     <div class="container">
         <div class="tile is-ancestor">
+            {% if enrollment and enrollment.project %}
             <div class="tile is-3 is-vertical is-parent">
                 <div class="tile box is-child">
-                    <h2 class="subtitle mb-2">{{ enrollment.project }}</h2>
+                    <h2 class="subtitle is-4 mb-2">{{ enrollment.project }}</h2>
     
                     <ul>
                         {% for enrollment in project_enrollments %}
                         <li>
+                            <a href="{{ enrollment.get_absolute_url }}">{{ enrollment.user }}</a>
                             {% if enrollment.is_project_lead %}
                             <span class="icon">👑</span>
                             {% endif %}
-                            <a href="{{ enrollment.get_absolute_url }}">{{ enrollment.user }}</a>
                         </li>
                         {% endfor %}
                     </ul>
@@ -39,8 +40,9 @@
                     </ul>
                 </div>
 
+                {% if small_group %}
                 <div class="tile box is-child">
-                    <h2 class="subtitle mb-2">{{ small_group }}</h2>
+                    <h2 class="subtitle is-4 mb-2">{{ small_group }}</h2>
                     <p class="has-text-grey"><span class="icon">🌎</span>{{ small_group.location }}</p>
                     <hr>
                     <ul>
@@ -55,26 +57,53 @@
                         {% endfor %}
                     </ul>
                 </div>
+                {% endif %}
             </div>
+            {% endif %}
 
             <div class="tile is-parent">
                 <div class="tile box is-child">
-                    <h2 class="subtitle mb-2">Your Contributions This Week</h2>
-    
+                    {% if active_semester is not None and enrollment is not None and enrollment.project is not None %}
+                    {% include "./tiles/week_contributions.html" %}
+                    {% elif active_semester is not None and enrollment is not None and enrollment.project is None %}
+                    <h2 class="subtitle is-4 mb-2">Choose a Project</h2>
+                    <p>Here's a list of projects that are actively seeking members to join:</p>
                     <p class="has-text-grey">Coming soon...</p>
+                    {% elif active_semester is not None and enrollment is None %}
+                    {% include "./tiles/not_enrolled.html" %}
+                    {% else %}
+                    <p class="has-text-grey">When a semester starts, you'll be able to access useful information on this dashboard!</p>
+                    {% endif %}
                 </div>
             </div>
 
             <div class="tile is-vertical is-parent">
                 <div class="tile is-child box">
-                    <h2 class="subtitle mb-2">Faculty Advisors & Coordinators</h2>
-                    <ul>
-                        {% for enrollment in semester_admins %}
-                        <li>
-                            <a href="{{ enrollment.get_absolute_url }}">{{ enrollment.user }}</a>
-                        </li>
-                        {% endfor %}
-                    </ul>
+                    <h2 class="subtitle is-4 mb-2">Need Support?</h2>
+
+                    <div class="columns">
+                        {% if small_group %}
+                        <div class="column">
+                            <small class="has-text-grey">Your Small Group Mentors</small>
+                            <ul>
+                                {% for mentor in small_group.mentors.all %}
+                                <li><a href="{{ mentor.get_absolute_url }}{% active_semester_query %}">{{ mentor }}</a></li>
+                                {% endfor %}
+                            </ul>
+                        </div>
+                        {% endif %}
+
+                        <div class="column">
+                            <small class="has-text-grey">Coordinators & Faculty Advisors</small>
+                            <ul>
+                                {% for enrollment in semester_admins %}
+                                <li>
+                                    <a href="{{ enrollment.get_absolute_url }}">{{ enrollment.user }}</a>
+                                </li>
+                                {% endfor %}
+                            </ul>
+                        </div>
+                    </div>
                 </div>
                 <div class="tile is-child box">
                     <div id="calendar"></div>

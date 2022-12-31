@@ -11,7 +11,7 @@ from portal.views.small_groups import SmallGroupIndexView
 
 urlpatterns = [
     path("", IndexView.as_view(), name="index"),
-    path("handbook", HandbookView.as_view(), name="index"),
+    path("handbook", HandbookView.as_view(), name="handbook"),
     path("auth/profile", profile, name="profile"),
     path("auth/impersonate", impersonate, name="impersonate"),
     path("auth/link/discord", start_discord_link, name="link_discord"),
