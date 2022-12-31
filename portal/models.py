@@ -3,6 +3,7 @@ from django.contrib.auth.models import AbstractUser, BaseUserManager
 from django.urls import reverse
 from django.utils import timezone
 from django.db.models import Q
+from django.db.models.signals import pre_save
 
 from portal.services import discord
 
@@ -184,6 +185,15 @@ class User(AbstractUser, TimestampedModel):
 
     class Meta:
         ordering = ["first_name", "last_name", "email"]
+
+
+def pre_save_user(instance, sender, *args, **kwargs):
+    if instance._state.adding and instance.email.endswith("@rpi.edu"):
+        instance.role = User.RPI
+        instance.is_approved = True
+
+
+pre_save.connect(pre_save_user, sender=User)
 
 
 class ProjectTag(TimestampedModel):

@@ -46,6 +46,7 @@ INSTALLED_APPS = [
     "django.contrib.staticfiles",
     "markdownify.apps.MarkdownifyConfig",
     "magiclink",
+    "anymail",
 ]
 
 MIDDLEWARE = [
@@ -208,5 +209,15 @@ MAGICLINK_SIGNUP_TEMPLATE_NAME = "magiclink/signup.html"
 LOGIN_REDIRECT_URL = "/"
 MAGICLINK_SIGNUP_LOGIN_REDIRECT = "/"
 
-if DEBUG:
-    EMAIL_BACKEND = "django.core.mail.backends.console.EmailBackend"
+DEFAULT_FROM_EMAIL = "rcos.management@gmail.com"
+
+EMAIL_BACKEND = (
+    "django.core.mail.backends.console.EmailBackend"
+    if DEBUG
+    else "anymail.backends.mailjet.EmailBackend"
+)
+
+ANYMAIL = {
+    "MAILJET_API_KEY": os.environ["MAILJET_API_KEY"],
+    "MAILJET_SECRET_KEY": os.environ["MAILJET_SECRET_KEY"],
+}
