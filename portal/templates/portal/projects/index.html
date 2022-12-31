@@ -11,9 +11,6 @@
         <table class="table is-fullwidth">
             <thead>
                 <tr>
-                    {% if target_semester and target_semester.is_active %}
-                    <th></th>
-                    {% endif %}
                     <th>Name</th>
                     <th>Summary</th>
                     <th>Tags</th>
@@ -31,22 +28,18 @@
             <tbody>
                 {% for project in projects %}
                 <tr>
-                    {% if target_semester and target_semester.is_active %}
                     <td>
-                        {% if project.is_seeking_members %}
+                        <a
+                            href="{{ project.get_absolute_url }}{% target_semester_query %}"
+                            >{{ project }}</a
+                        >
+                        {% if target_semester and target_semester.is_active and project.is_seeking_members %}
                         <span
                             class="tag is-warning"
                             title="Seeking new members!"
                             >👥</span
                         >
                         {% endif %}
-                    </td>
-                    {% endif %}
-                    <td>
-                        <a
-                            href="{{ project.get_absolute_url }}{% target_semester_query %}"
-                            >{{ project }}</a
-                        >
                     </td>
                     <td>{{ project.summary }}</td>
                     <td>{{ project.tags.all|join:", "|default:"-" }}</td>

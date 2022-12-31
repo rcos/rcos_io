@@ -12,7 +12,6 @@
         <table class="table is-fullwidth">
             <thead>
                 <tr>
-                    <th></th>
                     <th>Name</th>
                     {% if target_semester %}
                     <th>Project</th>
@@ -26,19 +25,17 @@
                 {% for user in users %}
                 {% user_enrollment user target_semester as enrollment %}
                 <tr>
-                    <td>
-                        {% if target_semester %}
-                        {% if enrollment.is_project_lead %}
-                        <span class="" title="Project Lead">👑</span>
-                        {% endif %}
-                        {% endif %}
-                    </td>
                     <td><a href="{{ user.get_absolute_url }}{% target_semester_query %}">{{ user }}</a></td>
                     {% if target_semester %}
                     <td>
                         <a href="{{ enrollment.project.get_absolute_url }}{% target_semester_query %}">
                             {{ enrollment.project }}
                         </a>
+                        {% if target_semester %}
+                        {% if enrollment.is_project_lead %}
+                        <span class="icon" title="Project Lead of {{ enrollment.project }}">👑</span>
+                        {% endif %}
+                        {% endif %}
                     </td>
                     <td>{{ enrollment.credits }}</td>
                     {% else %}
