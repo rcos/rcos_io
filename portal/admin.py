@@ -101,6 +101,7 @@ class ProjectAdmin(admin.ModelAdmin):
         ProjectProposalInline,
         ProjectPresentationInline,
     )
+    prepopulated_fields = {"slug": ("name",)}
     actions = (make_approved,)
 
 

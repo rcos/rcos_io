@@ -5,7 +5,7 @@ from django.utils import timezone
 from django.db.models import Q
 from django.db.models.signals import pre_save
 from django.core.exceptions import ValidationError
-
+from django.template.defaultfilters import slugify
 from portal.services import discord
 
 
@@ -206,6 +206,7 @@ class ProjectTag(TimestampedModel):
 
 
 class Project(TimestampedModel):
+    slug = models.SlugField()
     name = models.CharField(
         max_length=100, unique=True, help_text="The project's unique name"
     )
@@ -264,7 +265,12 @@ class Project(TimestampedModel):
         )
 
     def get_absolute_url(self):
-        return reverse("projects_detail", args=[str(self.id)])
+        return reverse("projects_detail", kwargs={"slug": self.slug})
+
+    def save(self, *args, **kwargs):
+        if not self.slug:
+            self.slug = slugify(self.name)
+        return super().save(*args, **kwargs)
 
     def __str__(self) -> str:
         return self.name

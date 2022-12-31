@@ -25,6 +25,7 @@ urlpatterns = [
     path("users/<int:pk>", UserDetailView.as_view(), name="users_detail"),
     path("projects/", ProjectIndexView.as_view(), name="projects_index"),
     path("projects/<int:pk>", ProjectDetailView.as_view(), name="projects_detail"),
+    path("projects/<slug:slug>", ProjectDetailView.as_view(), name="projects_detail"),
     path("meetings/", MeetingIndexView.as_view(), name="meetings_index"),
     path("api/meetings", meetings_api, name="meetings_api"),
     path("meetings/<int:pk>", MeetingDetailView.as_view(), name="meetings_detail"),
