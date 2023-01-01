@@ -5,7 +5,7 @@ from portal.views.admin import upload_submitty_data
 from .views.index import HandbookView, IndexView
 from .views.meetings import MeetingIndexView, MeetingDetailView, meetings_api
 from .views.users import UserIndexView, UserDetailView
-from .views.projects import ProjectDetailView, ProjectIndexView
+from .views.projects import ProjectProposeView, ProjectDetailView, ProjectIndexView
 from .views.auth import impersonate, profile, start_discord_link, discord_link_callback
 from portal.views.small_groups import SmallGroupDetailView, SmallGroupIndexView
 
@@ -25,6 +25,7 @@ urlpatterns = [
     path("users/", UserIndexView.as_view(), name="users_index"),
     path("users/<int:pk>", UserDetailView.as_view(), name="users_detail"),
     path("projects/", ProjectIndexView.as_view(), name="projects_index"),
+    path("projects/propose/", ProjectProposeView.as_view(), name="projects_propose"),
     path("projects/<int:pk>", ProjectDetailView.as_view(), name="projects_detail"),
     path("projects/<slug:slug>", ProjectDetailView.as_view(), name="projects_detail"),
     path("meetings/", MeetingIndexView.as_view(), name="meetings_index"),

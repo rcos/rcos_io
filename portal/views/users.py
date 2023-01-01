@@ -1,6 +1,6 @@
-from django.contrib.postgres.search import SearchVector
+from django.views.generic.edit import CreateView, DeleteView, UpdateView
 from . import SemesterFilteredListView, SemesterFilteredDetailView, SearchableListView
-from ..models import User
+from ..models import User, Enrollment
 
 
 class UserIndexView(SearchableListView, SemesterFilteredListView):
@@ -25,3 +25,14 @@ class UserDetailView(SemesterFilteredDetailView):
     template_name = "portal/users/detail.html"
     model = User
     context_object_name = "user"
+
+
+class EnrollmentCreateView(CreateView):
+    model = Enrollment
+    fields = ["semester"]
+    template_name = "portal/users/enroll.html"
+
+    def form_valid(self, form):
+        form.instance.user = self.request.user
+        form.instance.user = self.request.user
+        return super().form_valid(form)

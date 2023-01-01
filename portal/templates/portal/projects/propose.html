@@ -1,0 +1,68 @@
+{% extends "portal/base.html" %}
+
+{% block content %}
+<section class="section">
+    <div class="container">
+        {% if active_semester %}
+        <h1 class="title">Propose New Project for {{ active_semester }}</h1>
+
+        <form method="post">
+            {% csrf_token %}
+            <div class="columns">
+                <div class="column">
+                    <div class="field">
+                        <label for="{{ form.name.id_for_label }}" class="label">{{ form.name.label }}</label>
+                        <div class="control">
+                            {{ form.name }}
+                        </div>
+                    </div>
+                </div>
+                <div class="column">
+                    <div class="field">
+                        <label for="{{ form.summary.id_for_label }}" class="label">{{ form.summary.label }}</label>
+                        <div class="control">
+                            {{ form.summary }}
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            
+            <div class="columns">
+                <div class="column">
+                    <div class="field">
+                        <label for="{{ form.external_chat_url.id_for_label }}" class="label">{{ form.external_chat_url.label }}</label>
+                        <div class="control">
+                            {{ form.external_chat_url }}
+                        </div>
+                    </div>
+                </div>
+                <div class="column">
+                    <div class="field">
+                        <label for="{{ form.homepage_url.id_for_label }}" class="label">{{ form.homepage_url.label }}</label>
+                        <div class="control">
+                            {{ form.homepage_url }}
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="field">
+                <label for="{{ form.tags.id_for_label }}" class="label">{{ form.tags.label }}</label>
+                <div class="select is-multiple">
+                    {{ form.tags }}
+                </div>
+                <p class="help">Hold Ctrl to select multiple.</p>
+            </div>
+
+            <button type="submit" class="button">Submit Proposal</button>
+        </form>
+        {% else %}
+        <h1 class="title">No Active Semester</h1>
+        <h2 class="subtitle">You can only propose new projects right before and during a semester.</h2>
+
+        <a href="{% url 'projects_index' %}" class="button is-link">Back to Projects</a>
+        {% endif %}
+    </div>
+</section>
+{% endblock %}
