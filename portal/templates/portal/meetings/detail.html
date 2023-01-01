@@ -16,7 +16,7 @@
 <section class="section">
     <div class="container">
         <h1 class="title is-1">{{ meeting.display_name }}</h1>
-        <h2 class="subtitle is-4">{{ meeting.get_type_display }} Meeting {{ meeting.starts_at|naturaltime }}</h2>
+        <h2 class="subtitle is-4">{{ meeting.get_type_display }} Meeting <small class="has-text-grey">{{ meeting.starts_at|naturaltime }}</small></h2>
 
         <div class="columns">
             <div class="column">

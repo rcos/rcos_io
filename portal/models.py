@@ -498,7 +498,9 @@ class Meeting(TimestampedModel):
         this_morning = timezone.datetime.combine(
             today, timezone.datetime.min.time(), tzinfo=today.tzinfo
         )
-        return cls.objects.filter(starts_at__gte=this_morning).first()
+        return cls.objects.filter(
+            is_published=True, starts_at__gte=this_morning
+        ).first()
 
     class Meta:
         ordering = ["starts_at"]

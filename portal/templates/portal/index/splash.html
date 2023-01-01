@@ -49,6 +49,8 @@
                 <ul>
                     {% for enrollment in active_semester.get_admins %}
                     <li><a href="{{ enrollment.user.get_absolute_url }}">{{ enrollment.user }}</a></li>
+                    {% empty %}
+                    <li class="has-text-grey">TBD</li>
                     {% endfor %}
                 </ul>
             </div>
@@ -56,7 +58,11 @@
             <div class="column is-4 has-text-centered">
                 <h2 class="title is-4 mb-2">Next Meeting</h2>
 
+                {% if next_meeting %}
                 <a href="{{ next_meeting.get_absolute_url }}">{{ next_meeting }}</a>
+                {% else %}
+                <span class="has-text-grey">None scheduled.</span>
+                {% endif %}
             </div>
         </div>
     </div>
