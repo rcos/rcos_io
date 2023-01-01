@@ -19,3 +19,8 @@ class IndexView(TemplateView):
 
 class HandbookView(TemplateView):
     template_name = "portal/index/handbook.html"
+
+    def get_context_data(self, **kwargs):
+        data = super().get_context_data(**kwargs)
+        data["initial_route"] = self.request.GET.get("initial_route")
+        return data
