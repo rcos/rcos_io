@@ -4,7 +4,7 @@
 <div class="block">
     <p class="mb-2">Register for RCOS via SIS to participate in {{ active_semester }} and receive course credit for your work.
         You will be graded on attendance, open source contributions, and more. <a href="{% url 'handbook' %}?initial_route=/grading/README" target="handbook">View rubric.</a></p>
-    <a href="#" class="button is-primary is-outlined is-block block">Register for RCOS on SIS for <strong>course credit</strong></a>
+    <a href="#" class="button is-primary is-block block">Register for RCOS on SIS for <strong>course credit</strong></a>
 </div>
 <p class="has-text-centered has-text-grey block">or</p>
 <div class="block">
@@ -14,6 +14,6 @@
     <form action="{% url 'users_enroll' %}" method="post" onsubmit="return confirm('Are you sure?')">
         {% csrf_token %}
         <input type="hidden" name="semester" value="{{ active_semester.pk }}">
-        <button href="#" class="button is-primary is-outlined is-block is-fullwidth" type="submit">Enroll in RCOS {{ active_semester }} for <strong>0 credits</strong></button>
+        <button href="#" class="button is-light  is-block is-fullwidth" type="submit">Enroll in RCOS {{ active_semester }} for <strong>0 credits</strong></button>
     </form>
 </div>
