@@ -6,9 +6,8 @@
         <h1 class="title">Your Profile</h1>
 
         <form method="post">
+            {% include "portal/includes/formerrors.html" %}
             {% csrf_token %}
-
-            {{ form.non_field_errors }}
 
             <div class="columns">
                 <div class="column">

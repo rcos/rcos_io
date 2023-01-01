@@ -8,6 +8,9 @@
 
         <form method="post">
             {% csrf_token %}
+            
+            {% include "portal/includes/formerrors.html" %}
+
             <div class="columns">
                 <div class="column">
                     <div class="field">

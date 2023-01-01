@@ -1,5 +1,6 @@
 from django import forms
 from portal.models import User, Project
+from django.core.exceptions import ValidationError
 
 
 class UserProfileForm(forms.ModelForm):
@@ -21,6 +22,13 @@ class ProposeProjectForm(forms.ModelForm):
         self.fields["summary"].widget.attrs.update({"class": "input"})
         self.fields["external_chat_url"].widget.attrs.update({"class": "input"})
         self.fields["homepage_url"].widget.attrs.update({"class": "input"})
+
+    def clean(self):
+        if self.instance.owner and not self.instance.owner.is_approved:
+            raise ValidationError(
+                "Only approved users can propose projects.", code="unapproved-owner"
+            )
+        return super().clean()
 
     class Meta:
         model = Project

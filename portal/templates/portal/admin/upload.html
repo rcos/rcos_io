@@ -6,6 +6,7 @@
         <h1 class="title">Upload Data</h1>
 
         <form method="post" enctype="multipart/form-data">
+            {% include "portal/includes/formerrors.html" %}
             {% csrf_token %}
             {{ form }}
             <input type="submit" value="Upload">
