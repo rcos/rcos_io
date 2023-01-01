@@ -29,6 +29,7 @@
                         <td><a href="{{ user.get_absolute_url }}{% target_semester_query %}">{{ user }}</a></td>
                         {% if target_semester %}
                         <td>
+                            {% if enrollment.project %}
                             <a href="{{ enrollment.project.get_absolute_url }}{% target_semester_query %}">
                                 {{ enrollment.project }}
                             </a>
@@ -36,6 +37,9 @@
                             {% if enrollment.is_project_lead %}
                             <span class="icon" title="Project Lead of {{ enrollment.project }}">👑</span>
                             {% endif %}
+                            {% endif %}
+                            {% else %}
+                            <span class="has-text-grey">-</span>
                             {% endif %}
                         </td>
                         <td>{{ enrollment.credits }}</td>

@@ -11,5 +11,9 @@
     <p class="mb-2">Not feeling ready to participate for course credit yet, or not able to take any more credits? You can still
         participate in RCOS for just experience.
     </p>
-    <a href="#" class="button is-primary is-outlined is-block">Enroll in RCOS {{ active_semester }} for <strong>experience</strong></a>
+    <form action="{% url 'users_enroll' %}" method="post" onsubmit="return confirm('Are you sure?')">
+        {% csrf_token %}
+        <input type="hidden" name="semester" value="{{ active_semester.pk }}">
+        <button href="#" class="button is-primary is-outlined is-block is-fullwidth" type="submit">Enroll in RCOS {{ active_semester }} for <strong>0 credits</strong></button>
+    </form>
 </div>

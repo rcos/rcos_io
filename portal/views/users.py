@@ -1,6 +1,9 @@
 from django.views.generic.edit import CreateView, DeleteView, UpdateView
 from . import SemesterFilteredListView, SemesterFilteredDetailView, SearchableListView
-from ..models import User, Enrollment
+from ..models import User, Enrollment, Semester
+from django.contrib.auth.decorators import login_required
+from django.shortcuts import redirect
+from django.contrib import messages
 
 
 class UserIndexView(SearchableListView, SemesterFilteredListView):
@@ -27,12 +30,10 @@ class UserDetailView(SemesterFilteredDetailView):
     context_object_name = "user"
 
 
-class EnrollmentCreateView(CreateView):
-    model = Enrollment
-    fields = ["semester"]
-    template_name = "portal/users/enroll.html"
-
-    def form_valid(self, form):
-        form.instance.user = self.request.user
-        form.instance.user = self.request.user
-        return super().form_valid(form)
+@login_required
+def enroll_user(request):
+    if request.method == "POST":
+        semester = Semester.objects.get(pk=request.POST["semester"])
+        messages.success(request, f"Welcome to RCOS {semester}!")
+        Enrollment(user=request.user, semester=semester).save()
+    return redirect("/")

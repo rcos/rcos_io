@@ -4,7 +4,7 @@ from portal.views.admin import upload_submitty_data
 
 from .views.index import HandbookView, IndexView
 from .views.meetings import MeetingIndexView, MeetingDetailView, meetings_api
-from .views.users import UserIndexView, UserDetailView
+from .views.users import UserIndexView, UserDetailView, enroll_user
 from .views.projects import ProjectProposeView, ProjectDetailView, ProjectIndexView
 from .views.auth import impersonate, profile, start_discord_link, discord_link_callback
 from portal.views.small_groups import SmallGroupDetailView, SmallGroupIndexView
@@ -23,6 +23,7 @@ urlpatterns = [
     # path("/auth/link/github", name="link_github")
     # path("/auth/link/github/callback", name="link_github_callback")
     path("users/", UserIndexView.as_view(), name="users_index"),
+    path("users/enroll/", enroll_user, name="users_enroll"),
     path("users/<int:pk>", UserDetailView.as_view(), name="users_detail"),
     path("projects/", ProjectIndexView.as_view(), name="projects_index"),
     path("projects/propose/", ProjectProposeView.as_view(), name="projects_propose"),

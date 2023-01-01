@@ -70,11 +70,15 @@ class ProjectDetailView(SemesterFilteredDetailView):
 
         return data
 
+
 class ProjectProposeView(LoginRequiredMixin, CreateView):
     form_class = ProposeProjectForm
     template_name = "portal/projects/propose.html"
 
     def form_valid(self, form):
         form.instance.owner = self.request.user
-        messages.success(self.request, "The project has been proposed and will be reviwed by Mentors and Coordinators shortly.")
+        messages.success(
+            self.request,
+            "The project has been proposed and will be reviwed by Mentors and Coordinators shortly.",
+        )
         return super().form_valid(form)

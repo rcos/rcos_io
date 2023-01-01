@@ -21,9 +21,11 @@ class ProposeProjectForm(forms.ModelForm):
         self.fields["summary"].widget.attrs.update({"class": "input"})
         self.fields["external_chat_url"].widget.attrs.update({"class": "input"})
         self.fields["homepage_url"].widget.attrs.update({"class": "input"})
+
     class Meta:
         model = Project
         fields = ["name", "summary", "tags", "external_chat_url", "homepage_url"]
+
 
 class UploadSubmittyDataForm(forms.Form):
     submitty_csv = forms.FileField()
