@@ -1,12 +1,15 @@
-<h2 class="subtitle mb-2">Not Enrolled</h2>
+<h2 class="subtitle is-2">Not Enrolled</h2>
 
-<p class="mb-2">
-    Our records from Submitty/SIS show you are not enrolled in RCOS for <strong>{{ active_semester }}</strong>
-    for <strong>credit</strong>. Once you register for RCOS on SIS, we will automatically pick up on your enrollment here.
-</p>
 
-<p class="mb-2">
-    If you want to participate in RCOS <strong>for just experience (no course credit)</strong>, you can enroll here:
-</p>
-
-<a href="#" class="button is-primary is-outlined is-block">Enroll in RCOS {{ active_semester }}</a>
+<div class="block">
+    <p class="mb-2">Register for RCOS via SIS to participate in {{ active_semester }} and receive course credit for your work.
+        You will be graded on attendance, open source contributions, and more. <a href="{% url 'handbook' %}?initial_route=/grading/README" target="handbook">View rubric.</a></p>
+    <a href="#" class="button is-primary is-outlined is-block block">Register for RCOS on SIS for <strong>course credit</strong></a>
+</div>
+<p class="has-text-centered has-text-grey block">or</p>
+<div class="block">
+    <p class="mb-2">Not feeling ready to participate for course credit yet, or not able to take any more credits? You can still
+        participate in RCOS for just experience.
+    </p>
+    <a href="#" class="button is-primary is-outlined is-block">Enroll in RCOS {{ active_semester }} for <strong>experience</strong></a>
+</div>
