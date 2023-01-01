@@ -18,10 +18,10 @@
             {% endif %}
         </li>
 
-        {% if project.tags|length > 0 %}
+        {% if project.tags.all|length > 0 %}
         <li>
             <span class="icon">🏷</span>
-            {{ tags|join:", "|default:"No trags" }}
+            {{ project.tags.all|join:", " }}
         </li>
         {% endif %}
 
