@@ -3,6 +3,16 @@
 {% load humanize %}
 
 {% block content %}
+
+{% if not meeting.is_published %}
+<div class="notification is-warning mb-0">
+    <div class="container">
+        <span class="icon">⚠</span>
+        This meeting has not yet been published. Details may change.
+    </div>
+</div>
+{% endif %}
+
 <section class="section">
     <div class="container">
         <h1 class="title is-1">{{ meeting.display_name }}</h1>
