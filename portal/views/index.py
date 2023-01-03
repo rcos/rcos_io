@@ -1,6 +1,6 @@
 from django.views.generic.base import TemplateView
 
-from portal.models import Enrollment, Meeting, Project
+from portal.models import Enrollment, Meeting, Project, Semester
 
 
 class IndexView(TemplateView):
@@ -8,6 +8,7 @@ class IndexView(TemplateView):
 
     def get_context_data(self, **kwargs):
         data = super().get_context_data(**kwargs)
+
         data["enrollment_count"] = Enrollment.objects.count()
         data["project_count"] = Project.objects.count()
         data["active_semester_coordinators"] = Enrollment.objects.filter(

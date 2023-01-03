@@ -1,3 +1,4 @@
+from typing import Optional
 from django.db import models
 from django.contrib.auth.models import AbstractUser, BaseUserManager
 from django.urls import reverse
@@ -259,11 +260,6 @@ class Project(TimestampedModel):
     summary = models.CharField(
         max_length=100, help_text="A one-line summary of the project"
     )
-    is_seeking_members = models.BooleanField(
-        "seeking members?",
-        default=False,
-        help_text="Whether the project is actively looking for new members to join",
-    )
 
     external_chat_url = models.URLField(
         blank=True, help_text="Optional URL to an external chat that this project uses"
@@ -301,6 +297,9 @@ class Project(TimestampedModel):
     def get_absolute_url(self):
         return reverse("projects_detail", kwargs={"slug": self.slug})
 
+    def is_seeking_members(self, semester: Semester) -> Optional["ProjectPitch"]:
+        return self.pitches.filter(semester=semester, project=self).first()
+
     def save(self, *args, **kwargs):
         if not self.slug or self.slug != slugify(self.name):
             self.slug = slugify(self.name)
@@ -329,6 +328,9 @@ class ProjectPitch(TimestampedModel):
         Project, on_delete=models.CASCADE, related_name="pitches"
     )
     url = models.URLField(help_text="Link to the pitch presentation")
+
+    def __str__(self) -> str:
+        return f"{self.semester} {self.project} Pitch: {self.url}"
 
 
 class ProjectProposal(TimestampedModel):

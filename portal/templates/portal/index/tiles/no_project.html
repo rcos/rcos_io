@@ -1,0 +1,34 @@
+{% load portal_extras %}
+
+<div class="is-flex is-flex-direction-column is-flex-grow-1">
+    <p>Here's a list of projects that are actively seeking members to join. Check out their pitch and contact the Project Lead if you are interested!</p>
+    
+    <div class="is-flex-grow-1" style="overflow:auto; max-height: 600px;">
+        <hr>
+        {% for pitch in active_semester.project_pitches.all %}
+        <div class="block">
+            <a class="is-block subtitle mb-0" href="{{ pitch.project.get_absolute_url }}{% active_semester_query %}">{{ pitch.project }}</a>
+            
+            <small class="has-text-grey">{{ pitch.project.summary }}</small>
+            
+            <div>
+                {% for tag in pitch.project.tags.all %}
+                <small class="tag is-light">{{ tag }}</small>
+                {% endfor %}
+            </div>
+            
+            <small>
+                <a href="{{ pitch.url }}" target="_blank">View Pitch</a> /
+                <a href="#" target="_blank">Discuss on Discord</a>
+            </small>
+            <hr>
+
+        </div>
+        {% empty %}
+        <p class="has-text-grey">None have been proposed yet! Check back again soon.</p>
+        {% endfor %}
+        </ul>
+    </div>
+    
+    <a href="{% url 'projects_index' %}?semester={{ active_semester.pk }}" class="button is-block is-link is-outlined">View All {{ active_semester }} Projects</a>
+</div>

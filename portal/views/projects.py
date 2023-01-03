@@ -31,7 +31,7 @@ class ProjectIndexView(SearchableListView, SemesterFilteredListView):
 
         self.is_seeking_members = self.request.GET.get("is_seeking_members") == "yes"
         if self.is_seeking_members:
-            queryset = queryset.filter(is_seeking_members=True)
+            queryset = queryset.filter(pitches__semester=self.target_semester)
             self.is_seeking_members = True
 
         return queryset.distinct()

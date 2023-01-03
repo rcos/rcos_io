@@ -62,13 +62,12 @@
             {% endif %}
 
             <div class="tile is-parent">
-                <div class="tile box is-child">
+                <div class="tile box is-child is-flex  is-flex-direction-column">
                     {% if active_semester is not None and enrollment is not None and enrollment.project is not None %}
                     {% include "./tiles/week_contributions.html" %}
                     {% elif active_semester is not None and enrollment is not None and enrollment.project is None %}
                     <h2 class="subtitle is-4 mb-2">Choose a Project</h2>
-                    <p>Here's a list of projects that are actively seeking members to join:</p>
-                    <p class="has-text-grey">Coming soon...</p>
+                    {% include "./tiles/no_project.html" %}
                     {% elif active_semester is not None and enrollment is None %}
                     {% include "./tiles/not_enrolled.html" %}
                     {% else %}

@@ -44,17 +44,6 @@
 </section>
 <section class="section">
     <div class="container">
-        {% if target_semester.is_active and project.is_seeking_members %}
-        {% project_leads project target_semester as project_leads %}
-        <div class="notification is-warning">
-            <strong>{{ project }}</strong> is seeking new members to join their team! If interested, reach out to Project Lead{{ project_leads|length|pluralize }}
-            {% for enrollment in project_leads %}
-            <a href="{{ enrollment.get_absolute_url }}">{{ enrollment.user }}</a>
-            {% endfor %}
-            to determine if this project is the right fit for you.
-        </div>
-        {% endif %}
-
         {% include "portal/projects/sections/team.html" with enrollments=target_semester_enrollments %}
 
         {% if target_semester_enrollments|length == 0 %}

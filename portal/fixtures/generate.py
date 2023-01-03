@@ -72,7 +72,6 @@ for i in range(30):
                 "owner": choice(users)["pk"],
                 "is_approved": random() > 0.2,
                 "summary": f.sentence(),
-                "is_seeking_members": random() > 0.9,
                 "updated_at": "2022-12-29T02:30:00+0000",
                 "created_at": "2022-12-29T02:30:00+0000",
             },
