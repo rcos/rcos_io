@@ -1,5 +1,5 @@
 from django import forms
-from portal.models import User, Project
+from portal.models import User, Project, Semester
 from django.core.exceptions import ValidationError
 
 
@@ -36,4 +36,5 @@ class ProposeProjectForm(forms.ModelForm):
 
 
 class UploadSubmittyDataForm(forms.Form):
+    semester = forms.ModelChoiceField(queryset=Semester.objects.all())
     submitty_csv = forms.FileField()

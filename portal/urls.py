@@ -1,6 +1,6 @@
 from django.urls import path
 
-from portal.views.admin import upload_submitty_data
+from portal.views.admin import import_submitty_data
 
 from .views.index import HandbookView, IndexView
 from .views.meetings import MeetingIndexView, MeetingDetailView, meetings_api
@@ -38,5 +38,5 @@ urlpatterns = [
         SmallGroupDetailView.as_view(),
         name="small_groups_detail",
     ),
-    path("admin/upload", upload_submitty_data, name="admin_upload"),
+    path("admin/import", import_submitty_data, name="admin_import"),
 ]

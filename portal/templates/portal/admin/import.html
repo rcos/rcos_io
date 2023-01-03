@@ -1,0 +1,58 @@
+{% extends "portal/base.html" %}
+
+{% block content %}
+<section class="section">
+    <div class="container">
+        <div class="columns">
+            <div class="column is-3">
+                <aside class="menu">
+                    <p class="menu-label">
+                        Import
+                    </p>
+                    <ul class="menu-list">
+                        <li><a class="is-active">From Submitty</a></li>
+                        <li><a>Users</a></li>
+                        <li><a>Projects</a></li>
+                    </ul>
+                    <p class="menu-label">
+                        Export
+                    </p>
+                    <ul class="menu-list">
+                        <li><a>Users</a></li>
+                        <li><a>Enrollments</a></li>
+                        <li><a>Projects</a></li>
+                        <li><a>Meetings</a></li>
+                    </ul>
+                </aside>
+            </div>
+
+            <div class="column">
+                <h1 class="title">Import Users & Enrollments From Submitty</h1>
+
+                <div class="content">
+                    <p>The CSV should be exported from Submitty and is expected to contain the following columns (order doesn't matter, exact name does):</p>
+                    <ul>
+                        {% for col in expected_columns %}
+                        <li><code>{{ col }}</code></li>
+                        {% endfor %}
+                    </ul>
+                    <p>
+                        Importing is <strong>imdepotent</strong>, so you can upload the same file (or the same file with later additions)
+                        without worrying about duplicating any data. Users and enrollments are updated if found and created when not found.
+                    </p>
+                </div>
+
+                <hr>
+                <form method="post" enctype="multipart/form-data" class="box">
+                    {% include "portal/includes/formerrors.html" %}
+                    {% csrf_token %}
+                    {{ form.as_div }}
+                    <br>
+                    <button type="submit" class="button">Upload</button>
+                </form>
+            </div>
+        </div>
+        
+    </div>
+</section>
+{% endblock %}
