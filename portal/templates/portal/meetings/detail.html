@@ -53,6 +53,13 @@
                 <div id="calendar"></div>
             </div>
         </div>
+
+        {% if request.user.is_superuser %}
+        <hr>
+        <div class="buttons">
+            <a href="{% url 'admin:portal_meeting_change' meeting.pk %}" class="button">Edit in Admin</a>
+        </div>
+        {% endif %}
     </div>
 </section>
 

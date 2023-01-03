@@ -83,6 +83,13 @@
 <section class="section">
     <div class="container">
         <p class="has-text-grey">Coming soon...</p>
+
+        {% if request.user.is_superuser %}
+        <hr>
+        <div class="buttons">
+            <a href="{% url 'admin:portal_user_change' user.pk %}" class="button">Edit in Admin</a>
+        </div>
+        {% endif %}
     </div>
 </section>
 {% endblock %}

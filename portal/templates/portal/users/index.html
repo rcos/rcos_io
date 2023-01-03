@@ -68,6 +68,14 @@
             {% endif %}
         </p>
         {% endif %}
+
+        {% if request.user.is_superuser %}
+        <hr>
+        <div class="buttons">
+            <a href="{% url 'admin:portal_user_changelist' %}" class="button">View in Admin</a>
+            <a href="{% url 'admin:portal_user_add' %}" class="button">Add in Admin</a>
+        </div>
+        {% endif %}
     </div>
 </section>
 {% endblock %}

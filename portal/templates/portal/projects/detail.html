@@ -109,7 +109,16 @@
         {% empty %}
         <p class="has-text-grey"><b>{{ project }}</b> has no source code repositories listed yet!</p>
         {% endfor %}
+        
+        
+        {% if request.user.is_superuser %}
+        <hr>
+        <div class="buttons">
+            <a href="{% url 'admin:portal_project_change' project.pk %}" class="button">Edit in Admin</a>
+        </div>
+        {% endif %}
     </div>
+
 </section>
 
 {% endblock %}
