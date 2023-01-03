@@ -42,8 +42,8 @@
         {% if request.user.is_superuser %}
         <hr>
         <div class="buttons">
-            <a href="{% url 'admin:portal_small_group_changelist' %}" class="button">View in Admin</a>
-            <a href="{% url 'admin:portal_small_group_add' %}" class="button">Add in Admin</a>
+            <a href="{% url 'admin:portal_smallgroup_changelist' %}" class="button">View in Admin</a>
+            <a href="{% url 'admin:portal_smallgroup_add' %}" class="button">Add in Admin</a>
         </div>
         {% endif %}
     </div>
