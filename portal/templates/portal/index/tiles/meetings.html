@@ -1,0 +1,21 @@
+<h2 class="title is-4 mb-2">Next Meeting</h2>
+
+<a class="is-size-5" href="{{ next_meeting.get_absolute_url }}">{{ next_meeting }}</a>
+
+<hr>
+
+<div id="calendar"></div>
+
+<script src="https://cdn.jsdelivr.net/npm/fullcalendar@6.0.1/index.global.min.js"
+    integrity="sha256-wKSlmJX2aO3MGLwAyZeYmYpSBBI42kGszk55a52vKqs=" crossorigin="anonymous"></script>
+
+<script>
+    document.addEventListener("DOMContentLoaded", function () {
+        var calendarEl = document.getElementById("calendar");
+        var calendar = new FullCalendar.Calendar(calendarEl, {
+            initialView: "dayGridMonth",
+            events: "/api/meetings"
+        });
+        calendar.render();
+    });
+</script>

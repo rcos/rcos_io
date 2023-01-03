@@ -63,13 +63,14 @@
 
             <div class="tile is-parent">
                 <div class="tile box is-child is-flex  is-flex-direction-column">
-                    {% if active_semester is not None and enrollment is not None and enrollment.project is not None %}
+                    {% if active_semester and enrollment and enrollment.project %}
                     {% include "./tiles/week_contributions.html" %}
-                    {% elif active_semester is not None and enrollment is not None and enrollment.project is None %}
-                    <h2 class="title is-4 mb-2">Choose a Project</h2>
+                    {% elif active_semester and enrollment and enrollment.project is None %}
                     {% include "./tiles/no_project.html" %}
-                    {% elif active_semester is not None and enrollment is None %}
+                    {% elif request.user.is_approved and active_semester is not None and enrollment is None %}
                     {% include "./tiles/not_enrolled.html" %}
+                    {% elif not request.user.is_approved %}
+                    {% include "./tiles/not_approved.html" %}
                     {% else %}
                     <p class="has-text-grey">When a semester starts, you'll be able to access useful information on this dashboard!</p>
                     {% endif %}
@@ -78,54 +79,10 @@
 
             <div class="tile is-vertical is-parent">
                 <div class="tile is-child box">
-                    <h2 class="title is-4 mb-2">Need Support?</h2>
-
-                    <div class="columns">
-                        {% if small_group %}
-                        <div class="column">
-                            <small class="has-text-grey">Your Small Group Mentors</small>
-                            <ul>
-                                {% for mentor in small_group.mentors.all %}
-                                <li><a href="{{ mentor.get_absolute_url }}{% active_semester_query %}">{{ mentor }}</a></li>
-                                {% endfor %}
-                            </ul>
-                        </div>
-                        {% endif %}
-
-                        <div class="column">
-                            <small class="has-text-grey">Coordinators & Faculty Advisors</small>
-                            <ul>
-                                {% for enrollment in semester_admins %}
-                                <li>
-                                    <a href="{{ enrollment.get_absolute_url }}">{{ enrollment.user }}</a>
-                                </li>
-                                {% endfor %}
-                            </ul>
-                        </div>
-                    </div>
+                    {% include "./tiles/support.html" %}
                 </div>
                 <div class="tile is-child box">
-                    <h2 class="title is-4 mb-2">Next Meeting</h2>
-
-                    <a class="is-size-5" href="{{ next_meeting.get_absolute_url }}">{{ next_meeting }}</a>
-                    
-                    <hr>
-
-                    <div id="calendar"></div>
-
-                    <script src="https://cdn.jsdelivr.net/npm/fullcalendar@6.0.1/index.global.min.js"
-                        integrity="sha256-wKSlmJX2aO3MGLwAyZeYmYpSBBI42kGszk55a52vKqs=" crossorigin="anonymous"></script>
-
-                    <script>
-                        document.addEventListener("DOMContentLoaded", function () {
-                            var calendarEl = document.getElementById("calendar");
-                            var calendar = new FullCalendar.Calendar(calendarEl, {
-                                initialView: "dayGridMonth",
-                                events: "/api/meetings"
-                            });
-                            calendar.render();
-                        });
-                    </script>
+                    {% include "./tiles/meetings.html" %}
                 </div>
             </div>
         </div>

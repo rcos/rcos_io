@@ -1,0 +1,27 @@
+{% load portal_extras %}
+
+<h2 class="title is-4 mb-2">Need Support?</h2>
+
+<div class="columns">
+    {% if small_group %}
+    <div class="column">
+        <small class="has-text-grey">Your Small Group Mentors</small>
+        <ul>
+            {% for mentor in small_group.mentors.all %}
+            <li><a href="{{ mentor.get_absolute_url }}{% active_semester_query %}">{{ mentor }}</a></li>
+            {% endfor %}
+        </ul>
+    </div>
+    {% endif %}
+
+    <div class="column">
+        <small class="has-text-grey">Coordinators & Faculty Advisors</small>
+        <ul>
+            {% for enrollment in semester_admins %}
+            <li>
+                <a href="{{ enrollment.get_absolute_url }}">{{ enrollment.user }}</a>
+            </li>
+            {% endfor %}
+        </ul>
+    </div>
+</div>

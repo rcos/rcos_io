@@ -1,18 +1,25 @@
 <h2 class="title is-2">Not Enrolled</h2>
 
-<div class="block">
-    <p class="mb-2">Register for RCOS via SIS to participate in {{ active_semester }} and receive course credit for your work.
-        You will be graded on attendance, open source contributions, and more. <a href="{% url 'handbook' %}?initial_route=/grading/README" target="handbook">View rubric.</a></p>
-    <a href="#" class="button is-primary is-block block">Register for RCOS on SIS for <strong>course credit</strong></a>
-</div>
-<p class="has-text-centered has-text-grey block">or</p>
-<div class="block">
-    <p class="mb-2">Not feeling ready to participate for course credit yet, or not able to take any more credits? You can still
-        participate in RCOS for just experience.
+<div class="content block">
+    <p class="block">To participate in RCOS, you must enroll by clicking the button below OR by registering for RCOS on SIS.</p>
+    <p class="block">
+        If you <strong>register for the course on SIS</strong>, you can receive course credit for the semester. You will be graded on the follow aspects:
+        <ul>
+            <li>attendance</li>
+            <li>open source contributions</li>
+            <li>status updates & project documentation</li>
+            <li>presentations</li>
+            <li><a href="{% url 'handbook' %}?initial_route=/grading/rubric" target="handbook">view rubric</a></li>
+        </ul>
+    </p>
+    <p class="block">
+        If you do <strong class="has-text-danger">not register</strong> for the course on SIS, you can still participate fully in RCOS for just experience
+        and will not be held to any attendance or grading policies, though we heavily encourage you to attend all meetings
+        and contribute as much as you can. <span class="has-text-grey">This is a good option for those new to RCOS who want to try it out.</span>
     </p>
     <form action="{% url 'users_enroll' %}" method="post" onsubmit="return confirm('Are you sure?')">
         {% csrf_token %}
         <input type="hidden" name="semester" value="{{ active_semester.pk }}">
-        <button href="#" class="button is-light  is-block is-fullwidth" type="submit">Enroll in RCOS {{ active_semester }} for <strong>0 credits</strong></button>
+        <button href="#" class="button is-primary  is-block is-fullwidth" type="submit">Enroll in RCOS {{ active_semester }}</button>
     </form>
 </div>
