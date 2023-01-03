@@ -8,6 +8,7 @@ from django.db.models.signals import pre_save
 from django.core.exceptions import ValidationError
 from django.template.defaultfilters import slugify
 from portal.services import discord
+import re
 
 
 class TimestampedModel(models.Model):
@@ -504,10 +505,28 @@ class Meeting(TimestampedModel):
         help_text="Optional publicly displayed description for the meeting. Supports Markdown.",
     )
 
+    presentation_url = models.URLField(
+        blank=True,
+        help_text="The URL to the meeting's slideshow presentation if exists",
+    )
+
     # Relationships
     attendances = models.ManyToManyField(
         User, through="MeetingAttendance", related_name="meeting_attendances"
     )
+
+    @property
+    def presentation_embed_url(self):
+        # https://docs.google.com/presentation/d/1McqgFPrXd3efJty39ekgZpj2kVwapkY6iuU6zGFKuEA/edit#slide=id.g550345e1c6_0_74
+        if (
+            self.presentation_url
+            and "docs.google.com/presentation/d" in self.presentation_url
+        ):
+            match = re.search(r"[-\w]{25,}", self.presentation_url)
+            if match:
+                presentation_id = match.group()
+                return f"https://docs.google.com/presentation/d/{presentation_id}/embed"
+        return None
 
     @property
     def display_name(self):
