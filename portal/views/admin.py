@@ -5,6 +5,7 @@ from django.shortcuts import render
 from portal.models import User, Enrollment, Semester
 from typing import TypedDict
 from django.contrib.auth.decorators import login_required, user_passes_test
+from django.db.models import Q
 
 
 def is_admin(user):
@@ -35,20 +36,18 @@ def import_submitty_data(request):
             file = request.FILES["submitty_csv"]
             semester = Semester.objects.get(pk=request.POST["semester"])
 
-            print(semester)
-            users = []
             rows = TextIOWrapper(file, encoding="utf-8", newline="")
             for row in DictReader(rows):
                 row: SubmittyCSVRow
-                users.append(row)
 
                 if not row["Email"]:
                     print("Skipping", row)
                     continue
 
+                rcs_id = row["Email"].removesuffix("@rpi.edu")
                 # Find or create user
                 try:
-                    user = User.objects.get(email=row["Email"])
+                    user = User.objects.get(Q(rcs_id=rcs_id) | Q(email=row["Email"]))
                     print("Found", user)
                 except User.DoesNotExist:
                     user = User(email=row["Email"])
