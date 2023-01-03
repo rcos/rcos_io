@@ -212,6 +212,8 @@ MAGICLINK_SIGNUP_LOGIN_REDIRECT = "/"
 
 DEFAULT_FROM_EMAIL = "rcos.management@gmail.com"
 
+SERVER_EMAIL = DEFAULT_FROM_EMAIL
+
 EMAIL_BACKEND = (
     "django.core.mail.backends.console.EmailBackend"
     if DEBUG
