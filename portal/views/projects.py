@@ -39,6 +39,11 @@ class ProjectIndexView(SearchableListView, SemesterFilteredListView):
     def get_context_data(self, **kwargs):
         data = super().get_context_data(**kwargs)
         data["is_seeking_members"] = self.is_seeking_members
+        data["can_propose_project"] = (
+            self.request.user.can_propose_project(self.target_semester)
+            if self.request.user.is_authenticated
+            else False
+        )
         return data
 
 

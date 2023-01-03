@@ -40,6 +40,11 @@ class Semester(TimestampedModel):
         help_text="The last day of the semester according to the RPI Academic Calendar: https://info.rpi.edu/registrar/academic-calendar",
     )
 
+    @classmethod
+    def get_active(cls):
+        now = timezone.now().date()
+        return cls.objects.filter(start_date__lte=now, end_date__gte=now).first()
+
     @property
     def enrollment_count(self):
         return self.enrollments.count()
@@ -177,6 +182,29 @@ class User(AbstractUser, TimestampedModel):
             .order_by("-start_date")
             .distinct()
         )
+
+    def can_propose_project(self, semester: Semester) -> bool:
+        if not self.is_approved or not self.is_active:
+            return False
+
+        if (
+            not semester
+            or not semester.is_active
+            or not semester.is_accepting_new_projects
+        ):
+            return False
+
+        # Users can only propose a project if they aren't currently enrolled in a project
+        # and can own a max of 4 at one time
+        if self.owned_projects.count() >= 4:
+            return False
+        try:
+            if Enrollment.objects.get(user=self, semester=semester).project:
+                return False
+        except Enrollment.DoesNotExist:
+            return True
+
+        return True
 
     def get_absolute_url(self):
         return reverse("users_detail", args=[str(self.id)])

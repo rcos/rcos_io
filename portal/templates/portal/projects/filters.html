@@ -51,6 +51,8 @@
             <strong>All Semesters</strong>
             {% endif %}
         </p>
+        {% if can_propose_project%}
         <p class="level-item"><a class="button is-success" href="{% url 'projects_propose' %}">Propose Project</a></p>
+        {% endif %}
     </div>
 </nav>

@@ -5,16 +5,19 @@ from django.shortcuts import render
 from portal.models import User, Enrollment, Semester
 from typing import TypedDict
 
-SubmittyCSVRow = TypedDict('SubmittyCSVRow', {
-    'First Name': str,
-    'Last Name': str,
-    'User ID': str,
-    'Email': str,
-    'Secondary Email': str,
-    'Registration Section': str,
-    'Rotation Section': int,
-    'Group': str
-})
+SubmittyCSVRow = TypedDict(
+    "SubmittyCSVRow",
+    {
+        "First Name": str,
+        "Last Name": str,
+        "User ID": str,
+        "Email": str,
+        "Secondary Email": str,
+        "Registration Section": str,
+        "Rotation Section": int,
+        "Group": str,
+    },
+)
 
 
 def import_submitty_data(request):
@@ -31,7 +34,7 @@ def import_submitty_data(request):
                 row: SubmittyCSVRow
                 users.append(row)
 
-                if not row['Email']:
+                if not row["Email"]:
                     print("Skipping", row)
                     continue
 
@@ -56,15 +59,15 @@ def import_submitty_data(request):
 
                 # Upsert enrollment
                 enrollment, is_new = Enrollment.objects.update_or_create(
-                    semester=semester,
-                    user=user,
-                    defaults={
-                        "credits": credits
-                    }
+                    semester=semester, user=user, defaults={"credits": credits}
                 )
 
                 print("Created" if is_new else "Updated", "enrollment", enrollment)
     else:
         form = UploadSubmittyDataForm()
 
-    return render(request, "portal/admin/import.html", {"form": form, "expected_columns": SubmittyCSVRow.__required_keys__})
+    return render(
+        request,
+        "portal/admin/import.html",
+        {"form": form, "expected_columns": SubmittyCSVRow.__required_keys__},
+    )
