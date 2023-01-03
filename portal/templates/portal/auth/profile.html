@@ -11,10 +11,13 @@
 
             <div class="columns">
                 <div class="column">
-                    <div class="field">
-                        <label class="label">Email</label>
-                        <div class="control">
+                    <label class="label">Email</label>
+                    <div class="field has-addons">
+                        <div class="control is-flex-grow-1">
                             <input type="text" class="input" value="{{ request.user.email }}" readonly disabled>
+                        </div>
+                        <div class="control">
+                            <a href="#" class="button">Change</a>
                         </div>
                     </div>
                 </div>

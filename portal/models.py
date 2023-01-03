@@ -113,7 +113,11 @@ class User(AbstractUser, TimestampedModel):
 
     username = None
     email = models.EmailField("primary email address", unique=True)
-    is_approved = models.BooleanField("approved?", default=False)
+    is_approved = models.BooleanField(
+        "approved?",
+        default=False,
+        help_text="Identity is verified and can participate in RCOS",
+    )
     role = models.CharField(choices=ROLE_CHOICES, max_length=30, default=EXTERNAL)
 
     # Set for RPI users only
@@ -122,6 +126,7 @@ class User(AbstractUser, TimestampedModel):
         max_length=30,
         help_text="If the user is an RPI user, their RCS ID.",
         verbose_name="RCS ID",
+        unique=True,
     )
     graduation_year = models.PositiveIntegerField(
         null=True,

@@ -58,3 +58,6 @@ def discord_link_callback(request):
     request.user.save()
 
     return redirect("/")
+
+
+# def ChangeEmailView(FormView):
