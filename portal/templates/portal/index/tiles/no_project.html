@@ -20,8 +20,11 @@
             </div>
             
             <small>
-                <a href="{{ pitch.url }}" target="_blank">View Pitch</a> /
-                <a href="#" target="_blank">Discuss on Discord</a>
+                <a href="{{ pitch.url }}" target="_blank">View Pitch</a>
+                {% if pitch.project.discord_text_channel_url %}
+                /
+                <a href="{{ pitch.project.discord_text_channel_url }}" target="_blank">Discuss on Discord</a>
+                {% endif %}
             </small>
             <hr>
 

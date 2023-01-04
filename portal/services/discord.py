@@ -1,6 +1,6 @@
 import requests
-from typing import Any, Dict, NotRequired, TypedDict, Union, cast
-from rcos_io import settings
+from typing import Any, Dict, NotRequired, Optional, TypedDict, Union, cast
+from django.conf import settings
 
 DISCORD_VERSION_NUMBER = "10"
 DISCORD_API_ENDPOINT = f"https://discord.com/api/v{DISCORD_VERSION_NUMBER}"
@@ -247,3 +247,57 @@ def set_member_nickname(user_id: str, nickname: str):
     # https://requests.readthedocs.io/en/latest/user/quickstart/#response-status-codes
     # throws HTTPError for 4XX or 5XX
     return response
+
+
+class ServerScheduledEvent(TypedDict):
+    id: str
+    guild_id: str
+    name: str
+    description: NotRequired[str]
+    scheduled_start_time: str
+    scheduled_end_time: NotRequired[str]
+    privacy_level: str
+    status: str
+
+
+def get_server_event(event_id: str) -> ServerScheduledEvent:
+    """
+    https://discord.com/developers/docs/resources/guild-scheduled-event#get-guild-scheduled-event
+    """
+    response = requests.get(
+        f"{DISCORD_API_ENDPOINT}/guilds/{settings.DISCORD_SERVER_ID}/scheduled-events/{event_id}",
+        headers=HEADERS,
+        timeout=3,
+    )
+    response.raise_for_status()
+    # https://requests.readthedocs.io/en/latest/user/quickstart/#response-status-codes
+    # throws HTTPError for 4XX or 5XX
+    return cast(Dict[str, Any], response.json())
+
+
+def create_server_event(
+    name: str,
+    scheduled_start_time: str,
+    scheduled_end_time: str,
+    description: str,
+    location: Optional[str],
+) -> ServerScheduledEvent:
+    """
+    https://discord.com/developers/docs/resources/guild-scheduled-event#create-guild-scheduled-event
+    """
+    response = requests.post(
+        f"{DISCORD_API_ENDPOINT}/guilds/{settings.DISCORD_SERVER_ID}/scheduled-events",
+        json={
+            "entity_metadata": {"location": location},
+            "name": name,
+            "description": description,
+            "entity_type": 3,  # external event
+            "scheduled_start_time": scheduled_start_time,
+            "scheduled_end_time": scheduled_end_time,
+            "privacy_level": 2,
+        },
+        headers=HEADERS,
+        timeout=3,
+    )
+    response.raise_for_status()
+    return response.json()

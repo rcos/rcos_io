@@ -1,6 +1,6 @@
 from gql import Client, gql
 from gql.transport.requests import RequestsHTTPTransport
-from rcos_io import settings
+from django.conf import settings
 
 
 def client_factory():

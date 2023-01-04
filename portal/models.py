@@ -4,11 +4,12 @@ from django.contrib.auth.models import AbstractUser, BaseUserManager
 from django.urls import reverse
 from django.utils import timezone
 from django.db.models import Q
-from django.db.models.signals import pre_save
+from django.db.models.signals import pre_save, post_save
 from django.core.exceptions import ValidationError
 from django.template.defaultfilters import slugify
 from portal.services import discord
 import re
+from django.conf import settings
 
 
 class TimestampedModel(models.Model):
@@ -284,6 +285,12 @@ class Project(TimestampedModel):
 
     discord_voice_channel_id = models.CharField(max_length=200, blank=True)
 
+    @property
+    def discord_text_channel_url(self):
+        if self.discord_text_channel_id:
+            return f"https://discord.com/channels/{settings.DISCORD_SERVER_ID}/{self.discord_text_channel_id}"
+        return None
+
     def get_semester_count(self):
         return (
             Project.objects.filter(id=self.id, enrollments__semester__isnull=False)
@@ -510,6 +517,10 @@ class Meeting(TimestampedModel):
         help_text="The URL to the meeting's slideshow presentation if exists",
     )
 
+    discord_event_id = models.CharField(
+        blank=True, max_length=len("759071349561491526") + 5
+    )
+
     # Relationships
     attendances = models.ManyToManyField(
         User, through="MeetingAttendance", related_name="meeting_attendances"
@@ -543,6 +554,17 @@ class Meeting(TimestampedModel):
     def get_absolute_url(self):
         return reverse("meetings_detail", args=[str(self.id)])
 
+    def sync_discord_event(self):
+        if not self.discord_event_id and self.is_published:
+            event = discord.create_server_event(
+                name=self.name,
+                scheduled_start_time=self.starts_at.isoformat(),
+                scheduled_end_time=self.ends_at.isoformat(),
+                description=self.description_markdown,
+                location=self.location,
+            )
+            self.discord_event_id = event["id"]
+
     def __str__(self) -> str:
         return f"{self.display_name} - {self.starts_at.strftime('%a %b %-d %Y @ %-I:%M %p')}"
 
@@ -559,6 +581,16 @@ class Meeting(TimestampedModel):
     class Meta:
         ordering = ["starts_at"]
         get_latest_by = ["starts_at"]
+
+
+def sync_meeting_with_discord_event_on_save(
+    sender, instance: Meeting, created, *args, **kwargs
+):
+    # Check if Discord event exists
+    instance.sync_discord_event()
+
+
+post_save.connect(sync_meeting_with_discord_event_on_save, sender=Meeting)
 
 
 class MeetingAttendance(TimestampedModel):

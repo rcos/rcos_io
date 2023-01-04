@@ -2,7 +2,7 @@ from django.shortcuts import redirect
 from django.core.exceptions import BadRequest
 from portal.forms import UserProfileForm
 from portal.services import discord
-from rcos_io import settings
+from django.conf import settings
 from portal.models import User
 from requests import HTTPError
 from django.contrib.auth.decorators import login_required
