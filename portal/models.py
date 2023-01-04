@@ -555,15 +555,30 @@ class Meeting(TimestampedModel):
         return reverse("meetings_detail", args=[str(self.id)])
 
     def sync_discord_event(self):
+        description = f"""**{self.get_type_display()} Meeting**
+        
+        View details: https://rcos.up.railway.app/meetings/{self.pk}
+        {f'Slides: {self.presentation_url}' if self.presentation_url else ''}
+        """
         if not self.discord_event_id and self.is_published:
             event = discord.create_server_event(
-                name=self.name,
+                name=self.display_name,
                 scheduled_start_time=self.starts_at.isoformat(),
                 scheduled_end_time=self.ends_at.isoformat(),
-                description=self.description_markdown,
+                description=description,
                 location=self.location,
             )
             self.discord_event_id = event["id"]
+            self.save()
+        elif self.discord_event_id and self.is_published:
+            discord.update_server_event(
+                self.discord_event_id,
+                name=self.display_name,
+                scheduled_start_time=self.starts_at.isoformat(),
+                scheduled_end_time=self.ends_at.isoformat(),
+                description=description,
+                location=self.location,
+            )
 
     def __str__(self) -> str:
         return f"{self.display_name} - {self.starts_at.strftime('%a %b %-d %Y @ %-I:%M %p')}"

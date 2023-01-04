@@ -301,3 +301,32 @@ def create_server_event(
     )
     response.raise_for_status()
     return response.json()
+
+
+def update_server_event(
+    event_id: str,
+    name: str,
+    scheduled_start_time: str,
+    scheduled_end_time: str,
+    description: str,
+    location: Optional[str],
+) -> ServerScheduledEvent:
+    """
+    https://discord.com/developers/docs/resources/guild-scheduled-event#create-guild-scheduled-event
+    """
+    response = requests.patch(
+        f"{DISCORD_API_ENDPOINT}/guilds/{settings.DISCORD_SERVER_ID}/scheduled-events/{event_id}",
+        json={
+            "entity_metadata": {"location": location},
+            "name": name,
+            "description": description,
+            "entity_type": 3,  # external event
+            "scheduled_start_time": scheduled_start_time,
+            "scheduled_end_time": scheduled_end_time,
+            "privacy_level": 2,
+        },
+        headers=HEADERS,
+        timeout=3,
+    )
+    response.raise_for_status()
+    return response.json()
