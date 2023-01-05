@@ -10,6 +10,7 @@ def load_semesters(request):
     active_semester = next(
         (semester for semester in semesters if semester.is_active), None
     )
+
     return {"semesters": semesters, "active_semester": active_semester}
 
 

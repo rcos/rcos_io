@@ -1,4 +1,5 @@
 from django.views.generic.base import TemplateView
+from portal.forms import SubmitAttendanceForm
 
 from portal.models import Enrollment, Meeting, Project, Semester
 
@@ -9,12 +10,14 @@ class IndexView(TemplateView):
     def get_context_data(self, **kwargs):
         data = super().get_context_data(**kwargs)
 
+        data["submit_attendance_form"] = SubmitAttendanceForm()
         data["enrollment_count"] = Enrollment.objects.count()
         data["project_count"] = Project.objects.count()
         data["active_semester_coordinators"] = Enrollment.objects.filter(
             is_coordinator=True
         )
         data["next_meeting"] = Meeting.get_next()
+
         return data
 
 

@@ -10,7 +10,7 @@ from django.views.decorators.cache import cache_page
 from django.views.generic import DetailView, ListView
 from django.views.generic.edit import FormView
 
-from portal.forms import SubmitAttendanceCodeForm
+from portal.forms import SubmitAttendanceForm
 
 from ..models import Meeting, MeetingAttendance, MeetingAttendanceCode
 
@@ -61,10 +61,10 @@ def meetings_api(request):
 
 class SubmitAttendanceFormView(FormView):
     template_name = "portal/meetings/attendance/submit.html"
-    form_class = SubmitAttendanceCodeForm
+    form_class = SubmitAttendanceForm
     success_url = "/"
 
-    def form_valid(self, form: SubmitAttendanceCodeForm):
+    def form_valid(self, form: SubmitAttendanceForm):
         code = form.cleaned_data["code"]
         user = self.request.user
 

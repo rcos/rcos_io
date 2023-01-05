@@ -51,7 +51,8 @@ class UploadSubmittyDataForm(forms.Form):
     submitty_csv = forms.FileField()
 
 
-class SubmitAttendanceCodeForm(forms.Form):
+class SubmitAttendanceForm(forms.Form):
     code = forms.CharField(
-        help_text="The attendance code your Mentor or meeting host displayed"
+        label="Attendance Code",
+        help_text="The attendance code your Mentor or meeting host displayed",
     )

@@ -1,6 +1,22 @@
-<h2 class="title is-4 mb-2">Next Meeting</h2>
+{% load crispy_forms_tags %}
+<h2 class="title is-4 mb-2">Meetings</h2>
 
-<a class="is-size-5" href="{{ next_meeting.get_absolute_url }}">{{ next_meeting }}</a>
+<form action="{% url 'submit_attendance' %}" method="post">
+    {% csrf_token %}
+
+    <div class="columns">
+        <div class="column">
+            {{ submit_attendance_form|crispy }}
+        </div>
+    </div>
+</form>
+
+<hr>
+
+<div>
+    <small class="has-text-grey is-block">Next Up</small>
+    <a class="is-size-5 is-block" href="{{ next_meeting.get_absolute_url }}">{{ next_meeting }}</a>
+</div>
 
 <hr>
 
