@@ -1,6 +1,8 @@
 from django import forms
 from portal.models import User, Project, Semester
 from django.core.exceptions import ValidationError
+from crispy_forms.helper import FormHelper
+from crispy_forms.layout import Layout, Field, Submit
 
 
 class BulmaTextInput(forms.Widget):
@@ -8,12 +10,6 @@ class BulmaTextInput(forms.Widget):
 
 
 class UserProfileForm(forms.ModelForm):
-    def __init__(self, *args, **kwargs):
-        super().__init__(*args, **kwargs)
-        self.fields["first_name"].widget.attrs.update({"class": "input"})
-        self.fields["last_name"].widget.attrs.update({"class": "input"})
-        self.fields["graduation_year"].widget.attrs.update({"class": "input"})
-
     class Meta:
         model = User
         fields = ["first_name", "last_name", "graduation_year"]
