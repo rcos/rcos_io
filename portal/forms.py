@@ -32,13 +32,6 @@ class ChangeEmailForm(forms.Form):
 
 
 class ProposeProjectForm(forms.ModelForm):
-    def __init__(self, *args, **kwargs):
-        super().__init__(*args, **kwargs)
-        self.fields["name"].widget.attrs.update({"class": "input"})
-        self.fields["summary"].widget.attrs.update({"class": "input"})
-        self.fields["external_chat_url"].widget.attrs.update({"class": "input"})
-        self.fields["homepage_url"].widget.attrs.update({"class": "input"})
-
     def clean(self):
         if self.instance.owner and not self.instance.owner.is_approved:
             raise ValidationError(

@@ -274,7 +274,7 @@ class Project(TimestampedModel):
 
     homepage_url = models.URLField(
         blank=True,
-        help_text="Optional URL to a homepage for the project, potentially where it is deloyed",
+        help_text="Optional URL to a homepage for the project, potentially where it is publicly deployed or to documentation",
     )
 
     tags = models.ManyToManyField(ProjectTag, blank=True, related_name="projects")
