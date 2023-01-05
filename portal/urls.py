@@ -12,7 +12,12 @@ from .views.auth import (
     verify_change_email,
 )
 from .views.index import HandbookView, IndexView
-from .views.meetings import MeetingDetailView, MeetingIndexView, meetings_api
+from .views.meetings import (
+    MeetingDetailView,
+    MeetingIndexView,
+    SubmitAttendanceFormView,
+    meetings_api,
+)
 from .views.projects import ProjectDetailView, ProjectIndexView, ProjectProposeView
 from .views.users import UserDetailView, UserIndexView, enroll_user
 
@@ -39,8 +44,9 @@ urlpatterns = [
     path("projects/<int:pk>", ProjectDetailView.as_view(), name="projects_detail"),
     path("projects/<slug:slug>", ProjectDetailView.as_view(), name="projects_detail"),
     path("meetings/", MeetingIndexView.as_view(), name="meetings_index"),
-    path("api/meetings", meetings_api, name="meetings_api"),
+    path("attend", SubmitAttendanceFormView.as_view(), name="submit_attendance"),
     path("meetings/<int:pk>", MeetingDetailView.as_view(), name="meetings_detail"),
+    path("api/meetings", meetings_api, name="meetings_api"),
     path("small_groups/", SmallGroupIndexView.as_view(), name="small_groups_index"),
     path(
         "small_groups/<int:pk>",

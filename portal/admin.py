@@ -29,6 +29,11 @@ class MeetingAttendanceInline(admin.TabularInline):
     extra = 1
 
 
+class MeetingAttendanceCodeInline(admin.TabularInline):
+    model = MeetingAttendanceCode
+    extra = 1
+
+
 class StatusUpdateSubmissionInline(admin.StackedInline):
     model = StatusUpdateSubmission
     extra = 1
@@ -122,7 +127,7 @@ class MeetingAdmin(admin.ModelAdmin):
     list_display = ("display_name", "type", "starts_at", "is_published")
     search_fields = ("name", "type")
     list_filter = ("starts_at", "type", "is_published")
-    inlines = (MeetingAttendanceInline,)
+    inlines = (MeetingAttendanceCodeInline, MeetingAttendanceInline)
     actions = (make_published,)
 
 

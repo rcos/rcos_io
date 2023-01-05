@@ -3,7 +3,7 @@ from crispy_forms.layout import Field, Layout, Submit
 from django import forms
 from django.core.exceptions import ValidationError
 
-from portal.models import Project, Semester, User
+from portal.models import MeetingAttendanceCode, Project, Semester, User
 
 
 class BulmaTextInput(forms.Widget):
@@ -34,11 +34,12 @@ class ChangeEmailForm(forms.Form):
 
 class ProposeProjectForm(forms.ModelForm):
     def clean(self):
-        if self.instance.owner and not self.instance.owner.is_approved:
+        cleaned_data = super().clean()
+
+        if cleaned_data["owner"] and not cleaned_data["owner"].is_approved:
             raise ValidationError(
                 "Only approved users can propose projects.", code="unapproved-owner"
             )
-        return super().clean()
 
     class Meta:
         model = Project
@@ -48,3 +49,9 @@ class ProposeProjectForm(forms.ModelForm):
 class UploadSubmittyDataForm(forms.Form):
     semester = forms.ModelChoiceField(queryset=Semester.objects.all())
     submitty_csv = forms.FileField()
+
+
+class SubmitAttendanceCodeForm(forms.Form):
+    code = forms.CharField(
+        help_text="The attendance code your Mentor or meeting host displayed"
+    )

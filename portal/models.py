@@ -553,6 +553,11 @@ class Meeting(TimestampedModel):
             else "grey"
         )
 
+    @property
+    def is_ongoing(self):
+        now = timezone.now()
+        return self.starts_at < now < self.ends_at
+
     def get_absolute_url(self):
         return reverse("meetings_detail", args=[str(self.id)])
 
@@ -562,25 +567,30 @@ class Meeting(TimestampedModel):
         View details: https://rcos.up.railway.app/meetings/{self.pk}
         {f'Slides: {self.presentation_url}' if self.presentation_url else ''}
         """
-        if not self.discord_event_id and self.is_published:
-            event = discord.create_server_event(
-                name=self.display_name,
-                scheduled_start_time=self.starts_at.isoformat(),
-                scheduled_end_time=self.ends_at.isoformat(),
-                description=description,
-                location=self.location,
-            )
-            self.discord_event_id = event["id"]
-            self.save()
-        elif self.discord_event_id and self.is_published:
-            discord.update_server_event(
-                self.discord_event_id,
-                name=self.display_name,
-                scheduled_start_time=self.starts_at.isoformat(),
-                scheduled_end_time=self.ends_at.isoformat(),
-                description=description,
-                location=self.location,
-            )
+
+        try:
+            if not self.discord_event_id and self.is_published:
+                event = discord.create_server_event(
+                    name=self.display_name,
+                    scheduled_start_time=self.starts_at.isoformat(),
+                    scheduled_end_time=self.ends_at.isoformat(),
+                    description=description,
+                    location=self.location,
+                )
+                self.discord_event_id = event["id"]
+                self.save()
+            elif self.discord_event_id and self.is_published:
+                discord.update_server_event(
+                    self.discord_event_id,
+                    name=self.display_name,
+                    scheduled_start_time=self.starts_at.isoformat(),
+                    scheduled_end_time=self.ends_at.isoformat(),
+                    description=description,
+                    location=self.location,
+                )
+        except:
+            # TODO: handle
+            pass
 
     def __str__(self) -> str:
         return f"{self.display_name} - {self.starts_at.strftime('%a %b %-d %Y @ %-I:%M %p')}"
@@ -613,6 +623,7 @@ post_save.connect(sync_meeting_with_discord_event_on_save, sender=Meeting)
 class MeetingAttendance(TimestampedModel):
     meeting = models.ForeignKey(Meeting, on_delete=models.CASCADE)
     user = models.ForeignKey(User, on_delete=models.CASCADE)
+    is_verified = models.BooleanField(default=True)
     is_added_by_admin = models.BooleanField(
         default=False,
         help_text="Whether this attendance was added by an admin instead of by the user",
@@ -643,11 +654,34 @@ class SmallGroup(TimestampedModel):
     def get_absolute_url(self):
         return reverse("small_groups_detail", args=[str(self.id)])
 
+    def has_user(self, user):
+        return (
+            self.projects.filter(
+                enrollments__user=user, enrollments__semester=self.semester
+            ).count()
+            > 0
+        )
+
     def __str__(self) -> str:
         return self.display_name
 
     class Meta:
         ordering = ["semester", "name", "location"]
+
+
+class MeetingAttendanceCode(TimestampedModel):
+    code = models.CharField(max_length=20, primary_key=True)
+    meeting = models.ForeignKey(Meeting, on_delete=models.CASCADE)
+    small_group = models.ForeignKey(
+        SmallGroup, on_delete=models.CASCADE, null=True, blank=True
+    )
+
+    @property
+    def is_valid(self):
+        return self.meeting.is_ongoing
+
+    def __str__(self) -> str:
+        return self.code
 
 
 class StatusUpdate(TimestampedModel):
