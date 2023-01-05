@@ -33,6 +33,8 @@ ALLOWED_HOSTS = ["localhost", "127.0.0.1", "rcos.up.railway.app"]
 
 CSRF_TRUSTED_ORIGINS = ["https://rcos.up.railway.app"]
 
+PUBLIC_BASE_URL = os.environ["PUBLIC_BASE_URL"]
+
 # Application definition
 
 INSTALLED_APPS = [
@@ -48,7 +50,13 @@ INSTALLED_APPS = [
     "markdownify.apps.MarkdownifyConfig",
     "magiclink",
     "anymail",
+    "crispy_forms",
+    "crispy_bulma",
 ]
+
+CRISPY_ALLOWED_TEMPLATE_PACKS = ("bulma",)
+
+CRISPY_TEMPLATE_PACK = "bulma"
 
 MIDDLEWARE = [
     "django.middleware.security.SecurityMiddleware",

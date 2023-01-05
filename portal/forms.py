@@ -3,6 +3,10 @@ from portal.models import User, Project, Semester
 from django.core.exceptions import ValidationError
 
 
+class BulmaTextInput(forms.Widget):
+    template_name = "portal/widgets/text_input.html"
+
+
 class UserProfileForm(forms.ModelForm):
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
@@ -13,6 +17,22 @@ class UserProfileForm(forms.ModelForm):
     class Meta:
         model = User
         fields = ["first_name", "last_name", "graduation_year"]
+
+
+class ChangeEmailForm(forms.Form):
+    new_email = forms.EmailField(
+        help_text="Change the email you use to login. This is useful to avoid the RPI VPN.",
+        widget=forms.EmailInput(attrs={"class": "input"}),
+    )
+
+    def clean(self):
+        cleaned_data = super().clean()
+        # Check if user with this email already exists
+        try:
+            User.objects.get(email=cleaned_data.get("new_email"))
+            raise ValidationError("Email is already in use.")
+        except User.DoesNotExist:
+            pass
 
 
 class ProposeProjectForm(forms.ModelForm):

@@ -1,4 +1,5 @@
 {% extends "portal/base.html" %}
+{% load crispy_forms_tags %}
 
 {% block content %}
 <section class="section">
@@ -11,13 +12,10 @@
 
             <div class="columns">
                 <div class="column">
-                    <label class="label">Email</label>
-                    <div class="field has-addons">
-                        <div class="control is-flex-grow-1">
-                            <input type="text" class="input" value="{{ request.user.email }}" readonly disabled>
-                        </div>
+                    <div class="field ">
+                        <label class="label">Email</label>
                         <div class="control">
-                            <a href="#" class="button">Change</a>
+                            <input type="text" class="input" value="{{ request.user.email }}" readonly disabled>
                         </div>
                     </div>
                 </div>
@@ -67,6 +65,14 @@
             </div>
             
             <button type="submit" class="button">Save</button>
+        </form>
+
+        <hr>
+
+        <form action="{% url 'change_email' %}" method="post">
+            {% csrf_token %}
+            {{ change_email_form|crispy }}
+            <button class="button" type="submit">Send verification email</button>
         </form>
     </div>
 </section>
