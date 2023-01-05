@@ -1,20 +1,20 @@
 from django.urls import path
 
 from portal.views.admin import import_submitty_data
+from portal.views.small_groups import SmallGroupDetailView, SmallGroupIndexView
 
-from .views.index import HandbookView, IndexView
-from .views.meetings import MeetingIndexView, MeetingDetailView, meetings_api
-from .views.users import UserIndexView, UserDetailView, enroll_user
-from .views.projects import ProjectProposeView, ProjectDetailView, ProjectIndexView
 from .views.auth import (
     change_email,
+    discord_link_callback,
     impersonate,
     profile,
     start_discord_link,
-    discord_link_callback,
     verify_change_email,
 )
-from portal.views.small_groups import SmallGroupDetailView, SmallGroupIndexView
+from .views.index import HandbookView, IndexView
+from .views.meetings import MeetingDetailView, MeetingIndexView, meetings_api
+from .views.projects import ProjectDetailView, ProjectIndexView, ProjectProposeView
+from .views.users import UserDetailView, UserIndexView, enroll_user
 
 urlpatterns = [
     path("", IndexView.as_view(), name="index"),

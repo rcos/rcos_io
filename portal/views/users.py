@@ -1,9 +1,10 @@
-from django.views.generic.edit import CreateView, DeleteView, UpdateView
-from . import SemesterFilteredListView, SemesterFilteredDetailView, SearchableListView
-from ..models import User, Enrollment, Semester
+from django.contrib import messages
 from django.contrib.auth.decorators import login_required
 from django.shortcuts import redirect
-from django.contrib import messages
+from django.views.generic.edit import CreateView, DeleteView, UpdateView
+
+from ..models import Enrollment, Semester, User
+from . import SearchableListView, SemesterFilteredDetailView, SemesterFilteredListView
 
 
 class UserIndexView(SearchableListView, SemesterFilteredListView):

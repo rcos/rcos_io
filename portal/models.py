@@ -1,15 +1,17 @@
+import re
 from typing import Optional
-from django.db import models
+
+from django.conf import settings
 from django.contrib.auth.models import AbstractUser, BaseUserManager
+from django.core.exceptions import ValidationError
+from django.db import models
+from django.db.models import Q
+from django.db.models.signals import post_save, pre_save
+from django.template.defaultfilters import slugify
 from django.urls import reverse
 from django.utils import timezone
-from django.db.models import Q
-from django.db.models.signals import pre_save, post_save
-from django.core.exceptions import ValidationError
-from django.template.defaultfilters import slugify
+
 from portal.services import discord
-import re
-from django.conf import settings
 
 
 class TimestampedModel(models.Model):

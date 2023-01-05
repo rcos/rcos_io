@@ -1,11 +1,13 @@
 from csv import DictReader
 from io import TextIOWrapper
-from portal.forms import UploadSubmittyDataForm
-from django.shortcuts import render
-from portal.models import User, Enrollment, Semester
 from typing import TypedDict
+
 from django.contrib.auth.decorators import login_required, user_passes_test
 from django.db.models import Q
+from django.shortcuts import render
+
+from portal.forms import UploadSubmittyDataForm
+from portal.models import Enrollment, Semester, User
 
 
 def is_admin(user):

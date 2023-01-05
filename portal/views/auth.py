@@ -1,17 +1,17 @@
-from django.shortcuts import redirect
-from django.core.exceptions import BadRequest
-from portal.forms import ChangeEmailForm, UserProfileForm
-from portal.services import discord
 from django.conf import settings
-from portal.models import User
-from requests import HTTPError
-from django.contrib.auth.decorators import login_required
-from django.contrib.auth import login
-from django.shortcuts import render
 from django.contrib import messages
-from django.utils import timezone
+from django.contrib.auth import login
+from django.contrib.auth.decorators import login_required
+from django.core.exceptions import BadRequest
 from django.core.mail import send_mail
+from django.shortcuts import redirect, render
 from django.urls import reverse
+from django.utils import timezone
+from requests import HTTPError
+
+from portal.forms import ChangeEmailForm, UserProfileForm
+from portal.models import User
+from portal.services import discord
 
 
 @login_required

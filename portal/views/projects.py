@@ -1,12 +1,13 @@
-from django.contrib.auth.mixins import LoginRequiredMixin
-from django.views.generic.edit import CreateView
 from django.contrib import messages
+from django.contrib.auth.mixins import LoginRequiredMixin
 from django.contrib.messages.views import SuccessMessageMixin
+from django.views.generic.edit import CreateView
 
 from portal.forms import ProposeProjectForm
-from . import SemesterFilteredListView, SemesterFilteredDetailView, SearchableListView
-from ..models import Enrollment, Project
 from portal.services import github
+
+from ..models import Enrollment, Project
+from . import SearchableListView, SemesterFilteredDetailView, SemesterFilteredListView
 
 
 class ProjectIndexView(SearchableListView, SemesterFilteredListView):

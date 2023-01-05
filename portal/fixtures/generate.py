@@ -1,6 +1,7 @@
-from random import random, choice, randint
-from faker import Faker
 import json
+from random import choice, randint, random
+
+from faker import Faker
 
 f = Faker()
 

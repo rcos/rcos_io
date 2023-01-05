@@ -1,6 +1,6 @@
+from django.conf import settings
 from gql import Client, gql
 from gql.transport.requests import RequestsHTTPTransport
-from django.conf import settings
 
 
 def client_factory():

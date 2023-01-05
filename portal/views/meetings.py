@@ -1,8 +1,10 @@
 from typing import Any, Dict
+
 from django.http import JsonResponse
-from django.views.generic import ListView, DetailView
 from django.utils import timezone
 from django.views.decorators.cache import cache_page
+from django.views.generic import DetailView, ListView
+
 from ..models import Meeting
 
 

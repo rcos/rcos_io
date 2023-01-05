@@ -1,7 +1,7 @@
-from . import SemesterFilteredListView, SearchableListView
-from ..models import SmallGroup
-
 from django.views.generic import DetailView
+
+from ..models import SmallGroup
+from . import SearchableListView, SemesterFilteredListView
 
 
 class SmallGroupIndexView(SearchableListView, SemesterFilteredListView):
