@@ -3,8 +3,12 @@
         <a href="https://github.com/rcos/rcos_io/blob/main/LICENSE" target="_blank">MIT</a>.
     </p>
     {% if debug or request.user.is_superadmin %}
-    <p class="has-text-centered mt-3">
-        <a href="/admin">Admin Portal</a>
-    </p>
+        <nav class="breadcrumb is-centered mt-3" aria-label="breadcrumbs">
+            <ul>
+              <li><a href="/admin">Site Admin</a></li>
+              <li><a href="https://railway.app/dashboard" target="_blank">Railway Dashboard</a></li>
+              <li><a href="https://app.mailjet.com/dashboard" target="_blank">Mailjet</a></li>
+            </ul>
+          </nav>
     {% endif %}
 </footer>
