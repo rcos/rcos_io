@@ -1,8 +1,10 @@
 import random
+import string
 from typing import Any, Dict
 
 from django.contrib import messages
 from django.contrib.auth.decorators import login_required
+from django.contrib.auth.mixins import UserPassesTestMixin
 from django.http import JsonResponse
 from django.shortcuts import redirect
 from django.utils import timezone
@@ -20,6 +22,19 @@ from ..models import (
     SmallGroup,
     User,
 )
+
+
+def generate_code(code_length: int = 5):
+    """
+    Generates & returns a new attendance code.
+    """
+
+    code = ""
+
+    for _ in range(code_length):
+        code += random.choice(string.ascii_uppercase)
+
+    return code
 
 
 def meeting_to_event(meeting: Meeting) -> Dict[str, Any]:
@@ -51,14 +66,33 @@ class MeetingIndexView(ListView):
 
 
 class MeetingDetailView(DetailView):
+    object: Meeting
     template_name = "portal/meetings/detail.html"
     model = Meeting
     context_object_name = "meeting"
 
+    def can_manage_attendance(self):
+        if not self.request.user.is_authenticated:
+            return False
+        if self.request.user.is_superuser:
+            return True
+
+        if (
+            self.request.user.mentored_small_groups.filter(
+                semester=self.object.semester
+            ).count()
+            > 0
+        ):
+            return True
+
+        return False
+
     def get_context_data(self, **kwargs):
         data = super().get_context_data(**kwargs)
 
-        if self.request.user.is_superuser:
+        data["can_manage_attendance"] = False
+        if self.can_manage_attendance():
+            data["can_manage_attendance"] = True
             expected_users = User.objects.filter(
                 enrollments__semester=self.object.semester
             )
@@ -92,6 +126,24 @@ class MeetingDetailView(DetailView):
             data["non_attended_users"] = non_attended_users
             data["needs_verification_users"] = needs_verification_users
             data["attendance_ratio"] = attended_users.count() / expected_users.count()
+
+            query = {
+                "meeting": self.object,
+            }
+            if small_group:
+                query["small_group"] = small_group
+            else:
+                query["small_group__isnull"] = True
+
+            if self.object.is_ongoing:
+                code, is_code_new = self.object.attendance_codes.get_or_create(
+                    **query,
+                    defaults={"code": generate_code(), "small_group": small_group},
+                )
+            else:
+                code = None
+
+            data["code"] = code
 
         return data
 
@@ -172,7 +224,7 @@ class SubmitAttendanceFormView(FormView):
         else:
             messages.error(
                 self.request,
-                "That attendance code is no longer valid. Your attendance was not recorded.",
+                "That attendance code is not currently valid. Your attendance was not recorded.",
             )
 
         return super().form_valid(form)

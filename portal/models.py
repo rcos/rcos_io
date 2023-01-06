@@ -687,7 +687,11 @@ class MeetingAttendanceCode(TimestampedModel):
         Meeting, on_delete=models.CASCADE, related_name="attendance_codes"
     )
     small_group = models.ForeignKey(
-        SmallGroup, on_delete=models.CASCADE, null=True, blank=True
+        SmallGroup,
+        on_delete=models.CASCADE,
+        null=True,
+        blank=True,
+        related_name="attendance_codes",
     )
 
     @property

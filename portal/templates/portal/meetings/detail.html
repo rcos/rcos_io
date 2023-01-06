@@ -90,7 +90,7 @@
     </div>
 </section>
 
-{% if request.user.is_superuser %}
+{% if can_manage_attendance %}
 <section class="hero is-light">
     <div class="hero-body">
         <div class="container">
@@ -101,10 +101,6 @@
 <section class="section">
     <div class="container">
 
-        <!-- {% for code in meeting.attendance_codes.all %}
-        <h2>{{ code }}</h2>
-        {% endfor %} -->
-
         <div class="tabs">
             <ul>
                 <li class="{% if not target_small_group %}is-active{% endif %}"><a href="?small_group=">All Enrolled</a></li>
@@ -114,6 +110,18 @@
             </ul>
         </div>
         
+        {% if code %}
+        <div class="box has-text-centered">
+            <details>
+                <summary>Attendance Code</summary>
+                <h1 class="title is-1">{{ code }}</h1>
+            </details>
+            {% if not target_small_group %}
+            <p class="has-text-grey">Do not show this during Small Group meetings. Use your Small Group's.</p>
+            {% endif %}
+        </div>
+        {% endif %}
+
         <progress class="progress" value="{{ attendance_ratio }}"></progress>
 
         <div class="columns">
