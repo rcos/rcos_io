@@ -143,7 +143,14 @@
                 <ul>
                     {% for user in needs_verification_users %}
                     <li>
-                        <a href="{{ user.get_absolute_url }}?semester={{ meeting.semester.pk }}">{{ user }}</a> <span class="icon is-clickable">✅</span>
+                        <a href="{{ user.get_absolute_url }}?semester={{ meeting.semester.pk }}">{{ user }}</a>
+                        
+                        <form action="{% url 'verify_attendance' %}" method="post">
+                            {% csrf_token %}
+                            <input type="hidden" name="user" value="{{ user.pk }}">
+                            <input type="hidden" name="meeting" value="{{ meeting.pk }}">
+                            <button class="button is-small">Verify</button>
+                        </form>
                     </li>
                     {% endfor %}
                 </ul>
@@ -162,11 +169,12 @@
             </div>
         </div>
 
-        <form action="" method="post">
+        <form action="{% url 'verify_attendance' %}" method="post">
             {% csrf_token %}
+            <input type="hidden" name="meeting" value="{{ meeting.pk }}">
             <div class="field has-addons">
                 <div class="control">
-                    <input type="text" class="input" placeholder="Student RCS ID">
+                    <input type="text" name="rcs_id" class="input" placeholder="Student RCS ID">
                 </div>
                 <div class="control">
                     <button type="submit" class="button">Manually Add Attendance</button>

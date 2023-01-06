@@ -16,6 +16,7 @@ from .views.meetings import (
     MeetingDetailView,
     MeetingIndexView,
     SubmitAttendanceFormView,
+    manually_add_or_verify_attendance,
     meetings_api,
 )
 from .views.projects import ProjectDetailView, ProjectIndexView, ProjectProposeView
@@ -45,6 +46,11 @@ urlpatterns = [
     path("projects/<slug:slug>", ProjectDetailView.as_view(), name="projects_detail"),
     path("meetings/", MeetingIndexView.as_view(), name="meetings_index"),
     path("attend", SubmitAttendanceFormView.as_view(), name="submit_attendance"),
+    path(
+        "meetings/attendance/verify",
+        manually_add_or_verify_attendance,
+        name="verify_attendance",
+    ),
     path("meetings/<int:pk>", MeetingDetailView.as_view(), name="meetings_detail"),
     path("api/meetings", meetings_api, name="meetings_api"),
     path("small_groups/", SmallGroupIndexView.as_view(), name="small_groups_index"),

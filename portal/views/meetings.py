@@ -7,6 +7,7 @@ from django.contrib.auth.decorators import login_required
 from django.contrib.auth.mixins import UserPassesTestMixin
 from django.http import JsonResponse
 from django.shortcuts import redirect
+from django.urls import reverse
 from django.utils import timezone
 from django.views.decorators.cache import cache_page
 from django.views.generic import DetailView, ListView
@@ -223,3 +224,35 @@ class SubmitAttendanceFormView(FormView):
             )
 
         return super().form_valid(form)
+
+
+@login_required
+def manually_add_or_verify_attendance(request):
+    if request.method == "POST":
+        user = (
+            User.objects.get(pk=request.POST["user"])
+            if request.POST.get("user")
+            else User.objects.get(rcs_id=request.POST["rcs_id"])
+        )
+        meeting = Meeting.objects.get(pk=request.POST["meeting"])
+
+        if (
+            not request.user.is_mentor(meeting.semester)
+            and not request.user.is_superuser
+        ):
+            return redirect(reverse("meetings_index"))
+
+        try:
+            attendance = MeetingAttendance.objects.get(user=user, meeting=meeting)
+            if not attendance.is_verified:
+                attendance.is_verified = True
+                messages.info(request, "Verified attendance")
+        except MeetingAttendance.DoesNotExist:
+            attendance = MeetingAttendance(
+                meeting=meeting, user=user, is_verified=True, is_added_by_admin=True
+            )
+            messages.success(request, "Added attendance.")
+        attendance.save()
+
+        return redirect(reverse("meetings_detail", args=(meeting.pk,)))
+    return redirect(reverse("meetings_index"))
