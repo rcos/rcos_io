@@ -89,4 +89,83 @@
         {% endif %}
     </div>
 </section>
+
+{% if request.user.is_superuser %}
+<section class="hero is-light">
+    <div class="hero-body">
+        <div class="container">
+            <h1 class="title">Attendance</h1>
+        </div>
+    </div>
+</section>
+<section class="section">
+    <div class="container">
+
+        <!-- {% for code in meeting.attendance_codes.all %}
+        <h2>{{ code }}</h2>
+        {% endfor %} -->
+
+        <div class="tabs">
+            <ul>
+                <li class="{% if not target_small_group %}is-active{% endif %}"><a href="?small_group=">All Enrolled</a></li>
+                {% for small_group in meeting.semester.small_groups.all %}
+                <li class="{% if target_small_group == small_group %}is-active{% endif %}"><a href="?small_group={{ small_group.pk }}">{{ small_group }}</a></li>
+                {% endfor %}
+            </ul>
+        </div>
+        
+        <progress class="progress" value="{{ attendance_ratio }}"></progress>
+
+        <div class="columns">
+            <div class="column">
+                <h2 class="subtitle">Attended</h2>
+                <small>{{ attended_users|length }} total</small>
+                <ul>
+                    {% for user in attended_users %}
+                    <li>
+                        <a href="{{ user.get_absolute_url }}?semester={{ meeting.semester.pk }}">{{ user }}</a>
+                    </li>
+                    {% endfor %}
+                </ul>
+            </div>
+
+            <div class="column">
+                <h2 class="subtitle">Requires Verification</h2>
+                <small>{{ needs_verification_users|length }} total</small>
+                <ul>
+                    {% for user in needs_verification_users %}
+                    <li>
+                        <a href="{{ user.get_absolute_url }}?semester={{ meeting.semester.pk }}">{{ user }}</a> <span class="icon is-clickable">✅</span>
+                    </li>
+                    {% endfor %}
+                </ul>
+            </div>
+
+            <div class="column">
+                <h2 class="subtitle">Not Attended</h2>
+                <small>{{ non_attended_users|length }} total</small>
+                <ul>
+                    {% for user in non_attended_users %}
+                    <li>
+                        <a href="{{ user.get_absolute_url }}?semester={{ meeting.semester.pk }}">{{ user }}</a>
+                    </li>
+                    {% endfor %}
+                </ul>
+            </div>
+        </div>
+
+        <form action="" method="post">
+            {% csrf_token %}
+            <div class="field has-addons">
+                <div class="control">
+                    <input type="text" class="input" placeholder="Student RCS ID">
+                </div>
+                <div class="control">
+                    <button type="submit" class="button">Manually Add Attendance</button>
+                </div>
+            </div>
+        </form>
+    </div>
+</section>
+{% endif %}
 {% endblock %}

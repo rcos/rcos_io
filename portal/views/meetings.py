@@ -12,7 +12,14 @@ from django.views.generic.edit import FormView
 
 from portal.forms import SubmitAttendanceForm
 
-from ..models import Meeting, MeetingAttendance, MeetingAttendanceCode
+from ..models import (
+    Enrollment,
+    Meeting,
+    MeetingAttendance,
+    MeetingAttendanceCode,
+    SmallGroup,
+    User,
+)
 
 
 def meeting_to_event(meeting: Meeting) -> Dict[str, Any]:
@@ -48,6 +55,46 @@ class MeetingDetailView(DetailView):
     model = Meeting
     context_object_name = "meeting"
 
+    def get_context_data(self, **kwargs):
+        data = super().get_context_data(**kwargs)
+
+        if self.request.user.is_superuser:
+            expected_users = User.objects.filter(
+                enrollments__semester=self.object.semester
+            )
+            attended_users = self.object.attendances.filter(
+                meetingattendance__is_verified=True
+            )
+            non_attended_users = expected_users.exclude(
+                pk__in=attended_users.values_list("pk", flat=True)
+            )
+            needs_verification_users = self.object.attendances.filter(
+                meetingattendance__is_verified=False
+            )
+
+            small_group_pk = self.request.GET.get("small_group")
+            small_group = None
+            if small_group_pk:
+                small_group = SmallGroup.objects.get(pk=small_group_pk)
+                small_group_user_ids = small_group.get_users().values_list(
+                    "pk", flat=True
+                )
+                attended_users = attended_users.filter(pk__in=small_group_user_ids)
+                non_attended_users = non_attended_users.filter(
+                    pk__in=small_group_user_ids
+                )
+                needs_verification_users = needs_verification_users.filter(
+                    pk__in=small_group_user_ids
+                )
+
+            data["target_small_group"] = small_group
+            data["attended_users"] = attended_users
+            data["non_attended_users"] = non_attended_users
+            data["needs_verification_users"] = needs_verification_users
+            data["attendance_ratio"] = attended_users.count() / expected_users.count()
+
+        return data
+
 
 @cache_page(60 * 15)
 def meetings_api(request):
@@ -68,6 +115,13 @@ class SubmitAttendanceFormView(FormView):
         code = form.cleaned_data["code"]
         user = self.request.user
 
+        if not user.is_authenticated:
+            messages.error(
+                self.request,
+                "You are not logged in!",
+            )
+            return redirect("/")
+
         try:
             meeting_attendance_code = MeetingAttendanceCode.objects.get(pk=code)
         except MeetingAttendanceCode.DoesNotExist:
@@ -76,6 +130,15 @@ class SubmitAttendanceFormView(FormView):
                 "Attendance code not recognized. Your attendance was not recorded.",
             )
             return super().form_valid(form)
+
+        try:
+            user.enrollments.get(semester=meeting_attendance_code.meeting.semester)
+        except Enrollment.DoesNotExist:
+            messages.error(
+                self.request,
+                "You are not enrolled in this semester!",
+            )
+            return redirect("/")
 
         if meeting_attendance_code.is_valid:
             # Confirm user is in small group if it is for a small group

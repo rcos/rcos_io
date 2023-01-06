@@ -1,6 +1,6 @@
 from django.views.generic.base import TemplateView
-from portal.forms import SubmitAttendanceForm
 
+from portal.forms import SubmitAttendanceForm
 from portal.models import Enrollment, Meeting, Project, Semester
 
 

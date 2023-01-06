@@ -629,6 +629,9 @@ class MeetingAttendance(TimestampedModel):
         help_text="Whether this attendance was added by an admin instead of by the user",
     )
 
+    class Meta:
+        unique_together = ("meeting", "user")
+
 
 class SmallGroup(TimestampedModel):
     semester = models.ForeignKey(
@@ -654,6 +657,15 @@ class SmallGroup(TimestampedModel):
     def get_absolute_url(self):
         return reverse("small_groups_detail", args=[str(self.id)])
 
+    def get_enrollments(self):
+        return Enrollment.objects.filter(
+            semester=self.semester,
+            project__in=self.projects.values_list("pk", flat=True),
+        )
+
+    def get_users(self):
+        return User.objects.filter(enrollments__in=self.get_enrollments())
+
     def has_user(self, user):
         return (
             self.projects.filter(
@@ -671,7 +683,9 @@ class SmallGroup(TimestampedModel):
 
 class MeetingAttendanceCode(TimestampedModel):
     code = models.CharField(max_length=20, primary_key=True)
-    meeting = models.ForeignKey(Meeting, on_delete=models.CASCADE)
+    meeting = models.ForeignKey(
+        Meeting, on_delete=models.CASCADE, related_name="attendance_codes"
+    )
     small_group = models.ForeignKey(
         SmallGroup, on_delete=models.CASCADE, null=True, blank=True
     )
@@ -682,6 +696,9 @@ class MeetingAttendanceCode(TimestampedModel):
 
     def __str__(self) -> str:
         return self.code
+
+    class Meta:
+        unique_together = ("code", "meeting", "small_group")
 
 
 class StatusUpdate(TimestampedModel):
