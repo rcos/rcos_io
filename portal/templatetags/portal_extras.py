@@ -4,7 +4,7 @@ from django import template
 from django.db.models import Q
 from django.utils import timezone
 
-from portal.models import Enrollment
+from portal.models import Enrollment, User
 
 register = template.Library()
 
@@ -30,6 +30,16 @@ def semester_admins(semester):
     if semester:
         return semester.get_admins()
     return []
+
+
+@register.simple_tag
+def is_coordinator(user: User, semester=None):
+    return user.is_coordinator(semester)
+
+
+@register.simple_tag
+def is_mentor(user: User, semester=None):
+    return user.is_mentor(semester)
 
 
 @register.simple_tag

@@ -77,12 +77,7 @@ class MeetingDetailView(DetailView):
         if self.request.user.is_superuser:
             return True
 
-        if (
-            self.request.user.mentored_small_groups.filter(
-                semester=self.object.semester
-            ).count()
-            > 0
-        ):
+        if self.request.user.is_mentor(self.object.semester):
             return True
 
         return False

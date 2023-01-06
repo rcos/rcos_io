@@ -183,6 +183,45 @@ class User(AbstractUser, TimestampedModel):
             and self.discord_user_id
         )
 
+    def is_mentor(self, semester=None):
+        if semester is None:
+            semester = Semester.get_active()
+
+        if semester is None:
+            return False
+
+        return self.mentored_small_groups.filter(semester=semester).count() > 0
+
+    def is_coordinator(self, semester=None):
+        if semester is None:
+            semester = Semester.get_active()
+
+        if semester is None:
+            return False
+
+        return (
+            self.enrollments.filter(
+                is_coordinator=True,
+                semester=semester,
+            ).count()
+            > 0
+        )
+
+    def is_faculty_advisor(self, semester=None):
+        if semester is None:
+            semester = Semester.get_active()
+
+        if semester is None:
+            return False
+
+        return (
+            self.enrollments.filter(
+                is_faculty_advisor=True,
+                semester=semester,
+            ).count()
+            > 0
+        )
+
     def get_discord_user(self):
         return discord.get_user(self.discord_user_id) if self.discord_user_id else None
 

@@ -26,7 +26,17 @@
                     {% for user in users %}
                     {% user_enrollment user target_semester as enrollment %}
                     <tr>
-                        <td><a href="{{ user.get_absolute_url }}{% target_semester_query %}">{{ user }}</a></td>
+                        <td>
+                            <a href="{{ user.get_absolute_url }}{% target_semester_query %}">{{ user }}</a>
+                            {% is_coordinator user target_semester as is_user_coordinator %}
+                            {% if is_user_coordinator %}
+                            <span class="tag is-warning">Coordinator</span>
+                            {% endif %}
+                            {% is_mentor user target_semester as is_user_mentor %}
+                            {% if is_user_mentor %}
+                            <span class="tag is-info">Mentor</span>
+                            {% endif %}
+                        </td>
                         {% if target_semester %}
                         <td>
                             {% if enrollment.project %}
@@ -35,7 +45,7 @@
                             </a>
                             {% if target_semester %}
                             {% if enrollment.is_project_lead %}
-                            <span class="icon" title="Project Lead of {{ enrollment.project }}">👑</span>
+                            <span class="tag is-light">Lead</span>
                             {% endif %}
                             {% endif %}
                             {% else %}
