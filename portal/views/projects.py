@@ -1,11 +1,14 @@
+from django.contrib import messages
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.contrib.messages.views import SuccessMessageMixin
+from django.shortcuts import redirect
+from django.urls import reverse
 from django.views.generic.edit import CreateView
 
 from portal.forms import ProposeProjectForm
 from portal.services import github
 
-from ..models import Enrollment, Project
+from ..models import Enrollment, Project, Semester
 from . import (
     SearchableListView,
     SemesterFilteredDetailView,
@@ -89,6 +92,23 @@ class ProjectProposeView(
     template_name = "portal/projects/propose.html"
     success_message = "Your project has been proposed and will be reviwed by Mentors and Coordinators shortly."
 
+    def get(self, request, *args, **kwargs):
+        active_semester = Semester.get_active()
+        if not self.request.user.can_propose_project(active_semester):
+            messages.error(
+                self.request, "You are not currently eligible to propose new projects."
+            )
+            return redirect(reverse("projects_index"))
+
+        return super().get(request, *args, **kwargs)
+
     def form_valid(self, form):
+        active_semester = Semester.get_active()
+        if not self.request.user.can_propose_project(active_semester):
+            messages.error(
+                self.request, "You are not currently eligible to propose new projects."
+            )
+            return redirect(reverse("projects_index"))
+
         form.instance.owner = self.request.user
         return super().form_valid(form)

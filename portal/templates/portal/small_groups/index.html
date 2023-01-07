@@ -13,7 +13,12 @@
             <div class="column is-half">
                 <div class="box">
                     <h2 class="title mb-1"><a href="{{ small_group.get_absolute_url }}">{{ small_group }}</a></h2>
-                    <p class="mb-3 has-text-grey"><span class="icon">🌎</span> {{ small_group.location }}</p>
+                    <p class="mb-3 has-text-grey">
+                        <span class="icon">
+                            <i class="fa-solid fa-location-dot"></i>
+                        </span>
+                        {{ small_group.location }}
+                    </p>
                     <div class="columns">
                         <div class="column">
                             <h3 class="subtitle mb-1">Mentors</h3>

@@ -33,14 +33,6 @@ class ChangeEmailForm(forms.Form):
 
 
 class ProposeProjectForm(forms.ModelForm):
-    def clean(self):
-        cleaned_data = super().clean()
-
-        if cleaned_data["owner"] and not cleaned_data["owner"].is_approved:
-            raise ValidationError(
-                "Only approved users can propose projects.", code="unapproved-owner"
-            )
-
     class Meta:
         model = Project
         fields = ["name", "summary", "tags", "external_chat_url", "homepage_url"]

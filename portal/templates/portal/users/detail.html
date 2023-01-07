@@ -10,7 +10,7 @@
 </div>
 {% endif%}
 
-<section class="hero is-info">
+<section class="hero is-dark">
     <div class="hero-body">
         <div class="container">
             <div class="columns is-vcentered">
@@ -26,52 +26,62 @@
                     </nav>
                 </div>
                 <div class="column is-5">
-                    <div class="box">
-                        <ul class="mb-3">
-                            <li>
-                                <span class="icon">📧</span>
-                                {% if request.user.is_authenticated %}
-                                <a href="mailto:{{ user.email }}">{{ user.email }}</a>
-                                {% else %}
-                                <span class="has-text-grey">Login to view email.</span>
-                                {% endif %}
-                            </li>
-                            <li><span class="icon">👤</span> {{ user.get_role_display }}</li>
-                            {% if user.graduation_year %}
-                            <li><span class="icon">🎓</span> Class of {{ user.graduation_year }}</li>
+                    <ul class="mb-3">
+                        <li>
+                            <span class="icon">
+                                <i class="fa-solid fa-envelope"></i>
+                            </span>
+                            {% if request.user.is_authenticated and request.user.is_approved %}
+                            <a href="mailto:{{ user.email }}">{{ user.email }}</a>
+                            {% else %}
+                            <span class="has-text-grey">Login to view email.</span>
                             {% endif %}
-                        </ul>
-                        <div class="columns">
-                            <div class="column">
-                                {% with user.get_discord_user as discord_user %}
-                                {% if discord_user %}
-                                <div class="box p-3 is-flex is-align-items-center">
-                                    <figure class="image is-32x32 mr-2">
-                                        <img class="is-rounded" src="https://cdn.discordapp.com/avatars/{{ discord_user.id }}/{{ discord_user.avatar }}.png?size=32" alt="Discord avatar">
-                                    </figure>
-                                    <div class="is-size-5">
-                                        <span class="has-text-weight-bold">@{{ discord_user.username }}</span><small class="has-text-grey">#{{ discord_user.discriminator }}</small>
-                                    </div>
+                        </li>
+                        <li>
+                            <span class="icon">
+                                <i class="fa-solid fa-chalkboard-user"></i>
+                            </span>
+                            {{ user.get_role_display }}
+                        </li>
+                        {% if user.graduation_year %}
+                        <li>
+                            <span class="icon">
+                                <i class="fa-solid fa-graduation-cap"></i>
+                            </span>
+                            Class of {{ user.graduation_year }}
+                        </li>
+                        {% endif %}
+                    </ul>
+                    <div class="columns">
+                        {% if request.user.is_authenticated and request.user.is_approved %}
+                        <div class="column">
+                            {% with user.get_discord_user as discord_user %}
+                            {% if discord_user %}
+                            <small class="has-text-grey has-text-weight-semibold mb-2 is-block">Discord</small>
+                            <div class="is-flex is-align-items-center">
+                                <figure class="image is-32x32 mr-2">
+                                    <img class="is-rounded" src="https://cdn.discordapp.com/avatars/{{ discord_user.id }}/{{ discord_user.avatar }}.png?size=32" alt="Discord avatar">
+                                </figure>
+                                <div class="is-size-5">
+                                    <span class="has-text-weight-bold">@{{ discord_user.username }}</span><small class="has-text-grey">#{{ discord_user.discriminator }}</small>
                                 </div>
-                                {% else %}
-                                <p class="has-text-grey">Discord not yet linked.</p>
-                                {% endif %}
-                                {% endwith %}
                             </div>
-                            <div class="column">
-                                {% if user.github_username %}
-                                <div class="box p-3 is-flex is-align-items-center">
-                                    <figure class="image is-32x32 mr-2">
-                                        <img class="is-rounded" src="https://github.com/{{ user.github_username }}.png?size=32" alt="GitHub avatar">
-                                    </figure>
-                                    <div class="is-size-5">
-                                        <span class="has-text-weight-bold"><a target="_blank" href="https://www.github.com/{{ user.github_username }}">{{ user.github_username }}</a></span>
-                                    </div>
+                            {% endif %}
+                            {% endwith %}
+                        </div>
+                        {% endif %}
+                        <div class="column">
+                            {% if user.github_username %}
+                            <small class="has-text-grey has-text-weight-semibold mb-2 is-block">GitHub</small>
+                            <div class="is-flex is-align-items-center">
+                                <figure class="image is-32x32 mr-2">
+                                    <img class="is-rounded" src="https://github.com/{{ user.github_username }}.png?size=32" alt="GitHub avatar">
+                                </figure>
+                                <div class="is-size-5">
+                                    <span class="has-text-weight-bold"><a target="_blank" href="https://www.github.com/{{ user.github_username }}">{{ user.github_username }}</a></span>
                                 </div>
-                                {% else %}
-                                <p class="has-text-grey">GitHub not yet linked.</p>
-                                {% endif %}
                             </div>
+                            {% endif %}
                         </div>
                     </div>
                 </div>

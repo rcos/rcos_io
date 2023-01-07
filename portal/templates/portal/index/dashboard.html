@@ -27,7 +27,9 @@
                         <li>
                             <a href="{{ enrollment.get_absolute_url }}">{{ enrollment.user }}</a>
                             {% if enrollment.is_project_lead %}
-                            <span class="icon">👑</span>
+                            <span class="icon">
+                                <i class="fa-solid fa-crown"></i>
+                            </span>
                             {% endif %}
                         </li>
                         {% endfor %}

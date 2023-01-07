@@ -19,7 +19,7 @@
                 {% include "portal/includes/navbaritem.html" with view_name="projects_index" display="Projects" %}
                 {% include "portal/includes/navbaritem.html" with view_name="meetings_index" display="Meetings" %}
                 
-                {% if request.user.is_authenticated %}
+                {% if request.user.is_authenticated and request.user.is_approved %}
                 {% include "portal/includes/navbaritem.html" with view_name="small_groups_index" display="Small Groups" %}
                 {% endif %}
                 {% include "portal/includes/navbaritem.html" with view_name="handbook" display="Handbook" %}
