@@ -1,7 +1,7 @@
 from django.contrib import messages
-from django.contrib.auth.decorators import login_required
+from django.contrib.auth.decorators import login_required, user_passes_test
 from django.shortcuts import redirect
-from django.views.generic.edit import CreateView, DeleteView, UpdateView
+from django.urls import reverse
 
 from ..models import Enrollment, Semester, User
 from . import SearchableListView, SemesterFilteredDetailView, SemesterFilteredListView
@@ -33,6 +33,13 @@ class UserDetailView(SemesterFilteredDetailView):
 
 @login_required
 def enroll_user(request):
+    if not request.user.is_setup:
+        messages.error(
+            request,
+            "Please fill your profile out and connect your Discord and GitHub before enrolling.",
+        )
+        return redirect(reverse("profile"))
+
     if request.method == "POST":
         semester = Semester.objects.get(pk=request.POST["semester"])
         messages.success(request, f"Welcome to RCOS {semester}!")
