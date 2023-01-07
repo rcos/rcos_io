@@ -143,9 +143,10 @@ class User(AbstractUser, TimestampedModel):
         blank=True,
         max_length=200,
         help_text="The user's Discord account ID from the Discord API",
+        unique=True
     )
     github_username = models.CharField(
-        blank=True, max_length=200, help_text="The user's GitHub username (not user ID)"
+        blank=True, max_length=200, help_text="The user's GitHub username (not user ID)", unique=True
     )
 
     @property

@@ -6,9 +6,11 @@ from portal.views.small_groups import SmallGroupDetailView, SmallGroupIndexView
 from .views.auth import (
     change_email,
     discord_link_callback,
+    github_link_callback,
     impersonate,
     profile,
     start_discord_link,
+    start_github_link,
     verify_change_email,
 )
 from .views.index import HandbookView, IndexView
@@ -35,8 +37,10 @@ urlpatterns = [
         discord_link_callback,
         name="link_discord_callback",
     ),
-    # path("/auth/link/github", name="link_github")
-    # path("/auth/link/github/callback", name="link_github_callback")
+    path("auth/link/github", start_github_link, name="link_github"),
+    path(
+        "auth/link/github/callback", github_link_callback, name="link_github_callback"
+    ),
     path("users/", UserIndexView.as_view(), name="users_index"),
     path("users/enroll/", enroll_user, name="users_enroll"),
     path("users/<int:pk>", UserDetailView.as_view(), name="users_detail"),

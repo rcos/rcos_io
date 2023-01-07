@@ -11,7 +11,7 @@ from requests import HTTPError
 
 from portal.forms import ChangeEmailForm, UserProfileForm
 from portal.models import User
-from portal.services import discord
+from portal.services import discord, github
 
 
 @login_required
@@ -58,14 +58,49 @@ def discord_link_callback(request):
         discord_access_token = discord_user_tokens["access_token"]
         discord_user_info = discord.get_user_info(discord_access_token)
     except HTTPError as error:
-        return error
+        messages.error(request, "Yikes! Failed to link your Discord.")
+        return redirect(reverse("profile"))
 
     discord_user_id = discord_user_info["id"]
 
     request.user.discord_user_id = discord_user_id
     request.user.save()
 
-    return redirect("/")
+    messages.success(
+        request,
+        f"Successfully linked Discord account @{discord_user_info['username']}#{discord_user_info['discriminator']} to your profile.",
+    )
+    return redirect(reverse("profile"))
+
+
+@login_required
+def start_github_link(request):
+    return redirect(github.GITHUB_AUTH_URL)
+
+
+@login_required
+def github_link_callback(request):
+    code = request.GET.get("code")
+    if not code:
+        raise BadRequest
+
+    try:
+        github_user_tokens = github.get_tokens(code)
+        github_access_token = github_user_tokens["access_token"]
+        client = github.client_factory(github_access_token)
+        github_username = github.get_user_username(client)
+    except HTTPError as error:
+        messages.error(request, "Yikes! Failed to link your GitHub.")
+        return redirect(reverse("profile"))
+
+    request.user.github_username = github_username
+    request.user.save()
+
+    messages.success(
+        request,
+        f"Successfully linked GitHub account @{github_username} to your profile.",
+    )
+    return redirect(reverse("profile"))
 
 
 @login_required

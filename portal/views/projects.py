@@ -1,4 +1,3 @@
-from django.contrib import messages
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.contrib.messages.views import SuccessMessageMixin
 from django.views.generic.edit import CreateView
@@ -7,7 +6,12 @@ from portal.forms import ProposeProjectForm
 from portal.services import github
 
 from ..models import Enrollment, Project
-from . import SearchableListView, SemesterFilteredDetailView, SemesterFilteredListView
+from . import (
+    SearchableListView,
+    SemesterFilteredDetailView,
+    SemesterFilteredListView,
+    UserRequiresSetupMixin,
+)
 
 
 class ProjectIndexView(SearchableListView, SemesterFilteredListView):
@@ -78,7 +82,9 @@ class ProjectDetailView(SemesterFilteredDetailView):
         return data
 
 
-class ProjectProposeView(SuccessMessageMixin, LoginRequiredMixin, CreateView):
+class ProjectProposeView(
+    SuccessMessageMixin, LoginRequiredMixin, UserRequiresSetupMixin, CreateView
+):
     form_class = ProposeProjectForm
     template_name = "portal/projects/propose.html"
     success_message = "Your project has been proposed and will be reviwed by Mentors and Coordinators shortly."

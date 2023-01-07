@@ -1,9 +1,70 @@
+from typing import TypedDict
+
+import requests
 from django.conf import settings
 from gql import Client, gql
 from gql.transport.requests import RequestsHTTPTransport
 
+GITHUB_AUTH_URL = (
+    "https://github.com/login/oauth/authorize"
+    f"?client_id={settings.GITHUB_OAUTH_APP_CLIENT_ID}&redirect_uri={settings.GITHUB_OAUTH_APP_REDIRECT_URL}"
+)
 
-def client_factory():
+
+class GitHubTokens(TypedDict):
+    """
+    https://docs.github.com/en/developers/apps/building-oauth-apps/authorizing-oauth-apps#response
+    """
+
+    access_token: str
+    scope: str
+    token_type: int
+
+
+def get_tokens(code: str) -> GitHubTokens:
+    """
+    Given an authorization code, request an access token for a GitHub user.
+    Returns:
+        GitHubTokens
+    Raises:
+        HTTPError on failed request
+    See https://docs.github.com/en/developers/apps/building-oauth-apps/authorizing-oauth-apps
+    """
+    response = requests.post(
+        "https://github.com/login/oauth/access_token",
+        data={
+            "client_id": settings.GITHUB_OAUTH_APP_CLIENT_ID,
+            "client_secret": settings.GITHUB_OAUTH_APP_CLIENT_SECRET,
+            "code": code,
+            "redirect_uri": settings.GITHUB_OAUTH_APP_REDIRECT_URL,
+        },
+        headers={"Accept": "application/json"},
+        timeout=3,
+    )
+    response.raise_for_status()
+    # https://requests.readthedocs.io/en/latest/user/quickstart/#response-status-codes
+    # throws HTTPError for 4XX or 5XX
+    tokens = response.json()
+    return tokens
+
+
+def get_user_username(client: Client) -> str:
+    query = gql(
+        """
+        {
+            viewer {
+                login
+            }
+        }
+        """
+    )
+
+    result = client.execute(query)
+    print(result)
+    return result["viewer"]["login"]
+
+
+def client_factory(token: str = settings.GITHUB_API_TOKEN):
     """
     Creates a new GQL client pointing to the Hasura API.
     Instead of using one client across the app, one client should be made per request
@@ -15,7 +76,7 @@ def client_factory():
         url="https://api.github.com/graphql",
         verify=True,
         retries=3,
-        headers={"Authorization": f"bearer {settings.GITHUB_API_TOKEN}"},
+        headers={"Authorization": f"bearer {token}"},
     )
     print(settings.GITHUB_API_TOKEN)
     return Client(transport=transport)

@@ -4,7 +4,7 @@ from typing import Any, Dict
 
 from django.contrib import messages
 from django.contrib.auth.decorators import login_required
-from django.contrib.auth.mixins import UserPassesTestMixin
+from django.contrib.auth.mixins import LoginRequiredMixin, UserPassesTestMixin
 from django.http import JsonResponse
 from django.shortcuts import redirect
 from django.urls import reverse
@@ -14,6 +14,7 @@ from django.views.generic import DetailView, ListView
 from django.views.generic.edit import FormView
 
 from portal.forms import SubmitAttendanceForm
+from portal.views import UserRequiresSetupMixin
 
 from ..models import (
     Enrollment,
@@ -154,7 +155,7 @@ def meetings_api(request):
     return JsonResponse(events, safe=False)
 
 
-class SubmitAttendanceFormView(FormView):
+class SubmitAttendanceFormView(LoginRequiredMixin, UserRequiresSetupMixin, FormView):
     template_name = "portal/meetings/attendance/submit.html"
     form_class = SubmitAttendanceForm
     success_url = "/"

@@ -1,5 +1,8 @@
+from django.contrib import messages
+from django.contrib.auth.mixins import UserPassesTestMixin
 from django.contrib.postgres.search import SearchVector
-from django.shortcuts import get_object_or_404
+from django.shortcuts import get_object_or_404, redirect
+from django.urls import reverse
 from django.views.generic import DetailView, ListView
 
 from ..models import Semester
@@ -111,3 +114,15 @@ class SearchableListView(ListView):
         data = super().get_context_data(**kwargs)
         data["search"] = self.search
         return data
+
+
+class UserRequiresSetupMixin(UserPassesTestMixin):
+    def test_func(self):
+        return self.request.user.is_setup
+
+    def handle_no_permission(self):
+        messages.warning(
+            self.request,
+            "Please fill your profile out and connect your Discord and GitHub to get full access.",
+        )
+        return redirect(reverse("profile"))
