@@ -13,7 +13,7 @@
 </div>
 {% endif %}
 
-<section class="section">
+<section class="section" style="min-height: 100vh;">
     <div class="container">
         <h1 class="title is-1">{{ meeting.display_name }}</h1>
         <h2 class="subtitle is-4">{{ meeting.get_type_display }} Meeting <small class="has-text-grey">{{ meeting.starts_at|naturaltime }}</small></h2>
@@ -102,7 +102,7 @@
 </section>
 
 {% if can_manage_attendance %}
-<section class="hero is-light">
+<section class="hero is-light" id="attendance">
     <div class="hero-body">
         <div class="container">
             <h1 class="title">Attendance</h1>
