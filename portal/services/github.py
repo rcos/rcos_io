@@ -60,7 +60,6 @@ def get_user_username(client: Client) -> str:
     )
 
     result = client.execute(query)
-    print(result)
     return result["viewer"]["login"]
 
 
@@ -78,7 +77,6 @@ def client_factory(token: str = settings.GITHUB_API_TOKEN):
         retries=3,
         headers={"Authorization": f"bearer {token}"},
     )
-    print(settings.GITHUB_API_TOKEN)
     return Client(transport=transport)
 
 

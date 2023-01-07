@@ -27,7 +27,7 @@ from .views.users import UserDetailView, UserIndexView, enroll_user
 urlpatterns = [
     path("", IndexView.as_view(), name="index"),
     path("handbook", HandbookView.as_view(), name="handbook"),
-    path("auth/profile", profile, name="profile"),
+    path("profile", profile, name="profile"),
     path("auth/change_email", change_email, name="change_email"),
     path("auth/change_email/verify", verify_change_email, name="verify_change_email"),
     path("auth/impersonate", impersonate, name="impersonate"),

@@ -8,32 +8,71 @@
 
         <div class="columns">
             <div class="column">
-                <div class="field ">
-                    <label class="label">Email</label>
-                    <div class="control">
-                        <input type="text" class="input" value="{{ request.user.email }}" readonly disabled>
+                <div class="columns">
+                    <div class="column">
+                        <div class="field ">
+                            <label class="label">Email</label>
+                            <div class="control">
+                                <input type="text" class="input" value="{{ request.user.email }}" readonly disabled>
+                            </div>
+                        </div>
                     </div>
+                    {% if user.role == "rpi" %}
+                    <div class="column">
+                        <div class="field">
+                            <label class="label">RCS ID</label>
+                            <div class="control">
+                                <input type="text" class="input" value="{{ request.user.rcs_id }}" readonly disabled>
+                            </div>
+                        </div>
+                    </div>
+                    {% endif %}
+                </div>
+        
+                <form method="post">
+                    {% csrf_token %}
+        
+                    {{ form|crispy }}
+        
+                    <button type="submit" class="button">Update Profile</button>
+                </form>
+            </div>
+            <div class="column is-4">
+
+                <div class="notification {% if not request.user.discord_user_id %}is-danger{% endif %}">
+                    <span class="icon-text">
+                        <span class="icon is-large"><i class="fa-brands fa-2x fa-discord"></i></span>
+                        <span class="is-align-self-center">
+                            {% with request.user.get_discord_user as discord_user %}
+                            {% if discord_user %}
+                            Linked to <strong>@{{ discord_user.username }}#{{ discord_user.discriminator }}</strong>
+                            {% else %}
+                            <a href="{% url 'link_discord' %}">Link your Discord account</a>
+                            {% endif %}
+                            {% endwith %}
+                        </span>
+                    </span>
+                </div>
+                
+                <hr>
+                
+                <div class="notification {% if not request.user.github_username %}is-danger{% endif %}">
+                    <span class="icon-text">
+                        <span class="icon is-large"><i class="fa-brands fa-2x fa-github"></i></span>
+                        <span class="is-align-self-center">
+                            {% if request.user.github_username %}
+                            Linked to 
+                            <a class="has-text-weight-bold" href="https://github.com/{{ request.user.github_username }}" target="_blank">@{{ request.user.github_username }}</a>
+                            {% else %}
+                            <a href="{% url 'link_github' %}">Link your GitHub account</a>
+                            {% endif %}
+                        </span>
+                    </span>
                 </div>
             </div>
-            {% if user.role == "rpi" %}
-            <div class="column">
-                <div class="field">
-                    <label class="label">RCS ID</label>
-                    <div class="control">
-                        <input type="text" class="input" value="{{ request.user.rcs_id }}" readonly disabled>
-                    </div>
-                </div>
-            </div>
-            {% endif %}
         </div>
 
-        <form method="post">
-            {% csrf_token %}
-
-            {{ form|crispy }}
-
-            <button type="submit" class="button">Save</button>
-        </form>
+        
 
 
         <hr>
