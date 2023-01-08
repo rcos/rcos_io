@@ -602,6 +602,13 @@ class Meeting(TimestampedModel):
         now = timezone.now()
         return self.starts_at < now < self.ends_at
 
+    @classmethod
+    def get_ongoing(cls):
+        now = timezone.now()
+        return cls.objects.filter(
+            is_published=True, starts_at__lte=now, ends_at__gte=now
+        ).first()
+
     def get_absolute_url(self):
         return reverse("meetings_detail", args=[str(self.id)])
 
