@@ -216,13 +216,21 @@ DISCORD_REDIRECT_URL = os.environ["DISCORD_REDIRECT_URL"]
 LOGIN_URL = "magiclink:login"
 
 MAGICLINK_LOGIN_TEMPLATE_NAME = "portal/magiclink/login.html"
+
 MAGICLINK_LOGIN_SENT_TEMPLATE_NAME = "portal/magiclink/login_sent.html"
+
 MAGICLINK_LOGIN_FAILED_TEMPLATE_NAME = "portal/magiclink/login_failed.html"
 
+MAGICLINK_TOKEN_USES = 5
+
+MAGICLINK_REQUIRE_SAME_BROWSER = False
+
 MAGICLINK_REQUIRE_SIGNUP = False  # First login will create user
+
 MAGICLINK_SIGNUP_TEMPLATE_NAME = "magiclink/signup.html"
 
 LOGIN_REDIRECT_URL = "/"
+
 MAGICLINK_SIGNUP_LOGIN_REDIRECT = "/"
 
 DEFAULT_FROM_EMAIL = "rcos.management@gmail.com"

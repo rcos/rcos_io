@@ -109,7 +109,7 @@ class UserAdmin(UserAdmin):
         ),
         ("Important dates", {"fields": ("last_login", "date_joined")}),
         ("Linked Accounts", {"fields": ("github_username", "discord_user_id")}),
-        ("Permissions", {"fields": ("is_active", "is_superuser")}),
+        ("Permissions", {"fields": ("is_active", "is_staff", "is_superuser")}),
     )
     ordering = ("email", "last_login")
     inlines = (EnrollmentInline,)
