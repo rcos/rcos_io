@@ -181,7 +181,8 @@ class User(AbstractUser, TimestampedModel):
     @property
     def is_setup(self):
         return (
-            self.first_name
+            self.is_active
+            and self.first_name
             and self.last_name
             and self.github_username
             and self.discord_user_id

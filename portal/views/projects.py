@@ -1,6 +1,8 @@
 from django.contrib import messages
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.contrib.messages.views import SuccessMessageMixin
+from django.db.models import Q
+from django.http import Http404
 from django.shortcuts import redirect
 from django.urls import reverse
 from django.views.generic.edit import CreateView
@@ -59,6 +61,14 @@ class ProjectDetailView(SemesterFilteredDetailView):
     template_name = "portal/projects/detail.html"
     model = Project
     context_object_name = "project"
+
+    def get_object(self, queryset=None):
+        project: Project = super().get_object(queryset)
+        if not project.is_approved and (
+            not self.request.user.is_superuser or not self.request.user == project.owner
+        ):
+            raise Http404()
+        return project
 
     def get_context_data(self, **kwargs):
         data = super().get_context_data(**kwargs)
