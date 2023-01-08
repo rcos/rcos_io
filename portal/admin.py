@@ -1,4 +1,5 @@
 from django.contrib import admin
+from django.contrib.auth.admin import UserAdmin
 
 from .models import *
 
@@ -86,10 +87,31 @@ class SemesterAdmin(admin.ModelAdmin):
 
 
 @admin.register(User)
-class UserAdmin(admin.ModelAdmin):
+class UserAdmin(UserAdmin):
     list_display = ("display_name", "role", "is_approved")
     search_fields = ("first_name", "last_name", "email", "rcs_id")
     list_filter = ("role", "is_approved", "enrollments__semester__name")
+    exclude = ("username",)
+    fieldsets = (
+        (
+            "Personal info",
+            {
+                "fields": (
+                    "first_name",
+                    "last_name",
+                    "role",
+                    "rcs_id",
+                    "graduation_year",
+                    "email",
+                    "password",
+                )
+            },
+        ),
+        ("Important dates", {"fields": ("last_login", "date_joined")}),
+        ("Linked Accounts", {"fields": ("github_username", "discord_user_id")}),
+        ("Permissions", {"fields": ("is_active", "is_superuser")}),
+    )
+    ordering = ("email", "last_login")
     inlines = (EnrollmentInline,)
     actions = (make_approved,)
 
