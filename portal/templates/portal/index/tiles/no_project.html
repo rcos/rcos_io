@@ -34,6 +34,8 @@
         {% endfor %}
         </ul>
     </div>
-    
+    {% if can_propose_project %}
+    <a href="{% url 'projects_propose' %}" class="button is-primary is-outlined mb-2">Propose Project</a>
+    {% endif %}
     <a href="{% url 'projects_index' %}?semester={{ active_semester.pk }}" class="button is-block is-link is-outlined">View All {{ active_semester }} Projects</a>
 </div>

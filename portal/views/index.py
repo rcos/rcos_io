@@ -18,6 +18,14 @@ class IndexView(TemplateView):
         )
         data["next_meeting"] = Meeting.get_next()
 
+        if self.request.user.is_authenticated:
+            active_semester = Semester.get_active()
+            data["can_propose_project"] = self.request.user.can_propose_project(
+                active_semester
+            )
+        else:
+            data["can_propose_project"] = None
+
         return data
 
 

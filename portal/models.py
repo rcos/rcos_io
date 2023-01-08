@@ -237,7 +237,7 @@ class User(AbstractUser, TimestampedModel):
             .distinct()
         )
 
-    def can_propose_project(self, semester: Semester) -> bool:
+    def can_propose_project(self, semester: Optional[Semester]) -> bool:
         if not self.is_approved or not self.is_active:
             return False
 
