@@ -1,5 +1,16 @@
 {% load portal_extras %}
 
+{% if pending_project %}
+<h2 class="title is-3 mb-2">
+    Your proposed project <a href="{% url 'projects_detail' pending_project.pk %}">{{ pending_project }}</a> is being reviewed.
+</h2>
+<p class="is-size-5 block">
+    Once approved, you'll be marked as its project lead and can opt to pitch it to the RCOS student body if you want team mates to join you.
+</p>
+<p class="is-size-5 block">
+    You do not have to pitch your project and can pick team members yourself if preferred.
+</p>
+{% else %}
 <h2 class="title is-4 mb-2">Choose a Project</h2>
 
 <div class="is-flex is-flex-direction-column is-flex-grow-1">
@@ -47,3 +58,4 @@
     {% endif %}
     <a href="{% url 'projects_index' %}?semester={{ active_semester.pk }}" class="button is-block is-link is-outlined">View All {{ active_semester }} Projects</a>
 </div>
+{% endif %}

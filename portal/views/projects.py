@@ -64,7 +64,11 @@ class ProjectDetailView(SemesterFilteredDetailView):
 
     def get_object(self, queryset=None):
         project: Project = super().get_object(queryset)
-        if not project.is_approved and not self.request.user.is_superuser and not self.request.user == project.owner:
+        if (
+            not project.is_approved
+            and not self.request.user.is_superuser
+            and not self.request.user == project.owner
+        ):
             raise Http404()
         return project
 

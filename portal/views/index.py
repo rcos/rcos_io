@@ -24,9 +24,13 @@ class IndexView(TemplateView):
             data["can_propose_project"] = self.request.user.can_propose_project(
                 active_semester
             )
+            data["pending_project"] = self.request.user.owned_projects.filter(
+                is_approved=False
+            ).first()
         else:
             data["ongoing_meeting"] = None
             data["can_propose_project"] = None
+            data["pending_project"] = None
 
         return data
 
