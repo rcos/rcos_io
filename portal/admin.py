@@ -104,6 +104,7 @@ class UserAdmin(UserAdmin):
                     "graduation_year",
                     "email",
                     "password",
+                    "is_approved",
                 )
             },
         ),

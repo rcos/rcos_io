@@ -1,5 +1,5 @@
 import re
-from typing import Optional
+from typing import Optional, Tuple
 
 from django.conf import settings
 from django.contrib.auth.models import AbstractUser, BaseUserManager
@@ -10,6 +10,7 @@ from django.db.models.signals import post_save, pre_save
 from django.template.defaultfilters import slugify
 from django.urls import reverse
 from django.utils import timezone
+from requests import HTTPError
 
 from portal.services import discord
 
@@ -141,12 +142,14 @@ class User(AbstractUser, TimestampedModel):
     # Account integrations
     discord_user_id = models.CharField(
         blank=True,
+        null=True,
         max_length=200,
         help_text="The user's Discord account ID from the Discord API",
         unique=True,
     )
     github_username = models.CharField(
         blank=True,
+        null=True,
         max_length=200,
         help_text="The user's GitHub username (not user ID)",
         unique=True,
@@ -228,7 +231,12 @@ class User(AbstractUser, TimestampedModel):
         )
 
     def get_discord_user(self):
-        return discord.get_user(self.discord_user_id) if self.discord_user_id else None
+        try:
+            return (
+                discord.get_user(self.discord_user_id) if self.discord_user_id else None
+            )
+        except HTTPError:
+            return None
 
     def get_active_semesters(self):
         return (
@@ -237,28 +245,32 @@ class User(AbstractUser, TimestampedModel):
             .distinct()
         )
 
-    def can_propose_project(self, semester: Optional[Semester]) -> bool:
+    def can_propose_project(
+        self, semester: Optional[Semester]
+    ) -> Tuple[bool, Optional[str]]:
         if not self.is_approved or not self.is_active:
-            return False
+            return False, "Your account is not approved or active."
 
         if (
             not semester
             or not semester.is_active
             or not semester.is_accepting_new_projects
         ):
-            return False
+            return (
+                False,
+                "The current semester is not accepting new projects at this time.",
+            )
 
-        # Users can only propose a project if they aren't currently enrolled in a project
-        # and can own a max of 4 at one time
-        if self.owned_projects.count() >= 4:
-            return False
+        if self.owned_projects.filter(is_approved=False).count() > 0:
+            return False, "You have an unapproved project pending."
+
         try:
             if Enrollment.objects.get(user=self, semester=semester).project:
-                return False
+                return False, "You're already enrolled on a project this semester."
         except Enrollment.DoesNotExist:
-            return True
+            pass
 
-        return True
+        return True, None
 
     def get_absolute_url(self):
         return reverse("users_detail", args=[str(self.id)])

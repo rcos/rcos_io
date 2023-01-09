@@ -77,11 +77,14 @@
 
         <hr>
 
-        <form action="{% url 'change_email' %}" method="post">
-            {% csrf_token %}
-            {{ change_email_form|crispy }}
-            <button class="button" type="submit">Send verification email</button>
-        </form>
+        <details>
+            <summary>Change your email</summary>
+            <form action="{% url 'change_email' %}" method="post">
+                {% csrf_token %}
+                {{ change_email_form|crispy }}
+                <button class="button" type="submit">Send verification email</button>
+            </form>
+        </details>
     </div>
 </section>
 {% endblock %}
