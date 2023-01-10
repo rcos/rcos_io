@@ -2,13 +2,13 @@
     <p class="has-text-centered">Made with <span class="has-text-danger">❤</span> by <a href="https://handbook.rcos.io/" target="_blank">RCOS</a>. The source code is licensed
         <a href="https://github.com/rcos/rcos_io/blob/main/LICENSE" target="_blank">MIT</a>.
     </p>
-    {% if debug or request.user.is_superadmin %}
+    {% if debug or request.user.is_superuser %}
         <nav class="breadcrumb is-centered mt-3" aria-label="breadcrumbs">
             <ul>
-              <li><a href="/admin">Site Admin</a></li>
-              <li><a href="https://railway.app/dashboard" target="_blank">Railway Dashboard</a></li>
-              <li><a href="https://app.mailjet.com/dashboard" target="_blank">Mailjet</a></li>
+                <li><a href="/admin">Site Admin</a></li>
+                <li><a href="https://railway.app/dashboard" target="_blank">Railway Dashboard</a></li>
+                <li><a href="https://app.mailjet.com/dashboard" target="_blank">Mailjet</a></li>
             </ul>
-          </nav>
+        </nav>
     {% endif %}
 </footer>
