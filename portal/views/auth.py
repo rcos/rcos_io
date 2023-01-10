@@ -65,12 +65,20 @@ def discord_link_callback(request):
             messages.warning(request, "Failed to add you to the RCOS Discord server...")
 
         try:
+            discord.add_role_to_member(
+                discord_user_info["id"], settings.DISCORD_VERIFIED_ROLE_ID
+            )
+        except Exception as e:
+            print(e)
+
+        try:
             discord.set_member_nickname(
                 discord_user_info["id"], request.user.display_name
             )
         except:
             messages.warning(
-                request, "Failed to set your nickname on the Discord server..."
+                request,
+                "Failed to set your nickname and/or role on the Discord server...",
             )
 
     except HTTPError as error:
