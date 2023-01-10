@@ -9,6 +9,50 @@
 
         {% include "./filters.html" %}
 
+        <nav class="pagination" role="navigation" aria-label="pagination">
+            {% if page_obj.has_previous %}
+            <a class="pagination-previous" href="?semester={{ target_semester.pk|default:'' }}&search={{ search|default:'' }}&page={{ page_obj.previous_page_number }}">Previous</a>
+            {% else %}
+            <button class="pagination-previous" disabled>Previous</button>
+            {% endif %}
+
+            {% if page_obj.has_next %}
+            <a class="pagination-next" href="?semester={{ target_semester.pk|default:'' }}&search={{ search|default:'' }}&page={{ page_obj.next_page_number }}">Next</a>
+            {% else %}
+            <button class="pagination-next" disabled>Next</button>
+            {% endif %}
+
+            <ul class="pagination-list">
+                <li>
+                    <a class="pagination-link" aria-label="Goto page 1" href="?semester={{ target_semester.pk|default:'' }}&search={{ search|default:'' }}&page=1">1</a>
+                </li>
+                <li>
+                    <span class="pagination-ellipsis">&hellip;</span>
+                </li>
+
+                {% if page_obj.has_previous and page_obj.previous_page_number != 1 %}
+                <li>
+                    <a class="pagination-link" aria-label="Goto page {{ page_obj.previous_page_number }}" href="?semester={{ target_semester.pk|default:'' }}&search={{ search|default:'' }}&page={{ page_obj.previous_page_number }}">{{ page_obj.previous_page_number }}</a>
+                </li>
+                {% endif %}
+
+                <li>
+                    <a class="pagination-link is-current" aria-label="Page {{ page_obj.number }}" aria-current="page">{{ page_obj.number }}</a>
+                </li>
+                {% if page_obj.has_next and page_obj.next_page_number != page_obj.paginator.num_pages %}
+                <li>
+                    <a class="pagination-link" aria-label="Goto page {{ page_obj.next_page_number }}" href="?semester={{ target_semester.pk|default:'' }}&search={{ search|default:'' }}&page={{ page_obj.next_page_number }}">{{ page_obj.next_page_number }}</a>
+                </li>
+                {% endif %}
+                <li>
+                    <span class="pagination-ellipsis">&hellip;</span>
+                </li>
+                <li>
+                    <a class="pagination-link" aria-label="Goto page {{ page_obj.paginator.num_pages }}" href="?semester={{ target_semester.pk|default:'' }}&search={{ search|default:'' }}&page={{ page_obj.paginator.num_pages }}">{{ page_obj.paginator.num_pages }}</a>
+                </li>
+            </ul>
+        </nav>
+
         <div class="table-container">
             <table class="table is-fullwidth is-striped is-hoverable">
                 <thead>
@@ -23,7 +67,7 @@
                     </tr>
                 </thead>
                 <tbody>
-                    {% for user in users %}
+                    {% for user in page_obj  %}
                     {% user_enrollment user target_semester as enrollment %}
                     <tr>
                         <td>
