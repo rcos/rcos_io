@@ -57,6 +57,22 @@ def discord_link_callback(request):
         discord_user_tokens = discord.get_tokens(code)
         discord_access_token = discord_user_tokens["access_token"]
         discord_user_info = discord.get_user_info(discord_access_token)
+
+        try:
+            discord.add_user_to_server(discord_access_token, settings.DISCORD_SERVER_ID)
+            messages.success(request, "Added you to the RCOS Discord server!")
+        except:
+            messages.warning(request, "Failed to add you to the RCOS Discord server...")
+
+        try:
+            discord.set_member_nickname(
+                discord_user_info["id"], request.user.display_name
+            )
+        except:
+            messages.warning(
+                request, "Failed to set your nickname on the Discord server..."
+            )
+
     except HTTPError as error:
         messages.error(request, "Yikes! Failed to link your Discord.")
         return redirect(reverse("profile"))
