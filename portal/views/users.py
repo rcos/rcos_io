@@ -8,7 +8,7 @@ from . import SearchableListView, SemesterFilteredDetailView, SemesterFilteredLi
 
 
 class UserIndexView(SearchableListView, SemesterFilteredListView):
-    paginate_by = 10
+    paginate_by = 50
     template_name = "portal/users/index.html"
     context_object_name = "users"
 
