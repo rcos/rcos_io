@@ -22,6 +22,18 @@ def profile(request):
         if form.is_valid():
             messages.success(request, "Your profile was updated.")
             form.save()
+
+            if request.user.discord_user_id:
+                try:
+                    discord.set_member_nickname(
+                        request.user.discord_user_id, request.user.display_name
+                    )
+                except:
+                    messages.warning(
+                        request,
+                        "Failed to set your nickname on the Discord server...",
+                    )
+
             return redirect(reverse("profile"))
     else:
         form = UserProfileForm(instance=request.user)
