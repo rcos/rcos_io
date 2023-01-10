@@ -64,12 +64,13 @@ def discord_link_callback(request):
         except:
             messages.warning(request, "Failed to add you to the RCOS Discord server...")
 
-        try:
-            discord.add_role_to_member(
-                discord_user_info["id"], settings.DISCORD_VERIFIED_ROLE_ID
-            )
-        except Exception as e:
-            print(e)
+        if request.user.is_approved:
+            try:
+                discord.add_role_to_member(
+                    discord_user_info["id"], settings.DISCORD_VERIFIED_ROLE_ID
+                )
+            except Exception as e:
+                print(e)
 
         try:
             discord.set_member_nickname(
