@@ -1,8 +1,9 @@
+from typing import Any
+
 from django.contrib import messages
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.contrib.messages.views import SuccessMessageMixin
-from django.db.models import Q
-from django.http import Http404
+from django.http import Http404, HttpResponseForbidden
 from django.shortcuts import redirect
 from django.urls import reverse
 from django.views.generic.edit import CreateView
@@ -10,7 +11,7 @@ from django.views.generic.edit import CreateView
 from portal.forms import ProposeProjectForm
 from portal.services import github
 
-from ..models import Enrollment, Project, Semester
+from ..models import Enrollment, Project, ProjectPitch, Semester
 from . import (
     SearchableListView,
     SemesterFilteredDetailView,
@@ -123,4 +124,35 @@ class ProjectProposeView(
             return redirect(reverse("projects_index"))
 
         form.instance.owner = self.request.user
+        return super().form_valid(form)
+
+
+class ProjectAddPitch(CreateView):
+    model = ProjectPitch
+    template_name = "portal/projects/pitch.html"
+    fields = ["url"]
+    success_url = "/"
+
+    def get_context_data(self, **kwargs: Any):
+        data = super().get_context_data(**kwargs)
+        data["project"] = self.project
+        data["semester"] = self.semester
+        return data
+
+    def get(self, request, *args: str, **kwargs: Any):
+        self.semester = Semester.get_active()
+        self.project = Project.objects.get(pk=self.kwargs["slug"])
+        if not self.project.owner == self.request.user:
+            return HttpResponseForbidden()
+
+        return super().get(request, *args, **kwargs)
+
+    def form_valid(self, form):
+        self.semester = Semester.get_active()
+        self.project = Project.objects.get(pk=self.kwargs["slug"])
+        if not self.project.owner == self.request.user:
+            return HttpResponseForbidden()
+
+        form.instance.semester = self.semester
+        form.instance.project = self.project
         return super().form_valid(form)

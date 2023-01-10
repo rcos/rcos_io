@@ -1,0 +1,32 @@
+{% extends "portal/base.html" %}
+{% load crispy_forms_tags %}
+{% block content %}
+<section class="section">
+    <div class="container">
+        <h1 class="title">Submit Project Pitch for {{ project }} {{ active_semester }}</h1>
+
+        <div class="content">
+            <p>Pitching a project involves submitting a single presentation slide (usually Google Slides) that includes</p>
+            <ul>
+                <li>project name</li>
+                <li>project lead(s)</li>
+                <li>brief project description</li>
+                <li>project stack</li>
+                <li>what kind of members you're seeking (new/experienced/etc.)</li>
+                <li>repository link (if you have)</li>
+            </ul>
+            <p>You'll briefly present this slide as and advertisement to the RCOS community during one of the Pitch Days at the very start of the semester.</p>
+            <a href="{% url 'handbook' %}?initial_route=/project_management/pitch">View details and past examples in the Handbook</a>
+        </div>
+
+        <form method="post">
+            {% csrf_token %}
+
+            {{ form|crispy }}
+
+            <button type="submit" class="button">Submit Pitch</button>
+        </form>
+        
+    </div>
+</section>
+{% endblock %}

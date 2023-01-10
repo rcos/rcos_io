@@ -398,10 +398,19 @@ class ProjectPitch(TimestampedModel):
     project = models.ForeignKey(
         Project, on_delete=models.CASCADE, related_name="pitches"
     )
-    url = models.URLField(help_text="Link to the pitch presentation")
+    url = models.URLField(
+        "Presentation URL",
+        help_text="Direct link to the pitch presentation (usually a Google Slides link)",
+    )
 
     def __str__(self) -> str:
         return f"{self.semester} {self.project} Pitch: {self.url}"
+
+    class Meta:
+        unique_together = (
+            "semester",
+            "project",
+        )
 
 
 class ProjectProposal(TimestampedModel):
