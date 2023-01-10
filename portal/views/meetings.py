@@ -122,7 +122,11 @@ class MeetingDetailView(DetailView):
             data["attended_users"] = attended_users
             data["non_attended_users"] = non_attended_users
             data["needs_verification_users"] = needs_verification_users
-            data["attendance_ratio"] = attended_users.count() / expected_users.count()
+            data["attendance_ratio"] = (
+                attended_users.count() / expected_users.count()
+                if expected_users.count() > 0
+                else 0
+            )
 
             query = {
                 "meeting": self.object,
