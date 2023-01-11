@@ -14,8 +14,12 @@ from pathlib import Path
 
 from django.contrib.messages import constants as messages
 from dotenv import load_dotenv
+from sentry_sdk.integrations.django import DjangoIntegration
 
 load_dotenv()
+
+import sentry_sdk
+
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
@@ -29,6 +33,24 @@ SECRET_KEY = os.environ["SECRET_KEY"]
 
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = os.environ["ENV"] == "development"
+
+
+sentry_sdk.init(
+    dsn="https://9994829e0309480fb835f3b5eb9e600b@o4504487931346944.ingest.sentry.io/4504487932395520",
+    integrations=[
+        DjangoIntegration(),
+    ],
+    debug=DEBUG,
+    environment=os.environ["ENV"],
+    # Set traces_sample_rate to 1.0 to capture 100%
+    # of transactions for performance monitoring.
+    # We recommend adjusting this value in production.
+    traces_sample_rate=1.0,
+    # If you wish to associate users to errors (assuming you are using
+    # django.contrib.auth) you may enable sending PII data.
+    send_default_pii=True,
+)
+
 
 ALLOWED_HOSTS = ["localhost", "127.0.0.1", "rcos.up.railway.app"]
 
