@@ -5,9 +5,10 @@
     {% if debug or request.user.is_superuser %}
         <nav class="breadcrumb is-centered mt-3" aria-label="breadcrumbs">
             <ul>
-                <li><a href="/admin">Site Admin</a></li>
-                <li><a href="https://railway.app/dashboard" target="_blank">Railway Dashboard</a></li>
-                <li><a href="https://app.mailjet.com/dashboard" target="_blank">Mailjet</a></li>
+                <li><a href="/admin">Admin Site</a></li>
+                <li><a href="https://railway.app/dashboard" target="_blank">Hosting Dashboard</a></li>
+                <li><a href="https://sentry.io/organizations/rcos/issues/" target="_blank">Errors Dashboard</a></li>
+                <li><a href="https://app.mailjet.com/dashboard" target="_blank">Email API Dashboard</a></li>
             </ul>
         </nav>
     {% endif %}
