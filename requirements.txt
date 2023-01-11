@@ -23,6 +23,7 @@ python-dateutil==2.8.2
 python-dotenv==0.21.0
 requests==2.28.1
 requests-toolbelt==0.10.1
+sentry-sdk==1.12.1
 six==1.16.0
 sqlparse==0.4.3
 tinycss2==1.1.1
