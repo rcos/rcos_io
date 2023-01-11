@@ -60,6 +60,19 @@ def start_discord_link(request):
 
 
 @login_required
+def unlink_discord(request):
+    request.user.discord_user_id = None
+
+    try:
+        request.user.save()
+        messages.info(request, "Successfully unlinked your Discord account.")
+    except:
+        messages.error(request, "Failed to unlink your Discord account...")
+
+    return redirect(reverse("profile"))
+
+
+@login_required
 def discord_link_callback(request):
     code = request.GET.get("code")
     if not code:
@@ -137,6 +150,19 @@ def github_link_callback(request):
         request,
         f"Successfully linked GitHub account @{github_username} to your profile.",
     )
+    return redirect(reverse("profile"))
+
+
+@login_required
+def unlink_github(request):
+    request.user.github_username = None
+
+    try:
+        request.user.save()
+        messages.info(request, "Successfully unlinked your GitHub account.")
+    except:
+        messages.error(request, "Failed to unlink your GitHub account...")
+
     return redirect(reverse("profile"))
 
 

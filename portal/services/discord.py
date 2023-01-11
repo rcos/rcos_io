@@ -9,7 +9,7 @@ DISCORD_API_ENDPOINT = f"https://discord.com/api/v{DISCORD_VERSION_NUMBER}"
 DISCORD_OAUTH2_URL = (
     "https://discord.com/api/oauth2/authorize"
     f"?client_id={settings.DISCORD_CLIENT_ID}&redirect_uri={settings.DISCORD_REDIRECT_URL}"
-    "&response_type=code&scope=identify%20guilds.join&prompt=none"
+    "&response_type=code&scope=identify%20guilds.join&prompt=consent"
 )
 
 HEADERS = {

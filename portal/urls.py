@@ -11,6 +11,8 @@ from .views.auth import (
     profile,
     start_discord_link,
     start_github_link,
+    unlink_discord,
+    unlink_github,
     verify_change_email,
 )
 from .views.index import HandbookView, IndexView
@@ -42,10 +44,12 @@ urlpatterns = [
         discord_link_callback,
         name="link_discord_callback",
     ),
+    path("auth/unlink/discord", unlink_discord, name="unlink_discord"),
     path("auth/link/github", start_github_link, name="link_github"),
     path(
         "auth/link/github/callback", github_link_callback, name="link_github_callback"
     ),
+    path("auth/unlink/github", unlink_github, name="unlink_github"),
     path("users/", UserIndexView.as_view(), name="users_index"),
     path("users/enroll/", enroll_user, name="users_enroll"),
     path("users/<int:pk>", UserDetailView.as_view(), name="users_detail"),

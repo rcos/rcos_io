@@ -40,12 +40,17 @@
             <div class="column is-4">
 
                 <div class="notification {% if not request.user.discord_user_id %}is-danger{% endif %}">
-                    <span class="icon-text">
+                    <span class="icon-text" style="width: 100%;">
                         <span class="icon is-large"><i class="fa-brands fa-2x fa-discord"></i></span>
                         <span class="is-align-self-center">
                             {% with request.user.get_discord_user as discord_user %}
                             {% if discord_user %}
-                            Linked to <strong>@{{ discord_user.username }}#{{ discord_user.discriminator }}</strong>
+                            <p class="is-size-5">Linked to <strong>@{{ discord_user.username }}#{{ discord_user.discriminator }}</strong></p>
+                            <small>
+                                <a href="{% url 'unlink_discord' %}">Unlink</a>
+                                /
+                                <a href="{% url 'link_discord' %}">Switch</a>
+                            </small>
                             {% else %}
                             <a href="{% url 'link_discord' %}">Link your Discord account</a>
                             {% endif %}
@@ -61,8 +66,15 @@
                         <span class="icon is-large"><i class="fa-brands fa-2x fa-github"></i></span>
                         <span class="is-align-self-center">
                             {% if request.user.github_username %}
-                            Linked to 
-                            <a class="has-text-weight-bold" href="https://github.com/{{ request.user.github_username }}" target="_blank">@{{ request.user.github_username }}</a>
+                            <p class="is-size-5">
+                                Linked to 
+                                <a class="has-text-weight-bold" href="https://github.com/{{ request.user.github_username }}" target="_blank">@{{ request.user.github_username }}</a>
+                            </p>
+                            <small>
+                                <a href="{% url 'unlink_github' %}">Unlink</a>
+                                /
+                                <a href="{% url 'link_github' %}">Switch</a>
+                            </small>
                             {% else %}
                             <a href="{% url 'link_github' %}">Link your GitHub account</a>
                             {% endif %}
