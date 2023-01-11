@@ -12,6 +12,7 @@ from requests import HTTPError
 from portal.forms import ChangeEmailForm, UserProfileForm
 from portal.models import User
 from portal.services import discord, github
+from sentry_sdk import capture_exception
 
 
 @login_required
@@ -28,7 +29,8 @@ def profile(request):
                     discord.set_member_nickname(
                         request.user.discord_user_id, request.user.display_name
                     )
-                except:
+                except Exception as e:
+                    capture_exception(e)
                     messages.warning(
                         request,
                         "Failed to set your nickname on the Discord server...",
@@ -66,7 +68,8 @@ def unlink_discord(request):
     try:
         request.user.save()
         messages.info(request, "Successfully unlinked your Discord account.")
-    except:
+    except Exception as e:
+        capture_exception(e)
         messages.error(request, "Failed to unlink your Discord account...")
 
     return redirect(reverse("profile"))
@@ -86,7 +89,8 @@ def discord_link_callback(request):
         try:
             discord.add_user_to_server(discord_access_token, settings.DISCORD_SERVER_ID)
             messages.success(request, "Added you to the RCOS Discord server!")
-        except:
+        except Exception as e:
+            capture_exception(e)
             messages.warning(request, "Failed to add you to the RCOS Discord server...")
 
         if request.user.is_approved:
@@ -101,7 +105,8 @@ def discord_link_callback(request):
             discord.set_member_nickname(
                 discord_user_info["id"], request.user.display_name
             )
-        except:
+        except Exception as e:
+            capture_exception(e)
             messages.warning(
                 request,
                 "Failed to set your nickname and/or role on the Discord server...",
@@ -160,7 +165,8 @@ def unlink_github(request):
     try:
         request.user.save()
         messages.info(request, "Successfully unlinked your GitHub account.")
-    except:
+    except Exception as e:
+        capture_exception(e)
         messages.error(request, "Failed to unlink your GitHub account...")
 
     return redirect(reverse("profile"))
@@ -223,7 +229,8 @@ def verify_change_email(request):
                 f"You've confirmed your email change to {request.user.email}. Please use this email to login in the future.",
             )
             return redirect(reverse("profile"))
-    except:
+    except Exception as e:
+        capture_exception(e)
         messages.error(request, "Could not confirm your email address change.")
 
     return redirect(reverse("profile"))

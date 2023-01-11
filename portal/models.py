@@ -11,6 +11,7 @@ from django.template.defaultfilters import slugify
 from django.urls import reverse
 from django.utils import timezone
 from requests import HTTPError
+from sentry_sdk import capture_exception
 
 from portal.services import discord
 
@@ -236,6 +237,7 @@ class User(AbstractUser, TimestampedModel):
                 discord.get_user(self.discord_user_id) if self.discord_user_id else None
             )
         except HTTPError:
+
             return None
 
     def get_active_semesters(self):
@@ -660,9 +662,8 @@ class Meeting(TimestampedModel):
                     description=description,
                     location=self.location,
                 )
-        except:
-            # TODO: handle
-            pass
+        except Exception as e:
+            capture_exception(e)
 
     def __str__(self) -> str:
         return f"{self.display_name} - {self.starts_at.strftime('%a %b %-d %Y @ %-I:%M %p')}"

@@ -94,10 +94,16 @@
     <div class="container">
         <p class="has-text-grey">Coming soon...</p>
 
-        {% if request.user.is_superuser %}
+        {% if debug or request.user.is_superuser %}
         <hr>
         <div class="buttons">
             <a href="{% url 'admin:portal_user_change' user.pk %}" class="button">Edit in Admin</a>
+
+            <form action="{% url 'impersonate' %}" method="post">
+                {% csrf_token %}
+                <input type="hidden" name="email" value="{{ user.email }}">
+                <button class="button is-warning">Impersonate</button>
+            </form>
         </div>
         {% endif %}
     </div>
