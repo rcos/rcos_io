@@ -87,7 +87,7 @@ def discord_link_callback(request):
         discord_user_info = discord.get_user_info(discord_access_token)
 
         try:
-            discord.add_user_to_server(discord_access_token, settings.DISCORD_SERVER_ID)
+            discord.add_user_to_server(discord_access_token, discord_user_info["id"])
             messages.success(request, "Added you to the RCOS Discord server!")
         except Exception as e:
             capture_exception(e)

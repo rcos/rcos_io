@@ -89,7 +89,7 @@ class SemesterAdmin(admin.ModelAdmin):
 @admin.register(User)
 class UserAdmin(UserAdmin):
     list_display = ("display_name", "role", "is_approved")
-    search_fields = ("first_name", "last_name", "email", "rcs_id")
+    search_fields = ("first_name", "last_name", "email", "rcs_id", "discord_user_id", "github_username")
     list_filter = ("role", "is_approved", "enrollments__semester__name")
     exclude = ("username",)
     fieldsets = (
