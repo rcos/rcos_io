@@ -12,6 +12,8 @@ from django.urls import reverse
 from django.utils import timezone
 from requests import HTTPError
 from sentry_sdk import capture_exception
+from django.utils import formats
+from django.utils import timezone
 
 from portal.services import discord
 
@@ -666,7 +668,7 @@ class Meeting(TimestampedModel):
             capture_exception(e)
 
     def __str__(self) -> str:
-        return f"{self.display_name} - {self.starts_at.strftime('%a %b %-d %Y @ %-I:%M %p')}"
+        return f"{self.display_name} - {formats.date_format(timezone.localtime(self.starts_at), 'D M j Y @ P')}"
 
     @classmethod
     def get_next(cls):
@@ -796,7 +798,11 @@ class StatusUpdate(TimestampedModel):
 
     @property
     def display_name(self):
-        return (self.name or "Status Update") + " " + self.opens_at.strftime("%x")
+        return (
+            (self.name or "Status Update")
+            + " "
+            + timezone.localtime(self.opens_at).strftime("%x")
+        )
 
     def __str__(self) -> str:
         return self.display_name
