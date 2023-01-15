@@ -290,6 +290,12 @@ class User(AbstractUser, TimestampedModel):
 
     class Meta:
         ordering = ["first_name", "last_name", "email"]
+        indexes = [
+            models.Index(fields=["is_approved"]),
+            models.Index(fields=["email"]),
+            models.Index(fields=["rcs_id"]),
+            models.Index(fields=["first_name", "last_name"]),
+        ]
 
 
 def pre_save_user(instance, sender, *args, **kwargs):
@@ -386,6 +392,7 @@ class Project(TimestampedModel):
     class Meta:
         ordering = ["name"]
         get_latest_by = "created_at"
+        indexes = [models.Index(fields=["name", "summary"])]
 
 
 class ProjectRepository(TimestampedModel):
