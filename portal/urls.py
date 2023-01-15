@@ -1,4 +1,5 @@
 from django.urls import path
+from django.views.decorators.cache import cache_page
 
 from portal.views.admin import import_submitty_data
 from portal.views.small_groups import SmallGroupDetailView, SmallGroupIndexView
@@ -50,10 +51,14 @@ urlpatterns = [
         "auth/link/github/callback", github_link_callback, name="link_github_callback"
     ),
     path("auth/unlink/github", unlink_github, name="unlink_github"),
-    path("users/", UserIndexView.as_view(), name="users_index"),
+    path("users/", cache_page(60 * 15)(UserIndexView.as_view()), name="users_index"),
     path("users/enroll/", enroll_user, name="users_enroll"),
     path("users/<int:pk>", UserDetailView.as_view(), name="users_detail"),
-    path("projects/", ProjectIndexView.as_view(), name="projects_index"),
+    path(
+        "projects/",
+        cache_page(60 * 15)(ProjectIndexView.as_view()),
+        name="projects_index",
+    ),
     path("projects/propose/", ProjectProposeView.as_view(), name="projects_propose"),
     path("projects/<int:pk>", ProjectDetailView.as_view(), name="projects_detail"),
     path("projects/<slug:slug>", ProjectDetailView.as_view(), name="projects_detail"),
@@ -71,7 +76,11 @@ urlpatterns = [
     ),
     path("meetings/<int:pk>", MeetingDetailView.as_view(), name="meetings_detail"),
     path("api/meetings", meetings_api, name="meetings_api"),
-    path("small_groups/", SmallGroupIndexView.as_view(), name="small_groups_index"),
+    path(
+        "small_groups/",
+        cache_page(60 * 15)(SmallGroupIndexView.as_view()),
+        name="small_groups_index",
+    ),
     path(
         "small_groups/<int:pk>",
         SmallGroupDetailView.as_view(),
