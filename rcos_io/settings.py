@@ -279,3 +279,10 @@ MESSAGE_TAGS = {
     messages.SUCCESS: "is-success",
     messages.WARNING: "is-warning",
 }
+
+if DEBUG:
+    CACHES = {
+        'default': {
+            'BACKEND': 'django.core.cache.backends.dummy.DummyCache',
+        }
+    }
