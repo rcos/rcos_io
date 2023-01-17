@@ -1,7 +1,7 @@
 from django.urls import path
 from django.views.decorators.cache import cache_page
 
-from portal.views.admin import import_submitty_data
+from portal.views.admin import import_submitty_enrollments
 from portal.views.small_groups import SmallGroupDetailView, SmallGroupIndexView
 
 from .views.auth import (
@@ -86,5 +86,9 @@ urlpatterns = [
         SmallGroupDetailView.as_view(),
         name="small_groups_detail",
     ),
-    path("admin/import", import_submitty_data, name="admin_import"),
+    path(
+        "admin/import/submitty",
+        import_submitty_enrollments,
+        name="admin_import_submitty",
+    ),
 ]

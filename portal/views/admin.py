@@ -8,6 +8,10 @@ from django.shortcuts import render
 
 from portal.forms import UploadSubmittyDataForm
 from portal.models import Enrollment, Semester, User
+import logging
+
+
+logger = logging.getLogger(__name__)
 
 
 def is_admin(user):
@@ -31,7 +35,7 @@ SubmittyCSVRow = TypedDict(
 
 @login_required
 @user_passes_test(is_admin)
-def import_submitty_data(request):
+def import_submitty_enrollments(request):
     if request.method == "POST":
         form = UploadSubmittyDataForm(request.POST, request.FILES)
         if form.is_valid():
@@ -43,40 +47,45 @@ def import_submitty_data(request):
                 row: SubmittyCSVRow
 
                 if not row["Email"]:
-                    print("Skipping", row)
+                    logger.warning("Skipping %s", row)
                     continue
 
-                rcs_id = row["Email"].removesuffix("@rpi.edu")
-                # Find or create user
                 try:
-                    user = User.objects.get(Q(rcs_id=rcs_id) | Q(email=row["Email"]))
-                    print("Found", user)
-                except User.DoesNotExist:
-                    user = User(email=row["Email"])
-                    print("Created", user)
+                    rcs_id = row["Email"].removesuffix("@rpi.edu")
+                    # Find or create user
+                    try:
+                        user = User.objects.get(
+                            Q(rcs_id=rcs_id) | Q(email=row["Email"])
+                        )
+                    except User.DoesNotExist:
+                        user = User(email=row["Email"])
 
-                if not user.first_name:
-                    user.first_name = row["First Name"]
-                if not user.last_name:
-                    user.last_name = row["Last Name"]
+                    if not user.first_name:
+                        user.first_name = row["First Name"]
+                    if not user.last_name:
+                        user.last_name = row["Last Name"]
 
-                user.save()
-                try:
-                    credits = int(row["Registration Section"])
-                except ValueError:
-                    credits = 0
+                    user.save()
+                    try:
+                        credits = int(row["Registration Section"])
+                    except ValueError:
+                        credits = 0
 
-                # Upsert enrollment
-                enrollment, is_new = Enrollment.objects.update_or_create(
-                    semester=semester, user=user, defaults={"credits": credits}
-                )
+                    # Upsert enrollment
+                    enrollment, is_new = Enrollment.objects.update_or_create(
+                        semester=semester, user=user, defaults={"credits": credits}
+                    )
 
-                print("Created" if is_new else "Updated", "enrollment", enrollment)
+                    logger.info(
+                        "Created" if is_new else "Updated", "enrollment", enrollment
+                    )
+                except:
+                    pass
     else:
         form = UploadSubmittyDataForm()
 
     return render(
         request,
-        "portal/admin/import.html",
+        "portal/admin/import/submitty_enrollments.html",
         {"form": form, "expected_columns": SubmittyCSVRow.__required_keys__},
     )
