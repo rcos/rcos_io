@@ -9,11 +9,9 @@ from django.db.models import Q
 from django.db.models.signals import post_save, pre_save
 from django.template.defaultfilters import slugify
 from django.urls import reverse
-from django.utils import timezone
+from django.utils import formats, timezone
 from requests import HTTPError
 from sentry_sdk import capture_exception
-from django.utils import formats
-from django.utils import timezone
 
 from portal.services import discord
 

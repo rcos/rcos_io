@@ -8,11 +8,11 @@ from django.shortcuts import redirect, render
 from django.urls import reverse
 from django.utils import timezone
 from requests import HTTPError
+from sentry_sdk import capture_exception
 
 from portal.forms import ChangeEmailForm, UserProfileForm
 from portal.models import User
 from portal.services import discord, github
-from sentry_sdk import capture_exception
 
 
 @login_required
@@ -112,7 +112,8 @@ def discord_link_callback(request):
                 "Failed to set your nickname and/or role on the Discord server...",
             )
 
-    except HTTPError as error:
+    except HTTPError as e:
+        capture_exception(e)
         messages.error(request, "Yikes! Failed to link your Discord.")
         return redirect(reverse("profile"))
 
@@ -144,8 +145,12 @@ def github_link_callback(request):
         github_access_token = github_user_tokens["access_token"]
         client = github.client_factory(github_access_token)
         github_username = github.get_user_username(client)
-    except HTTPError as error:
+    except HTTPError as e:
+        capture_exception(e)
         messages.error(request, "Yikes! Failed to link your GitHub.")
+        return redirect(reverse("profile"))
+    except KeyError:
+        messages.error(request, "Failed to link your GitHub. Try again.")
         return redirect(reverse("profile"))
 
     request.user.github_username = github_username
