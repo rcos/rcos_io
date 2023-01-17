@@ -125,7 +125,7 @@ def add_user_to_server(access_token: str, user_id: str, nickname: Optional[str] 
     }
 
     if nickname is not None:
-        data["nickname"] = nickname
+        data["nick"] = nickname
     if roles is not None:
         data["roles"] = roles
 
