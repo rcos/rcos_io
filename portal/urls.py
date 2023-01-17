@@ -51,12 +51,12 @@ urlpatterns = [
         "auth/link/github/callback", github_link_callback, name="link_github_callback"
     ),
     path("auth/unlink/github", unlink_github, name="unlink_github"),
-    path("users/", cache_page(60 * 15)(UserIndexView.as_view()), name="users_index"),
+    path("users/", UserIndexView.as_view(), name="users_index"),
     path("users/enroll/", enroll_user, name="users_enroll"),
     path("users/<int:pk>", UserDetailView.as_view(), name="users_detail"),
     path(
         "projects/",
-        cache_page(60 * 15)(ProjectIndexView.as_view()),
+        ProjectIndexView.as_view(),
         name="projects_index",
     ),
     path("projects/propose/", ProjectProposeView.as_view(), name="projects_propose"),
@@ -78,7 +78,7 @@ urlpatterns = [
     path("api/meetings", meetings_api, name="meetings_api"),
     path(
         "small_groups/",
-        cache_page(60 * 15)(SmallGroupIndexView.as_view()),
+        SmallGroupIndexView.as_view(),
         name="small_groups_index",
     ),
     path(
