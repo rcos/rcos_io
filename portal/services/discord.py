@@ -108,19 +108,27 @@ def get_user_info(access_token: str) -> DiscordUser:
     return user
 
 
-def add_user_to_server(access_token: str, user_id: str):
+def add_user_to_server(access_token: str, user_id: str, nickname: Optional[str] = None, roles: Optional[list[str]] = None):
     """
-    Given a Discord user's id, add them to the RCOS server with the given nickname.
+    Given a Discord user's id, add them to the RCOS server with the given nickname and roles.
     Args:
         access_token: Discord user's access token
         user_id: Discord user's account ID
+        nickname: nickname to give the member, must be <= 32 chars (optional)
+        roles: list of Discord role IDs to assign the member (optional)
     Raises:
         HTTPError on failed request
     See https://discord.com/developers/docs/resources/guild#add-guild-member
     """
-    data = {
+    data: Dict[str, Any] = {
         "access_token": access_token,
     }
+
+    if nickname is not None:
+        data["nickname"] = nickname
+    if roles is not None:
+        data["roles"] = roles
+
     response = requests.put(
         f"{DISCORD_API_ENDPOINT}/guilds/{settings.DISCORD_SERVER_ID}/members/{user_id}",
         json=data,
