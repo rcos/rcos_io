@@ -92,7 +92,7 @@ class SearchableListView(ListView):
         # Default to all approved projects
         queryset = Project.objects.filter(is_approved=True)
         # If search is passed in URL, search that value on these fields
-        search_fields = ("name", "summary", "owner__rcs_id)
+        search_fields = ("name", "description", "owner__rcs_id)
     ```
     """
 

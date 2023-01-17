@@ -33,6 +33,7 @@ class ProjectIndexView(SearchableListView, SemesterFilteredListView):
         "owner__last_name",
         "owner__rcs_id",
         "summary",
+        "description",
         "tags__name",
     )
 

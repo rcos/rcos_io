@@ -35,12 +35,19 @@ class ChangeEmailForm(forms.Form):
 class ProposeProjectForm(forms.ModelForm):
     class Meta:
         model = Project
-        fields = ["name", "summary", "tags", "external_chat_url", "homepage_url"]
+        fields = [
+            "name",
+            "summary",
+            "description",
+            "tags",
+            "external_chat_url",
+            "homepage_url",
+        ]
 
 
-class UploadSubmittyDataForm(forms.Form):
+class SemesterCSVUploadForm(forms.Form):
     semester = forms.ModelChoiceField(queryset=Semester.objects.all())
-    submitty_csv = forms.FileField()
+    csv = forms.FileField()
 
 
 class SubmitAttendanceForm(forms.Form):

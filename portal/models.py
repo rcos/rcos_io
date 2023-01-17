@@ -331,7 +331,10 @@ class Project(TimestampedModel):
         help_text="Whether the project has been approved by Mentors/Coordinators to participate in RCOS",
     )
     summary = models.CharField(
-        max_length=100, help_text="A one-line summary of the project"
+        max_length=100, help_text="One-line summary of the project", blank=True
+    )
+    description = models.TextField(
+        max_length=10_000, help_text="A description of the project"
     )
 
     external_chat_url = models.URLField(
@@ -390,7 +393,7 @@ class Project(TimestampedModel):
     class Meta:
         ordering = ["name"]
         get_latest_by = "created_at"
-        indexes = [models.Index(fields=["name", "summary"])]
+        indexes = [models.Index(fields=["name", "summary", "description"])]
 
 
 class ProjectRepository(TimestampedModel):

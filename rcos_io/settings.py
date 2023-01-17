@@ -282,7 +282,7 @@ MESSAGE_TAGS = {
 
 if DEBUG:
     CACHES = {
-        'default': {
-            'BACKEND': 'django.core.cache.backends.dummy.DummyCache',
+        "default": {
+            "BACKEND": "django.core.cache.backends.dummy.DummyCache",
         }
     }

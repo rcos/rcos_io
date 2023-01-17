@@ -10,9 +10,9 @@
                         Import
                     </p>
                     <ul class="menu-list">
-                        <li><a class="is-active">From Submitty</a></li>
+                        <li><a href="{% url 'admin_import_submitty' %}">From Submitty</a></li>
                         <li><a>Users</a></li>
-                        <li><a href="{% url 'admin_import_submitty' %}">Projects</a></li>
+                        <li><a class="is-active">Projects</a></li>
                     </ul>
                     <p class="menu-label">
                         Export
@@ -27,7 +27,7 @@
             </div>
 
             <div class="column">
-                <h1 class="title">Import Users & Enrollments From Submitty</h1>
+                <h1 class="title">Import Projects & Pitches from Google Forms</h1>
 
                 <div class="content">
                     <p>The CSV should be exported from Submitty and is expected to contain the following columns (order doesn't matter, exact name does):</p>
