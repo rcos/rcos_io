@@ -108,7 +108,12 @@ def get_user_info(access_token: str) -> DiscordUser:
     return user
 
 
-def add_user_to_server(access_token: str, user_id: str, nickname: Optional[str] = None, roles: Optional[list[str]] = None):
+def upsert_server_member(
+    access_token: str,
+    user_id: str,
+    nickname: Optional[str] = None,
+    roles: Optional[list[str]] = None,
+):
     """
     Given a Discord user's id, add them to the RCOS server and/or update them with the given nickname and roles.
     Args:
@@ -116,6 +121,8 @@ def add_user_to_server(access_token: str, user_id: str, nickname: Optional[str] 
         user_id: Discord user's account ID
         nickname: nickname to give the member, must be <= 32 chars (optional)
         roles: list of Discord role IDs to assign the member (optional)
+    Returns:
+        joined_server: whether user was added to the server (false if already on server)
     Raises:
         HTTPError on failed request
     See https://discord.com/developers/docs/resources/guild#add-guild-member
@@ -137,7 +144,11 @@ def add_user_to_server(access_token: str, user_id: str, nickname: Optional[str] 
         timeout=3,
     )
 
+    response.raise_for_status()
+
     # If the member was already in the guild, need to update them
+    joined_server = response.status_code == 201
+
     if response.status_code == 204 and (nickname is not None or roles is not None):
         del data["access_token"]
         response = requests.patch(
@@ -147,10 +158,7 @@ def add_user_to_server(access_token: str, user_id: str, nickname: Optional[str] 
             timeout=3,
         )
 
-    response.raise_for_status()
-    # https://requests.readthedocs.io/en/latest/user/quickstart/#response-status-codes
-    # throws HTTPError for 4XX or 5XX
-    return response
+    return joined_server
 
 
 def get_user(user_id: str) -> Union[DiscordUser, None]:
