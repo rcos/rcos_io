@@ -67,28 +67,22 @@
                     </tr>
                 </thead>
                 <tbody>
-                    {% for user in page_obj  %}
-                    {% user_enrollment user target_semester as enrollment %}
+                    {% for user_row in user_rows  %}
                     <tr>
                         <td>
-                            <a href="{{ user.get_absolute_url }}{% target_semester_query %}">{{ user }}</a>
-                            {% is_coordinator user target_semester as is_user_coordinator %}
-                            {% if is_user_coordinator %}
+                            <a href="{{ user_row.user.get_absolute_url }}{% target_semester_query %}">{{ user_row.user }}</a>
+                            {% if user_row.enrollment and user_row.enrollment.is_coordinator %}
                             <span class="tag is-warning">Coordinator</span>
-                            {% endif %}
-                            {% is_mentor user target_semester as is_user_mentor %}
-                            {% if is_user_mentor %}
-                            <span class="tag is-info">Mentor</span>
                             {% endif %}
                         </td>
                         {% if target_semester %}
                         <td>
-                            {% if enrollment.project %}
-                            <a href="{{ enrollment.project.get_absolute_url }}{% target_semester_query %}">
-                                {{ enrollment.project }}
+                            {% if user_row.project %}
+                            <a href="{{ user_row.project.get_absolute_url }}{% target_semester_query %}">
+                                {{ user_row.project }}
                             </a>
                             {% if target_semester %}
-                            {% if enrollment.is_project_lead %}
+                            {% if user_row.enrollment.is_project_lead %}
                             <span class="tag is-light">Lead</span>
                             {% endif %}
                             {% endif %}
@@ -96,10 +90,10 @@
                             <span class="has-text-grey">-</span>
                             {% endif %}
                         </td>
-                        <td>{{ enrollment.credits }}</td>
+                        <td>{{ user_row.enrollment.credits }}</td>
                         {% else %}
                         <td>
-                            {% for enrollment in user.enrollments.all %}
+                            {% for enrollment in user_row.enrollments %}
                             <a class="is-block" href="{{ enrollment.get_absolute_url }}">{{ enrollment.semester }} ({{ enrollment.project }})</a>
                             {% empty %}
                             -
@@ -112,7 +106,7 @@
             </table>
         </div>
 
-        {% if users|length == 0 %}
+        {% if user_rows|length == 0 %}
         <p class="has-text-centered has-text-grey">
             No users
             {% if target_semester %}

@@ -33,11 +33,6 @@ def semester_admins(semester):
 
 
 @register.simple_tag
-def is_coordinator(user: User, semester=None):
-    return user.is_coordinator(semester)
-
-
-@register.simple_tag
 def is_mentor(user: User, semester=None):
     return user.is_mentor(semester)
 
@@ -47,13 +42,6 @@ def user_enrollment(user, semester):
     if semester:
         return user.enrollments.filter(semester=semester).first()
     return None
-
-
-@register.simple_tag
-def enrollment_count(enrollments, semester) -> int:
-    if semester:
-        return enrollments.filter(semester=semester).count()
-    return 0
 
 
 @register.simple_tag
