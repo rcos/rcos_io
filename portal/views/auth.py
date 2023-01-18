@@ -87,30 +87,16 @@ def discord_link_callback(request):
         discord_user_info = discord.get_user_info(discord_access_token)
 
         try:
-            discord.add_user_to_server(discord_access_token, discord_user_info["id"])
+            discord.add_user_to_server(
+                discord_access_token,
+                discord_user_info["id"],
+                request.user.display_name,
+                [settings.DISCORD_VERIFIED_ROLE_ID] if request.user.is_approved else None
+            )
             messages.success(request, "Added you to the RCOS Discord server!")
         except Exception as e:
             capture_exception(e)
             messages.warning(request, "Failed to add you to the RCOS Discord server...")
-
-        if request.user.is_approved:
-            try:
-                discord.add_role_to_member(
-                    discord_user_info["id"], settings.DISCORD_VERIFIED_ROLE_ID
-                )
-            except Exception as e:
-                print(e)
-
-        try:
-            discord.set_member_nickname(
-                discord_user_info["id"], request.user.display_name
-            )
-        except Exception as e:
-            capture_exception(e)
-            messages.warning(
-                request,
-                "Failed to set your nickname and/or role on the Discord server...",
-            )
 
     except HTTPError as e:
         capture_exception(e)

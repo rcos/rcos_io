@@ -108,25 +108,45 @@ def get_user_info(access_token: str) -> DiscordUser:
     return user
 
 
-def add_user_to_server(access_token: str, user_id: str):
+def add_user_to_server(access_token: str, user_id: str, nickname: Optional[str] = None, roles: Optional[list[str]] = None):
     """
-    Given a Discord user's id, add them to the RCOS server with the given nickname.
+    Given a Discord user's id, add them to the RCOS server and/or update them with the given nickname and roles.
     Args:
         access_token: Discord user's access token
         user_id: Discord user's account ID
+        nickname: nickname to give the member, must be <= 32 chars (optional)
+        roles: list of Discord role IDs to assign the member (optional)
     Raises:
         HTTPError on failed request
     See https://discord.com/developers/docs/resources/guild#add-guild-member
+    See https://discord.com/developers/docs/resources/guild#modify-guild-member
     """
-    data = {
+    data: Dict[str, Any] = {
         "access_token": access_token,
     }
+
+    if nickname is not None:
+        data["nick"] = nickname
+    if roles is not None:
+        data["roles"] = roles
+
     response = requests.put(
         f"{DISCORD_API_ENDPOINT}/guilds/{settings.DISCORD_SERVER_ID}/members/{user_id}",
         json=data,
         headers=HEADERS,
         timeout=3,
     )
+
+    # If the member was already in the guild, need to update them
+    if response.status_code == 204 and (nickname is not None or roles is not None):
+        del data["access_token"]
+        response = requests.patch(
+            f"{DISCORD_API_ENDPOINT}/guilds/{settings.DISCORD_SERVER_ID}/members/{user_id}",
+            json=data,
+            headers=HEADERS,
+            timeout=3,
+        )
+
     response.raise_for_status()
     # https://requests.readthedocs.io/en/latest/user/quickstart/#response-status-codes
     # throws HTTPError for 4XX or 5XX
