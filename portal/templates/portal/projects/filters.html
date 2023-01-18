@@ -3,7 +3,7 @@
         <input type="hidden" name="semester" value="{{ target_semester.id|default:'' }}">
         <div class="level-item">
             <p class="subtitle is-6">
-                <strong>{{ projects|length }}</strong> result{{ projects|pluralize }}
+                <strong>{{ projects_data|length }}</strong> result{{ projects_data|pluralize }}
             </p>
         </div>
         {% if target_semester and target_semester.is_active %}

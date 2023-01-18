@@ -109,6 +109,15 @@ class UserManager(BaseUserManager):
         return self._create_user(email, password, **extra_fields)
 
 
+class StudentManager(UserManager):
+    def get_queryset(self):
+        return (
+            super()
+            .get_queryset()
+            .filter(role=User.RPI, is_active=True, is_approved=True)
+        )
+
+
 class User(AbstractUser, TimestampedModel):
     RPI = "rpi"
     EXTERNAL = "external"
@@ -129,6 +138,7 @@ class User(AbstractUser, TimestampedModel):
     # Set for RPI users only
     rcs_id = models.CharField(
         blank=True,
+        null=True,
         max_length=30,
         help_text="If the user is an RPI user, their RCS ID.",
         verbose_name="RCS ID",

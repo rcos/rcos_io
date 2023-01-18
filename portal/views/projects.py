@@ -1,4 +1,5 @@
 from typing import Any
+from django.db.models import Count
 
 from django.contrib import messages
 from django.contrib.auth.mixins import LoginRequiredMixin
@@ -25,7 +26,11 @@ class ProjectIndexView(SearchableListView, SemesterFilteredListView):
     context_object_name = "projects"
 
     # Default to all approved projects
-    queryset = Project.objects.filter(is_approved=True).select_related()
+    queryset = (
+        Project.objects.filter(is_approved=True)
+        .prefetch_related("tags", "pitches")
+        .select_related("owner")
+    )
     semester_filter_key = "enrollments__semester"
     search_fields = (
         "name",
@@ -56,6 +61,41 @@ class ProjectIndexView(SearchableListView, SemesterFilteredListView):
             if self.request.user.is_authenticated
             else False
         )
+
+        projects_data = []
+        enrollments = Enrollment.objects.filter(
+            project__in=self.queryset
+        ).select_related("user")
+        if self.target_semester:
+            enrollments = enrollments.filter(
+                semester=self.target_semester
+            ).select_related("semester")
+
+        for project in self.get_queryset():
+            project_data = {
+                "project": project,
+                "enrollments": len(
+                    [e for e in enrollments if e.project_id == project.pk]
+                ),
+            }
+            if self.target_semester:
+                project_data["leads"] = [
+                    e
+                    for e in enrollments
+                    if e.project_id == project.pk and e.is_project_lead == True
+                ]
+                project_data["pitch"] = next(
+                    (
+                        pitch
+                        for pitch in project.pitches.all()
+                        if pitch.semester_id == self.target_semester.pk
+                    ),
+                    None,
+                )
+            projects_data.append(project_data)
+
+        data["projects_data"] = projects_data
+
         return data
 
 

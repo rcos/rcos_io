@@ -50,9 +50,17 @@ sentry_sdk.init(
 )
 
 
-ALLOWED_HOSTS = ["localhost", "127.0.0.1", "rcos.up.railway.app", "rcosio-staging.up.railway.app"]
+ALLOWED_HOSTS = [
+    "localhost",
+    "127.0.0.1",
+    "rcos.up.railway.app",
+    "rcosio-staging.up.railway.app",
+]
 
-CSRF_TRUSTED_ORIGINS = ["https://rcos.up.railway.app", "https://rcosio-staging.up.railway.app"]
+CSRF_TRUSTED_ORIGINS = [
+    "https://rcos.up.railway.app",
+    "https://rcosio-staging.up.railway.app",
+]
 
 PUBLIC_BASE_URL = os.environ["PUBLIC_BASE_URL"]
 
@@ -73,6 +81,7 @@ INSTALLED_APPS = [
     "anymail",
     "crispy_forms",
     "crispy_bulma",
+    "debug_toolbar",
 ]
 
 CRISPY_ALLOWED_TEMPLATE_PACKS = ("bulma",)
@@ -80,6 +89,7 @@ CRISPY_ALLOWED_TEMPLATE_PACKS = ("bulma",)
 CRISPY_TEMPLATE_PACK = "bulma"
 
 MIDDLEWARE = [
+    "debug_toolbar.middleware.DebugToolbarMiddleware",
     "django.middleware.security.SecurityMiddleware",
     "whitenoise.middleware.WhiteNoiseMiddleware",
     "django.contrib.sessions.middleware.SessionMiddleware",
