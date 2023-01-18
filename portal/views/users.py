@@ -48,7 +48,9 @@ class UserIndexView(SearchableListView, SemesterFilteredListView):
                     user_row["enrollment"].project if user_row["enrollment"] else None
                 )
             else:
-                user_row["enrollments"] = []
+                user_row["enrollments"] = [
+                    e for e in enrollments if e.user_id == user.pk
+                ]
 
             user_rows.append(user_row)
 

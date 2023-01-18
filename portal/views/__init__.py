@@ -63,7 +63,6 @@ class SemesterFilteredListView(ListView):
         semester_id = self.request.GET.get("semester")
         if semester_id and not self.target_semester:
             self.target_semester = get_object_or_404(Semester, pk=semester_id)
-            print("jere")
 
         if self.target_semester:
             queryset = queryset.filter(
