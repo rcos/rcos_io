@@ -52,6 +52,7 @@ class SemesterFilteredListView(ListView):
     ```
     """
 
+    target_semester = None
     semester_filter_key = "semester"
     """The key to match with the semester object when filtering."""
 
@@ -60,12 +61,13 @@ class SemesterFilteredListView(ListView):
         queryset = super().get_queryset()
 
         semester_id = self.request.GET.get("semester")
-        if semester_id:
+        if semester_id and not self.target_semester:
             self.target_semester = get_object_or_404(Semester, pk=semester_id)
 
-            return queryset.filter(**{self.semester_filter_key: self.target_semester})
-        else:
-            self.target_semester = None
+        if self.target_semester:
+            queryset = queryset.filter(
+                **{self.semester_filter_key: self.target_semester}
+            )
 
         return queryset
 

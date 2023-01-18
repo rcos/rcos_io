@@ -3,7 +3,7 @@
         <input type="hidden" name="semester" value="{{ target_semester.id|default:'' }}">
         <div class="level-item">
             <p class="subtitle is-6">
-                <strong>{{ users|length }}</strong> result{{ users|pluralize }}
+                <strong>{{ user_rows|length }}</strong> result{{ user_rows|pluralize }}
             </p>
         </div>
         <div class="level-item">

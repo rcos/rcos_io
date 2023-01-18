@@ -14,6 +14,7 @@ class UserIndexView(SearchableListView, SemesterFilteredListView):
 
     # Default to all active RPI members
     queryset = User.objects.filter(role=User.RPI, is_approved=True, is_active=True)
+
     semester_filter_key = "enrollments__semester"
     search_fields = (
         "first_name",
@@ -22,6 +23,40 @@ class UserIndexView(SearchableListView, SemesterFilteredListView):
         "graduation_year",
         "enrollments__project__name",
     )
+
+    def get_context_data(self, **kwargs):
+        data = super().get_context_data(**kwargs)
+
+        enrollments = Enrollment.objects.filter(
+            user__in=self.get_queryset()
+        ).select_related("semester", "project")
+
+        if self.target_semester:
+            enrollments = enrollments.filter(semester=self.target_semester)
+
+        user_rows = []
+        for user in self.get_queryset():
+            user_row = {
+                "user": user,
+            }
+
+            if self.target_semester:
+                user_row["enrollment"] = next(
+                    (e for e in enrollments if e.user_id == user.pk), None
+                )
+                user_row["project"] = (
+                    user_row["enrollment"].project if user_row["enrollment"] else None
+                )
+            else:
+                user_row["enrollments"] = [
+                    e for e in enrollments if e.user_id == user.pk
+                ]
+
+            user_rows.append(user_row)
+
+        data["user_rows"] = user_rows
+
+        return data
 
 
 class UserDetailView(SemesterFilteredDetailView):

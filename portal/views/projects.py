@@ -64,7 +64,7 @@ class ProjectIndexView(SearchableListView, SemesterFilteredListView):
 
         projects_data = []
         enrollments = Enrollment.objects.filter(
-            project__in=self.queryset
+            project__in=self.get_queryset()
         ).select_related("user")
         if self.target_semester:
             enrollments = enrollments.filter(

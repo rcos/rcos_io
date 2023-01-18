@@ -536,7 +536,7 @@ class Enrollment(TimestampedModel):
 
     def get_absolute_url(self):
         return (
-            reverse("users_detail", args=[str(self.user.id)])
+            reverse("users_detail", args=[str(self.user_id)])
             + "?semester="
             + self.semester.id
         )
