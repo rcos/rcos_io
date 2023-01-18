@@ -174,3 +174,8 @@ class StatusUpdateAdmin(admin.ModelAdmin):
     search_fields = ("name", "location")
     list_filter = ("semester", "opens_at")
     inlines = (StatusUpdateSubmissionInline,)
+
+
+@admin.register(ProjectTag)
+class ProjectTagAdmin(admin.ModelAdmin):
+    pass
