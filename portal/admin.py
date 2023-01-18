@@ -126,8 +126,8 @@ class UserAdmin(UserAdmin):
 
 @admin.register(Project)
 class ProjectAdmin(admin.ModelAdmin):
-    list_display = ("name", "summary", "created_at", "is_approved")
-    search_fields = ("name", "summary", "description", "tags__name")
+    list_display = ("name", "created_at", "is_approved")
+    search_fields = ("name", "description", "tags__name")
     list_filter = ("is_approved", "enrollments__semester__name", "tags__name")
     inlines = (
         ProjectRepositoryInline,

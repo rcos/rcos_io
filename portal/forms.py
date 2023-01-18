@@ -37,7 +37,6 @@ class ProposeProjectForm(forms.ModelForm):
         model = Project
         fields = [
             "name",
-            "summary",
             "description",
             "tags",
             "external_chat_url",

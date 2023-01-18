@@ -13,7 +13,6 @@
                 <thead>
                     <tr>
                         <th>Name</th>
-                        <th>Summary</th>
                         <th>Tags</th>
                         {% if target_semester %}
                         <th>Lead</th>
@@ -23,7 +22,6 @@
                         <th>Owner</th>
                         <th>Active Semesters</th>
                         {% endif %}
-
                     </tr>
                 </thead>
                 <tbody>
@@ -42,7 +40,6 @@
                             >
                             {% endif %}
                         </td>
-                        <td>{{ project_data.project.summary }}</td>
                         <td>{{ project_data.project.tags.all|join:", "|default:"-" }}</td>
                         {% if target_semester %}
                         <td>

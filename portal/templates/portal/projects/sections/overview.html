@@ -1,32 +1,24 @@
 <ul>
     <li>
         <span class="icon">
-            <i class="fa-solid fa-question"></i>
-        </span>
-        {% if project.summary %}
-        {{ project.summary }}
-        {% else %}
-        <span class="has-text-grey">No description given.</span>
-        {% endif %}
-    </li>
-
-    <li>
-        <span class="icon">
             <i class="fa-solid fa-crown"></i>
         </span>
         {% if project.owner %}
+        Owned by 
         <a href="{{ project.owner.get_absolute_url }}">{{ project.owner }}</a>
         {% else %}
         <span class="has-text-grey">No owner.</span>
         {% endif %}
     </li>
 
-    {% if project.tags.all|length > 0 %}
     <li>
         <span class="icon">🏷</span>
+        {% if project.tags.all|length > 0 %}
         {{ project.tags.all|join:", " }}
+        {% else %}
+        <span class="has-text-grey">No tags.</span>
+        {% endif %}
     </li>
-    {% endif %}
 
     {% if project.homepage_url %}
     <li>
@@ -35,7 +27,7 @@
     </li>
     {% endif %}
     
-    {% if project.external_chat_url %}
+    {% if project.external_chat_url and request.user.is_authenticated and request.user.is_approved %}
     <li>
         <span class="icon">💬</span>
         <a href="{{ project.external_chat_url }}">{{ project.external_chat_url }}</a>
