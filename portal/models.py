@@ -109,7 +109,7 @@ class UserManager(BaseUserManager):
         return self._create_user(email, password, **extra_fields)
 
 
-class StudentManager(models.Manager):
+class StudentManager(UserManager):
     def get_queryset(self):
         return (
             super()
@@ -138,6 +138,7 @@ class User(AbstractUser, TimestampedModel):
     # Set for RPI users only
     rcs_id = models.CharField(
         blank=True,
+        null=True,
         max_length=30,
         help_text="If the user is an RPI user, their RCS ID.",
         verbose_name="RCS ID",
@@ -164,9 +165,6 @@ class User(AbstractUser, TimestampedModel):
         help_text="The user's GitHub username (not user ID)",
         unique=True,
     )
-
-    # Managers
-    students = StudentManager()
 
     @property
     def full_name(self):
