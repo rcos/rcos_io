@@ -4,7 +4,7 @@
 
 ### Requirements
 
-- Python 3.10+
+- Python 3.11+
 - a Postgres database
 
 ### Setup
@@ -16,9 +16,11 @@
 5. Create a `.env` file (not the placement of the `.`) and add environment values
     - see `.env.example` for the expected variables
 6. Setup database `./manage.py migrate`
-7. ~~Load test data (optional) `./manage.py loaddata full`~~ coming soon
+7. Create a superuser for testing `./manage.py createsuperuser`
+8. ~~Load test data (optional) `./manage.py loaddata full`~~ coming soon
 
 
 ### Running
 
 1. `./manage.py runserver`
+2. Navigate to http://127.0.0.1:8000/auth/login/ and enter the email of your superuser and choose "Login (admin)"
