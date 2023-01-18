@@ -20,4 +20,5 @@ urlpatterns = [
     path("", include("portal.urls")),
     path("auth/", include("magiclink.urls", namespace="magiclink")),
     path("admin/", admin.site.urls),
+    path('__debug__/', include('debug_toolbar.urls')),
 ]

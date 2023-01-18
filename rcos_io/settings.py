@@ -81,6 +81,7 @@ INSTALLED_APPS = [
     "anymail",
     "crispy_forms",
     "crispy_bulma",
+    "debug_toolbar"
 ]
 
 CRISPY_ALLOWED_TEMPLATE_PACKS = ("bulma",)
@@ -88,6 +89,7 @@ CRISPY_ALLOWED_TEMPLATE_PACKS = ("bulma",)
 CRISPY_TEMPLATE_PACK = "bulma"
 
 MIDDLEWARE = [
+    "debug_toolbar.middleware.DebugToolbarMiddleware",
     "django.middleware.security.SecurityMiddleware",
     "whitenoise.middleware.WhiteNoiseMiddleware",
     "django.contrib.sessions.middleware.SessionMiddleware",
