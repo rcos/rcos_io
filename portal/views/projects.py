@@ -25,7 +25,7 @@ class ProjectIndexView(SearchableListView, SemesterFilteredListView):
     context_object_name = "projects"
 
     # Default to all approved projects
-    queryset = Project.objects.filter(is_approved=True).select_related()
+    queryset = Project.objects.filter(is_approved=True)
     semester_filter_key = "enrollments__semester"
     search_fields = (
         "name",

@@ -81,7 +81,7 @@ INSTALLED_APPS = [
     "anymail",
     "crispy_forms",
     "crispy_bulma",
-    "debug_toolbar"
+    "debug_toolbar",
 ]
 
 CRISPY_ALLOWED_TEMPLATE_PACKS = ("bulma",)

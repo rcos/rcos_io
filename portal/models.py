@@ -109,6 +109,15 @@ class UserManager(BaseUserManager):
         return self._create_user(email, password, **extra_fields)
 
 
+class StudentManager(models.Manager):
+    def get_queryset(self):
+        return (
+            super()
+            .get_queryset()
+            .filter(role=User.RPI, is_active=True, is_approved=True)
+        )
+
+
 class User(AbstractUser, TimestampedModel):
     RPI = "rpi"
     EXTERNAL = "external"
@@ -155,6 +164,9 @@ class User(AbstractUser, TimestampedModel):
         help_text="The user's GitHub username (not user ID)",
         unique=True,
     )
+
+    # Managers
+    students = StudentManager()
 
     @property
     def full_name(self):
