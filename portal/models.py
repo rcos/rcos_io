@@ -440,15 +440,28 @@ class Project(TimestampedModel):
                 "user"
             )
             for enrollment in enrollments:
-                if not enrollment.user.discord_user_id:
+                discord_user_id = enrollment.user.discord_user_id
+                if not discord_user_id:
                     logger.warning(
                         f"Skipping {enrollment.user} since no Discord linked"
                     )
                     continue
+
+                if enrollment.is_project_lead:
+                    try:
+                        discord.add_role_to_member(
+                            discord_user_id, settings.DISCORD_PROJECT_LEAD_ROLE_ID
+                        )
+                    except HTTPError as e:
+                        capture_exception(e)
+                        logger.exception(
+                            f"Failed to add Project Lead role to {enrollment.user}",
+                            exc_info=e,
+                        )
+                    sleep(1)
+
                 try:
-                    discord.add_role_to_member(
-                        enrollment.user.discord_user_id, self.discord_role_id
-                    )
+                    discord.add_role_to_member(discord_user_id, self.discord_role_id)
                 except HTTPError as e:
                     capture_exception(e)
                     logger.exception(
@@ -468,10 +481,22 @@ class Project(TimestampedModel):
                 # No! This is early semester, only a text channel should exist and it should be under the
                 # Project Pairing category
 
-                lead_discord_mentions = " / ".join([(f"<@{e.user.discord_user_id}>" if e.user.discord_user_id else e.user.display_name) for e in self.enrollments.filter(semester=semester, is_project_lead=True).select_related("user")])
-            
-                repos = "Repositories:\n" + \
-                    "\n".join([r.url for r in self.repositories.all()])
+                lead_discord_mentions = " / ".join(
+                    [
+                        (
+                            f"<@{e.user.discord_user_id}>"
+                            if e.user.discord_user_id
+                            else e.user.display_name
+                        )
+                        for e in self.enrollments.filter(
+                            semester=semester, is_project_lead=True
+                        ).select_related("user")
+                    ]
+                )
+
+                repos = "Repositories:\n" + "\n".join(
+                    [r.url for r in self.repositories.all()]
+                )
                 text_channel_params = {
                     "name": self.name,
                     "type": discord.TEXT_CHANNEL_TYPE,
@@ -490,13 +515,16 @@ class Project(TimestampedModel):
 
                         {settings.PUBLIC_BASE_URL + reverse("projects_detail", args=(self.pk,))}
                         """
-                    )
+                    ),
                 }
 
         if text_channel_params:
             if self.discord_text_channel_id:
                 try:
-                    text_channel = discord.modify_server_channel(self.discord_text_channel_id, cast(discord.ModifyChannelParams, text_channel_params))
+                    text_channel = discord.modify_server_channel(
+                        self.discord_text_channel_id,
+                        cast(discord.ModifyChannelParams, text_channel_params),
+                    )
                 except HTTPError as e:
                     capture_exception(e)
                     logger.exception(
@@ -516,7 +544,6 @@ class Project(TimestampedModel):
                         f"Failed to create project Discord text channel for {self}",
                         exc_info=e,
                     )
-            
 
     def get_semester_count(self):
         return (

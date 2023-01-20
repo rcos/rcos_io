@@ -239,8 +239,10 @@ def create_server_channel(params: CreateServerChannelParams):
 
     return cast(Dict[str, Any], response.json())
 
+
 class ModifyChannelParams(CreateServerChannelParams):
     name: NotRequired[str]
+
 
 def modify_server_channel(channel_id: str, params: ModifyChannelParams):
     response = requests.patch(
@@ -253,6 +255,7 @@ def modify_server_channel(channel_id: str, params: ModifyChannelParams):
     response.raise_for_status()
 
     return cast(Dict[str, Any], response.json())
+
 
 class CreateRoleParams(TypedDict):
     name: NotRequired[str]
