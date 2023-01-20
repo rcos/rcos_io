@@ -1,4 +1,4 @@
-from typing import Any, Dict, NotRequired, Optional, TypedDict, Union, cast
+from typing import Any, Dict, Literal, NotRequired, Optional, TypedDict, Union, cast
 
 import requests
 from django.conf import settings
@@ -212,6 +212,53 @@ def dm_user(dm_channel_id: str, message_content: str):
     )
     response.raise_for_status()
     return response.json()
+
+
+TEXT_CHANNEL_TYPE = 0
+VOICE_CHANNEL_TYPE = 2
+CATEGORY_CHANNEL_TYPE = 4
+
+
+class CreateDiscordServerChannelParams(TypedDict):
+    name: str
+    type: NotRequired[int]
+    topic: NotRequired[str]
+    position: NotRequired[int]
+    parent_id: NotRequired[str]
+
+
+def create_server_channel(params: CreateDiscordServerChannelParams):
+    response = requests.post(
+        f"{DISCORD_API_ENDPOINT}/guilds/{settings.DISCORD_SERVER_ID}/channels",
+        headers=HEADERS,
+        timeout=3,
+        json=params,
+    )
+
+    response.raise_for_status()
+
+    return cast(Dict[str, Any], response.json())
+
+
+class CreateDiscordRoleParams(TypedDict):
+    name: NotRequired[str]
+    permissions: NotRequired[str]
+    color: NotRequired[int]
+    hoist: NotRequired[bool]
+    mentionable: NotRequired[bool]
+
+
+def create_role(params: CreateDiscordRoleParams):
+    response = requests.post(
+        f"{DISCORD_API_ENDPOINT}/guilds/{settings.DISCORD_SERVER_ID}/roles",
+        headers=HEADERS,
+        timeout=3,
+        json=params,
+    )
+
+    response.raise_for_status()
+
+    return cast(Dict[str, Any], response.json())
 
 
 def add_role_to_member(user_id: str, role_id: str):
