@@ -14,6 +14,10 @@ from requests import HTTPError
 from sentry_sdk import capture_exception
 
 from portal.services import discord
+import logging
+
+
+logger = logging.getLogger(__name__)
 
 
 class TimestampedModel(models.Model):
@@ -406,6 +410,75 @@ class Project(TimestampedModel):
         if self.discord_text_channel_id:
             return f"https://discord.com/channels/{settings.DISCORD_SERVER_ID}/{self.discord_text_channel_id}"
         return None
+
+    def sync_discord(self, semester: Optional[Semester]):
+        if not semester:
+            # Delete role
+            # Delete channels?
+            raise NotImplementedError
+
+        # Role
+        if not self.discord_role_id:
+            try:
+                project_role = discord.create_role(
+                    {"name": self.name, "hoist": True, "mentionable": True}
+                )
+            except HTTPError as e:
+                capture_exception(e)
+                logger.exception(
+                    f"Failed to create project Discord role for {self}", exc_info=e
+                )
+
+            self.discord_role_id = project_role["id"]
+            self.save()
+
+        if self.discord_role_id:
+            # Apply role to team members
+            enrollments = self.enrollments.filter(semester=semester).select_related(
+                "user"
+            )
+            for enrollment in enrollments:
+                if not enrollment.user.discord_user_id:
+                    logger.warning(
+                        f"Skipping {enrollment.user} since no Discord linked"
+                    )
+                    continue
+                try:
+                    discord.add_role_to_member(
+                        enrollment.user.discord_user_id, self.discord_role_id
+                    )
+                except HTTPError as e:
+                    capture_exception(e)
+                    logger.exception(
+                        f"Failed to add project Discord role for {self} to {enrollment.user}",
+                        exc_info=e,
+                    )
+
+        # Channels
+        # Are small groups formed yet?
+        if SmallGroup.objects.filter(semester=semester).count() > 0:
+            raise NotImplemented
+        else:
+            # No! This is early semester, only a text channel should exist and it should be under the
+            # Project Pairing category
+            if not self.discord_text_channel_id:
+                try:
+                    text_channel = discord.create_server_channel(
+                        {
+                            "name": self.name,
+                            "type": discord.TEXT_CHANNEL_TYPE,
+                            "parent_id": settings.DISCORD_PROJECT_PAIRING_CATEGORY_ID,
+                            "topic": "test",
+                        }
+                    )
+                    self.discord_text_channel_id = text_channel["id"]
+                    self.save()
+                except HTTPError as e:
+                    capture_exception(e)
+                    logger.exception(
+                        f"Failed to create project Discord text channel for {self}",
+                        exc_info=e,
+                    )
 
     def get_semester_count(self):
         return (

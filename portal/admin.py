@@ -2,6 +2,11 @@ from django.contrib import admin
 from django.contrib.auth.admin import UserAdmin
 
 from .models import *
+import logging
+
+
+logger = logging.getLogger(__name__)
+
 
 admin.site.site_header = "RCOS IO Administration"
 admin.site.site_title = "RCOS IO"
@@ -12,6 +17,20 @@ admin.site.site_title = "RCOS IO"
 @admin.action(description="Mark selected as approved")
 def make_approved(modeladmin, request, queryset):
     queryset.update(is_approved=True)
+
+
+@admin.action(description="Sync roles and channels on Discord")
+def sync_discord(modeladmin, request, queryset):
+    semester = Semester.get_active()
+
+    for object in queryset:
+        try:
+            object.sync_discord(semester)
+            logger.info(f"Synced Discord roles and channels for project {object}")
+        except Exception as err:
+            logger.exception(
+                "Failed to sync Discord roles and channels for {object}", exc_info=err
+            )
 
 
 @admin.action(description="Mark selected as published")
@@ -150,7 +169,10 @@ class ProjectAdmin(admin.ModelAdmin):
         ProjectPresentationInline,
     )
     prepopulated_fields = {"slug": ("name",)}
-    actions = (make_approved,)
+    actions = (
+        make_approved,
+        sync_discord,
+    )
 
 
 @admin.register(Enrollment)
