@@ -379,6 +379,14 @@ class Project(TimestampedModel):
         related_name="owned_projects",
         help_text="The user that can make edits to the project",
     )
+    organization = models.ForeignKey(
+        Organization,
+        on_delete=models.SET_NULL,
+        null=True,
+        blank=True,
+        related_name="projects",
+        help_text="The external organization this project belongs to (optional)",
+    )
     is_approved = models.BooleanField(
         "approved?",
         default=False,
