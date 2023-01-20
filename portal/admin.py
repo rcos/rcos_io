@@ -181,12 +181,19 @@ class ProjectAdmin(admin.ModelAdmin):
     def formfield_for_foreignkey(self, db_field, request, **kwargs):
         if db_field.name == "owner":
             parent_id = request.resolver_match.kwargs.get("object_id")
-            project = Project.objects.get(pk=parent_id)
 
-            if project.organization:
-                kwargs["queryset"] = project.organization.users.filter(is_approved=True)
-            else:
-                kwargs["queryset"] = User.objects.filter(is_approved=True)
+            try:
+                project = Project.objects.get(pk=parent_id)
+
+                if project.organization:
+                    kwargs["queryset"] = project.organization.users.filter(
+                        is_approved=True
+                    )
+                else:
+                    kwargs["queryset"] = User.objects.filter(is_approved=True)
+            except Project.DoesNotExist:
+                pass
+
         return super().formfield_for_foreignkey(db_field, request, **kwargs)
 
 
