@@ -77,6 +77,25 @@ class Semester(TimestampedModel):
         ordering = ["-start_date"]
 
 
+class Organization(TimestampedModel):
+    name = models.CharField(max_length=100, unique=True)
+    email_domain = models.CharField(
+        max_length=100,
+        help_text="The email domain used to auto-associate users to this org.",
+    )
+    email_domain_secondary = models.CharField(
+        max_length=100,
+        blank=True,
+        help_text="A secondary email domain used to auto-associate users to this org.",
+    )
+    homepage_url = models.URLField(
+        max_length=200, help_text="The public homepage of the organization."
+    )
+
+    def __str__(self) -> str:
+        return self.name
+
+
 class UserManager(BaseUserManager):
     use_in_migrations = True
 
@@ -134,6 +153,14 @@ class User(AbstractUser, TimestampedModel):
         help_text="Identity is verified and can participate in RCOS",
     )
     role = models.CharField(choices=ROLE_CHOICES, max_length=30, default=EXTERNAL)
+
+    organization = models.ForeignKey(
+        Organization,
+        null=True,
+        on_delete=models.SET_NULL,
+        related_name="users",
+        help_text="The organization this user belongs to (optional)"
+    )
 
     # Set for RPI users only
     rcs_id = models.CharField(
@@ -307,11 +334,19 @@ class User(AbstractUser, TimestampedModel):
 
 
 def pre_save_user(instance, sender, *args, **kwargs):
-    if instance._state.adding and instance.email.endswith("@rpi.edu"):
-        instance.role = User.RPI
-        instance.is_approved = True
-        instance.rcs_id = instance.email.removesuffix("@rpi.edu").lower()
+    if instance._state.adding:
+        if instance.email.endswith("@rpi.edu"):
+            instance.role = User.RPI
+            instance.is_approved = True
+            instance.rcs_id = instance.email.removesuffix("@rpi.edu").lower()
 
+        # Search for org with matching email domain
+        email_domain = instance.email.split("@")[1]
+        try:
+            instance.organization = Organization.objects.get(Q(email_domain=email_domain) | Q(email_domain_secondary=email_domain))
+            instance.is_approved = True
+        except Organization.DoesNotExist:
+            pass
 
 pre_save.connect(pre_save_user, sender=User)
 
