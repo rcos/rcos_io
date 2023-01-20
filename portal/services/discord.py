@@ -123,6 +123,7 @@ def upsert_server_member(
         roles: list of Discord role IDs to assign the member (optional)
     Returns:
         joined_server: whether user was added to the server (false if already on server)
+        updated_member: whether the member's Discord nickname and/or roles were updated 
     Raises:
         HTTPError on failed request
     See https://discord.com/developers/docs/resources/guild#add-guild-member
@@ -146,9 +147,10 @@ def upsert_server_member(
 
     response.raise_for_status()
 
-    # If the member was already in the guild, need to update them
     joined_server = response.status_code == 201
+    updated_member = joined_server
 
+    # If the member was already in the guild, need to update them
     if response.status_code == 204 and (nickname is not None or roles is not None):
         del data["access_token"]
         response = requests.patch(
@@ -157,8 +159,9 @@ def upsert_server_member(
             headers=HEADERS,
             timeout=3,
         )
+        updated_member = response.status_code == 200
 
-    return joined_server
+    return joined_server, updated_member
 
 
 def get_user(user_id: str) -> Union[DiscordUser, None]:

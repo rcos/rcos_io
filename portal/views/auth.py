@@ -90,7 +90,7 @@ def discord_link_callback(request):
         discord_user_info = discord.get_user_info(discord_access_token)
 
         try:
-            is_newly_added_to_server = discord.upsert_server_member(
+            joined_server, updated_member = discord.upsert_server_member(
                 discord_access_token,
                 discord_user_info["id"],
                 request.user.display_name,
@@ -99,9 +99,17 @@ def discord_link_callback(request):
                 else None,
             )
 
-            if is_newly_added_to_server:
+            if joined_server:
+                # If the user was added to the server
                 messages.success(request, "Added you to the RCOS Discord server!")
-        except Exception as e:
+            else:
+                # If the user was already in the server (since failure to join raises error)
+                if updated_member:
+                    messages.success(request, "Successfully updated your name and roles in the Discord server!")
+                else:
+                    messages.warning(request, "Failed to update your name and roles in the Discord server...")
+
+        except HTTPError as e:
             capture_exception(e)
             messages.warning(request, "Failed to add you to the RCOS Discord server...")
 
