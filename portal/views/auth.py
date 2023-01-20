@@ -13,6 +13,7 @@ from sentry_sdk import capture_exception
 from portal.forms import ChangeEmailForm, UserProfileForm
 from portal.models import User
 from portal.services import discord, github
+from portal.views.meetings import generate_code
 
 
 @login_required
@@ -176,7 +177,7 @@ def change_email(request):
 
         if form.is_valid():
             new_email = form.cleaned_data["new_email"]
-            verification_code = "abcd"
+            verification_code = generate_code()
             request.session["email_change"] = {
                 "new_email": new_email,
                 "verification_code": verification_code,
