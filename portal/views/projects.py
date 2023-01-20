@@ -29,7 +29,7 @@ class ProjectIndexView(SearchableListView, SemesterFilteredListView):
     queryset = (
         Project.objects.filter(is_approved=True)
         .prefetch_related("tags", "pitches")
-        .select_related("owner")
+        .select_related("owner", "organization")
     )
     semester_filter_key = "enrollments__semester"
     search_fields = (
@@ -55,11 +55,6 @@ class ProjectIndexView(SearchableListView, SemesterFilteredListView):
     def get_context_data(self, **kwargs):
         data = super().get_context_data(**kwargs)
         data["is_seeking_members"] = self.is_seeking_members
-        data["can_propose_project"] = (
-            self.request.user.can_propose_project(self.target_semester)
-            if self.request.user.is_authenticated
-            else False
-        )
 
         projects_data = []
         enrollments = Enrollment.objects.filter(

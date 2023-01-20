@@ -86,6 +86,7 @@ class Organization(TimestampedModel):
     name = models.CharField(max_length=100, unique=True)
     email_domain = models.CharField(
         max_length=100,
+        blank=True,
         help_text="The email domain used to auto-associate users to this org.",
     )
     email_domain_secondary = models.CharField(
@@ -96,6 +97,7 @@ class Organization(TimestampedModel):
     homepage_url = models.URLField(
         max_length=200, help_text="The public homepage of the organization."
     )
+    discord_role_id = models.CharField(max_length=100, blank=True)
 
     def __str__(self) -> str:
         return self.name
@@ -353,6 +355,18 @@ def pre_save_user(instance, sender, *args, **kwargs):
                 Q(email_domain=email_domain) | Q(email_domain_secondary=email_domain)
             )
             instance.is_approved = True
+
+            if instance.discord_user_id and instance.organization.discord_role_id:
+                try:
+                    discord.add_role_to_member(
+                        instance.discord_user_id, instance.organization.discord_role_id
+                    )
+                except HTTPError as e:
+                    capture_exception(e)
+                    logger.exception(
+                        f"Failed to add org Discord role for {instance.organization} to {instance}",
+                        exc_info=e,
+                    )
         except Organization.DoesNotExist:
             pass
 

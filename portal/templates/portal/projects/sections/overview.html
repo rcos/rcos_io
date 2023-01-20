@@ -1,4 +1,13 @@
 <ul>
+    {% if project.organization %}
+    <li>
+        <span class="icon">
+            <i class="fa-solid fa-building"></i>
+        </span>
+        {{ project.organization }} Project
+    </li>
+    {% endif %}
+
     <li>
         <span class="icon">
             <i class="fa-solid fa-crown"></i>
@@ -12,7 +21,9 @@
     </li>
 
     <li>
-        <span class="icon">🏷</span>
+        <span class="icon">
+            <i class="fa-solid fa-tags"></i>
+        </span>
         {% if project.tags.all|length > 0 %}
         {{ project.tags.all|join:", " }}
         {% else %}

@@ -32,6 +32,9 @@
                                 href="{{ project_data.project.get_absolute_url }}{% target_semester_query %}"
                                 >{{ project_data.project }}</a
                             >
+                            {% if project_data.project.organization %}
+                            <span class="tag is-light">{{ project_data.project.organization }}</span>
+                            {% endif %}
                             {% if target_semester and target_semester.is_active and project_data.project.is_seeking_members %}
                             <span
                                 class="tag is-warning"
