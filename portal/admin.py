@@ -1,7 +1,7 @@
 from time import sleep
 from django.contrib import admin
 from django.contrib.auth.admin import UserAdmin
-
+from django.db.models.functions import Lower
 from .models import *
 import logging
 
@@ -177,6 +177,17 @@ class ProjectAdmin(admin.ModelAdmin):
         make_approved,
         sync_discord,
     )
+
+    def formfield_for_foreignkey(self, db_field, request, **kwargs):
+        if db_field.name == "owner":
+            parent_id = request.resolver_match.kwargs.get("object_id")
+            project = Project.objects.get(pk=parent_id)
+
+            if project.organization:
+                kwargs["queryset"] = project.organization.users.filter(is_approved=True)
+            else:
+                kwargs["queryset"] = User.objects.filter(is_approved=True)
+        return super().formfield_for_foreignkey(db_field, request, **kwargs)
 
 
 @admin.register(Enrollment)
