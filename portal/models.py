@@ -159,7 +159,7 @@ class User(AbstractUser, TimestampedModel):
         null=True,
         on_delete=models.SET_NULL,
         related_name="users",
-        help_text="The organization this user belongs to (optional)"
+        help_text="The organization this user belongs to (optional)",
     )
 
     # Set for RPI users only
@@ -343,10 +343,13 @@ def pre_save_user(instance, sender, *args, **kwargs):
         # Search for org with matching email domain
         email_domain = instance.email.split("@")[1]
         try:
-            instance.organization = Organization.objects.get(Q(email_domain=email_domain) | Q(email_domain_secondary=email_domain))
+            instance.organization = Organization.objects.get(
+                Q(email_domain=email_domain) | Q(email_domain_secondary=email_domain)
+            )
             instance.is_approved = True
         except Organization.DoesNotExist:
             pass
+
 
 pre_save.connect(pre_save_user, sender=User)
 

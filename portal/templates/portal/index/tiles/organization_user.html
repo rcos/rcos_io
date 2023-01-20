@@ -1,0 +1,17 @@
+<h2 class="title is-2">{{ request.user.organization }} Guest</h2>
+
+<div class="content">
+    <p>
+        Thank for for participating in RCOS{% if request.user.first_name %}, {{ request.user.first_name }}{% endif %}! Please ensure you have completed your profile by adding your:
+    </p>
+    <ul>
+        <li>name</li>
+        <li>GitHub account</li>
+        <li>Discord account</li>
+    </ul>
+
+    <p>
+        Once you have, contact a Coordinator on the Discord server to let them know what project you are a part of.
+    </p>
+</div>
+<a href="{% url 'profile' %}" class="button is-success">Complete Profile</a>

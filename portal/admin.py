@@ -24,6 +24,7 @@ class UserInline(admin.TabularInline):
     model = User
     extra = 1
 
+
 class EnrollmentInline(admin.TabularInline):
     model = Enrollment
     extra = 1
@@ -89,9 +90,11 @@ class SemesterAdmin(admin.ModelAdmin):
         ProjectPresentationInline,
     )
 
+
 @admin.register(Organization)
 class OrganizationAdmin(admin.ModelAdmin):
     pass
+
 
 @admin.register(User)
 class UserAdmin(UserAdmin):
@@ -123,7 +126,10 @@ class UserAdmin(UserAdmin):
             },
         ),
         ("Important dates", {"fields": ("last_login", "date_joined")}),
-        ("Linked Accounts", {"fields": ("organization", "github_username", "discord_user_id")}),
+        (
+            "Linked Accounts",
+            {"fields": ("organization", "github_username", "discord_user_id")},
+        ),
         ("Permissions", {"fields": ("is_active", "is_staff", "is_superuser")}),
     )
     ordering = ("email", "last_login")

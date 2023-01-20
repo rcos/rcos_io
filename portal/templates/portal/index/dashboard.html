@@ -23,7 +23,7 @@
                     <h2 class="title is-4 mb-2">{{ enrollment.project }}</h2>
                     
                     <div class="block">
-                        <small class="has-text-grey">Your Team Members</small>
+                        <small class="has-text-grey">Your Team</small>
                         <ul>
                             {% for enrollment in project_enrollments %}
                             <li>
@@ -91,13 +91,17 @@
                         {% include "./tiles/week_contributions.html" %}
                         {% endif %}
                     {% elif active_semester and enrollment and enrollment.project is None %}
-                    {% include "./tiles/no_project.html" %}
+                        {% include "./tiles/no_project.html" %}
                     {% elif request.user.is_approved and active_semester is not None and enrollment is None %}
-                    {% include "./tiles/not_enrolled.html" %}
+                        {% if request.user.organization %}
+                            {% include "./tiles/organization_user.html" %}
+                        {% else %}    
+                            {% include "./tiles/not_enrolled.html" %}
+                        {% endif %}
                     {% elif not request.user.is_approved %}
-                    {% include "./tiles/not_approved.html" %}
+                        {% include "./tiles/not_approved.html" %}
                     {% else %}
-                    <p class="has-text-grey">When a semester starts, you'll be able to access useful information on this dashboard!</p>
+                        <p class="has-text-grey">When a semester starts, you'll be able to access useful information on this dashboard!</p>
                     {% endif %}
                 </div>
             </div>
