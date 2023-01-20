@@ -1,3 +1,4 @@
+from time import sleep
 from django.contrib import admin
 from django.contrib.auth.admin import UserAdmin
 
@@ -31,6 +32,9 @@ def sync_discord(modeladmin, request, queryset):
             logger.exception(
                 "Failed to sync Discord roles and channels for {object}", exc_info=err
             )
+        print("Sleeping")
+        sleep(1)
+        print("Awake")
 
 
 @admin.action(description="Mark selected as published")

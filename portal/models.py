@@ -1,6 +1,7 @@
 import re
-from typing import Optional, Tuple
-
+from time import sleep
+from typing import Optional, Tuple, cast
+import inspect
 from django.conf import settings
 from django.contrib.auth.models import AbstractUser, BaseUserManager
 from django.core.exceptions import ValidationError
@@ -431,6 +432,7 @@ class Project(TimestampedModel):
 
             self.discord_role_id = project_role["id"]
             self.save()
+            sleep(1)
 
         if self.discord_role_id:
             # Apply role to team members
@@ -453,23 +455,58 @@ class Project(TimestampedModel):
                         f"Failed to add project Discord role for {self} to {enrollment.user}",
                         exc_info=e,
                     )
+                sleep(1)
 
         # Channels
+        text_channel_params = None
         # Are small groups formed yet?
         if SmallGroup.objects.filter(semester=semester).count() > 0:
             raise NotImplemented
         else:
-            # No! This is early semester, only a text channel should exist and it should be under the
-            # Project Pairing category
-            if not self.discord_text_channel_id:
+            pitch = self.is_seeking_members(semester)
+            if pitch:
+                # No! This is early semester, only a text channel should exist and it should be under the
+                # Project Pairing category
+
+                lead_discord_mentions = " / ".join([(f"<@{e.user.discord_user_id}>" if e.user.discord_user_id else e.user.display_name) for e in self.enrollments.filter(semester=semester, is_project_lead=True).select_related("user")])
+            
+                repos = "Repositories:\n" + \
+                    "\n".join([r.url for r in self.repositories.all()])
+                text_channel_params = {
+                    "name": self.name,
+                    "type": discord.TEXT_CHANNEL_TYPE,
+                    "parent_id": settings.DISCORD_PROJECT_PAIRING_CATEGORY_ID,
+                    "topic": inspect.cleandoc(
+                        f"""**{self.name}**
+                        
+                        {self.description}
+
+                        Project Lead(s): {lead_discord_mentions}
+
+                        Pitch: {pitch.url}
+                        
+                        {repos}
+                        
+
+                        {settings.PUBLIC_BASE_URL + reverse("projects_detail", args=(self.pk,))}
+                        """
+                    )
+                }
+
+        if text_channel_params:
+            if self.discord_text_channel_id:
+                try:
+                    text_channel = discord.modify_server_channel(self.discord_text_channel_id, cast(discord.ModifyChannelParams, text_channel_params))
+                except HTTPError as e:
+                    capture_exception(e)
+                    logger.exception(
+                        f"Failed to update project Discord text channel for {self}",
+                        exc_info=e,
+                    )
+            else:
                 try:
                     text_channel = discord.create_server_channel(
-                        {
-                            "name": self.name,
-                            "type": discord.TEXT_CHANNEL_TYPE,
-                            "parent_id": settings.DISCORD_PROJECT_PAIRING_CATEGORY_ID,
-                            "topic": "test",
-                        }
+                        cast(discord.CreateServerChannelParams, text_channel_params)
                     )
                     self.discord_text_channel_id = text_channel["id"]
                     self.save()
@@ -479,6 +516,7 @@ class Project(TimestampedModel):
                         f"Failed to create project Discord text channel for {self}",
                         exc_info=e,
                     )
+            
 
     def get_semester_count(self):
         return (

@@ -219,7 +219,7 @@ VOICE_CHANNEL_TYPE = 2
 CATEGORY_CHANNEL_TYPE = 4
 
 
-class CreateDiscordServerChannelParams(TypedDict):
+class CreateServerChannelParams(TypedDict):
     name: str
     type: NotRequired[int]
     topic: NotRequired[str]
@@ -227,7 +227,7 @@ class CreateDiscordServerChannelParams(TypedDict):
     parent_id: NotRequired[str]
 
 
-def create_server_channel(params: CreateDiscordServerChannelParams):
+def create_server_channel(params: CreateServerChannelParams):
     response = requests.post(
         f"{DISCORD_API_ENDPOINT}/guilds/{settings.DISCORD_SERVER_ID}/channels",
         headers=HEADERS,
@@ -239,8 +239,22 @@ def create_server_channel(params: CreateDiscordServerChannelParams):
 
     return cast(Dict[str, Any], response.json())
 
+class ModifyChannelParams(CreateServerChannelParams):
+    name: NotRequired[str]
 
-class CreateDiscordRoleParams(TypedDict):
+def modify_server_channel(channel_id: str, params: ModifyChannelParams):
+    response = requests.patch(
+        f"{DISCORD_API_ENDPOINT}/channels/{channel_id}",
+        headers=HEADERS,
+        timeout=3,
+        json=params,
+    )
+
+    response.raise_for_status()
+
+    return cast(Dict[str, Any], response.json())
+
+class CreateRoleParams(TypedDict):
     name: NotRequired[str]
     permissions: NotRequired[str]
     color: NotRequired[int]
@@ -248,7 +262,7 @@ class CreateDiscordRoleParams(TypedDict):
     mentionable: NotRequired[bool]
 
 
-def create_role(params: CreateDiscordRoleParams):
+def create_role(params: CreateRoleParams):
     response = requests.post(
         f"{DISCORD_API_ENDPOINT}/guilds/{settings.DISCORD_SERVER_ID}/roles",
         headers=HEADERS,
