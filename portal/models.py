@@ -157,6 +157,7 @@ class User(AbstractUser, TimestampedModel):
     organization = models.ForeignKey(
         Organization,
         null=True,
+        blank=True,
         on_delete=models.SET_NULL,
         related_name="users",
         help_text="The organization this user belongs to (optional)",
