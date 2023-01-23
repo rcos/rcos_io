@@ -155,7 +155,7 @@ class UserAdmin(UserAdmin):
         ),
         ("Permissions", {"fields": ("is_active", "is_staff", "is_superuser")}),
     )
-    ordering = ("email", "last_login")
+    ordering = ("first_name",)
     inlines = (EnrollmentInline,)
     actions = (make_approved,)
 
@@ -164,7 +164,7 @@ class UserAdmin(UserAdmin):
 class ProjectAdmin(admin.ModelAdmin):
     list_display = ("name", "created_at", "is_approved")
     search_fields = ("name", "description", "tags__name")
-    list_filter = ("is_approved", "enrollments__semester__name", "tags__name")
+    list_filter = ("is_approved", "organization", "enrollments__semester__name", "tags__name")
     inlines = (
         ProjectRepositoryInline,
         EnrollmentInline,

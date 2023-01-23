@@ -332,7 +332,7 @@ class User(AbstractUser, TimestampedModel):
             raise ValidationError("Only RPI users can have a graduation year set.")
 
     class Meta:
-        ordering = ["first_name", "last_name", "email"]
+        ordering = ["first_name", "last_name"]
         indexes = [
             models.Index(fields=["is_approved"]),
             models.Index(fields=["email"]),
