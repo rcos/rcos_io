@@ -855,7 +855,7 @@ class Meeting(TimestampedModel):
     def sync_discord_event(self):
         description = f"""**{self.get_type_display()} Meeting**
         
-        View details: https://rcos.up.railway.app/meetings/{self.pk}
+        View details: {settings.PUBLIC_BASE_URL}/meetings/{self.pk}
         {f'Slides: {self.presentation_url}' if self.presentation_url else ''}
         """
 
