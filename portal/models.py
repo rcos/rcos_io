@@ -93,6 +93,10 @@ class Semester(TimestampedModel):
 
     class Meta:
         ordering = ["-start_date"]
+        indexes = [
+            models.Index(fields=["start_date"]),
+            models.Index(fields=["start_date", "end_date"]),
+        ]
 
 
 class Organization(TimestampedModel):
