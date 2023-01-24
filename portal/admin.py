@@ -1,10 +1,11 @@
+import logging
 from time import sleep
+
 from django.contrib import admin
 from django.contrib.auth.admin import UserAdmin
 from django.db.models.functions import Lower
-from .models import *
-import logging
 
+from .models import *
 
 logger = logging.getLogger(__name__)
 
@@ -164,7 +165,12 @@ class UserAdmin(UserAdmin):
 class ProjectAdmin(admin.ModelAdmin):
     list_display = ("name", "created_at", "is_approved")
     search_fields = ("name", "description", "tags__name")
-    list_filter = ("is_approved", "organization", "enrollments__semester__name", "tags__name")
+    list_filter = (
+        "is_approved",
+        "organization",
+        "enrollments__semester__name",
+        "tags__name",
+    )
     inlines = (
         ProjectRepositoryInline,
         EnrollmentInline,

@@ -1,3 +1,4 @@
+import logging
 from csv import DictReader
 from io import TextIOWrapper
 from typing import TypedDict
@@ -8,8 +9,6 @@ from django.shortcuts import render
 
 from portal.forms import SemesterCSVUploadForm
 from portal.models import Enrollment, Project, ProjectPitch, Semester, User
-import logging
-
 
 logger = logging.getLogger(__name__)
 
