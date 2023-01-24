@@ -77,10 +77,14 @@ class MeetingDetailView(DetailView):
     def can_manage_attendance(self):
         if not self.request.user.is_authenticated:
             return False
+
         if self.request.user.is_superuser:
             return True
 
-        if self.request.user.is_mentor(self.object.semester):
+        if (
+            self.request.user.is_mentor(self.object.semester)
+            and self.object.type != Meeting.MENTOR
+        ):
             return True
 
         return False
@@ -91,14 +95,15 @@ class MeetingDetailView(DetailView):
         # Check attendance status
         if self.request.user.is_authenticated and self.request.user.is_rpi:
             try:
-                data["user_attendance"] = MeetingAttendance.objects.get(meeting=self.object, user=self.request.user)
+                data["user_attendance"] = MeetingAttendance.objects.get(
+                    meeting=self.object, user=self.request.user
+                )
             except MeetingAttendance.DoesNotExist:
                 data["user_attendance"] = None
-            
+
             data["submit_attendance_form"] = SubmitAttendanceForm()
         else:
             data["submit_attendance_form"] = None
-
 
         data["can_manage_attendance"] = False
         if self.can_manage_attendance():
