@@ -124,10 +124,14 @@ class ProjectDetailView(SemesterFilteredDetailView):
                 enrollments_by_semester[enrollment.semester].append(enrollment)
             data["enrollments_by_semester"] = enrollments_by_semester
         client = github.client_factory()
-        data["repositories"] = [
-            github.get_repository_details(client, repo.url)["repository"]
-            for repo in self.object.repositories.all()
-        ]
+        
+        try:
+            data["repositories"] = [
+                github.get_repository_details(client, repo.url)["repository"]
+                for repo in self.object.repositories.all()
+            ]
+        except:
+            data["repositories"] = []
 
         return data
 
