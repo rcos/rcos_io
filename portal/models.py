@@ -22,6 +22,7 @@ logger = logging.getLogger(__name__)
 
 
 class TimestampedModel(models.Model):
+    """A base model that all other models should inherit from. It adds timestamps for creation and updating."""
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
 
@@ -30,6 +31,7 @@ class TimestampedModel(models.Model):
 
 
 class Semester(TimestampedModel):
+    """Represents an RPI semeseter that RCOS takes place during."""
     id = models.CharField(
         max_length=len("202201"),
         primary_key=True,
@@ -54,6 +56,7 @@ class Semester(TimestampedModel):
 
     @classmethod
     def get_active(cls):
+        """Returns the currently ongoing semester or `None` if none exists."""
         now = timezone.now().date()
         return cls.objects.filter(start_date__lte=now, end_date__gte=now).first()
 
@@ -83,6 +86,7 @@ class Semester(TimestampedModel):
 
 
 class Organization(TimestampedModel):
+    """Represents an external organization that users and projects can belong to."""
     name = models.CharField(max_length=100, unique=True)
     email_domain = models.CharField(
         max_length=100,
@@ -135,7 +139,7 @@ class UserManager(BaseUserManager):
         return self._create_user(email, password, **extra_fields)
 
 
-class StudentManager(UserManager):
+class StudentManager(BaseUserManager):
     def get_queryset(self):
         return (
             super()
@@ -145,6 +149,7 @@ class StudentManager(UserManager):
 
 
 class User(AbstractUser, TimestampedModel):
+    """Represents an RCOS member, either an active RPI student/faculty with an RCS ID or an external user."""
     RPI = "rpi"
     EXTERNAL = "external"
     ROLE_CHOICES = ((RPI, "RPI"), (EXTERNAL, "External"))
@@ -207,6 +212,7 @@ class User(AbstractUser, TimestampedModel):
 
     @property
     def display_name(self):
+        """Returns a display name taking into account whatever parts of the user's profile is set."""
         chunks = []
 
         if self.first_name:
@@ -326,6 +332,7 @@ class User(AbstractUser, TimestampedModel):
         return self.display_name
 
     objects = UserManager()
+    students = StudentManager()
 
     def clean(self):
         if self.role != User.RPI and self.graduation_year is not None:
@@ -375,6 +382,7 @@ pre_save.connect(pre_save_user, sender=User)
 
 
 class ProjectTag(TimestampedModel):
+    """Represents a technology/language/framework/category/etc. that can be tagged to a project."""
     name = models.CharField(max_length=100, unique=True)
 
     def __str__(self) -> str:
@@ -382,6 +390,7 @@ class ProjectTag(TimestampedModel):
 
 
 class Project(TimestampedModel):
+    """Represents an open source project in RCOS."""
     slug = models.SlugField()
     name = models.CharField(
         max_length=100, unique=True, help_text="The project's unique name"
@@ -391,7 +400,7 @@ class Project(TimestampedModel):
         null=True,
         on_delete=models.SET_NULL,
         related_name="owned_projects",
-        help_text="The user that can make edits to the project",
+        help_text="The user that can edit the project",
     )
     organization = models.ForeignKey(
         Organization,
@@ -399,7 +408,7 @@ class Project(TimestampedModel):
         null=True,
         blank=True,
         related_name="projects",
-        help_text="The external organization this project belongs to (optional)",
+        help_text="The external organization this project belongs to",
     )
     is_approved = models.BooleanField(
         "approved?",
@@ -412,7 +421,7 @@ class Project(TimestampedModel):
     )
 
     external_chat_url = models.URLField(
-        blank=True, help_text="Optional URL to an external chat that this project uses"
+        blank=True, help_text="Optional URL to an external chat that this project uses (e.g. a Discord invite link)"
     )
 
     homepage_url = models.URLField(

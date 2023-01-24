@@ -49,6 +49,14 @@
                             <a href="{{ meeting.host.get_absolute_url }}">{{ meeting.host }}</a>
                         </li>
                         {% endif %}
+                        {% if meeting.presentation_url %}
+                        <li class="mb-2">
+                            <span class="icon">
+                                <i class="fa-solid fa-person-chalkboard"></i>
+                            </span>
+                            <a href="{{ meeting.presentation_url }}" target="_blank">Presentation Slides</a>
+                        </li>
+                        {% endif %}
                     </ul>
                     <hr>
                     <div class="content mt-5">
