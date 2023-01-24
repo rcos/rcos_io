@@ -5,12 +5,14 @@ from django.shortcuts import get_object_or_404, redirect
 from django.urls import reverse
 from django.views.generic import DetailView, ListView
 from django.conf import settings
+from django.core.cache import cache
 
 from ..models import Semester
 
 
 def load_semesters(request):
-    semesters = Semester.objects.all()
+
+    semesters = cache.get_or_set("semesters", Semester.objects.all())
     active_semester = next(
         (semester for semester in semesters if semester.is_active), None
     )
