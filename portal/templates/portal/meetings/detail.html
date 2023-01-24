@@ -1,4 +1,5 @@
 {% extends "portal/base.html" %}
+{% load crispy_forms_tags %}
 {% load markdownify %}
 {% load humanize %}
 
@@ -15,7 +16,14 @@
 
 <section class="section" style="min-height: 100vh;">
     <div class="container">
-        <h1 class="title is-1">{{ meeting.display_name }}</h1>
+        <h1 class="title is-1">
+            {{ meeting.display_name }}
+            {% if user_attendance and user_attendance.is_verified %}
+                <span class="tag is-success">Attended</span>
+            {% elif user_attendance and not user_attendance.is_verified %}
+                <span class="tag is-warning">Attendance Awaiting Verification</span>
+            {% endif %}
+        </h1>
         <h2 class="subtitle is-4">{{ meeting.get_type_display }} Meeting <small class="has-text-grey">{{ meeting.starts_at|naturaltime }}</small></h2>
 
         <div class="columns">
@@ -49,6 +57,14 @@
                             <a href="{{ meeting.host.get_absolute_url }}">{{ meeting.host }}</a>
                         </li>
                         {% endif %}
+                        {% if meeting.presentation_url %}
+                        <li class="mb-2">
+                            <span class="icon">
+                                <i class="fa-solid fa-person-chalkboard"></i>
+                            </span>
+                            <a href="{{ meeting.presentation_url }}" target="_blank">Presentation Slides</a>
+                        </li>
+                        {% endif %}
                     </ul>
                     <hr>
                     <div class="content mt-5">
@@ -59,6 +75,13 @@
                         {% endif %}
                     </div>
                 </div>
+
+                {% if request.user.is_authenticated and request.user.is_rpi and not user_attendance %}
+                <form action="{% url 'submit_attendance' %}" method="post">
+                    {% csrf_token %}
+                    {{ submit_attendance_form|crispy }}
+                </form>
+                {% endif %}
             </div>
             <div class="column">
                 {% if meeting.presentation_embed_url %}

@@ -55,7 +55,7 @@
                     <div class="columns">
                         {% if request.user.is_authenticated and request.user.is_approved %}
                         <div class="column">
-                            {% with user.get_discord_user as discord_user %}
+                            {% with user.discord_user as discord_user %}
                             {% if discord_user %}
                             <small class="has-text-grey has-text-weight-semibold mb-2 is-block">Discord</small>
                             <div class="is-flex is-align-items-center">

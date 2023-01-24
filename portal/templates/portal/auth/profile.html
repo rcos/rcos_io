@@ -43,7 +43,7 @@
                     <span class="icon-text" style="width: 100%;">
                         <span class="icon is-large"><i class="fa-brands fa-2x fa-discord"></i></span>
                         <span class="is-align-self-center">
-                            {% with request.user.get_discord_user as discord_user %}
+                            {% with request.user.discord_user as discord_user %}
                             {% if discord_user %}
                             <p class="is-size-5">Linked to <strong>@{{ discord_user.username }}#{{ discord_user.discriminator }}</strong></p>
                             <small>

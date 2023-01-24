@@ -1,7 +1,8 @@
+import logging
 import re
 from time import sleep
 from typing import Optional, Tuple, cast
-import inspect
+
 from django.conf import settings
 from django.contrib.auth.models import AbstractUser, BaseUserManager
 from django.core.exceptions import ValidationError
@@ -13,15 +14,20 @@ from django.urls import reverse
 from django.utils import formats, timezone
 from requests import HTTPError
 from sentry_sdk import capture_exception
+from django.db.models.functions import Lower
 
 from portal.services import discord
-import logging
-
 
 logger = logging.getLogger(__name__)
 
 
+def sync_discord(sender, instance, created, *args, **kwargs):
+    instance.sync_discord()
+
+
 class TimestampedModel(models.Model):
+    """A base model that all other models should inherit from. It adds timestamps for creation and updating."""
+
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
 
@@ -30,19 +36,41 @@ class TimestampedModel(models.Model):
 
 
 class Semester(TimestampedModel):
+    """Represents an RPI semeseter that RCOS takes place during."""
+
     id = models.CharField(
         max_length=len("202201"),
         primary_key=True,
         help_text="The unique ID of the semseter in RPI's format of YYYYMM where YYYY is the starting year and MM is the starting month.",
     )
     name = models.CharField(
-        max_length=30, help_text="User-facing name of semester, e.g. Fall 2022"
+        max_length=30, help_text="User-facing name of semester, e.g. Fall 2024"
     )
-    is_accepting_new_projects = models.BooleanField(
-        "accepting new projects?",
-        default=False,
-        help_text="Whether new projects can be proposed for this semester",
+
+    mentor_application_deadline = models.BooleanField(
+        help_text="The last date students can apply to be Mentors for this semester",
+        blank=True,
+        null=True,
     )
+    enrollment_deadline = models.DateTimeField(
+        help_text="The last date users can enroll in the semester (not with a project yet)",
+        blank=True,
+        null=True,
+    )
+    project_enrollment_application_deadline = models.DateTimeField(
+        help_text="The last date users can apply to a project",
+        blank=True,
+        null=True,
+    )
+    project_pitch_deadline = models.DateTimeField(
+        blank=True,
+        null=True,
+    )
+    project_proposal_deadline = models.DateTimeField(
+        blank=True,
+        null=True,
+    )
+
     start_date = models.DateField(
         "first day",
         help_text="The first day of the semester according to the RPI Academic Calendar: https://info.rpi.edu/registrar/academic-calendar",
@@ -54,6 +82,7 @@ class Semester(TimestampedModel):
 
     @classmethod
     def get_active(cls):
+        """Returns the currently ongoing semester or `None` if none exists."""
         now = timezone.now().date()
         return cls.objects.filter(start_date__lte=now, end_date__gte=now).first()
 
@@ -80,9 +109,15 @@ class Semester(TimestampedModel):
 
     class Meta:
         ordering = ["-start_date"]
+        indexes = [
+            models.Index(fields=["start_date"]),
+            models.Index(fields=["start_date", "end_date"]),
+        ]
 
 
 class Organization(TimestampedModel):
+    """Represents an external organization that users and projects can belong to."""
+
     name = models.CharField(max_length=100, unique=True)
     email_domain = models.CharField(
         max_length=100,
@@ -98,6 +133,25 @@ class Organization(TimestampedModel):
         max_length=200, help_text="The public homepage of the organization."
     )
     discord_role_id = models.CharField(max_length=100, blank=True)
+
+    def sync_discord(self):
+        """Ensures that a Discord role exists for the organization, and that all its members have it assigned."""
+
+        # Ensure existence of role
+        # TODO: if role ID is set, check that is still exists and recreate if not
+        if not self.discord_role_id:
+            role = discord.create_role(
+                {"name": self.name, "hoist": True, "mentionable": True}
+            )
+            self.discord_role_id = role["id"]
+            self.save()
+
+        # Add role to members
+        for user in self.users:
+            user: User
+            if user.discord_user_id:
+                discord.add_role_to_member(user.discord_user_id, self.discord_role_id)
+                sleep(1)
 
     def __str__(self) -> str:
         return self.name
@@ -135,7 +189,7 @@ class UserManager(BaseUserManager):
         return self._create_user(email, password, **extra_fields)
 
 
-class StudentManager(UserManager):
+class StudentManager(BaseUserManager):
     def get_queryset(self):
         return (
             super()
@@ -145,6 +199,8 @@ class StudentManager(UserManager):
 
 
 class User(AbstractUser, TimestampedModel):
+    """Represents an RCOS member, either an active RPI student/faculty with an RCS ID or an external user."""
+
     RPI = "rpi"
     EXTERNAL = "external"
     ROLE_CHOICES = ((RPI, "RPI"), (EXTERNAL, "External"))
@@ -202,11 +258,16 @@ class User(AbstractUser, TimestampedModel):
     )
 
     @property
+    def is_rpi(self):
+        return self.role == User.RPI
+
+    @property
     def full_name(self):
         return f"{self.first_name} {self.last_name}".strip() or "Unnamed User"
 
     @property
     def display_name(self):
+        """Returns a display name taking into account whatever parts of the user's profile is set."""
         chunks = []
 
         if self.first_name:
@@ -276,14 +337,34 @@ class User(AbstractUser, TimestampedModel):
             > 0
         )
 
-    def get_discord_user(self):
-        try:
-            return (
-                discord.get_user(self.discord_user_id) if self.discord_user_id else None
-            )
-        except HTTPError:
+    @property
+    def discord_user(self):
+        return discord.get_user(self.discord_user_id) if self.discord_user_id else None
 
-            return None
+    @property
+    def discord_member(self):
+        return (
+            discord.get_server_member(self.discord_user_id)
+            if self.discord_user_id
+            else None
+        )
+
+    def send_message(self, message_content: str):
+        """Send a direct message to the user via Discord. If Discord is not linked or it fails, sends an email."""
+
+        sent = False
+        if self.discord_user_id:
+            try:
+                dm_channel = discord.create_user_dm_channel(self.discord_user_id)
+                discord.dm_user(dm_channel["id"], message_content)
+                sent = True
+            except Exception as e:
+                capture_exception(e)
+
+        if not sent:
+            # Send backup email
+            # TODO: send_mail
+            raise NotImplementedError
 
     def get_active_semesters(self):
         return (
@@ -298,10 +379,10 @@ class User(AbstractUser, TimestampedModel):
         if not self.is_approved or not self.is_active:
             return False, "Your account is not approved or active."
 
+        # TODO: check deadline
         if (
             not semester
             or not semester.is_active
-            or not semester.is_accepting_new_projects
         ):
             return (
                 False,
@@ -319,20 +400,33 @@ class User(AbstractUser, TimestampedModel):
 
         return True, None
 
+    def sync_discord(self):
+        # Discord nickname and roles
+        if self.discord_user_id:
+            try:
+                discord.set_member_nickname(self.discord_user_id, self.display_name)
+                if self.is_approved:
+                    discord.add_role_to_member(
+                        self.discord_user_id, settings.DISCORD_VERIFIED_ROLE_ID
+                    )
+            except Exception as e:
+                capture_exception(e)
+
     def get_absolute_url(self):
-        return reverse("users_detail", args=[str(self.id)])
+        return reverse("users_detail", args=[str(self.pk)])
 
     def __str__(self) -> str:
         return self.display_name
 
     objects = UserManager()
+    students = StudentManager()
 
     def clean(self):
         if self.role != User.RPI and self.graduation_year is not None:
             raise ValidationError("Only RPI users can have a graduation year set.")
 
     class Meta:
-        ordering = ["first_name", "last_name"]
+        ordering = [Lower("first_name"), Lower("last_name")]
         indexes = [
             models.Index(fields=["is_approved"]),
             models.Index(fields=["email"]),
@@ -372,9 +466,12 @@ def pre_save_user(instance, sender, *args, **kwargs):
 
 
 pre_save.connect(pre_save_user, sender=User)
+post_save.connect(sync_discord, sender=User)
 
 
 class ProjectTag(TimestampedModel):
+    """Represents a technology/language/framework/category/etc. that can be tagged to a project."""
+
     name = models.CharField(max_length=100, unique=True)
     icon = models.CharField(max_length=100, unique=False)
 
@@ -383,6 +480,8 @@ class ProjectTag(TimestampedModel):
 
 
 class Project(TimestampedModel):
+    """Represents an open source project in RCOS."""
+
     slug = models.SlugField()
     name = models.CharField(
         max_length=100, unique=True, help_text="The project's unique name"
@@ -392,7 +491,7 @@ class Project(TimestampedModel):
         null=True,
         on_delete=models.SET_NULL,
         related_name="owned_projects",
-        help_text="The user that can make edits to the project",
+        help_text="The user that can edit the project",
     )
     organization = models.ForeignKey(
         Organization,
@@ -400,7 +499,7 @@ class Project(TimestampedModel):
         null=True,
         blank=True,
         related_name="projects",
-        help_text="The external organization this project belongs to (optional)",
+        help_text="The external organization this project belongs to",
     )
     is_approved = models.BooleanField(
         "approved?",
@@ -413,7 +512,8 @@ class Project(TimestampedModel):
     )
 
     external_chat_url = models.URLField(
-        blank=True, help_text="Optional URL to an external chat that this project uses"
+        blank=True,
+        help_text="Optional URL to an external chat that this project uses (e.g. a Discord invite link)",
     )
 
     homepage_url = models.URLField(
@@ -435,138 +535,161 @@ class Project(TimestampedModel):
             return f"https://discord.com/channels/{settings.DISCORD_SERVER_ID}/{self.discord_text_channel_id}"
         return None
 
-    def sync_discord(self, semester: Optional[Semester]):
-        if not semester:
-            # Delete role
-            # Delete channels?
-            raise NotImplementedError
-
-        # Role
-        if not self.discord_role_id:
-            try:
-                project_role = discord.create_role(
-                    {"name": self.name, "hoist": True, "mentionable": True}
-                )
-            except HTTPError as e:
-                capture_exception(e)
-                logger.exception(
-                    f"Failed to create project Discord role for {self}", exc_info=e
-                )
-
-            self.discord_role_id = project_role["id"]
-            self.save()
-            sleep(1)
-
-        if self.discord_role_id:
-            # Apply role to team members
-            enrollments = self.enrollments.filter(semester=semester).select_related(
-                "user"
+    def send_discord_message(self, message_content: str):
+        if self.discord_text_channel_id:
+            discord.send_message(
+                self.discord_text_channel_id, {"content": message_content}
             )
-            for enrollment in enrollments:
-                discord_user_id = enrollment.user.discord_user_id
-                if not discord_user_id:
-                    logger.warning(
-                        f"Skipping {enrollment.user} since no Discord linked"
-                    )
-                    continue
 
-                if enrollment.is_project_lead:
+    def sync_discord(self):
+        print("here")
+        active_semester = Semester.get_active()
+
+        if not active_semester:
+            # TODO: delete all project channels except external ones?
+            logger.warning(
+                f"No active semester, deleting all Discord channels and roles for project {self}"
+            )
+            return
+
+        # Determine if this project is running this semester
+        enrollments = self.enrollments.filter(semester=active_semester).select_related(
+            "user"
+        )
+
+        if len(enrollments) > 0:
+            logger.info(
+                f"{self} is an active project, upserting Discord channels and roles"
+            )
+            # An active project, ensure roles and channels exist
+            if not self.discord_role_id:
+                try:
+                    project_role = discord.create_role(
+                        {"name": self.name, "hoist": True, "mentionable": True}
+                    )
+
+                    self.discord_role_id = project_role["id"]
+                    self.save()
+                    sleep(1)
+                except HTTPError as e:
+                    capture_exception(e)
+                    logger.exception(
+                        f"Failed to create project Discord role for {self}", exc_info=e
+                    )
+
+            if self.discord_role_id:
+                # Apply role to team members
+                for enrollment in enrollments:
+                    discord_user_id = enrollment.user.discord_user_id
+                    if not discord_user_id:
+                        logger.warning(
+                            f"Skipping {enrollment.user} since no Discord linked"
+                        )
+                        continue
+
+                    if enrollment.is_project_lead:
+                        try:
+                            discord.add_role_to_member(
+                                discord_user_id, settings.DISCORD_PROJECT_LEAD_ROLE_ID
+                            )
+                            sleep(1)
+                        except HTTPError as e:
+                            capture_exception(e)
+                            logger.exception(
+                                f"Failed to add Project Lead role to {enrollment.user}",
+                                exc_info=e,
+                            )
                     try:
                         discord.add_role_to_member(
-                            discord_user_id, settings.DISCORD_PROJECT_LEAD_ROLE_ID
+                            discord_user_id, self.discord_role_id
                         )
+                        sleep(1)
                     except HTTPError as e:
                         capture_exception(e)
                         logger.exception(
-                            f"Failed to add Project Lead role to {enrollment.user}",
+                            f"Failed to add project Discord role for {self} to {enrollment.user}",
                             exc_info=e,
                         )
-                    sleep(1)
-
-                try:
-                    discord.add_role_to_member(discord_user_id, self.discord_role_id)
-                except HTTPError as e:
-                    capture_exception(e)
-                    logger.exception(
-                        f"Failed to add project Discord role for {self} to {enrollment.user}",
-                        exc_info=e,
-                    )
-                sleep(1)
+        else:
+            # TODO: Not an active project, DESTROY EVERY TRACE OF IT
+            logger.info(
+                f"{self} is a UNACTIVE project, removing Discord channels and roles"
+            )
+            pass
 
         # Channels
-        text_channel_params = None
-        # Are small groups formed yet?
-        if SmallGroup.objects.filter(semester=semester).count() > 0:
-            raise NotImplemented
-        else:
-            pitch = self.is_seeking_members(semester)
-            if pitch:
-                # No! This is early semester, only a text channel should exist and it should be under the
-                # Project Pairing category
+        # text_channel_params = None
+        # # Are small groups formed yet?
+        # if SmallGroup.objects.filter(semester=semester).count() > 0:
+        #     raise NotImplementedError
+        # else:
+        #     pitch = self.is_seeking_members(semester)
+        #     if pitch:
+        #         # No! This is early semester, only a text channel should exist and it should be under the
+        #         # Project Pairing category
 
-                lead_discord_mentions = " / ".join(
-                    [
-                        (
-                            f"<@{e.user.discord_user_id}>"
-                            if e.user.discord_user_id
-                            else e.user.display_name
-                        )
-                        for e in self.enrollments.filter(
-                            semester=semester, is_project_lead=True
-                        ).select_related("user")
-                    ]
-                )
+        #         lead_discord_mentions = " / ".join(
+        #             [
+        #                 (
+        #                     f"<@{e.user.discord_user_id}>"
+        #                     if e.user.discord_user_id
+        #                     else e.user.display_name
+        #                 )
+        #                 for e in self.enrollments.filter(
+        #                     semester=semester, is_project_lead=True
+        #                 ).select_related("user")
+        #             ]
+        #         )
 
-                repos = "Repositories:\n" + "\n".join(
-                    [r.url for r in self.repositories.all()]
-                )
-                text_channel_params = {
-                    "name": self.name,
-                    "type": discord.TEXT_CHANNEL_TYPE,
-                    "parent_id": settings.DISCORD_PROJECT_PAIRING_CATEGORY_ID,
-                    "topic": inspect.cleandoc(
-                        f"""**{self.name}**
-                        
-                        {self.description}
+        #         repos = "Repositories:\n" + "\n".join(
+        #             [r.url for r in self.repositories.all()]
+        #         )
+        #         text_channel_params = {
+        #             "name": self.name,
+        #             "type": discord.TEXT_CHANNEL_TYPE,
+        #             "parent_id": settings.DISCORD_PROJECT_PAIRING_CATEGORY_ID,
+        #             "topic": inspect.cleandoc(
+        #                 f"""**{self.name}**
 
-                        Project Lead(s): {lead_discord_mentions}
+        #                 {self.description}
 
-                        Pitch: {pitch.url}
-                        
-                        {repos}
-                        
+        #                 Project Lead(s): {lead_discord_mentions}
 
-                        {settings.PUBLIC_BASE_URL + reverse("projects_detail", args=(self.pk,))}
-                        """
-                    ),
-                }
+        #                 Pitch: {pitch.url}
 
-        if text_channel_params:
-            if self.discord_text_channel_id:
-                try:
-                    text_channel = discord.modify_server_channel(
-                        self.discord_text_channel_id,
-                        cast(discord.ModifyChannelParams, text_channel_params),
-                    )
-                except HTTPError as e:
-                    capture_exception(e)
-                    logger.exception(
-                        f"Failed to update project Discord text channel for {self}",
-                        exc_info=e,
-                    )
-            else:
-                try:
-                    text_channel = discord.create_server_channel(
-                        cast(discord.CreateServerChannelParams, text_channel_params)
-                    )
-                    self.discord_text_channel_id = text_channel["id"]
-                    self.save()
-                except HTTPError as e:
-                    capture_exception(e)
-                    logger.exception(
-                        f"Failed to create project Discord text channel for {self}",
-                        exc_info=e,
-                    )
+        #                 {repos}
+
+        #                 {settings.PUBLIC_BASE_URL + reverse("projects_detail", args=(self.pk,))}
+        #                 """
+        #             ),
+        #         }
+
+        # if text_channel_params:
+        #     if self.discord_text_channel_id:
+        #         try:
+        #             text_channel = discord.modify_server_channel(
+        #                 self.discord_text_channel_id,
+        #                 cast(discord.ModifyChannelParams, text_channel_params),
+        #             )
+        #         except HTTPError as e:
+        #             capture_exception(e)
+        #             logger.exception(
+        #                 f"Failed to update project Discord text channel for {self}",
+        #                 exc_info=e,
+        #             )
+        #     else:
+        #         try:
+        #             text_channel = discord.create_server_channel(
+        #                 cast(discord.CreateServerChannelParams, text_channel_params)
+        #             )
+        #             self.discord_text_channel_id = text_channel["id"]
+        #             self.save()
+        #         except HTTPError as e:
+        #             capture_exception(e)
+        #             logger.exception(
+        #                 f"Failed to create project Discord text channel for {self}",
+        #                 exc_info=e,
+        #             )
 
     def get_semester_count(self):
         return (
@@ -599,9 +722,12 @@ class Project(TimestampedModel):
         return self.name
 
     class Meta:
-        ordering = ["name"]
+        ordering = [Lower("name")]
         get_latest_by = "created_at"
         indexes = [models.Index(fields=["name", "description"])]
+
+
+post_save.connect(sync_discord, sender=Project)
 
 
 class ProjectRepository(TimestampedModel):
@@ -662,6 +788,12 @@ class ProjectProposal(TimestampedModel):
         help_text="Optional comments from the grader",
     )
 
+    class Meta:
+        unique_together = (
+            "semester",
+            "project",
+        )
+
 
 class ProjectPresentation(TimestampedModel):
     semester = models.ForeignKey(
@@ -691,6 +823,80 @@ class ProjectPresentation(TimestampedModel):
         blank=True,
         help_text="Optional comments from the grader",
     )
+
+    class Meta:
+        unique_together = (
+            "semester",
+            "project",
+        )
+
+
+class ProjectEnrollmentApplication(TimestampedModel):
+    """Represents an application from a student to join a project."""
+
+    semester = models.ForeignKey(
+        Semester,
+        on_delete=models.CASCADE,
+        related_name="project_enrollment_applications",
+    )
+    user = models.ForeignKey(
+        User, on_delete=models.CASCADE, related_name="project_enrollment_applications"
+    )
+    project = models.ForeignKey(
+        Project,
+        null=True,
+        blank=True,
+        on_delete=models.SET_NULL,
+        related_name="enrollment_applications",
+    )
+    is_accepted = models.BooleanField(null=True, default=None)
+    why = models.TextField(
+        max_length=10000, help_text="Why you want to join the project?"
+    )
+    experience = models.TextField(
+        max_length=10000,
+        help_text="What prior knowledge/experience related to this project do you have?",
+    )
+
+    rejection_reason = models.CharField(
+        max_length=200,
+        blank=True,
+        help_text="Why the project lead rejected the application",
+    )
+
+    def accept(self):
+        """Approves the user's request to join this project. Enrolls the user to the project and marks as approved."""
+        if self.is_accepted != None:
+            return
+
+        # Mark as accepted
+        self.is_accepted = True
+
+        # Upsert enrollment
+        Enrollment.objects.update_or_create(
+            semester=self.semester, user=self.user, defaults={"project": self.project}
+        )
+
+        self.save()
+
+        # Notify user
+        self.user.send_message(
+            f"🎉 You've been accepted onto the **{self.project}** team!"
+        )
+
+    def reject(self):
+        if self.is_accepted != None:
+            return
+
+        # Mark as denied
+        self.is_accepted = False
+
+        self.save()
+
+        # Notify user
+        self.user.send_message(
+            f"⚠ **{self.project}** has decided to not move forward with your application for the following reason:\n{self.rejection_reason}!"
+        )
 
 
 class Enrollment(TimestampedModel):
@@ -732,6 +938,9 @@ class Enrollment(TimestampedModel):
         help_text="Private notes for admins about this user for this semester",
     )
 
+    def sync_discord(self):
+        pass
+
     def get_absolute_url(self):
         return (
             reverse("users_detail", args=[str(self.user_id)])
@@ -746,6 +955,20 @@ class Enrollment(TimestampedModel):
         unique_together = ("semester", "user")
         ordering = ["semester"]
         get_latest_by = ["semester"]
+
+
+post_save.connect(sync_discord, sender=Enrollment)
+
+
+class PublicManager(models.Manager):
+    def get_queryset(self):
+        return (
+            super()
+            .get_queryset()
+            .filter(is_published=True)
+            .exclude(type=Meeting.COORDINATOR)
+            .exclude(type=Meeting.MENTOR)
+        )
 
 
 class Meeting(TimestampedModel):
@@ -813,9 +1036,14 @@ class Meeting(TimestampedModel):
         User, through="MeetingAttendance", related_name="meeting_attendances"
     )
 
+    objects = models.Manager()
+
+    public = PublicManager()
+    """Public meetings that can be displayed to all users (and not logged in users)"""
+
     @property
     def presentation_embed_url(self):
-        # https://docs.google.com/presentation/d/1McqgFPrXd3efJty39ekgZpj2kVwapkY6iuU6zGFKuEA/edit#slide=id.g550345e1c6_0_74
+        # e.g. https://docs.google.com/presentation/d/1McqgFPrXd3efJty39ekgZpj2kVwapkY6iuU6zGFKuEA/edit#slide=id.g550345e1c6_0_74
         if (
             self.presentation_url
             and "docs.google.com/presentation/d" in self.presentation_url
@@ -853,7 +1081,7 @@ class Meeting(TimestampedModel):
     def get_absolute_url(self):
         return reverse("meetings_detail", args=[str(self.id)])
 
-    def sync_discord_event(self):
+    def sync_discord(self):
         description = f"""**{self.get_type_display()} Meeting**
         
         View details: {settings.PUBLIC_BASE_URL}/meetings/{self.pk}
@@ -901,14 +1129,7 @@ class Meeting(TimestampedModel):
         get_latest_by = ["starts_at"]
 
 
-def sync_meeting_with_discord_event_on_save(
-    sender, instance: Meeting, created, *args, **kwargs
-):
-    # Check if Discord event exists
-    instance.sync_discord_event()
-
-
-post_save.connect(sync_meeting_with_discord_event_on_save, sender=Meeting)
+post_save.connect(sync_discord, sender=Meeting)
 
 
 class MeetingAttendance(TimestampedModel):
@@ -922,6 +1143,49 @@ class MeetingAttendance(TimestampedModel):
 
     class Meta:
         unique_together = ("meeting", "user")
+
+
+class MentorApplication(TimestampedModel):
+    """Represents a submitted application by a student to be a Mentor for a particular semester."""
+
+    semester = models.ForeignKey(
+        Semester, on_delete=models.CASCADE, related_name="mentor_applications"
+    )
+    user = models.ForeignKey(
+        User, on_delete=models.CASCADE, related_name="mentor_applications"
+    )
+    why = models.TextField(
+        max_length=10000, help_text="Why do you want to be a Mentor?"
+    )
+    skills = models.ManyToManyField(
+        ProjectTag,
+        blank=True,
+        related_name="mentors",
+        help_text="What skills can you offer help for?",
+    )
+    is_accepted = models.BooleanField(
+        "accepted?", null=True, default=None, help_text="Was this application accepted"
+    )
+
+    def accept(self):
+        if not self.semester.is_active:
+            return
+
+        self.is_accepted = True
+        self.save()
+
+        # TODO: figure out message
+        # self.user.send_message()
+
+    def deny(self):
+        if not self.semester.is_active:
+            return
+
+        self.is_accepted = False
+        self.save()
+
+        # TODO: figure out message
+        # self.user.send_message()
 
 
 class SmallGroup(TimestampedModel):
@@ -969,7 +1233,7 @@ class SmallGroup(TimestampedModel):
         return self.display_name
 
     class Meta:
-        ordering = ["semester", "name", "location"]
+        ordering = ["semester", Lower("name"), "location"]
 
 
 class MeetingAttendanceCode(TimestampedModel):

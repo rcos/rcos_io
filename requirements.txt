@@ -1,4 +1,5 @@
 asgiref==3.6.0
+async-timeout==4.0.2
 backoff==2.2.1
 bleach==5.0.1
 certifi==2022.12.7
@@ -22,6 +23,7 @@ psycopg2-binary==2.9.5
 pyparsing==3.0.9
 python-dateutil==2.8.2
 python-dotenv==0.21.0
+redis==4.4.2
 requests==2.28.1
 requests-toolbelt==0.10.1
 sentry-sdk==1.12.1
