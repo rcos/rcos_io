@@ -4,6 +4,7 @@ from django.contrib.postgres.search import SearchVector
 from django.shortcuts import get_object_or_404, redirect
 from django.urls import reverse
 from django.views.generic import DetailView, ListView
+from django.conf import settings
 
 from ..models import Semester
 
@@ -120,6 +121,9 @@ class SearchableListView(ListView):
 
 class UserRequiresSetupMixin(UserPassesTestMixin):
     def test_func(self):
+        if settings.DEBUG:
+            return True
+
         return self.request.user.is_setup
 
     def handle_no_permission(self):

@@ -1,6 +1,7 @@
 import random
 import string
 from typing import Any, Dict
+from django.db import IntegrityError
 
 from django.contrib import messages
 from django.contrib.auth.decorators import login_required
@@ -162,21 +163,17 @@ def meetings_api(request):
 class SubmitAttendanceFormView(LoginRequiredMixin, UserRequiresSetupMixin, FormView):
     template_name = "portal/meetings/attendance/submit.html"
     form_class = SubmitAttendanceForm
-    success_url = "/"
+    success_url = "/meetings"
 
     def form_valid(self, form: SubmitAttendanceForm):
         code = form.cleaned_data["code"]
         user = self.request.user
 
-        if not user.is_authenticated:
-            messages.error(
-                self.request,
-                "You are not logged in!",
-            )
-            return redirect("/")
-
+        # Search for attendance code
         try:
-            meeting_attendance_code = MeetingAttendanceCode.objects.get(pk=code)
+            meeting_attendance_code = MeetingAttendanceCode.objects.select_related(
+                "meeting", "small_group"
+            ).get(pk__iexact=code)
         except MeetingAttendanceCode.DoesNotExist:
             messages.error(
                 self.request,
@@ -185,13 +182,13 @@ class SubmitAttendanceFormView(LoginRequiredMixin, UserRequiresSetupMixin, FormV
             return super().form_valid(form)
 
         try:
-            user.enrollments.get(semester=meeting_attendance_code.meeting.semester)
+            user.enrollments.get(semester=meeting_attendance_code.meeting.semester.pk)
         except Enrollment.DoesNotExist:
             messages.error(
                 self.request,
                 "You are not enrolled in this semester!",
             )
-            return redirect("/")
+            return redirect(reverse("meetings_index"))
 
         if meeting_attendance_code.is_valid:
             # Confirm user is in small group if it is for a small group
@@ -203,14 +200,22 @@ class SubmitAttendanceFormView(LoginRequiredMixin, UserRequiresSetupMixin, FormV
                     self.request,
                     "That is not your Small Group's attendance code... Nice try.",
                 )
-                return redirect("/")
+                return redirect(reverse("submit_attendance"))
 
             new_attendance = MeetingAttendance(
                 meeting=meeting_attendance_code.meeting,
                 user=user,
                 is_verified=random.random() > 0.5,
             )
-            new_attendance.save()
+
+            try:
+                new_attendance.save()
+            except IntegrityError:
+                messages.warning(
+                    self.request,
+                    f"You've already submitted attendance for this meeting!",
+                )
+                return redirect(reverse("submit_attendance"))
 
             if new_attendance.is_verified:
                 messages.success(
@@ -228,7 +233,7 @@ class SubmitAttendanceFormView(LoginRequiredMixin, UserRequiresSetupMixin, FormV
                 "That attendance code is not currently valid. Your attendance was not recorded.",
             )
 
-        return super().form_valid(form)
+        return redirect(meeting_attendance_code.meeting.get_absolute_url())
 
 
 @login_required
