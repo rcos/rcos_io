@@ -12,7 +12,7 @@ class UserIndexView(SearchableListView, SemesterFilteredListView):
     context_object_name = "users"
 
     # Default to all active RPI members
-    queryset = User.objects.filter(role=User.RPI, is_approved=True, is_active=True)
+    queryset = User.students
 
     semester_filter_key = "enrollments__semester"
     search_fields = (

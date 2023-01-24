@@ -61,9 +61,9 @@ class MeetingIndexView(ListView):
             today, timezone.datetime.min.time(), tzinfo=today.tzinfo
         )
 
-        queryset = Meeting.objects.filter(
-            is_published=True, starts_at__gte=this_morning
-        ).select_related()[:5]
+        queryset = Meeting.public.filter(starts_at__gte=this_morning).select_related()[
+            :5
+        ]
         return queryset
 
 
@@ -153,7 +153,7 @@ class MeetingDetailView(DetailView):
 def meetings_api(request):
     start, end = request.GET.get("start"), request.GET.get("end")
 
-    meetings = Meeting.objects.filter(is_published=True, starts_at__range=[start, end])
+    meetings = Meeting.public.filter(starts_at__range=[start, end])
 
     events = list(map(meeting_to_event, meetings))
     return JsonResponse(events, safe=False)
