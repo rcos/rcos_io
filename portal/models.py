@@ -14,6 +14,7 @@ from django.urls import reverse
 from django.utils import formats, timezone
 from requests import HTTPError
 from sentry_sdk import capture_exception
+from django.db.models.functions import Lower
 
 from portal.services import discord
 
@@ -425,7 +426,7 @@ class User(AbstractUser, TimestampedModel):
             raise ValidationError("Only RPI users can have a graduation year set.")
 
     class Meta:
-        ordering = ["first_name", "last_name"]
+        ordering = [Lower("first_name"), Lower("last_name")]
         indexes = [
             models.Index(fields=["is_approved"]),
             models.Index(fields=["email"]),
@@ -720,7 +721,7 @@ class Project(TimestampedModel):
         return self.name
 
     class Meta:
-        ordering = ["name"]
+        ordering = [Lower("name")]
         get_latest_by = "created_at"
         indexes = [models.Index(fields=["name", "description"])]
 
@@ -1231,7 +1232,7 @@ class SmallGroup(TimestampedModel):
         return self.display_name
 
     class Meta:
-        ordering = ["semester", "name", "location"]
+        ordering = ["semester", Lower("name"), "location"]
 
 
 class MeetingAttendanceCode(TimestampedModel):
