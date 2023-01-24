@@ -97,7 +97,18 @@ class SemesterAdmin(admin.ModelAdmin):
     fieldsets = (
         (None, {"fields": ["id", "name"]}),
         ("Dates", {"fields": ["start_date", "end_date"]}),
-        (None, {"fields": ["is_accepting_new_projects"]}),
+        (
+            "Deadlines",
+            {
+                "fields": [
+                    "mentor_application_deadline",
+                    "enrollment_deadline",
+                    "project_enrollment_application_deadline",
+                    "project_pitch_deadline",
+                    "project_proposal_deadline",
+                ]
+            },
+        ),
     )
     list_display = (
         "name",

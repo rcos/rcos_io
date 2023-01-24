@@ -45,16 +45,31 @@ class Semester(TimestampedModel):
     name = models.CharField(
         max_length=30, help_text="User-facing name of semester, e.g. Fall 2024"
     )
-    is_accepting_mentors = models.BooleanField(
-        "accepting mentor applications?",
-        default=False,
-        help_text="Whether users can apply to be Mentors for this semester",
+
+    mentor_application_deadline = models.BooleanField(
+        help_text="The last date students can apply to be Mentors for this semester",
+        blank=True,
+        null=True,
     )
-    is_accepting_new_projects = models.BooleanField(
-        "accepting new projects?",
-        default=False,
-        help_text="Whether new projects can be proposed for this semester",
+    enrollment_deadline = models.DateTimeField(
+        help_text="The last date users can enroll in the semester (not with a project yet)",
+        blank=True,
+        null=True,
     )
+    project_enrollment_application_deadline = models.DateTimeField(
+        help_text="The last date users can apply to a project",
+        blank=True,
+        null=True,
+    )
+    project_pitch_deadline = models.DateTimeField(
+        blank=True,
+        null=True,
+    )
+    project_proposal_deadline = models.DateTimeField(
+        blank=True,
+        null=True,
+    )
+
     start_date = models.DateField(
         "first day",
         help_text="The first day of the semester according to the RPI Academic Calendar: https://info.rpi.edu/registrar/academic-calendar",
@@ -363,10 +378,10 @@ class User(AbstractUser, TimestampedModel):
         if not self.is_approved or not self.is_active:
             return False, "Your account is not approved or active."
 
+        # TODO: check deadline
         if (
             not semester
             or not semester.is_active
-            or not semester.is_accepting_new_projects
         ):
             return (
                 False,
@@ -771,6 +786,12 @@ class ProjectProposal(TimestampedModel):
         help_text="Optional comments from the grader",
     )
 
+    class Meta:
+        unique_together = (
+            "semester",
+            "project",
+        )
+
 
 class ProjectPresentation(TimestampedModel):
     semester = models.ForeignKey(
@@ -800,6 +821,12 @@ class ProjectPresentation(TimestampedModel):
         blank=True,
         help_text="Optional comments from the grader",
     )
+
+    class Meta:
+        unique_together = (
+            "semester",
+            "project",
+        )
 
 
 class ProjectEnrollmentApplication(TimestampedModel):
@@ -908,6 +935,9 @@ class Enrollment(TimestampedModel):
         blank=True,
         help_text="Private notes for admins about this user for this semester",
     )
+
+    def sync_discord(self):
+        pass
 
     def get_absolute_url(self):
         return (
