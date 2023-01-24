@@ -188,6 +188,8 @@ STATICFILES_STORAGE = "whitenoise.storage.CompressedManifestStaticFilesStorage"
 # Default primary key field type
 # https://docs.djangoproject.com/en/4.1/ref/settings/#default-auto-field
 
+SESSION_ENGINE = "django.contrib.sessions.backends.cache"
+
 DEFAULT_AUTO_FIELD = "django.db.models.BigAutoField"
 
 CSRF_COOKIE_SECURE = True
@@ -296,12 +298,12 @@ MESSAGE_TAGS = {
     messages.WARNING: "is-warning",
 }
 
-if DEBUG:
-    CACHES = {
-        "default": {
-            "BACKEND": "django.core.cache.backends.dummy.DummyCache",
-        }
+CACHES = {
+    'default': {
+        'BACKEND': 'django.core.cache.backends.redis.RedisCache',
+        'LOCATION': os.environ["REDIS_URL"],
     }
+}
 
 LOGGING = {
     "version": 1,
