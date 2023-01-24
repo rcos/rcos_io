@@ -123,7 +123,7 @@ def upsert_server_member(
         roles: list of Discord role IDs to assign the member (optional)
     Returns:
         joined_server: whether user was added to the server (false if already on server)
-        updated_member: whether the member's Discord nickname and/or roles were updated 
+        updated_member: whether the member's Discord nickname and/or roles were updated
     Raises:
         HTTPError on failed request
     See https://discord.com/developers/docs/resources/guild#add-guild-member
@@ -178,7 +178,39 @@ def get_user(user_id: str) -> Union[DiscordUser, None]:
     response = requests.get(
         f"{DISCORD_API_ENDPOINT}/users/{user_id}", headers=HEADERS, timeout=3
     )
+
+    if response.status_code == 404:
+        return None
+
     response.raise_for_status()
+    # https://requests.readthedocs.io/en/latest/user/quickstart/#response-status-codes
+    # throws HTTPError for 4XX or 5XX
+    user = response.json()
+    return user
+
+
+def get_server_member(user_id: str) -> Union[Dict[str, Any], None]:
+    """
+    Given a Discord user's id, gets their user server member profile.
+    Args:
+        user_id: Discord user's unique account ID
+    Returns:
+        DiscordUser
+    Raises:
+        HTTPError on failed request (e.g. not found)
+    See https://discord.com/developers/docs/resources/guild#get-guild-member
+    """
+    response = requests.get(
+        f"{DISCORD_API_ENDPOINT}/guilds/{settings.DISCORD_SERVER_ID}/members/{user_id}",
+        headers=HEADERS,
+        timeout=3,
+    )
+
+    if response.status_code == 404:
+        return None
+
+    response.raise_for_status()
+
     # https://requests.readthedocs.io/en/latest/user/quickstart/#response-status-codes
     # throws HTTPError for 4XX or 5XX
     user = response.json()
@@ -250,6 +282,23 @@ class ModifyChannelParams(CreateServerChannelParams):
 def modify_server_channel(channel_id: str, params: ModifyChannelParams):
     response = requests.patch(
         f"{DISCORD_API_ENDPOINT}/channels/{channel_id}",
+        headers=HEADERS,
+        timeout=3,
+        json=params,
+    )
+
+    response.raise_for_status()
+
+    return cast(Dict[str, Any], response.json())
+
+
+class SendMessageParams(TypedDict):
+    content: str
+
+
+def send_message(channel_id: str, params: SendMessageParams):
+    response = requests.post(
+        f"{DISCORD_API_ENDPOINT}/channels/{channel_id}/messages",
         headers=HEADERS,
         timeout=3,
         json=params,
