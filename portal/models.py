@@ -2,6 +2,7 @@ import logging
 import re
 from time import sleep
 from typing import Optional, Tuple, cast
+from django.core.cache import cache
 
 from django.conf import settings
 from django.contrib.auth.models import AbstractUser, BaseUserManager
@@ -298,12 +299,14 @@ class User(AbstractUser, TimestampedModel):
             and self.discord_user_id
         )
 
+    def get_active_enrollment(self) -> Optional["Enrollment"]:
+        active_semester = cache.get("active_semester")
+        return self.enrollments.filter(semester=active_semester).first()
+
     def is_coordinator(self, semester=None):
         if semester is None:
-            semester = Semester.get_active()
-
-        if semester is None:
-            return False
+            active_enrollment = self.get_active_enrollment()
+            return active_enrollment and active_enrollment.is_coordinator
 
         return (
             self.enrollments.filter(
@@ -315,10 +318,8 @@ class User(AbstractUser, TimestampedModel):
 
     def is_faculty_advisor(self, semester=None):
         if semester is None:
-            semester = Semester.get_active()
-
-        if semester is None:
-            return False
+            active_enrollment = self.get_active_enrollment()
+            return active_enrollment and active_enrollment.is_faculty_advisor
 
         return (
             self.enrollments.filter(
@@ -1103,14 +1104,26 @@ class Meeting(TimestampedModel):
         return f"{self.display_name} - {formats.date_format(timezone.localtime(self.starts_at), 'D M j Y @ P')}"
 
     @classmethod
-    def get_next(cls):
-        today = timezone.datetime.today()
-        this_morning = timezone.datetime.combine(
-            today, timezone.datetime.min.time(), tzinfo=today.tzinfo
-        )
-        return cls.objects.filter(
-            is_published=True, starts_at__gte=this_morning
-        ).first()
+    def get_user_queryset(cls, user):
+        if user.is_authenticated:
+            active_enrollment = user.get_active_enrollment()
+            queryset = cls.objects
+            if user.is_superuser or (
+                active_enrollment and active_enrollment.is_coordinator
+            ):
+                pass
+            elif active_enrollment and active_enrollment.is_mentor:
+                queryset = queryset.exclude(
+                    is_published=False, type=Meeting.COORDINATOR
+                )
+            else:
+                queryset = queryset.exclude(
+                    is_published=False, type__in=(Meeting.MENTOR, Meeting.COORDINATOR)
+                )
+        else:
+            queryset = cls.public
+
+        return queryset
 
     class Meta:
         ordering = ["starts_at"]

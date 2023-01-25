@@ -2,6 +2,7 @@ import random
 import string
 from typing import Any, Dict
 from django.db import IntegrityError
+from django.core.cache import cache
 
 from django.contrib import messages
 from django.contrib.auth.decorators import login_required
@@ -175,11 +176,12 @@ class MeetingDetailView(DetailView):
         return data
 
 
-@cache_page(60 * 15)
 def meetings_api(request):
     start, end = request.GET.get("start"), request.GET.get("end")
 
-    meetings = Meeting.public.filter(starts_at__range=[start, end])
+    meetings = Meeting.get_user_queryset(request.user).filter(
+        starts_at__range=[start, end]
+    )
 
     events = list(map(meeting_to_event, meetings))
     return JsonResponse(events, safe=False)
