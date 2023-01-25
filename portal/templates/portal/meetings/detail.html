@@ -137,7 +137,7 @@
 
         <div class="tabs">
             <ul>
-                <li class="{% if not target_small_group %}is-active{% endif %}"><a href="?small_group=">All Enrolled</a></li>
+                <li class="{% if not target_small_group %}is-active{% endif %}"><a href="?small_group=">All Students</a></li>
                 {% for small_group in meeting.semester.small_groups.all %}
                 <li class="{% if target_small_group == small_group %}is-active{% endif %}"><a href="?small_group={{ small_group.pk }}">{{ small_group }}</a></li>
                 {% endfor %}
@@ -150,13 +150,20 @@
                 <summary>Attendance Code</summary>
                 <h1 class="title is-1">{{ code }}</h1>
             </details>
-            {% if not target_small_group %}
+            {% if not target_small_group and meeting.type == "small_group" %}
             <p class="has-text-grey">Do not show this during Small Group meetings. Use your Small Group's.</p>
             {% endif %}
         </div>
         {% endif %}
 
-        <progress class="progress" value="{{ attendance_ratio }}"></progress>
+        <div class="columns">
+            <div class="column is-narrow">
+                <strong>{% widthratio attendance_ratio 1 100 %}% ({{ attended_users|length }} of {{ expected_users|length }}) attended</strong>
+            </div>
+            <div class="column">
+                <progress class="progress" value="{{ attendance_ratio }}"></progress>
+            </div>
+        </div>
 
         <div class="columns">
             <div class="column">
@@ -208,7 +215,12 @@
             <input type="hidden" name="meeting" value="{{ meeting.pk }}">
             <div class="field has-addons">
                 <div class="control">
-                    <input type="text" name="rcs_id" class="input" placeholder="Student RCS ID">
+                    <input type="text" list="rcs_ids" name="rcs_id" class="input" placeholder="Student RCS ID">
+                    <datalist id="rcs_ids">
+                        {% for user in non_attended_users  %}
+                        <option value="{{ user.rcs_id }}">
+                        {% endfor %}
+                    </datalist>
                 </div>
                 <div class="control">
                     <button type="submit" class="button">Manually Add Attendance</button>

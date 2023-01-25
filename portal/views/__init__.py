@@ -1,3 +1,4 @@
+from curses.has_key import has_key
 from django.contrib import messages
 from django.contrib.auth.mixins import UserPassesTestMixin
 from django.contrib.postgres.search import SearchVector
@@ -7,14 +8,19 @@ from django.views.generic import DetailView, ListView
 from django.conf import settings
 from django.core.cache import cache
 
-from ..models import Semester
+from ..models import Enrollment, Semester
 
 
 def load_semesters(request):
 
     semesters = cache.get_or_set("semesters", Semester.objects.all())
-    active_semester = next(
-        (semester for semester in semesters if semester.is_active), None
+    active_semester = (
+        cache.get_or_set(
+            "active_semester",
+            next((semester for semester in semesters if semester.is_active), None),
+        )
+        if semesters
+        else None
     )
 
     return {"semesters": semesters, "active_semester": active_semester}

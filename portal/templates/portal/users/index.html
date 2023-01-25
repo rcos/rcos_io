@@ -27,8 +27,14 @@
                     <tr>
                         <td>
                             <a href="{{ user_row.user.get_absolute_url }}{% target_semester_query %}">{{ user_row.user }}</a>
-                            {% if user_row.enrollment and user_row.enrollment.is_coordinator %}
-                            <span class="tag is-warning">Coordinator</span>
+                            {% if user_row.enrollment %}
+                                {% if user_row.enrollment.is_coordinator %}
+                                <span class="tag is-warning">Coordinator</span>
+                                {% endif %}
+                                
+                                {% if user_row.enrollment.is_mentor %}
+                                <span class="tag is-info">Mentor</span>
+                                {% endif %}
                             {% endif %}
                         </td>
                         {% if target_semester %}

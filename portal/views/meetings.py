@@ -2,6 +2,7 @@ import random
 import string
 from typing import Any, Dict
 from django.db import IntegrityError
+from django.core.cache import cache
 
 from django.contrib import messages
 from django.contrib.auth.decorators import login_required
@@ -57,14 +58,13 @@ class MeetingIndexView(ListView):
 
     # Fetch 5 most recent published meetings, calendar will fetch all from API separately
     def get_queryset(self):
-        today = timezone.datetime.today()
-        this_morning = timezone.datetime.combine(
-            today, timezone.datetime.min.time(), tzinfo=today.tzinfo
-        )
+        now = timezone.datetime.today()
 
-        queryset = Meeting.public.filter(starts_at__gte=this_morning).select_related()[
-            :5
-        ]
+        queryset = (
+            Meeting.get_user_queryset(self.request.user)
+            .filter(ends_at__gte=now)
+            .select_related()[:5]
+        )
         return queryset
 
 
@@ -81,10 +81,20 @@ class MeetingDetailView(DetailView):
         if self.request.user.is_superuser:
             return True
 
+        active_enrollment = self.request.user.enrollments.filter(
+            semester_id=self.object.semester_id
+        ).first()
+
+        # Mentors can manage general meeting attendance except mentor and coordinator meetings
         if (
-            self.request.user.is_mentor(self.object.semester)
-            and self.object.type != Meeting.MENTOR
+            active_enrollment
+            and active_enrollment.is_mentor
+            and self.object.type not in (Meeting.MENTOR, Meeting.COORDINATOR)
         ):
+            return True
+
+        # Meeting hosts also can manage attendance
+        if self.object.host == self.request.user:
             return True
 
         return False
@@ -108,12 +118,10 @@ class MeetingDetailView(DetailView):
         data["can_manage_attendance"] = False
         if self.can_manage_attendance():
             data["can_manage_attendance"] = True
-            expected_users = User.objects.filter(
-                enrollments__semester=self.object.semester
-            )
-            attended_users = self.object.attendances.filter(
-                meetingattendance__is_verified=True
-            )
+
+            expected_users = self.object.expected_attendance_users
+            attended_users = self.object.attended_users
+
             non_attended_users = expected_users.exclude(
                 pk__in=attended_users.values_list("pk", flat=True)
             )
@@ -140,6 +148,7 @@ class MeetingDetailView(DetailView):
             data["attended_users"] = attended_users
             data["non_attended_users"] = non_attended_users
             data["needs_verification_users"] = needs_verification_users
+            data["expected_users"] = expected_users
             data["attendance_ratio"] = (
                 attended_users.count() / expected_users.count()
                 if expected_users.count() > 0
@@ -167,11 +176,12 @@ class MeetingDetailView(DetailView):
         return data
 
 
-@cache_page(60 * 15)
 def meetings_api(request):
     start, end = request.GET.get("start"), request.GET.get("end")
 
-    meetings = Meeting.public.filter(starts_at__range=[start, end])
+    meetings = Meeting.get_user_queryset(request.user).filter(
+        starts_at__range=[start, end]
+    )
 
     events = list(map(meeting_to_event, meetings))
     return JsonResponse(events, safe=False)
@@ -256,18 +266,37 @@ class SubmitAttendanceFormView(LoginRequiredMixin, UserRequiresSetupMixin, FormV
 @login_required
 def manually_add_or_verify_attendance(request):
     if request.method == "POST":
-        user = (
-            User.objects.get(pk=request.POST["user"])
-            if request.POST.get("user")
-            else User.objects.get(rcs_id=request.POST["rcs_id"])
-        )
-        meeting = Meeting.objects.get(pk=request.POST["meeting"])
+        meeting: Meeting = Meeting.objects.get(pk=request.POST["meeting"])
 
+        try:
+            user = (
+                User.objects.get(pk=request.POST["user"])
+                if request.POST.get("user")
+                else User.objects.get(rcs_id=request.POST["rcs_id"])
+            )
+        except User.DoesNotExist:
+            messages.error(request, "User not found.")
+            return redirect(reverse("meetings_detail", args=(meeting.pk,)))
+
+        submitter_enrollment = request.user.enrollments.get(semester=meeting.semester)
         if (
-            not request.user.is_mentor(meeting.semester)
-            and not request.user.is_superuser
+            not request.user.is_superuser
+            and not submitter_enrollment.is_faculty_advisor
+            and not submitter_enrollment.is_coordinator
+            and not submitter_enrollment.is_mentor
         ):
             return redirect(reverse("meetings_index"))
+
+        if (
+            not request.user.is_superuser
+            and not submitter_enrollment.is_coordinator
+            and submitter_enrollment.is_mentor
+            and meeting.type == Meeting.MENTOR
+        ):
+            messages.warning(
+                request, "You cannot manually submit attendance for a Mentor meeting!"
+            )
+            return redirect(reverse("meetings_detail", args=(meeting.pk,)))
 
         try:
             attendance = MeetingAttendance.objects.get(user=user, meeting=meeting)
