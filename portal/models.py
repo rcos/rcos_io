@@ -47,7 +47,7 @@ class Semester(TimestampedModel):
         max_length=30, help_text="User-facing name of semester, e.g. Fall 2024"
     )
 
-    mentor_application_deadline = models.BooleanField(
+    mentor_application_deadline = models.DateTimeField(
         help_text="The last date students can apply to be Mentors for this semester",
         blank=True,
         null=True,
@@ -941,7 +941,7 @@ class Enrollment(TimestampedModel):
 
     class Meta:
         unique_together = ("semester", "user")
-        ordering = ["semester"]
+        ordering = ["semester", "user__first_name"]
         get_latest_by = ["semester"]
 
 

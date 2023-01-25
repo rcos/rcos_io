@@ -89,6 +89,16 @@ class ProjectRepositoryInline(admin.TabularInline):
     extra = 1
 
 
+class MentorApplicationInline(admin.TabularInline):
+    model = MentorApplication
+    extra = 1
+
+
+class SmallGroupInline(admin.TabularInline):
+    model = SmallGroup
+    extra = 1
+
+
 # Model Admins
 
 
@@ -119,10 +129,11 @@ class SemesterAdmin(admin.ModelAdmin):
     )
     search_fields = ("name",)
     inlines = (
-        EnrollmentInline,
+        MentorApplicationInline,
         ProjectPitchInline,
         ProjectProposalInline,
         ProjectPresentationInline,
+        SmallGroupInline,
     )
 
 
@@ -223,6 +234,7 @@ class EnrollmentAdmin(admin.ModelAdmin):
         "is_for_pay",
         "is_project_lead",
         "is_coordinator",
+        "is_mentor",
     )
 
 
