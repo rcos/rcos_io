@@ -1,6 +1,12 @@
 {% extends "portal/base.html" %}
 {% load portal_extras %}
 
+{% block ogp %}
+<meta property="og:title" content="{{ project.name }}" />
+<meta property="og:type" content="website" />
+<meta property="og:url" content="{{ request.get_host }}{{ project.get_absolute_url }}" />
+{% endblock %}
+
 {% block content %}
 
 {% if not project.is_approved %}
