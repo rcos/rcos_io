@@ -149,6 +149,7 @@ class MeetingDetailView(DetailView):
             data["attended_users"] = attended_users
             data["non_attended_users"] = non_attended_users
             data["needs_verification_users"] = needs_verification_users
+            data["expected_users"] = expected_users
             data["attendance_ratio"] = (
                 attended_users.count() / expected_users.count()
                 if expected_users.count() > 0
@@ -266,18 +267,37 @@ class SubmitAttendanceFormView(LoginRequiredMixin, UserRequiresSetupMixin, FormV
 @login_required
 def manually_add_or_verify_attendance(request):
     if request.method == "POST":
-        user = (
-            User.objects.get(pk=request.POST["user"])
-            if request.POST.get("user")
-            else User.objects.get(rcs_id=request.POST["rcs_id"])
-        )
-        meeting = Meeting.objects.get(pk=request.POST["meeting"])
+        meeting: Meeting = Meeting.objects.get(pk=request.POST["meeting"])
 
+        try:
+            user = (
+                User.objects.get(pk=request.POST["user"])
+                if request.POST.get("user")
+                else User.objects.get(rcs_id=request.POST["rcs_id"])
+            )
+        except User.DoesNotExist:
+            messages.error(request, "User not found.")
+            return redirect(reverse("meetings_detail", args=(meeting.pk,)))
+
+        submitter_enrollment = request.user.enrollments.get(semester=meeting.semester)
         if (
-            not request.user.is_mentor(meeting.semester)
-            and not request.user.is_superuser
+            not request.user.is_superuser
+            and not submitter_enrollment.is_faculty_advisor
+            and not submitter_enrollment.is_coordinator
+            and not submitter_enrollment.is_mentor
         ):
             return redirect(reverse("meetings_index"))
+
+        if (
+            not request.user.is_superuser
+            and not submitter_enrollment.is_coordinator
+            and submitter_enrollment.is_mentor
+            and meeting.type == Meeting.MENTOR
+        ):
+            messages.warning(
+                request, "You cannot manually submit attendance for a Mentor meeting!"
+            )
+            return redirect(reverse("meetings_detail", args=(meeting.pk,)))
 
         try:
             attendance = MeetingAttendance.objects.get(user=user, meeting=meeting)

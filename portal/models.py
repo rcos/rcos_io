@@ -303,6 +303,19 @@ class User(AbstractUser, TimestampedModel):
         active_semester = cache.get("active_semester")
         return self.enrollments.filter(semester=active_semester).first()
 
+    def is_mentor(self, semester=None):
+        if semester is None:
+            active_enrollment = self.get_active_enrollment()
+            return active_enrollment and active_enrollment.is_mentor
+
+        return (
+            self.enrollments.filter(
+                is_mentor=True,
+                semester=semester,
+            ).count()
+            > 0
+        )
+
     def is_coordinator(self, semester=None):
         if semester is None:
             active_enrollment = self.get_active_enrollment()
