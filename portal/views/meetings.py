@@ -58,14 +58,13 @@ class MeetingIndexView(ListView):
 
     # Fetch 5 most recent published meetings, calendar will fetch all from API separately
     def get_queryset(self):
-        today = timezone.datetime.today()
-        this_morning = timezone.datetime.combine(
-            today, timezone.datetime.min.time(), tzinfo=today.tzinfo
-        )
+        now = timezone.datetime.today()
 
-        queryset = Meeting.public.filter(starts_at__gte=this_morning).select_related()[
-            :5
-        ]
+        queryset = (
+            Meeting.get_user_queryset(self.request.user)
+            .filter(ends_at__gte=now)
+            .select_related()[:5]
+        )
         return queryset
 
 
