@@ -15,7 +15,7 @@ class Migration(migrations.Migration):
         migrations.AlterModelManagers(
             name="user",
             managers=[
-                ("students", portal.models.StudentManager()),
+                ("students", portal.models.RPIUserManager()),
                 ("objects", portal.models.UserManager()),
             ],
         ),

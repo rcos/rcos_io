@@ -189,7 +189,7 @@ class UserManager(BaseUserManager):
         return self._create_user(email, password, **extra_fields)
 
 
-class StudentManager(BaseUserManager):
+class RPIUserManager(BaseUserManager):
     def get_queryset(self):
         return (
             super()
@@ -298,15 +298,6 @@ class User(AbstractUser, TimestampedModel):
             and self.discord_user_id
         )
 
-    def is_mentor(self, semester=None):
-        if semester is None:
-            semester = Semester.get_active()
-
-        if semester is None:
-            return False
-
-        return self.mentored_small_groups.filter(semester=semester).count() > 0
-
     def is_coordinator(self, semester=None):
         if semester is None:
             semester = Semester.get_active()
@@ -380,10 +371,7 @@ class User(AbstractUser, TimestampedModel):
             return False, "Your account is not approved or active."
 
         # TODO: check deadline
-        if (
-            not semester
-            or not semester.is_active
-        ):
+        if not semester or not semester.is_active:
             return (
                 False,
                 "The current semester is not accepting new projects at this time.",
@@ -419,7 +407,7 @@ class User(AbstractUser, TimestampedModel):
         return self.display_name
 
     objects = UserManager()
-    students = StudentManager()
+    rpi = RPIUserManager()
 
     def clean(self):
         if self.role != User.RPI and self.graduation_year is not None:
@@ -921,6 +909,7 @@ class Enrollment(TimestampedModel):
     )
     is_project_lead = models.BooleanField("project lead?", default=False)
     is_coordinator = models.BooleanField("coordinator?", default=False)
+    is_mentor = models.BooleanField("mentor?", default=False)
     is_faculty_advisor = models.BooleanField("faculty advisor?", default=False)
 
     final_grade = models.DecimalField(
@@ -1172,6 +1161,10 @@ class MentorApplication(TimestampedModel):
 
         self.is_accepted = True
         self.save()
+
+        Enrollment.objects.update_or_create(
+            user=self.user_id, semester=self.semester_id, defaults={"is_mentor": True}
+        )
 
         # TODO: figure out message
         # self.user.send_message()

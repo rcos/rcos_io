@@ -81,10 +81,20 @@ class MeetingDetailView(DetailView):
         if self.request.user.is_superuser:
             return True
 
+        active_enrollment = self.request.user.enrollments.filter(
+            semester_id=self.object.semester_id
+        ).first()
+
+        # Mentors can manage general meeting attendance except mentor and coordinator meetings
         if (
-            self.request.user.is_mentor(self.object.semester)
-            and self.object.type != Meeting.MENTOR
+            active_enrollment
+            and active_enrollment.is_mentor
+            and self.object.type not in (Meeting.MENTOR, Meeting.COORDINATOR)
         ):
+            return True
+
+        # Meeting hosts also can manage attendance
+        if self.object.host == self.request.user:
             return True
 
         return False
@@ -108,9 +118,7 @@ class MeetingDetailView(DetailView):
         data["can_manage_attendance"] = False
         if self.can_manage_attendance():
             data["can_manage_attendance"] = True
-            expected_users = User.objects.filter(
-                enrollments__semester=self.object.semester
-            )
+            expected_users = User.rpi.filter(enrollments__semester=self.object.semester)
             attended_users = self.object.attendances.filter(
                 meetingattendance__is_verified=True
             )
