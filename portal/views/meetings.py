@@ -119,10 +119,10 @@ class MeetingDetailView(DetailView):
         data["can_manage_attendance"] = False
         if self.can_manage_attendance():
             data["can_manage_attendance"] = True
-            expected_users = User.rpi.filter(enrollments__semester=self.object.semester)
-            attended_users = self.object.attendances.filter(
-                meetingattendance__is_verified=True
-            )
+
+            expected_users = self.object.expected_attendance_users
+            attended_users = self.object.attended_users
+
             non_attended_users = expected_users.exclude(
                 pk__in=attended_users.values_list("pk", flat=True)
             )

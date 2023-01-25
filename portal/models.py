@@ -1073,6 +1073,27 @@ class Meeting(TimestampedModel):
         now = timezone.now()
         return self.starts_at < now < self.ends_at
 
+    @property
+    def expected_attendance_users(self):
+        if self.type == Meeting.COORDINATOR:
+            return User.rpi.filter(
+                Q(enrollments__semester=self.semester_id)
+                & (
+                    Q(enrollments__is_coordinator=True)
+                    | Q(enrollments__is_faculty_advisor=True)
+                )
+            )
+        elif self.type == Meeting.MENTOR:
+            return User.rpi.filter(
+                enrollments__semester=self.semester_id, enrollments__is_mentor=True
+            )
+        else:
+            return User.rpi.filter(enrollments__semester=self.semester_id)
+
+    @property
+    def attended_users(self):
+        return self.attendances.filter(meetingattendance__is_verified=True)
+
     @classmethod
     def get_ongoing(cls):
         now = timezone.now()
