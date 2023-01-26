@@ -76,14 +76,14 @@ class MeetingDetailView(DetailView):
 
     def can_manage_attendance(self):
         if not self.request.user.is_authenticated:
-            return False
-
-        if self.request.user.is_superuser:
-            return True
+            return None, False
 
         active_enrollment = self.request.user.enrollments.filter(
             semester_id=self.object.semester_id
         ).first()
+
+        if self.request.user.is_superuser:
+            return active_enrollment, True
 
         # Mentors can manage general meeting attendance except mentor and coordinator meetings
         if (
@@ -91,13 +91,13 @@ class MeetingDetailView(DetailView):
             and active_enrollment.is_mentor
             and self.object.type not in (Meeting.MENTOR, Meeting.COORDINATOR)
         ):
-            return True
+            return active_enrollment, True
 
         # Meeting hosts also can manage attendance
         if self.object.host == self.request.user:
-            return True
+            return active_enrollment, True
 
-        return False
+        return active_enrollment, False
 
     def get_context_data(self, **kwargs):
         data = super().get_context_data(**kwargs)
@@ -116,7 +116,9 @@ class MeetingDetailView(DetailView):
             data["submit_attendance_form"] = None
 
         data["can_manage_attendance"] = False
-        if self.can_manage_attendance():
+        active_enrollment, can_manage_attendance = self.can_manage_attendance()
+        data["active_enrollment"] = active_enrollment
+        if can_manage_attendance:
             data["can_manage_attendance"] = True
 
             expected_users = self.object.expected_attendance_users
@@ -285,25 +287,36 @@ def manually_add_or_verify_attendance(request):
             messages.error(request, "User not found.")
             return redirect(reverse("meetings_detail", args=(meeting.pk,)))
 
-        submitter_enrollment = request.user.enrollments.get(semester=meeting.semester)
-        if (
-            not request.user.is_superuser
-            and not submitter_enrollment.is_faculty_advisor
-            and not submitter_enrollment.is_coordinator
-            and not submitter_enrollment.is_mentor
-        ):
-            return redirect(reverse("meetings_index"))
-
-        if (
-            not request.user.is_superuser
-            and not submitter_enrollment.is_coordinator
-            and submitter_enrollment.is_mentor
-            and meeting.type == Meeting.MENTOR
-        ):
-            messages.warning(
-                request, "You cannot manually submit attendance for a Mentor meeting!"
+        try:
+            submitter_enrollment = request.user.enrollments.get(
+                semester=meeting.semester
             )
-            return redirect(reverse("meetings_detail", args=(meeting.pk,)))
+            if (
+                not request.user.is_superuser
+                and not submitter_enrollment.is_faculty_advisor
+                and not submitter_enrollment.is_coordinator
+                and not submitter_enrollment.is_mentor
+            ):
+                return redirect(reverse("meetings_index"))
+
+            if (
+                not request.user.is_superuser
+                and not submitter_enrollment.is_coordinator
+                and submitter_enrollment.is_mentor
+                and meeting.type == Meeting.MENTOR
+            ):
+                messages.warning(
+                    request,
+                    "You cannot manually submit attendance for a Mentor meeting!",
+                )
+                return redirect(reverse("meetings_detail", args=(meeting.pk,)))
+        except Enrollment.DoesNotExist:
+            if not request.user.is_superuser:
+                messages.error(
+                    request,
+                    "You must be an enrolled Faculty Advisor/Coordinator/Mentor to perform this action.",
+                )
+                return redirect(reverse("meetings_detail", args=(meeting.pk,)))
 
         try:
             attendance = MeetingAttendance.objects.get(user=user, meeting=meeting)

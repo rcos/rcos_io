@@ -14,7 +14,7 @@
 </div>
 {% endif %}
 
-<section class="section" style="min-height: 100vh;">
+<section class="section" {% if can_manage_attendance %}style="min-height: 100vh;"{% endif %}>
     <div class="container">
         <h1 class="title is-1">
             {{ meeting.display_name }}
@@ -230,5 +230,13 @@
         </form>
     </div>
 </section>
+{% elif active_enrollment.is_mentor %}
+
+<section class="section">
+    <div class="container">
+        <p class="has-text-grey has-text-centered">Mentors cannot manage Mentor meeting attendance.</p>
+    </div>
+</section>
+
 {% endif %}
 {% endblock %}
