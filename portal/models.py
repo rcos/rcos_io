@@ -304,7 +304,6 @@ class User(AbstractUser, TimestampedModel):
     def get_active_enrollment(self) -> Optional["Enrollment"]:
         active_semester = cache.get("active_semester")
         queryset = self.enrollments.filter(semester=active_semester)
-        print(queryset.explain())
         return queryset.first()
 
     def is_mentor(self, semester=None):

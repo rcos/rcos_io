@@ -216,7 +216,7 @@
             <input type="hidden" name="meeting" value="{{ meeting.pk }}">
             <div class="field has-addons">
                 <div class="control">
-                    <input type="text" list="rcs_ids" name="rcs_id" class="input" placeholder="Student RCS ID">
+                    <input type="text" list="rcs_ids" name="rcs_id" class="input" placeholder="Student RCS ID" required>
                     <datalist id="rcs_ids">
                         {% for user in non_attended_users  %}
                         <option value="{{ user.rcs_id }}">

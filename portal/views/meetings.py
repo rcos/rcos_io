@@ -268,11 +268,18 @@ def manually_add_or_verify_attendance(request):
     if request.method == "POST":
         meeting: Meeting = Meeting.objects.get(pk=request.POST["meeting"])
 
+        user_id = request.POST.get("user", "").strip()
+        rcs_id = request.POST.get("rcs_id", "").strip()
+
+        if not user_id and not rcs_id:
+            messages.warning(request, "You did not enter a user ID or RCS ID!")
+            return redirect(reverse("meetings_detail", args=(meeting.pk,)))
+
         try:
             user = (
-                User.objects.get(pk=request.POST["user"])
-                if request.POST.get("user")
-                else User.objects.get(rcs_id=request.POST["rcs_id"])
+                User.objects.get(pk=user_id)
+                if user_id
+                else User.objects.get(rcs_id=rcs_id)
             )
         except User.DoesNotExist:
             messages.error(request, "User not found.")
@@ -302,13 +309,14 @@ def manually_add_or_verify_attendance(request):
             attendance = MeetingAttendance.objects.get(user=user, meeting=meeting)
             if not attendance.is_verified:
                 attendance.is_verified = True
-                messages.info(request, "Verified attendance")
+                attendance.save()
+                messages.info(request, f"Verified attendance for {user}.")
         except MeetingAttendance.DoesNotExist:
             attendance = MeetingAttendance(
                 meeting=meeting, user=user, is_verified=True, is_added_by_admin=True
             )
-            messages.success(request, "Added attendance.")
-        attendance.save()
+            attendance.save()
+            messages.success(request, f"Added attendance for {user}!")
 
         return redirect(reverse("meetings_detail", args=(meeting.pk,)))
     return redirect(reverse("meetings_index"))
