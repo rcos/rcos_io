@@ -209,7 +209,7 @@ class SubmitAttendanceFormView(LoginRequiredMixin, UserRequiresSetupMixin, FormV
             return super().form_valid(form)
 
         try:
-            user.enrollments.get(semester=meeting_attendance_code.meeting.semester.pk)
+            user.enrollments.get(semester=meeting_attendance_code.meeting.semester_id)
         except Enrollment.DoesNotExist:
             messages.error(
                 self.request,

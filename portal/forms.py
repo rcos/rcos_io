@@ -11,11 +11,10 @@ class BulmaTextInput(forms.Widget):
 
 
 class UserProfileForm(forms.ModelForm):
-
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
         self.helper = FormHelper()
-    
+
     class Meta:
         model = User
         fields = ["first_name", "last_name", "graduation_year"]

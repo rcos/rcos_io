@@ -241,7 +241,7 @@ class User(AbstractUser, TimestampedModel):
         null=True,
         blank=True,
         help_text="If the user is an RPI user, their graduation year.",
-        validators=[MaxValueValidator(2028), MinValueValidator(1950)]
+        validators=[MaxValueValidator(2028), MinValueValidator(1950)],
     )
 
     # Account integrations
@@ -303,7 +303,9 @@ class User(AbstractUser, TimestampedModel):
 
     def get_active_enrollment(self) -> Optional["Enrollment"]:
         active_semester = cache.get("active_semester")
-        return self.enrollments.filter(semester=active_semester).first()
+        queryset = self.enrollments.filter(semester=active_semester)
+        print(queryset.explain())
+        return queryset.first()
 
     def is_mentor(self, semester=None):
         if semester is None:
@@ -956,6 +958,12 @@ class Enrollment(TimestampedModel):
         return f"{self.semester.name} - {self.user} - {self.project or 'No project'}"
 
     class Meta:
+        indexes = [
+            models.Index(fields=["user", "semester"]),
+            models.Index(fields=["user"]),
+            models.Index(fields=["semester"]),
+            models.Index(fields=["semester", "project"]),
+        ]
         unique_together = ("semester", "user")
         ordering = ["semester", "user__first_name"]
         get_latest_by = ["semester"]
@@ -1300,6 +1308,9 @@ class MeetingAttendanceCode(TimestampedModel):
         return self.code
 
     class Meta:
+        indexes = [
+            models.Index(fields=["code"]),
+        ]
         unique_together = ("code", "meeting", "small_group")
 
 
