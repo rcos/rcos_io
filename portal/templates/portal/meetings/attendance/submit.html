@@ -6,13 +6,13 @@
     <div class="container">
         <h1 class="title">Submit Attendance</h1>
 
-        <form method="post">
+        {% crispy form %}
+        <!-- <form method="post">
             {% csrf_token %}
 
-            {{ form|crispy }}
 
             <button class="button" type="submit">Submit</button>
-        </form>
+        </form> -->
     </div>
 </section>
 {% endblock %}

@@ -1095,11 +1095,13 @@ class Meeting(TimestampedModel):
         return self.attendances.filter(meetingattendance__is_verified=True)
 
     @classmethod
-    def get_ongoing(cls):
+    def get_ongoing(cls, user):
         now = timezone.now()
-        return cls.objects.filter(
-            is_published=True, starts_at__lte=now, ends_at__gte=now
-        ).first()
+        return (
+            cls.get_user_queryset(user)
+            .filter(is_published=True, starts_at__lte=now, ends_at__gte=now)
+            .first()
+        )
 
     def get_absolute_url(self):
         return reverse("meetings_detail", args=[str(self.id)])

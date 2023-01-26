@@ -77,10 +77,11 @@
                 </div>
 
                 {% if request.user.is_authenticated and request.user.is_rpi and not user_attendance %}
-                <form action="{% url 'submit_attendance' %}" method="post">
-                    {% csrf_token %}
-                    {{ submit_attendance_form|crispy }}
-                </form>
+                    {% if meeting.is_ongoing %}
+                    {% crispy submit_attendance_form %}
+                    {% else %}
+                    <small class="has-text-grey">Attendance can only be submitted during the meeting.</small>
+                    {% endif %}
                 {% endif %}
             </div>
             <div class="column">

@@ -1,3 +1,4 @@
+from urllib import request
 from django.views.generic.base import TemplateView
 
 from portal.forms import SubmitAttendanceForm
@@ -28,7 +29,7 @@ class IndexView(TemplateView):
 
         if self.request.user.is_authenticated:
             active_semester = Semester.get_active()
-            data["ongoing_meeting"] = Meeting.get_ongoing()
+            data["ongoing_meeting"] = Meeting.get_ongoing(self.request.user)
             data["can_propose_project"] = self.request.user.can_propose_project(
                 active_semester
             )

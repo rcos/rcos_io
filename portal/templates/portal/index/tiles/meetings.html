@@ -4,11 +4,17 @@
 <form action="{% url 'submit_attendance' %}" method="post">
     {% csrf_token %}
 
-    <div class="columns">
-        <div class="column">
-            {{ submit_attendance_form|crispy }}
+    <label for="attendance-code" class="label">Meeting Attendance</label>
+    <div class="field has-addons">
+        <div class="control is-flex-grow-1">
+          <input type="text" id="attendance-code" name="code" type="text" required placeholder="Attendance code" class="input">
         </div>
-    </div>
+        <div class="control">
+          <button type="submit" class="button">
+            Submit
+          </button>
+        </div>
+      </div>
 </form>
 <hr>
 
