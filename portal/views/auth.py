@@ -14,6 +14,7 @@ from portal.forms import ChangeEmailForm, UserProfileForm
 from portal.models import User
 from portal.services import discord, github
 from portal.views.meetings import generate_code
+from django.db import IntegrityError
 
 
 @login_required
@@ -44,8 +45,7 @@ def impersonate(request):
     return redirect("/")
 
 
-@login_required
-def start_discord_link(request):
+def start_discord_flow(request):
     return redirect(discord.DISCORD_OAUTH2_URL)
 
 
@@ -63,8 +63,7 @@ def unlink_discord(request):
     return redirect(reverse("profile"))
 
 
-@login_required
-def discord_link_callback(request):
+def discord_flow_callback(request):
     code = request.GET.get("code")
     if not code:
         raise BadRequest
@@ -73,6 +72,27 @@ def discord_link_callback(request):
         discord_user_tokens = discord.get_tokens(code)
         discord_access_token = discord_user_tokens["access_token"]
         discord_user_info = discord.get_user_info(discord_access_token)
+    except HTTPError as e:
+        capture_exception(e)
+        messages.error(request, "Yikes! Failed to link your Discord.")
+        return redirect(reverse("profile"))
+
+    discord_user_id = discord_user_info["id"]
+
+    if request.user.is_authenticated:
+        request.user.discord_user_id = discord_user_id
+        try:
+            request.user.save()
+            messages.success(
+                request,
+                f"Successfully linked Discord account @{discord_user_info['username']}#{discord_user_info['discriminator']} to your profile.",
+            )
+        except IntegrityError:
+            messages.warning(
+                request,
+                f"Discord account @{discord_user_info['username']}#{discord_user_info['discriminator']} is already linked to another user!",
+            )
+            return redirect(reverse("profile"))
 
         try:
             joined_server, updated_member = discord.upsert_server_member(
@@ -99,35 +119,30 @@ def discord_link_callback(request):
                         request,
                         "Failed to update your name and roles in the Discord server...",
                     )
-
         except HTTPError as e:
             capture_exception(e)
             messages.warning(request, "Failed to add you to the RCOS Discord server...")
 
-    except HTTPError as e:
-        capture_exception(e)
-        messages.error(request, "Yikes! Failed to link your Discord.")
-        return redirect(reverse("profile"))
+    else:
+        # Login
+        try:
+            user = User.objects.get(discord_user_id=discord_user_id)
+            login(request, user, backend="django.contrib.auth.backends.ModelBackend")
+        except User.DoesNotExist:
+            messages.warning(
+                request,
+                "No RCOS account found that matches your Discord. Please sign in with email first and then link your Discord account on your profile!",
+            )
+            return redirect(reverse("magiclink:login") + "?next=/auth/discord")
 
-    discord_user_id = discord_user_info["id"]
-
-    request.user.discord_user_id = discord_user_id
-    request.user.save()
-
-    messages.success(
-        request,
-        f"Successfully linked Discord account @{discord_user_info['username']}#{discord_user_info['discriminator']} to your profile.",
-    )
     return redirect(reverse("profile"))
 
 
-@login_required
-def start_github_link(request):
+def start_github_flow(request):
     return redirect(github.GITHUB_AUTH_URL)
 
 
-@login_required
-def github_link_callback(request):
+def github_flow_callback(request):
     code = request.GET.get("code")
     if not code:
         raise BadRequest
@@ -145,13 +160,30 @@ def github_link_callback(request):
         messages.error(request, "Failed to link your GitHub. Try again.")
         return redirect(reverse("profile"))
 
-    request.user.github_username = github_username
-    request.user.save()
-
-    messages.success(
-        request,
-        f"Successfully linked GitHub account @{github_username} to your profile.",
-    )
+    if request.user.is_authenticated:
+        request.user.github_username = github_username
+        try:
+            request.user.save()
+            messages.success(
+                request,
+                f"Successfully linked GitHub account @{github_username} to your profile.",
+            )
+        except IntegrityError:
+            messages.warning(
+                request,
+                f"GitHub account @{github_username} is already linked to another user!",
+            )
+    else:
+        # Login
+        try:
+            user = User.objects.get(github_username=github_username)
+            login(request, user, backend="django.contrib.auth.backends.ModelBackend")
+        except User.DoesNotExist:
+            messages.warning(
+                request,
+                "No RCOS account found that matches your GitHub. Please sign in with email first and then link your GitHub account on your profile!",
+            )
+            return redirect(reverse("magiclink:login") + "?next=/auth/github")
     return redirect(reverse("profile"))
 
 
@@ -165,69 +197,5 @@ def unlink_github(request):
     except Exception as e:
         capture_exception(e)
         messages.error(request, "Failed to unlink your GitHub account...")
-
-    return redirect(reverse("profile"))
-
-
-@login_required
-def change_email(request):
-    if request.method == "POST":
-        form = ChangeEmailForm(request.POST)
-
-        if form.is_valid():
-            new_email = form.cleaned_data["new_email"]
-            verification_code = generate_code()
-            request.session["email_change"] = {
-                "new_email": new_email,
-                "verification_code": verification_code,
-                "expires_at": (
-                    timezone.now() + timezone.timedelta(minutes=1)
-                ).isoformat(),
-            }
-            send_mail(
-                subject="Verify email address change",
-                message=f"""Hi {request.user.first_name or 'RCOS member'}, we received a request to change your primary email to this account.
-                If you did not make such a request, please ignore this email. Otherwise, click the link below to confirm the change. Once confirmed, you will only be able to login with this email address and not the original.
-
-                {settings.PUBLIC_BASE_URL}{reverse("verify_change_email")}?verification_code={verification_code}
-                """,
-                from_email=settings.DEFAULT_FROM_EMAIL,
-                recipient_list=[new_email],
-                fail_silently=False,
-            )
-
-            messages.info(
-                request,
-                f"Check {new_email} for a verification email to confirm your email change.",
-            )
-        else:
-            messages.warning(
-                request,
-                "Unable to submit your email change request. That email might already be in use or invalid.",
-            )
-
-    return redirect(reverse("profile"))
-
-
-@login_required
-def verify_change_email(request):
-    try:
-        verification_code = request.GET["verification_code"]
-        email_change = request.session.pop("email_change")
-        if timezone.datetime.fromisoformat(email_change["expires_at"]) < timezone.now():
-            messages.error(
-                request, "Your email change request expired. Please try again."
-            )
-        elif verification_code == email_change["verification_code"]:
-            request.user.email = email_change["new_email"]
-            request.user.save()
-            messages.success(
-                request,
-                f"You've confirmed your email change to {request.user.email}. Please use this email to login in the future.",
-            )
-            return redirect(reverse("profile"))
-    except Exception as e:
-        capture_exception(e)
-        messages.error(request, "Could not confirm your email address change.")
 
     return redirect(reverse("profile"))

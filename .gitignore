@@ -138,3 +138,5 @@ GitHub.sublime-settings
 .history
 
 fake.py
+
+*.rdb

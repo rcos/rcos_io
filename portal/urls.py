@@ -1,20 +1,17 @@
 from django.urls import path
-from django.views.decorators.cache import cache_page
 
 from portal.views.admin import import_google_form_projects, import_submitty_enrollments
 from portal.views.small_groups import SmallGroupDetailView, SmallGroupIndexView
 
 from .views.auth import (
-    change_email,
-    discord_link_callback,
-    github_link_callback,
+    discord_flow_callback,
+    github_flow_callback,
     impersonate,
     profile,
-    start_discord_link,
-    start_github_link,
+    start_discord_flow,
+    start_github_flow,
     unlink_discord,
     unlink_github,
-    verify_change_email,
 )
 from .views.index import HandbookView, IndexView
 from .views.meetings import (
@@ -36,21 +33,17 @@ urlpatterns = [
     path("", IndexView.as_view(), name="index"),
     path("handbook", HandbookView.as_view(), name="handbook"),
     path("profile", profile, name="profile"),
-    path("auth/change_email", change_email, name="change_email"),
-    path("auth/change_email/verify", verify_change_email, name="verify_change_email"),
     path("auth/impersonate", impersonate, name="impersonate"),
-    path("auth/link/discord", start_discord_link, name="link_discord"),
+    path("auth/discord", start_discord_flow, name="discord_flow"),
     path(
-        "auth/link/discord/callback",
-        discord_link_callback,
-        name="link_discord_callback",
+        "auth/discord/callback",
+        discord_flow_callback,
+        name="discord_flow_callback",
     ),
-    path("auth/unlink/discord", unlink_discord, name="unlink_discord"),
-    path("auth/link/github", start_github_link, name="link_github"),
-    path(
-        "auth/link/github/callback", github_link_callback, name="link_github_callback"
-    ),
-    path("auth/unlink/github", unlink_github, name="unlink_github"),
+    path("auth/discord/unlink", unlink_discord, name="unlink_discord"),
+    path("auth/github", start_github_flow, name="github_flow"),
+    path("auth/github/callback", github_flow_callback, name="link_github_callback"),
+    path("auth/github/unlink", unlink_github, name="unlink_github"),
     path("users/", UserIndexView.as_view(), name="users_index"),
     path("users/enroll/", enroll_user, name="users_enroll"),
     path("users/<int:pk>", UserDetailView.as_view(), name="users_detail"),

@@ -22,6 +22,22 @@
                     {% endif %}
                 </form>
             </div>
+            <div class="column">
+                <h3 class="subtitle">Already signed in before and linked accounts?</h3>
+
+                <a class="is-block is-medium button is-dark mb-2" href="{% url 'github_flow' %}">
+                    <span class="icon">
+                        <i class="fa-brands fa-github"></i>
+                    </span>
+                    <span>GitHub Login</span>
+                </a>
+                <a class="is-block is-medium button is-dark mb-2" href="{% url 'discord_flow' %}">
+                    <span class="icon">
+                        <i class="fa-brands fa-discord"></i>
+                    </span>
+                    <span>Discord Login</span>
+                </a>
+            </div>
         </div>
         
     </div>

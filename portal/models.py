@@ -757,10 +757,11 @@ class ProjectPitch(TimestampedModel):
         return f"{self.semester} {self.project} Pitch: {self.url}"
 
     class Meta:
-        unique_together = (
-            "semester",
-            "project",
-        )
+        constraints = [
+            models.UniqueConstraint(
+                fields=["semester", "project"], name="unique_semester_pitch"
+            )
+        ]
 
 
 class ProjectProposal(TimestampedModel):
@@ -793,10 +794,11 @@ class ProjectProposal(TimestampedModel):
     )
 
     class Meta:
-        unique_together = (
-            "semester",
-            "project",
-        )
+        constraints = [
+            models.UniqueConstraint(
+                fields=["semester", "project"], name="unique_semester_proposal"
+            )
+        ]
 
 
 class ProjectPresentation(TimestampedModel):
@@ -829,10 +831,11 @@ class ProjectPresentation(TimestampedModel):
     )
 
     class Meta:
-        unique_together = (
-            "semester",
-            "project",
-        )
+        constraints = [
+            models.UniqueConstraint(
+                fields=["semester", "project"], name="unique_semester_presentation"
+            )
+        ]
 
 
 class ProjectEnrollmentApplication(TimestampedModel):
@@ -902,6 +905,15 @@ class ProjectEnrollmentApplication(TimestampedModel):
             f"⚠ **{self.project}** has decided to not move forward with your application for the following reason:\n{self.rejection_reason}!"
         )
 
+    class Meta:
+        constraints = [
+            models.UniqueConstraint(
+                fields=["semester", "user"],
+                condition=Q(is_accepted=True),
+                name="unique_accepted_application",
+            )
+        ]
+
 
 class Enrollment(TimestampedModel):
     semester = models.ForeignKey(
@@ -963,7 +975,11 @@ class Enrollment(TimestampedModel):
             models.Index(fields=["semester"]),
             models.Index(fields=["semester", "project"]),
         ]
-        unique_together = ("semester", "user")
+        constraints = [
+            models.UniqueConstraint(
+                fields=["semester", "user"], name="unique_semester_enrollment"
+            )
+        ]
         ordering = ["semester", "user__first_name"]
         get_latest_by = ["semester"]
 
@@ -1188,7 +1204,11 @@ class MeetingAttendance(TimestampedModel):
     )
 
     class Meta:
-        unique_together = ("meeting", "user")
+        constraints = [
+            models.UniqueConstraint(
+                fields=["meeting", "user"], name="unique_meeting_attendance"
+            )
+        ]
 
 
 class MentorApplication(TimestampedModel):
@@ -1236,6 +1256,13 @@ class MentorApplication(TimestampedModel):
 
         # TODO: figure out message
         # self.user.send_message()
+
+    class Meta:
+        constraints = [
+            models.UniqueConstraint(
+                fields=["semester", "user"], name="unique_mentor_application"
+            )
+        ]
 
 
 class SmallGroup(TimestampedModel):
@@ -1310,7 +1337,12 @@ class MeetingAttendanceCode(TimestampedModel):
         indexes = [
             models.Index(fields=["code"]),
         ]
-        unique_together = ("code", "meeting", "small_group")
+        constraints = [
+            models.UniqueConstraint(
+                fields=["code", "meeting", "small_group"],
+                name="unique_meeting_attendance_small_group_code",
+            )
+        ]
 
 
 class StatusUpdate(TimestampedModel):

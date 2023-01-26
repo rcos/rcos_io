@@ -49,10 +49,10 @@
                             <small>
                                 <a href="{% url 'unlink_discord' %}">Unlink</a>
                                 /
-                                <a href="{% url 'link_discord' %}">Switch</a>
+                                <a href="{% url 'discord_flow' %}">Switch</a>
                             </small>
                             {% else %}
-                            <a href="{% url 'link_discord' %}">Link your Discord account</a>
+                            <a href="{% url 'discord_flow' %}">Link your Discord account</a>
                             {% endif %}
                             {% endwith %}
                         </span>
@@ -73,27 +73,16 @@
                             <small>
                                 <a href="{% url 'unlink_github' %}">Unlink</a>
                                 /
-                                <a href="{% url 'link_github' %}">Switch</a>
+                                <a href="{% url 'github_flow' %}">Switch</a>
                             </small>
                             {% else %}
-                            <a href="{% url 'link_github' %}">Link your GitHub account</a>
+                            <a href="{% url 'github_flow' %}">Link your GitHub account</a>
                             {% endif %}
                         </span>
                     </span>
                 </div>
             </div>
         </div>
-
-        <hr>
-
-        <details>
-            <summary>Change your email</summary>
-            <form action="{% url 'change_email' %}" method="post">
-                {% csrf_token %}
-                {{ change_email_form|crispy }}
-                <button class="button" type="submit">Send verification email</button>
-            </form>
-        </details>
     </div>
 </section>
 {% endblock %}
