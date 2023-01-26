@@ -5,6 +5,11 @@
 <meta property="og:title" content="{{ project.name }}" />
 <meta property="og:type" content="website" />
 <meta property="og:url" content="{{ request.get_host }}{{ project.get_absolute_url }}" />
+{% if project.logo_url != '' %}
+<meta property="og:image" content="{{ project.logo_url }}" />
+{% else %}
+<meta property="og:image" content="https://github.com/rcos/rcos-branding/blob/master/img/lockup-red.png" />
+{% endif %}
 {% endblock %}
 
 {% block content %}
@@ -22,7 +27,14 @@
         <div class="container">
             <div class="columns is-vcentered">
                 <div class="column">
-                    <h1 class="title is-1">{{ project }}</h1>
+                    <div class="columns is-vcentered">
+                        <div class="column is-one-quarter">
+                            <img class="image" src="{{ project.logo_url }}"/>
+                        </div>
+                        <div class="column">
+                            <h1 class="title is-1">{{ project }}</h1>
+                        </div>
+                    </div>
                     <nav class="breadcrumb is-2" aria-label="breadcrumbs">
                         <ul>
                             {% for semester in project.get_active_semesters %}
