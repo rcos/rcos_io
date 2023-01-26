@@ -525,11 +525,6 @@ class Project(TimestampedModel):
         help_text="Optional URL to a homepage for the project, potentially where it is publicly deployed or to documentation",
     )
 
-    logo_url = models.URLField(
-        blank=True,
-        help_text="Optional URL to a logo for the project",
-    )
-
     tags = models.ManyToManyField(ProjectTag, blank=True, related_name="projects")
 
     discord_role_id = models.CharField(max_length=200, blank=True)
