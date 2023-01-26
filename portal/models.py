@@ -16,6 +16,7 @@ from django.utils import formats, timezone
 from requests import HTTPError
 from sentry_sdk import capture_exception
 from django.db.models.functions import Lower
+from django.core.validators import MaxValueValidator, MinValueValidator
 
 from portal.services import discord
 
@@ -240,6 +241,7 @@ class User(AbstractUser, TimestampedModel):
         null=True,
         blank=True,
         help_text="If the user is an RPI user, their graduation year.",
+        validators=[MaxValueValidator(2028), MinValueValidator(1950)]
     )
 
     # Account integrations
@@ -278,7 +280,7 @@ class User(AbstractUser, TimestampedModel):
 
         if self.role == User.RPI:
             if self.graduation_year:
-                chunks.append(f"'{str(self.graduation_year)[2:]}")
+                chunks.append(f"’{str(self.graduation_year)[2:]}")
             if len(chunks) > 0 and self.rcs_id:
                 chunks.append(f"({self.rcs_id})")
             elif self.rcs_id:
