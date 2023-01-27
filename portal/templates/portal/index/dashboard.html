@@ -20,7 +20,9 @@
             {% if enrollment and enrollment.project %}
             <div class="tile is-3 is-vertical is-parent">
                 <div class="tile box is-child">
-                    <h2 class="title is-4 mb-2">{{ enrollment.project }}</h2>
+                    <a href="{{ enrollment.project.get_absolute_url }}">
+                        <h2 class="title is-4 mb-2">{{ enrollment.project }}</h2>
+                    </a>
                     
                     <div class="block">
                         <small class="has-text-grey">Your Team</small>

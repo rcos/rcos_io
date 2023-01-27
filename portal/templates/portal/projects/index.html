@@ -43,7 +43,11 @@
                             >
                             {% endif %}
                         </td>
-                        <td>{{ project_data.project.tags.all|join:", "|default:"-" }}</td>
+                        <td>
+                            {% for project_tag in project_data.project.tags.all %}
+                                <span class="tag is-dark">{{ project_tag }}</span>
+                            {% endfor %}
+                        </td>
                         {% if target_semester %}
                         <td>
                             {% for project_lead_enrollment in project_data.leads %}
