@@ -47,7 +47,7 @@
             <div class="is-offset-2 column is-4 has-text-centered">
                 <h2 class="title is-4 mb-2">Current Leadership</h2>
                 <ul>
-                    {% for enrollment in active_semester.get_admins %}
+                    {% for enrollment in active_semester_admins %}
                     <li><a href="{{ enrollment.user.get_absolute_url }}">{{ enrollment.user }}</a></li>
                     {% empty %}
                     <li class="has-text-grey">TBD</li>

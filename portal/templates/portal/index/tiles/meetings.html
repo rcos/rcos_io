@@ -1,6 +1,7 @@
 {% load crispy_forms_tags %}
 <h2 class="title is-4 mb-2">Meetings</h2>
 
+{% if ongoing_meeting %}
 <form action="{% url 'submit_attendance' %}" method="post">
     {% csrf_token %}
 
@@ -17,9 +18,6 @@
       </div>
 </form>
 <hr>
-
-{% if ongoing_meeting %}
-
 <small class="has-text-grey is-block">Ongoing Meeting
     {% if ongoing_meeting.location %}
     at <strong>{{ ongoing_meeting.location }}</strong></small>
