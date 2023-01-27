@@ -210,14 +210,9 @@ class SubmitAttendanceFormView(LoginRequiredMixin, UserRequiresSetupMixin, FormV
             )
             return super().form_valid(form)
 
-        try:
-            user.enrollments.get(semester=meeting_attendance_code.meeting.semester_id)
-        except Enrollment.DoesNotExist:
-            messages.error(
-                self.request,
-                "You are not enrolled in this semester!",
-            )
-            return redirect(reverse("meetings_index"))
+        user.enrollments.get_or_create(
+            semester_id=meeting_attendance_code.meeting.semester_id
+        )
 
         if meeting_attendance_code.is_valid:
             # Confirm user is in small group if it is for a small group
