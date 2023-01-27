@@ -5,6 +5,7 @@
 <meta property="og:title" content="{{ project.name }}" />
 <meta property="og:type" content="website" />
 <meta property="og:url" content="{{ request.get_host }}{{ project.get_absolute_url }}" />
+<meta property="og:description" content="{{ project.description }}" />
 {% if project.logo_url != '' %}
 <meta property="og:image" content="{{ project.logo_url }}" />
 {% else %}
