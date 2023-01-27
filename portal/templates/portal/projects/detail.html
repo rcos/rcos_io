@@ -28,9 +28,11 @@
             <div class="columns is-vcentered">
                 <div class="column">
                     <div class="columns is-vcentered">
+                        {% if project.logo_url != '' %}
                         <div class="column is-one-quarter">
                             <img class="image" src="{{ project.logo_url }}"/>
                         </div>
+                        {% endif %}
                         <div class="column">
                             <h1 class="title is-1">{{ project }}</h1>
                         </div>
