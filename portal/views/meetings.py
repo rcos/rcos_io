@@ -313,6 +313,8 @@ def manually_add_or_verify_attendance(request):
                 )
                 return redirect(reverse("meetings_detail", args=(meeting.pk,)))
 
+        user.enrollments.get_or_create(semester_id=meeting.semester_id)
+
         try:
             attendance = MeetingAttendance.objects.get(user=user, meeting=meeting)
             if not attendance.is_verified:

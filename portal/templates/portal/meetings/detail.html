@@ -80,7 +80,7 @@
                     {% if meeting.is_ongoing %}
                     {% crispy submit_attendance_form %}
                     {% else %}
-                    <small class="has-text-grey">Attendance can only be submitted during the meeting.</small>
+                    <small class="has-text-grey">Attendance can be submitted here during the meeting. <a href="#" onclick="window.location.reload()">Refresh</a> the page if the meeting is currently in progress.</small>
                     {% endif %}
                 {% endif %}
             </div>
@@ -190,11 +190,10 @@
                 <small>{{ needs_verification_users|length }} total</small>
                 <ul>
                     {% for user in needs_verification_users %}
-                    <li>
-                        <a href="{{ user.get_absolute_url }}?semester={{ meeting.semester.pk }}">{{ user }}</a>
-                        
+                    <li class="mb-2">
                         <form action="{% url 'verify_attendance' %}" method="post">
                             {% csrf_token %}
+                            <a href="{{ user.get_absolute_url }}?semester={{ meeting.semester.pk }}">{{ user }}</a>
                             <input type="hidden" name="user" value="{{ user.pk }}">
                             <input type="hidden" name="meeting" value="{{ meeting.pk }}">
                             <button class="button is-small">Verify</button>
