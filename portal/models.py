@@ -1035,7 +1035,7 @@ class Meeting(TimestampedModel):
         null=True,
         blank=True,
         on_delete=models.SET_NULL,
-        help_text="Optional host for the meeting (e.g. mentor hosting a workshop",
+        help_text="Optional host for the meeting (e.g. mentor hosting a workshop)",
     )
     type = models.CharField(choices=TYPE_CHOICES, max_length=100)
     is_published = models.BooleanField(
@@ -1060,7 +1060,9 @@ class Meeting(TimestampedModel):
     )
 
     discord_event_id = models.CharField(
-        blank=True, max_length=len("759071349561491526") + 5
+        blank=True,
+        max_length=len("759071349561491526") + 5,
+        help_text="Automatically managed, do not touch!",
     )
 
     # Relationships
