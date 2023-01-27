@@ -1,0 +1,5 @@
+## Stress Testing
+
+```
+$ locust
+```
