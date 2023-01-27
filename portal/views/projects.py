@@ -67,9 +67,9 @@ class ProjectIndexView(SearchableListView, SemesterFilteredListView):
         for project in self.get_queryset():
             project_data = {
                 "project": project,
-                "enrollments": len(
-                    [e for e in enrollments if e.project_id == project.pk]
-                ),
+                # "enrollments": len(
+                #     [e for e in enrollments if e.project_id == project.pk]
+                # ),
             }
             if self.target_semester:
                 project_data["leads"] = [
