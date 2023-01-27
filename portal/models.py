@@ -3,6 +3,7 @@ import re
 from time import sleep
 from typing import Optional, Tuple, cast
 from django.core.cache import cache
+from decimal import Decimal
 
 from django.conf import settings
 from django.contrib.auth.models import AbstractUser, BaseUserManager
@@ -1057,6 +1058,13 @@ class Meeting(TimestampedModel):
     presentation_url = models.URLField(
         blank=True,
         help_text="The URL to the meeting's slideshow presentation if exists",
+    )
+
+    attendance_chance_verification_required = models.DecimalField(
+        max_digits=3,
+        decimal_places=2,
+        default=Decimal(0.25),
+        help_text="The % chance that a student submitting attendance will have to be verified (as a decimal)",
     )
 
     discord_event_id = models.CharField(

@@ -229,7 +229,8 @@ class SubmitAttendanceFormView(LoginRequiredMixin, UserRequiresSetupMixin, FormV
             new_attendance = MeetingAttendance(
                 meeting=meeting_attendance_code.meeting,
                 user=user,
-                is_verified=random.random() > 0.5,
+                is_verified=random.random()
+                > meeting_attendance_code.meeting.attendance_chance_verification_required,
             )
 
             try:
