@@ -229,7 +229,8 @@ class SubmitAttendanceFormView(LoginRequiredMixin, UserRequiresSetupMixin, FormV
             new_attendance = MeetingAttendance(
                 meeting=meeting_attendance_code.meeting,
                 user=user,
-                is_verified=random.random() > 0.5,
+                is_verified=random.random()
+                > meeting_attendance_code.meeting.attendance_chance_verification_required,
             )
 
             try:
@@ -312,6 +313,8 @@ def manually_add_or_verify_attendance(request):
                     "You must be an enrolled Faculty Advisor/Coordinator/Mentor to perform this action.",
                 )
                 return redirect(reverse("meetings_detail", args=(meeting.pk,)))
+
+        user.enrollments.get_or_create(semester_id=meeting.semester_id)
 
         try:
             attendance = MeetingAttendance.objects.get(user=user, meeting=meeting)

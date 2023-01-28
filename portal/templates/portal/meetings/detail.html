@@ -80,7 +80,7 @@
                     {% if meeting.is_ongoing %}
                     {% crispy submit_attendance_form %}
                     {% else %}
-                    <small class="has-text-grey">Attendance can only be submitted during the meeting.</small>
+                    <small class="has-text-grey">Attendance can be submitted here during the meeting. <a href="#" onclick="window.location.reload()">Refresh</a> the page if the meeting is currently in progress.</small>
                     {% endif %}
                 {% endif %}
             </div>
@@ -145,19 +145,25 @@
             </ul>
         </div>
         
-        {% if code %}
         <div class="box has-text-centered">
-            <details>
-                <summary>Attendance Code</summary>
-                <h1 class="title is-1">{{ code }}</h1>
-            </details>
-            {% if not target_small_group and meeting.type == "small_group" %}
-            <p class="has-text-grey">Do not show this during Small Group meetings. Use your Small Group's.</p>
+            {% if code %}
+                <details>
+                    <summary>Attendance Code</summary>
+                    <h1 class="title" style="padding: 10rem 0; font-size: 10rem;">{{ code }}</h1>
+                </details>
+                {% if not target_small_group and meeting.type == "small_group" %}
+                <p class="has-text-grey">Do not show this during Small Group meetings. Use your Small Group's.</p>
+                {% endif %}
+            {% else %}
+                <p class="has-text-grey">
+                    The attendance code is displayed here while the meeting is in progress.
+                    <a href="#" onclick="window.location.reload()">Refresh</a> the page if the meeting is currently in progress.
+                </p>
             {% endif %}
         </div>
-        {% endif %}
+        
 
-        <div class="columns">
+        <div class="columns mt-6">
             <div class="column is-narrow">
                 <strong>{% widthratio attendance_ratio 1 100 %}% ({{ attended_users|length }} of {{ expected_users|length }}) attended</strong>
             </div>
@@ -184,11 +190,10 @@
                 <small>{{ needs_verification_users|length }} total</small>
                 <ul>
                     {% for user in needs_verification_users %}
-                    <li>
-                        <a href="{{ user.get_absolute_url }}?semester={{ meeting.semester.pk }}">{{ user }}</a>
-                        
+                    <li class="mb-2">
                         <form action="{% url 'verify_attendance' %}" method="post">
                             {% csrf_token %}
+                            <a href="{{ user.get_absolute_url }}?semester={{ meeting.semester.pk }}">{{ user }}</a>
                             <input type="hidden" name="user" value="{{ user.pk }}">
                             <input type="hidden" name="meeting" value="{{ meeting.pk }}">
                             <button class="button is-small">Verify</button>
