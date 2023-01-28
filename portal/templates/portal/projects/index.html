@@ -30,6 +30,7 @@
                 </thead>
                 <tbody>
                     {% with querystring=request.GET.urlencode %}
+                    {% with notator=querystring|length_is:0|yesno:',&' %}
                     {% for project_data in projects_data %}
                     <tr>
                         <td>
@@ -50,7 +51,7 @@
                         </td>
                         <td>
                             {% for project_tag in project_data.project.tags.all %}
-                                <a href="{{ request.get_host }}{{ request.path }}?{{ querystring }}{{ querystring|length_is:0|yesno:',&' }}search={{ project_tag }}">
+                                <a href="{{ request.get_host }}{{ request.path }}?{{ querystring }}{{ notator }}search={{ project_tag }}">
                                     <span class="tag is-dark">{{ project_tag }}</span>
                                 </a>
                             {% endfor %}
@@ -80,6 +81,7 @@
                         {% endif%}
                     </tr>
                     {% endfor %}
+                    {% endwith %}
                     {% endwith %}
                 </tbody>
             </table>
