@@ -25,7 +25,9 @@
             <i class="fa-solid fa-tags"></i>
         </span>
         {% if project.tags.all|length > 0 %}
-        {{ project.tags.all|join:", " }}
+            {% for project_tag in project.tags.all %}
+                <span class="tag is-light">{{ project_tag }}</span>
+            {% endfor %}
         {% else %}
         <span class="has-text-grey">No tags.</span>
         {% endif %}
