@@ -29,6 +29,7 @@
                     </tr>
                 </thead>
                 <tbody>
+                    {% with querystring=request.GET.urlencode %}
                     {% for project_data in projects_data %}
                     <tr>
                         <td>
@@ -49,7 +50,9 @@
                         </td>
                         <td>
                             {% for project_tag in project_data.project.tags.all %}
-                                <span class="tag is-dark">{{ project_tag }}</span>
+                                <a href="{{ request.get_host }}{{ request.path }}?{{ querystring }}{{ querystring|length_is:0|yesno:',&' }}search={{ project_tag }}">
+                                    <span class="tag is-dark">{{ project_tag }}</span>
+                                </a>
                             {% endfor %}
                         </td>
                         {% if target_semester %}
@@ -77,6 +80,7 @@
                         {% endif%}
                     </tr>
                     {% endfor %}
+                    {% endwith %}
                 </tbody>
             </table>
         </div>
