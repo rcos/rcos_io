@@ -31,7 +31,7 @@
                 <tbody>
                     {% with querystring=request.GET.urlencode %}
                     {% with notator=querystring|length_is:0|yesno:',&' %}
-                    {% for project_data in projects_data %}
+                    {% for project_data in projects_rows %}
                     <tr>
                         <td>
                             <a
@@ -87,7 +87,7 @@
             </table>
         </div>
 
-        {% if projects_data|length == 0 %}
+        {% if projects_rows|length == 0 %}
         <p class="has-text-centered has-text-grey">
             No projects
             {% if target_semester %}

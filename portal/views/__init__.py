@@ -123,7 +123,7 @@ class SearchableListView(ListView):
 
     def get_context_data(self, **kwargs):
         data = super().get_context_data(**kwargs)
-        data["search"] = ' '.join(self.request.GET.getlist("search"))
+        data["search"] = " ".join(self.request.GET.getlist("search"))
         return data
 
 
