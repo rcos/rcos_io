@@ -1,5 +1,17 @@
 {% extends "portal/base.html" %}
 
+{% block ogp %}
+<meta property="og:title" content="404 Error | RCOS IO" />
+<meta property="og:type" content="website" />
+<meta property="og:url" content="{{ request.get_full_path }}" />
+<meta property="og:description" content="404: Page Not Found" />
+<meta property="og:image" content="https://github.com/rcos/rcos-branding/blob/master/img/lockup-red.png" />
+{% endblock %}
+
+{% block title %}
+404 | RCOS IO
+{% endblock %}
+
 {% block content %}
 <section class="section">
     <div class="container">
