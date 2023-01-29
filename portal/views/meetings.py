@@ -329,5 +329,5 @@ def manually_add_or_verify_attendance(request):
             attendance.save()
             messages.success(request, f"Added attendance for {user}!")
 
-        return redirect(reverse("meetings_detail", args=(meeting.pk,)))
+        return redirect(reverse("meetings_detail", args=(meeting.pk,)) + "#attendance")
     return redirect(reverse("meetings_index"))

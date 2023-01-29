@@ -21,6 +21,28 @@
 
         main {
             flex: 1;
+        } 
+        
+        #main-attendance-box .title {
+            padding: 5rem 0;
+            font-size: 15rem;
+        }
+
+        #pinned-attendance-box {
+            position: fixed;
+            top: 60px;
+            right: 60px;
+            z-index: 10;
+            opacity: 0;
+            transition: opacity 0.15s ease-in-out;
+        }
+
+        #pinned-attendance-box.is-shown {
+            opacity: 1;
+        }
+
+        #pinned-attendance-box .title {
+            font-size: 5rem;
         }
     </style>
 </head>
