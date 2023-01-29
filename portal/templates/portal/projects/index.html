@@ -51,7 +51,7 @@
                         </td>
                         <td>
                             {% for project_tag in project_data.project.tags.all %}
-                                <a href="{{ request.get_host }}{{ request.path }}?{{ querystring }}{{ notator }}search={{ project_tag }}">
+                                <a href="{{ request.path }}?{{ querystring }}{{ notator }}search={{ project_tag }}">
                                     <span class="tag is-dark">{{ project_tag }}</span>
                                 </a>
                             {% endfor %}
