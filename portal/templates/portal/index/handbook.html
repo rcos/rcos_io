@@ -1,5 +1,17 @@
 {% extends "portal/base.html" %}
 
+{% block ogp %}
+<meta property="og:title" content="Handbook | RCOS IO" />
+<meta property="og:type" content="website" />
+<meta property="og:url" content="{{ request.get_full_path }}" />
+<meta property="og:description" content="Handbook | Rensselaer Center for Open Source" />
+<meta property="og:image" content="https://github.com/rcos/rcos-branding/blob/master/img/lockup-red.png" />
+{% endblock %}
+
+{% block title %}
+Handbook | RCOS IO
+{% endblock %}
+
 {% block content %}
 <style>
 html {
