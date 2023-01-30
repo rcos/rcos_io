@@ -1,8 +1,5 @@
 {% load portal_extras %}
 {% user_enrollment request.user active_semester as enrollment %}
-{% project_leads enrollment.project active_semester as project_leads %}
-{% project_enrollments enrollment.project active_semester as project_enrollments %}
-{% project_small_group enrollment.project active_semester as small_group %}
 {% semester_admins active_semester as semester_admins %}
 
 {% block ogp %}
@@ -25,89 +22,27 @@
 <section class="section">
     <div class="container">
         <div class="tile is-ancestor">
-            {% if enrollment and enrollment.project %}
-            <div class="tile is-3 is-vertical is-parent">
-                <div class="tile box is-child">
-                    <h2 class="title is-4 mb-2">{{ enrollment.project }}</h2>
-                    
-                    <div class="block">
-                        <small class="has-text-grey">Your Team</small>
-                        <ul>
-                            {% for enrollment in project_enrollments %}
-                            <li>
-                                <a href="{{ enrollment.get_absolute_url }}">{{ enrollment.user }}</a>
-                                {% if enrollment.is_project_lead %}
-                                <span class="icon" title="Project Lead">
-                                    <i class="fa-solid fa-crown"></i>
-                                </span>
-                                {% endif %}
-                            </li>
-                            {% endfor %}
-                        </ul>
-                    </div>
-
-                    <div class="block">
-                        <small class="has-text-grey">Your Repositories</small>
-                        <ul>
-                            {% for repository in enrollment.project.repositories.all %}
-                            <li><a href="{{ repository.url }}" target="_blank">{{ repository.url|to_short_repository }}</a></li>
-                            {% empty %}
-                            <li class="has-text-grey">None added yet.</li>
-                            {% endfor %}
-                        </ul>
-                    </div>
-                </div>
-
-                {% if small_group %}
-                <div class="tile box is-child">
-                    <h2 class="title is-4 mb-2">{{ small_group }}</h2>
-                    <p class="has-text-grey">
-                        <span class="icon">
-                            <i class="fa-regular fa-calendar-xmark"></i>
-                        </span>
-                        {{ small_group.location }}
-                    </p>
-
-                    <div class="block">
-                        <small class="has-text-grey">Mentors</small>
-                        <ul>
-                            {% for mentor in small_group.mentors.all %}
-                            <li><span class="icon">👩‍🏫</span> <a href="{{ mentor.get_absolute_url }}{% active_semester_query %}">{{ mentor }}</a></li>
-                            {% endfor %}
-                        </ul>
-                    </div>
-
-                    <div class="block">
-                        <small class="has-text-grey">Projects</small>
-                        <ul>
-                            {% for project in small_group.projects.all %}
-                            <li><a href="{{ project.get_absolute_url }}{% active_semester_query %}">{{ project }}</a></li>
-                            {% endfor %}
-                        </ul>
-                    </div>
-                </div>
-                {% endif %}
-            </div>
-            {% endif %}
-
             <div class="tile is-parent is-vertical">
                 <div class="tile box is-child is-flex  is-flex-direction-column">
-                    {% if active_semester and enrollment and enrollment.project %}
-                        {% if enrollment.is_project_lead %}
-                        {% include "./tiles/project_lead.html" %}
-                        {% else %}
-                        {% include "./tiles/week_contributions.html" %}
-                        {% endif %}
-                    {% elif active_semester and enrollment and enrollment.project is None %}
-                        {% include "./tiles/no_project.html" %}
-                    {% elif request.user.is_approved and active_semester is not None and enrollment is None %}
-                        {% if request.user.organization %}
-                            {% include "./tiles/organization_user.html" %}
-                        {% else %}    
+                    {% if active_semester %}
+                        {% if request.user.is_approved %}
+                            {% if enrollment %}
+                            <h2 class="title is-2">Welcome to RCOS IO!</h2>
+                            <div class="content block">
+                                <p>
+                                    This site is under (very) active development. You might find bugs or performance issues. When you do, please open <a href="https://github.com/rcos/rcos_io/issues/new" target="_blank">issues</a> on the repository!
+                                </p>
+
+                                <p>The data in this site is incomplete, so don't worry if it doesn't list your project or doesn't say that you're on a project. For Spring 2023, it's main usage will be attendance taking. We will join the attendance data with Submitty data at the end of the year for grading.</p>
+
+                                <p>Feel free to discuss the site on Discord in <a href="https://discord.com/channels/738593165438746634/1062827617599901757">#rcos-io</a>.</p>
+                            </div>
+                            {% else %}
                             {% include "./tiles/not_enrolled.html" %}
-                        {% endif %}
-                    {% elif not request.user.is_approved %}
+                            {% endif %}
+                        {% else %}
                         {% include "./tiles/not_approved.html" %}
+                        {% endif %}
                     {% else %}
                         <p class="has-text-grey">When a semester starts, you'll be able to access useful information on this dashboard!</p>
                     {% endif %}

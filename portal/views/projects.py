@@ -55,7 +55,7 @@ class ProjectIndexView(SearchableListView, SemesterFilteredListView):
         data = super().get_context_data(**kwargs)
         data["is_seeking_members"] = self.is_seeking_members
 
-        projects_data = []
+        projects_rows = []
         enrollments = Enrollment.objects.filter(
             project__in=self.get_queryset()
         ).select_related("user")
@@ -65,19 +65,19 @@ class ProjectIndexView(SearchableListView, SemesterFilteredListView):
             ).select_related("semester")
 
         for project in self.get_queryset():
-            project_data = {
+            projects_row = {
                 "project": project,
-                "enrollments": len(
-                    [e for e in enrollments if e.project_id == project.pk]
-                ),
+                # "enrollments": len(
+                #     [e for e in enrollments if e.project_id == project.pk]
+                # ),
             }
             if self.target_semester:
-                project_data["leads"] = [
+                projects_row["leads"] = [
                     e
                     for e in enrollments
                     if e.project_id == project.pk and e.is_project_lead == True
                 ]
-                project_data["pitch"] = next(
+                projects_row["pitch"] = next(
                     (
                         pitch
                         for pitch in project.pitches.all()
@@ -85,9 +85,9 @@ class ProjectIndexView(SearchableListView, SemesterFilteredListView):
                     ),
                     None,
                 )
-            projects_data.append(project_data)
+            projects_rows.append(projects_row)
 
-        data["projects_data"] = projects_data
+        data["projects_rows"] = projects_rows
 
         return data
 

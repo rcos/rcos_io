@@ -13,5 +13,15 @@ Handbook | RCOS IO
 {% endblock %}
 
 {% block content %}
-<iframe src="https://handbook.rcos.io/#{{ initial_route|default:'' }}" width="100%" height="900" frameborder="0"></iframe>
+<style>
+html {
+  overflow-y: hidden;
+}
+
+.handbook {
+  height: calc(100vh - 14rem - 1em);
+  width: 100%;
+}
+</style>
+<iframe src="https://handbook.rcos.io/#{{ initial_route|default:'' }}" class="handbook" frameborder="0"></iframe>
 {% endblock %}

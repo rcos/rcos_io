@@ -139,7 +139,8 @@ DATABASES = {
         "PASSWORD": os.environ["PGPASSWORD"],
         "HOST": os.environ["PGHOST"],
         "PORT": os.environ["PGPORT"],
-        "CONN_MAX_AGE": 0 if DEBUG else 60,
+        "CONN_MAX_AGE": 0 if DEBUG else 60 * 5,
+        "CONN_HEALTH_CHECKS": True,
     }
 }
 

@@ -211,14 +211,9 @@ class SubmitAttendanceFormView(LoginRequiredMixin, UserRequiresSetupMixin, FormV
             )
             return super().form_valid(form)
 
-        try:
-            user.enrollments.get(semester=meeting_attendance_code.meeting.semester_id)
-        except Enrollment.DoesNotExist:
-            messages.error(
-                self.request,
-                "You are not enrolled in this semester!",
-            )
-            return redirect(reverse("meetings_index"))
+        user.enrollments.get_or_create(
+            semester_id=meeting_attendance_code.meeting.semester_id
+        )
 
         if meeting_attendance_code.is_valid:
             # Confirm user is in small group if it is for a small group
@@ -235,7 +230,8 @@ class SubmitAttendanceFormView(LoginRequiredMixin, UserRequiresSetupMixin, FormV
             new_attendance = MeetingAttendance(
                 meeting=meeting_attendance_code.meeting,
                 user=user,
-                is_verified=random.random() > 0.5,
+                is_verified=random.random()
+                > meeting_attendance_code.meeting.attendance_chance_verification_required,
             )
 
             try:
@@ -319,6 +315,8 @@ def manually_add_or_verify_attendance(request):
                 )
                 return redirect(reverse("meetings_detail", args=(meeting.pk,)))
 
+        user.enrollments.get_or_create(semester_id=meeting.semester_id)
+
         try:
             attendance = MeetingAttendance.objects.get(user=user, meeting=meeting)
             if not attendance.is_verified:
@@ -332,5 +330,5 @@ def manually_add_or_verify_attendance(request):
             attendance.save()
             messages.success(request, f"Added attendance for {user}!")
 
-        return redirect(reverse("meetings_detail", args=(meeting.pk,)))
+        return redirect(reverse("meetings_detail", args=(meeting.pk,)) + "#attendance")
     return redirect(reverse("meetings_index"))
