@@ -91,8 +91,10 @@
                 {% if request.user.is_authenticated and request.user.is_rpi and not user_attendance %}
                     {% if meeting.is_ongoing %}
                     {% crispy submit_attendance_form %}
-                    {% else %}
-                    <small class="has-text-grey">Attendance can be submitted here during the meeting. <a href="#" onclick="window.location.reload()">Refresh</a> the page if the meeting is currently in progress.</small>
+                    {% elif meeting.is_upcoming %}
+                    <small class="has-text-grey">Attendance can be submitted here during the meeting. <a href="#" onclick="window.location.reload()">Refresh</a> the page when the meeting starts.</small>
+                    {% elif meeting.is_over %}
+                    <small class="has-text-grey">The meeting has ended and attendance can no longer be submitted.</small>
                     {% endif %}
                 {% endif %}
             </div>
@@ -168,8 +170,13 @@
                 {% endif %}
             {% else %}
                 <p class="has-text-grey">
-                    The attendance code is displayed here while the meeting is in progress.
-                    <a href="#" onclick="window.location.reload()">Refresh</a> the page if the meeting is currently in progress.
+                    {% if meeting.is_upcoming %}
+                    The attendance code will be displayed here when the meeting starts.
+                    <a href="#" onclick="window.location.reload()">Refresh</a> the page when the meeting starts.
+                    {% elif meeting.is_over %}
+                    The meeting has ended and the attendance code can no longer be displayed. You can still add
+                    students manually below.
+                    {% endif %}
                 </p>
             {% endif %}
         </div>

@@ -1060,6 +1060,10 @@ class Meeting(TimestampedModel):
         help_text="The URL to the meeting's slideshow presentation if exists",
     )
 
+    recording_url = models.URLField(
+        blank=True, help_text="The URL to the meeting's recording (optional)"
+    )
+
     attendance_chance_verification_required = models.DecimalField(
         max_digits=3,
         decimal_places=2,
@@ -1107,6 +1111,16 @@ class Meeting(TimestampedModel):
             if self.type in Meeting.TYPE_COLORS
             else "grey"
         )
+
+    @property
+    def is_over(self):
+        now = timezone.now()
+        return self.ends_at < now
+
+    @property
+    def is_upcoming(self):
+        now = timezone.now()
+        return self.starts_at > now
 
     @property
     def is_ongoing(self):

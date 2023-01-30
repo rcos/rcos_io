@@ -63,7 +63,7 @@ class MeetingIndexView(ListView):
         queryset = (
             Meeting.get_user_queryset(self.request.user)
             .filter(ends_at__gte=now)
-            .order_by('starts_at')
+            .order_by("starts_at")
             .select_related()[:5]
         )
         return queryset
