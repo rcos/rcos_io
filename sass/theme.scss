@@ -1,0 +1,30 @@
+@charset "utf-8";
+
+@import url('https://fonts.googleapis.com/css2?family=Montserrat:ital,wght@0,300;0,400;0,500;0,700;1,400&display=swap');
+@import url('https://fonts.googleapis.com/css?family=Nunito:400,700');
+
+// RCOS Brand Colors
+// https://handbook.rcos.io/#/resources/brand_standards
+$rcos-red: #da291c;
+$rcos-grey: #707372;
+$rcos-black: #231f20;
+$title-font: "Montserrat", sans-serif;
+$body-font: "Nunito", sans-serif;
+
+// Update Bulma's global variables
+$grey-dark: $rcos-grey;
+$danger: $rcos-red;
+$dark: $rcos-black;
+$warning: #FFB563;
+$primary: #30BCED;
+$success: #43AA8B;
+
+body {
+    font-family: $body-font;
+}
+
+.title, .subtitle {
+    font-family: $title-font;
+}
+
+@import "./bulma-0.9.4/bulma.sass";
