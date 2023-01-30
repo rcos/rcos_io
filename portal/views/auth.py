@@ -4,6 +4,7 @@ from django.contrib.auth import login
 from django.contrib.auth.decorators import login_required
 from django.core.exceptions import BadRequest
 from django.core.mail import send_mail
+from django.db import IntegrityError
 from django.shortcuts import redirect, render
 from django.urls import reverse
 from django.utils import timezone
@@ -14,7 +15,6 @@ from portal.forms import ChangeEmailForm, UserProfileForm
 from portal.models import User
 from portal.services import discord, github
 from portal.views.meetings import generate_code
-from django.db import IntegrityError
 
 
 @login_required
