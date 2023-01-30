@@ -1,6 +1,18 @@
 {% extends "portal/base.html" %}
 {% load humanize %}
 
+{% block ogp %}
+<meta property="og:title" content="Meetings | RCOS IO" />
+<meta property="og:type" content="website" />
+<meta property="og:url" content="{{ request.build_absolute_uri }}" />
+<meta property="og:description" content="Meetings {% if meetings|length > 0 %}{% with next_meeting=meetings|first %}| Next meeting: {{ next_meeting.display_name }} @ {{ next_meeting.starts_at }}{% endwith %}{% endif %}| Rensselaer Center for Open Source" />
+<meta property="og:image" content="https://github.com/rcos/rcos-branding/blob/master/img/lockup-red.png" />
+{% endblock %}
+
+{% block title %}
+Meetings | RCOS IO
+{% endblock %}
+
 {% block content %}
 <section class="section">
     <div class="container">

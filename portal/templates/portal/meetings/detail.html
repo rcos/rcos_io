@@ -3,6 +3,18 @@
 {% load markdownify %}
 {% load humanize %}
 
+{% block ogp %}
+<meta property="og:title" content="{{ meeting.display_name }} | RCOS IO" />
+<meta property="og:type" content="website" />
+<meta property="og:url" content="{{ request.build_absolute_uri }}" />
+<meta property="og:description" content="{{ meeting.display_name }} @ {{ meeting.starts_at }} | Rensselaer Center for Open Source" />
+<meta property="og:image" content="https://github.com/rcos/rcos-branding/blob/master/img/lockup-red.png" />
+{% endblock %}
+
+{% block title %}
+{{ meeting.display_name }} | RCOS IO
+{% endblock %}
+
 {% block content %}
 
 {% if not meeting.is_published %}
@@ -126,7 +138,7 @@
 </section>
 
 {% if can_manage_attendance %}
-<section class="hero is-light" id="attendance">
+<section class="hero is-light">
     <div class="hero-body">
         <div class="container">
             <h1 class="title">Attendance</h1>
@@ -145,11 +157,11 @@
             </ul>
         </div>
         
-        <div class="box has-text-centered">
+        <div class="box has-text-centered attendance-box" id="main-attendance-box">
             {% if code %}
                 <details>
                     <summary>Attendance Code</summary>
-                    <h1 class="title" style="padding: 10rem 0; font-size: 10rem;">{{ code }}</h1>
+                    <h1 class="title">{{ code }}</h1>
                 </details>
                 {% if not target_small_group and meeting.type == "small_group" %}
                 <p class="has-text-grey">Do not show this during Small Group meetings. Use your Small Group's.</p>
@@ -161,9 +173,24 @@
                 </p>
             {% endif %}
         </div>
+
+        {% if code %}
+        <div class="notification is-dark attendance-box" id="pinned-attendance-box">
+            <details>
+                <summary>Attendance Code</summary>
+                <h1 class="title">{{ code }}</h1>
+            </details>
+            {% if not target_small_group and meeting.type == "small_group" %}
+            <p class="has-text-grey">Do not show this during Small Group meetings. Use your Small Group's.</p>
+            {% endif %}
+        </div>
+        {% endif %}
         
 
-        <div class="columns mt-6">
+        <div class="columns mt-6" id="attendance">
+            <div class="column is-narrow">
+                <a href="#attendance" onclick="window.location.reload()" class="button">Refresh</a>
+            </div>
             <div class="column is-narrow">
                 <strong>{% widthratio attendance_ratio 1 100 %}% ({{ attended_users|length }} of {{ expected_users|length }}) attended</strong>
             </div>
@@ -244,4 +271,88 @@
 </section>
 
 {% endif %}
+
+<script>
+    function getCookie(cname) {
+        let name = cname + "="
+        let decodedCookie = decodeURIComponent(document.cookie);
+        let ca = decodedCookie.split(';')
+        for (let i = 0; i < ca.length; i++) {
+            let c = ca[i]
+            while (c.charAt(0) == ' ') {
+                c = c.substring(1)
+            }
+            if (c.indexOf(name) == 0) {
+                return c.substring(name.length, c.length)
+            }
+        }
+        return ""
+    }
+
+    function setCookie(cname, cvalue, exdays) {
+        const d = new Date()
+        d.setTime(d.getTime() + (exdays*24*60*60*1000))
+        let expires = "expires="+ d.toUTCString()
+        document.cookie = cname + "=" + cvalue + ";" + expires + ";path=/"
+      }
+
+    document.addEventListener("DOMContentLoaded", function () {
+        const mainAttendanceBox = document.getElementById("main-attendance-box")
+        const pinnedAttendanceBox = document.getElementById("pinned-attendance-box")
+        
+        const attendanceBoxDetails = document.querySelectorAll(".attendance-box details")
+        
+        if (mainAttendanceBox && pinnedAttendanceBox) {
+            function showAttendanceCode() {
+                attendanceBoxDetails.forEach(details => details.open = true)
+            }
+    
+            function hideAttendanceCode() {
+                attendanceBoxDetails.forEach(details => details.open = false)
+            }
+
+            // On page load, determine whether to start with the attendance code is
+            // displayed or hidden by looking at the browser cookie we set
+            if (getCookie("isAttendanceCodeShown") === "true") {
+                showAttendanceCode()
+            } else {
+                hideAttendanceCode()
+            }
+
+            // Keep the two attendance code displays in sync by listening for
+            // the toggle event which fires when the user toggles whether the code
+            // is shown or not. Sets a browser cookie that stores the status and
+            // shows/hides the other attendance code
+            attendanceBoxDetails.forEach(details => {
+                details.addEventListener("toggle", function() {
+                    setCookie("isAttendanceCodeShown", details.open, 1)
+                    if (details.open) {
+                        showAttendanceCode()
+                    } else {
+                        hideAttendanceCode()
+                    }
+                })
+            })
+
+            // Detect when the main attendance code is visible and not visible on the page
+            // after scrolling, so we can show the pinned attendance code when the main
+            // one has been scrolled off the page
+            const observer = new IntersectionObserver((entries) => {
+                entries.forEach((entry) => {
+                    // If less than 75% of the main attendance code is visible on the screen,
+                    // show the pinned one
+                    if (entry.intersectionRatio < 0.50) {
+                        pinnedAttendanceBox.classList.add("is-shown")
+                    } else {
+                        pinnedAttendanceBox.classList.remove("is-shown")
+                    }
+                })
+            }, {
+                threshold: [0, .25, .5, .75, 1],
+            })
+    
+            observer.observe(mainAttendanceBox)
+        }
+    })
+</script>
 {% endblock %}

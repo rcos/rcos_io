@@ -63,6 +63,7 @@ class MeetingIndexView(ListView):
         queryset = (
             Meeting.get_user_queryset(self.request.user)
             .filter(ends_at__gte=now)
+            .order_by('starts_at')
             .select_related()[:5]
         )
         return queryset
@@ -329,5 +330,5 @@ def manually_add_or_verify_attendance(request):
             attendance.save()
             messages.success(request, f"Added attendance for {user}!")
 
-        return redirect(reverse("meetings_detail", args=(meeting.pk,)))
+        return redirect(reverse("meetings_detail", args=(meeting.pk,)) + "#attendance")
     return redirect(reverse("meetings_index"))

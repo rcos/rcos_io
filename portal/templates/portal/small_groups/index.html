@@ -1,6 +1,18 @@
 {% extends "portal/base.html" %}
 {% load portal_extras %}
 
+{% block ogp %}
+<meta property="og:title" content="Small Groups | RCOS IO" />
+<meta property="og:type" content="website" />
+<meta property="og:url" content="{{ request.build_absolute_uri }}" />
+<meta property="og:description" content="Small Groups | Rensselaer Center for Open Source" />
+<meta property="og:image" content="https://github.com/rcos/rcos-branding/blob/master/img/lockup-red.png" />
+{% endblock %}
+
+{% block title %}
+Small Groups | RCOS IO
+{% endblock %}
+
 {% block content %}
 <section class="section">
     <div class="container">

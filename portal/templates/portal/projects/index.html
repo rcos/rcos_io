@@ -1,6 +1,19 @@
 {% extends "portal/base.html" %}
 {% load portal_extras %}
 {% load admin_urls %}
+
+{% block ogp %}
+<meta property="og:title" content="Projects | RCOS IO" />
+<meta property="og:type" content="website" />
+<meta property="og:url" content="{{ request.build_absolute_uri }}" />
+<meta property="og:description" content="{{ target_semester|default:'' }} Projects | {{ target_semester|default:'Total' }} project count: {{ projects_data|length }} | Rensselaer Center for Open Source" />
+<meta property="og:image" content="https://github.com/rcos/rcos-branding/blob/master/img/lockup-red.png" />
+{% endblock %}
+
+{% block title %}
+Projects | RCOS IO
+{% endblock %}
+
 {% block content %}
 <section class="section">
     <div class="container">
@@ -31,7 +44,7 @@
                 <tbody>
                     {% with querystring=request.GET.urlencode %}
                     {% with notator=querystring|length_is:0|yesno:',&' %}
-                    {% for project_data in projects_data %}
+                    {% for project_data in projects_rows %}
                     <tr>
                         <td>
                             <a
@@ -51,7 +64,7 @@
                         </td>
                         <td>
                             {% for project_tag in project_data.project.tags.all %}
-                                <a href="{{ request.get_host }}{{ request.path }}?{{ querystring }}{{ notator }}search={{ project_tag }}">
+                                <a href="{{ request.path }}?{{ querystring }}{{ notator }}search={{ project_tag|urlencode }}">
                                     <span class="tag is-dark">{{ project_tag }}</span>
                                 </a>
                             {% endfor %}
@@ -87,7 +100,7 @@
             </table>
         </div>
 
-        {% if projects_data|length == 0 %}
+        {% if projects_rows|length == 0 %}
         <p class="has-text-centered has-text-grey">
             No projects
             {% if target_semester %}

@@ -2,6 +2,14 @@
 {% user_enrollment request.user active_semester as enrollment %}
 {% semester_admins active_semester as semester_admins %}
 
+{% block ogp %}
+<meta property="og:title" content="Dashboard | RCOS IO" />
+<meta property="og:type" content="website" />
+<meta property="og:url" content="{{ request.build_absolute_uri }}" />
+<meta property="og:description" content="Dashboard | Rensselaer Center for Open Source" />
+<meta property="og:image" content="https://github.com/rcos/rcos-branding/blob/master/img/lockup-red.png" />
+{% endblock %}
+
 <section class="hero is-dark">
     <div class="hero-body">
         <div class="container">
