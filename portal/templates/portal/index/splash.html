@@ -1,7 +1,7 @@
 <div class="hero is-danger">
     <div class="hero-body">
         <div class="container">
-            <h1 class="title is-1">Rensselaer Center for Open Source</h1>
+            <h1 class="title is-1" id="hero-title">Rensselaer Center for Open Source<span id="hero-title-ext" class="is-italic"></span><span class="has-text-weight-bold" id="hero-title-cursor">_</span></h1>
             <h2 class="subtitle">A community of motivated students at Rensselaer Polytechnic Institute who develop open
                 source projects under the guidance of experienced instructors and student mentors.</h2>
         </div>
@@ -40,6 +40,66 @@
         </div>
     </div>
 </section>
+<script type="text/javascript">
+    const hero_title = document.getElementById("hero-title-ext");
+    const cursor = document.getElementById("hero-title-cursor");
+    
+    const continuations = [" Software", " Projects", " Ideas", "..."];
+
+    let show_cursor = false;
+    let stop_blink = false;
+
+    let blink = () => {
+        show_cursor = !show_cursor;
+        if(show_cursor){
+            cursor.classList.remove("is-hidden");
+        }else{
+            cursor.classList.add("is-hidden");
+        }
+
+        if(stop_blink){
+            cursor.classList.add("is-hidden");
+        }else{
+            setTimeout(blink, 400);
+        }
+    };
+
+    setTimeout(blink, 400);
+
+    let j = 0;
+    let added_text = "";
+
+    setTimeout(
+        () => {
+            continuations.forEach((ck) => {
+                for(let i = 0; i < ck.length; i++){
+                    let k = i * 100 + Math.floor(Math.random() * 100);
+                    j += k;
+                    setTimeout(() => {
+                        added_text += ck[i];
+                        hero_title.innerText = added_text;
+                    }, j + k);
+                }
+                
+                j += 3000;
+
+                for(let i = 0; i < ck.length; i++){
+                    let k = i * 75;
+                    j += k;
+                    setTimeout(() => {
+                        added_text = added_text.slice(0, -1);
+                        hero_title.innerText = added_text;
+                    }, j + k);
+                }
+
+                j += 2000;
+            });
+
+            setTimeout(() => {
+                stop_blink = true;
+            }, j + 1000);
+        }, 1500);
+</script>
 {% if active_semester %}
 <section class="section">
     <div class="container">
