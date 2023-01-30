@@ -4,7 +4,7 @@
 {% block ogp %}
 <meta property="og:title" content="{{ project.name }}" />
 <meta property="og:type" content="website" />
-<meta property="og:url" content="{{ request.get_full_path }}" />
+<meta property="og:url" content="{{ request.build_absolute_uri }}" />
 <meta property="og:description" content="{{ project.description }}" />
 {% if project.logo_url != '' %}
 <meta property="og:image" content="{{ project.logo_url }}" />

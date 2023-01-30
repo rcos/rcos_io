@@ -6,8 +6,8 @@
 {% block ogp %}
 <meta property="og:title" content="{{ meeting.display_name }} | RCOS IO" />
 <meta property="og:type" content="website" />
-<meta property="og:url" content="{{ request.get_full_path }}" />
-<meta property="og:description" content="{{ meeting.display_name }} | Rensselaer Center for Open Source" />
+<meta property="og:url" content="{{ request.build_absolute_uri }}" />
+<meta property="og:description" content="{{ meeting.display_name }} @ {{ meeting.starts_at }} | Rensselaer Center for Open Source" />
 <meta property="og:image" content="https://github.com/rcos/rcos-branding/blob/master/img/lockup-red.png" />
 {% endblock %}
 
