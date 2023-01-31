@@ -77,6 +77,14 @@
                             <a href="{{ meeting.presentation_url }}" target="_blank">Presentation Slides</a>
                         </li>
                         {% endif %}
+                        {% if meeting.recording_url %}
+                        <li class="mb-2">
+                            <span class="icon">
+                                <i class="fas fa-video"></i>
+                            </span>
+                            <a href="{{ meeting.recording_url }}" target="_blank">Reecording</a>
+                        </li>
+                        {% endif %}
                     </ul>
                     <hr>
                     <div class="content mt-5">
