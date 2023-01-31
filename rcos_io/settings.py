@@ -54,13 +54,13 @@ ALLOWED_HOSTS = [
     "localhost",
     "127.0.0.1",
     "rcos.up.railway.app",
-    "rcosio-staging.up.railway.app",
+    "rcos-staging.up.railway.app",
     "new.rcos.io",
 ]
 
 CSRF_TRUSTED_ORIGINS = [
     "https://rcos.up.railway.app",
-    "https://rcosio-staging.up.railway.app",
+    "https://rcos-staging.up.railway.app",
     "https://new.rcos.io",
 ]
 
