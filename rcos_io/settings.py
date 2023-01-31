@@ -11,6 +11,8 @@ https://docs.djangoproject.com/en/4.1/ref/settings/
 """
 import os
 from pathlib import Path
+import eventlet
+eventlet.monkey_patch()
 
 from django.contrib.messages import constants as messages
 from dotenv import load_dotenv
