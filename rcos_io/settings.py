@@ -309,7 +309,14 @@ MESSAGE_TAGS = {
     messages.WARNING: "is-warning",
 }
 
-if os.environ["ENV"] != "development":
+if os.environ["ENV"] == "development":
+    CACHES = {
+        "default": {
+            "BACKEND": "django.core.cache.backends.db.DatabaseCache",
+            "LOCATION": "cache",
+        }
+    }
+else:
     CACHES = {
         "default": {
             "BACKEND": "django.core.cache.backends.redis.RedisCache",
