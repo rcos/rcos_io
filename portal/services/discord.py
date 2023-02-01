@@ -475,3 +475,18 @@ def update_server_event(
     )
     response.raise_for_status()
     return response.json()
+
+
+def delete_server_event(
+    event_id: str,
+):
+    """
+    https://discord.com/developers/docs/resources/guild-scheduled-event#delete-guild-scheduled-event
+    """
+    response = requests.delete(
+        f"{DISCORD_API_ENDPOINT}/guilds/{settings.DISCORD_SERVER_ID}/scheduled-events/{event_id}",
+        headers=HEADERS,
+        timeout=3,
+    )
+    response.raise_for_status()
+    return response.json()
