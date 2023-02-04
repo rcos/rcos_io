@@ -1,12 +1,12 @@
 import random
 import string
 from typing import Any, Dict
-from django.db import IntegrityError
-from django.core.cache import cache
 
 from django.contrib import messages
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth.mixins import LoginRequiredMixin, UserPassesTestMixin
+from django.core.cache import cache
+from django.db import IntegrityError
 from django.http import JsonResponse
 from django.shortcuts import redirect
 from django.urls import reverse
@@ -63,7 +63,7 @@ class MeetingIndexView(ListView):
         queryset = (
             Meeting.get_user_queryset(self.request.user)
             .filter(ends_at__gte=now)
-            .order_by('starts_at')
+            .order_by("starts_at")
             .select_related()[:5]
         )
         return queryset

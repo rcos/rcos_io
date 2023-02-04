@@ -8,7 +8,7 @@
 <meta property="og:type" content="website" />
 <meta property="og:url" content="{{ request.build_absolute_uri }}" />
 <meta property="og:description" content="{{ meeting.display_name }} @ {{ meeting.starts_at }} | Rensselaer Center for Open Source" />
-<meta property="og:image" content="https://github.com/rcos/rcos-branding/blob/master/img/lockup-red.png" />
+<meta property="og:image" content="https://raw.githubusercontent.com/rcos/rcos-branding/master/img/lockup-red.png" />
 {% endblock %}
 
 {% block title %}
@@ -77,6 +77,14 @@
                             <a href="{{ meeting.presentation_url }}" target="_blank">Presentation Slides</a>
                         </li>
                         {% endif %}
+                        {% if meeting.recording_url %}
+                        <li class="mb-2">
+                            <span class="icon">
+                                <i class="fas fa-video"></i>
+                            </span>
+                            <a href="{{ meeting.recording_url }}" target="_blank">Reecording</a>
+                        </li>
+                        {% endif %}
                     </ul>
                     <hr>
                     <div class="content mt-5">
@@ -91,18 +99,20 @@
                 {% if request.user.is_authenticated and request.user.is_rpi and not user_attendance %}
                     {% if meeting.is_ongoing %}
                     {% crispy submit_attendance_form %}
-                    {% else %}
-                    <small class="has-text-grey">Attendance can be submitted here during the meeting. <a href="#" onclick="window.location.reload()">Refresh</a> the page if the meeting is currently in progress.</small>
+                    {% elif meeting.is_upcoming %}
+                    <small class="has-text-grey">Attendance can be submitted here during the meeting. <a href="#" onclick="window.location.reload()">Refresh</a> the page when the meeting starts.</small>
+                    {% elif meeting.is_over %}
+                    <small class="has-text-grey">The meeting has ended and attendance can no longer be submitted.</small>
                     {% endif %}
                 {% endif %}
             </div>
-            <div class="column">
+            <div class="column {% if meeting.presentation_embed_url %}is-7{% endif %}">
                 {% if meeting.presentation_embed_url %}
                 <iframe
                     src="{{ meeting.presentation_embed_url }}"
                     frameborder="0"
                     width="100%"
-                    height="400"
+                    height="500"
                     allowfullscreen="true"
                     mozallowfullscreen="true"
                     webkitallowfullscreen="true"
@@ -168,14 +178,19 @@
                 {% endif %}
             {% else %}
                 <p class="has-text-grey">
-                    The attendance code is displayed here while the meeting is in progress.
-                    <a href="#" onclick="window.location.reload()">Refresh</a> the page if the meeting is currently in progress.
+                    {% if meeting.is_upcoming %}
+                    The attendance code will be displayed here when the meeting starts.
+                    <a href="#" onclick="window.location.reload()">Refresh</a> the page when the meeting starts.
+                    {% elif meeting.is_over %}
+                    The meeting has ended and the attendance code can no longer be displayed. You can still add
+                    students manually below.
+                    {% endif %}
                 </p>
             {% endif %}
         </div>
 
         {% if code %}
-        <div class="notification is-dark attendance-box" id="pinned-attendance-box">
+        <div class="notification is-dark attendance-box block" id="pinned-attendance-box">
             <details>
                 <summary>Attendance Code</summary>
                 <h1 class="title">{{ code }}</h1>
@@ -187,7 +202,7 @@
         {% endif %}
         
 
-        <div class="columns mt-6" id="attendance">
+        <div class="columns mt-6 block is-vcentered" id="attendance">
             <div class="column is-narrow">
                 <a href="#attendance" onclick="window.location.reload()" class="button">Refresh</a>
             </div>
@@ -199,11 +214,29 @@
             </div>
         </div>
 
+        <form action="{% url 'verify_attendance' %}" method="post" class="block">
+            {% csrf_token %}
+            <input type="hidden" name="meeting" value="{{ meeting.pk }}">
+            <div class="field has-addons">
+                <div class="control">
+                    <input type="text" list="rcs_ids" name="rcs_id" class="input" placeholder="Student RCS ID" required>
+                    <datalist id="rcs_ids">
+                        {% for user in non_attended_users  %}
+                        <option value="{{ user.rcs_id }}">
+                        {% endfor %}
+                    </datalist>
+                </div>
+                <div class="control">
+                    <button type="submit" class="button">Manually Add Attendance</button>
+                </div>
+            </div>
+        </form>
+
         <div class="columns">
             <div class="column">
                 <h2 class="subtitle">Attended</h2>
                 <small>{{ attended_users|length }} total</small>
-                <ul>
+                <ul style="max-height: 400px; overflow-y: auto;">
                     {% for user in attended_users %}
                     <li>
                         <a href="{{ user.get_absolute_url }}?semester={{ meeting.semester.pk }}">{{ user }}</a>
@@ -233,7 +266,7 @@
             <div class="column">
                 <h2 class="subtitle">Not Attended</h2>
                 <small>{{ non_attended_users|length }} total</small>
-                <ul>
+                <ul style="max-height: 400px; overflow-y: auto;">
                     {% for user in non_attended_users %}
                     <li>
                         <a href="{{ user.get_absolute_url }}?semester={{ meeting.semester.pk }}">{{ user }}</a>
@@ -242,24 +275,6 @@
                 </ul>
             </div>
         </div>
-
-        <form action="{% url 'verify_attendance' %}" method="post">
-            {% csrf_token %}
-            <input type="hidden" name="meeting" value="{{ meeting.pk }}">
-            <div class="field has-addons">
-                <div class="control">
-                    <input type="text" list="rcs_ids" name="rcs_id" class="input" placeholder="Student RCS ID" required>
-                    <datalist id="rcs_ids">
-                        {% for user in non_attended_users  %}
-                        <option value="{{ user.rcs_id }}">
-                        {% endfor %}
-                    </datalist>
-                </div>
-                <div class="control">
-                    <button type="submit" class="button">Manually Add Attendance</button>
-                </div>
-            </div>
-        </form>
     </div>
 </section>
 {% elif active_enrollment.is_mentor %}

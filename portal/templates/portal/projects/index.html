@@ -6,8 +6,8 @@
 <meta property="og:title" content="Projects | RCOS IO" />
 <meta property="og:type" content="website" />
 <meta property="og:url" content="{{ request.build_absolute_uri }}" />
-<meta property="og:description" content="{{ target_semester|default:'' }} Projects | {{ target_semester|default:'Total' }} project count: {{ projects_data|length }} | Rensselaer Center for Open Source" />
-<meta property="og:image" content="https://github.com/rcos/rcos-branding/blob/master/img/lockup-red.png" />
+<meta property="og:description" content="{{ target_semester|default:'All' }} Projects | Project count: {{ projects_rows|length }} | Rensselaer Center for Open Source" />
+<meta property="og:image" content="https://raw.githubusercontent.com/rcos/rcos-branding/master/img/lockup-red.png" />
 {% endblock %}
 
 {% block title %}

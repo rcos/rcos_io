@@ -1,23 +1,23 @@
 import logging
 import re
+from decimal import Decimal
 from time import sleep
 from typing import Optional, Tuple, cast
-from django.core.cache import cache
-from decimal import Decimal
 
 from django.conf import settings
 from django.contrib.auth.models import AbstractUser, BaseUserManager
+from django.core.cache import cache
 from django.core.exceptions import ValidationError
+from django.core.validators import MaxValueValidator, MinValueValidator
 from django.db import models
 from django.db.models import Q
-from django.db.models.signals import post_save, pre_save
+from django.db.models.functions import Lower
+from django.db.models.signals import post_save, pre_save, post_delete
 from django.template.defaultfilters import slugify
 from django.urls import reverse
 from django.utils import formats, timezone
 from requests import HTTPError
 from sentry_sdk import capture_exception
-from django.db.models.functions import Lower
-from django.core.validators import MaxValueValidator, MinValueValidator
 
 from portal.services import discord
 
@@ -26,6 +26,10 @@ logger = logging.getLogger(__name__)
 
 def sync_discord(sender, instance, created, *args, **kwargs):
     instance.sync_discord()
+
+
+def sync_discord_on_delete(sender, instance, *args, **kwargs):
+    instance.sync_discord(is_deleted=True)
 
 
 class TimestampedModel(models.Model):
@@ -137,7 +141,7 @@ class Organization(TimestampedModel):
     )
     discord_role_id = models.CharField(max_length=100, blank=True)
 
-    def sync_discord(self):
+    def sync_discord(self, is_deleted=False):
         """Ensures that a Discord role exists for the organization, and that all its members have it assigned."""
 
         # Ensure existence of role
@@ -406,7 +410,7 @@ class User(AbstractUser, TimestampedModel):
 
         return True, None
 
-    def sync_discord(self):
+    def sync_discord(self, is_deleted=False):
         # Discord nickname and roles
         if self.discord_user_id:
             try:
@@ -551,7 +555,7 @@ class Project(TimestampedModel):
                 self.discord_text_channel_id, {"content": message_content}
             )
 
-    def sync_discord(self):
+    def sync_discord(self, is_deleted=False):
         print("here")
         active_semester = Semester.get_active()
 
@@ -961,7 +965,7 @@ class Enrollment(TimestampedModel):
         help_text="Private notes for admins about this user for this semester",
     )
 
-    def sync_discord(self):
+    def sync_discord(self, is_deleted=False):
         pass
 
     def get_absolute_url(self):
@@ -1060,6 +1064,10 @@ class Meeting(TimestampedModel):
         help_text="The URL to the meeting's slideshow presentation if exists",
     )
 
+    recording_url = models.URLField(
+        blank=True, help_text="The URL to the meeting's recording (optional)"
+    )
+
     attendance_chance_verification_required = models.DecimalField(
         max_digits=3,
         decimal_places=2,
@@ -1109,6 +1117,16 @@ class Meeting(TimestampedModel):
         )
 
     @property
+    def is_over(self):
+        now = timezone.now()
+        return self.ends_at < now
+
+    @property
+    def is_upcoming(self):
+        now = timezone.now()
+        return self.starts_at > now
+
+    @property
     def is_ongoing(self):
         now = timezone.now()
         return self.starts_at < now < self.ends_at
@@ -1146,7 +1164,7 @@ class Meeting(TimestampedModel):
     def get_absolute_url(self):
         return reverse("meetings_detail", args=[str(self.id)])
 
-    def sync_discord(self):
+    def sync_discord(self, is_deleted=False):
         description = f"""**{self.get_type_display()} Meeting**
         
         View details: {settings.PUBLIC_BASE_URL}/meetings/{self.pk}
@@ -1154,25 +1172,35 @@ class Meeting(TimestampedModel):
         """
 
         try:
-            if not self.discord_event_id and self.is_published:
-                event = discord.create_server_event(
-                    name=self.display_name,
-                    scheduled_start_time=self.starts_at.isoformat(),
-                    scheduled_end_time=self.ends_at.isoformat(),
-                    description=description,
-                    location=self.location,
-                )
-                self.discord_event_id = event["id"]
+            if is_deleted:
+                discord.delete_server_event(self.discord_event_id)
+                self.discord_event_id = ""
                 self.save()
-            elif self.discord_event_id and self.is_published:
-                discord.update_server_event(
-                    self.discord_event_id,
-                    name=self.display_name,
-                    scheduled_start_time=self.starts_at.isoformat(),
-                    scheduled_end_time=self.ends_at.isoformat(),
-                    description=description,
-                    location=self.location,
-                )
+            else:
+                if self.is_ongoing or self.is_upcoming:
+                    if not self.discord_event_id and self.is_published:
+                        event = discord.create_server_event(
+                            name=self.display_name,
+                            scheduled_start_time=self.starts_at.isoformat(),
+                            scheduled_end_time=self.ends_at.isoformat(),
+                            description=description,
+                            location=self.location,
+                        )
+                        self.discord_event_id = event["id"]
+                        self.save()
+                    elif self.discord_event_id and self.is_published:
+                        discord.update_server_event(
+                            self.discord_event_id,
+                            name=self.display_name,
+                            scheduled_start_time=self.starts_at.isoformat(),
+                            scheduled_end_time=self.ends_at.isoformat(),
+                            description=description,
+                            location=self.location,
+                        )
+                    elif self.discord_event_id and not self.is_published:
+                        discord.delete_server_event(self.discord_event_id)
+                        self.discord_event_id = ""
+                        self.save()
         except Exception as e:
             capture_exception(e)
 
@@ -1207,6 +1235,7 @@ class Meeting(TimestampedModel):
 
 
 post_save.connect(sync_discord, sender=Meeting)
+post_delete.connect(sync_discord_on_delete, sender=Meeting)
 
 
 class MeetingAttendance(TimestampedModel):

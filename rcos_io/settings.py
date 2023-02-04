@@ -11,7 +11,6 @@ https://docs.djangoproject.com/en/4.1/ref/settings/
 """
 import os
 from pathlib import Path
-
 from django.contrib.messages import constants as messages
 from dotenv import load_dotenv
 from sentry_sdk.integrations.django import DjangoIntegration
@@ -54,13 +53,13 @@ ALLOWED_HOSTS = [
     "localhost",
     "127.0.0.1",
     "rcos.up.railway.app",
-    "rcosio-staging.up.railway.app",
+    "rcos-staging.up.railway.app",
     "new.rcos.io",
 ]
 
 CSRF_TRUSTED_ORIGINS = [
     "https://rcos.up.railway.app",
-    "https://rcosio-staging.up.railway.app",
+    "https://rcos-staging.up.railway.app",
     "https://new.rcos.io",
 ]
 
@@ -139,8 +138,6 @@ DATABASES = {
         "PASSWORD": os.environ["PGPASSWORD"],
         "HOST": os.environ["PGHOST"],
         "PORT": os.environ["PGPORT"],
-        "CONN_MAX_AGE": 0 if DEBUG else 60 * 5,
-        "CONN_HEALTH_CHECKS": True,
     }
 }
 

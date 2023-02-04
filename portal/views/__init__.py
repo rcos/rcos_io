@@ -1,23 +1,25 @@
 from curses.has_key import has_key
+
+from django.conf import settings
 from django.contrib import messages
 from django.contrib.auth.mixins import UserPassesTestMixin
 from django.contrib.postgres.search import SearchVector
+from django.core.cache import cache
 from django.shortcuts import get_object_or_404, redirect
 from django.urls import reverse
 from django.views.generic import DetailView, ListView
-from django.conf import settings
-from django.core.cache import cache
 
 from ..models import Enrollment, Semester
 
 
 def load_semesters(request):
 
-    semesters = cache.get_or_set("semesters", Semester.objects.all())
+    semesters = cache.get_or_set("semesters", Semester.objects.all(), 60 * 60 * 24)
     active_semester = (
         cache.get_or_set(
             "active_semester",
             next((semester for semester in semesters if semester.is_active), None),
+            60 * 60 * 24,
         )
         if semesters
         else None
