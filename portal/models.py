@@ -410,6 +410,11 @@ class User(AbstractUser, TimestampedModel):
 
         return True, None
 
+    def get_expected_meetings(self, semester=Semester):
+        # Determine what kinds of meetings this student is expected to attend
+        meeting_types = [Meeting.LARGE_GROUP, Meeting.SMALL_GROUP, Meeting.WORKSHOP]
+        return Meeting.objects.filter(type__in=meeting_types, semester=semester)
+
     def sync_discord(self, is_deleted=False):
         # Discord nickname and roles
         if self.discord_user_id:

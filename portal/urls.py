@@ -20,6 +20,7 @@ from .views.meetings import (
     SubmitAttendanceFormView,
     manually_add_or_verify_attendance,
     meetings_api,
+    user_attendance,
 )
 from .views.projects import (
     ProjectAddPitch,
@@ -47,6 +48,7 @@ urlpatterns = [
     path("users/", UserIndexView.as_view(), name="users_index"),
     path("users/enroll/", enroll_user, name="users_enroll"),
     path("users/<int:pk>", UserDetailView.as_view(), name="users_detail"),
+    path("users/<int:pk>/attendance", user_attendance, name="user_attendance"),
     path(
         "projects/",
         ProjectIndexView.as_view(),

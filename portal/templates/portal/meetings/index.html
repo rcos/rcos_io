@@ -1,5 +1,6 @@
 {% extends "portal/base.html" %}
 {% load humanize %}
+{% load portal_extras %}
 
 {% block ogp %}
 <meta property="og:title" content="Meetings | RCOS IO" />
@@ -68,15 +69,15 @@ Meetings | RCOS IO
                             {% endif %}
                         </ul>
                         <small class="has-text-grey">{{ meeting.starts_at|naturaltime }}</small>
-                        <!-- <span class="tag">
-                           
-                        </span> -->
-                        
                     </div>
                 </div>
                 {% empty %}
                 <p class="has-text-grey">No upcoming meetings are currently scheduled! Check back again later.</p>
                 {% endfor %}
+                
+                {% if request.user.is_authenticated and request.user.is_rpi %}
+                <a href="{% url 'user_attendance' request.user.pk %}{% active_semester_query %}" class="button">Your Attendance</a>
+                {% endif %}
             </div>
             <div class="column">
                 <div id="calendar"></div>
