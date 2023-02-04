@@ -56,16 +56,27 @@ class MeetingIndexView(ListView):
     template_name = "portal/meetings/index.html"
     context_object_name = "meetings"
 
-    # Fetch 5 most recent published meetings, calendar will fetch all from API separately
+    # Fetch 10 most recent published meetings, calendar will fetch all from API separately
     def get_queryset(self):
         now = timezone.now()
 
-        queryset = (
+        upcoming = (
             Meeting.get_user_queryset(self.request.user)
+            .filter(starts_at__gte=now)
+            .order_by("starts_at")
+            .select_related()[:10]
+        )
+
+        ongoing = (
+            Meeting.get_user_queryset(self.request.user)
+            .filter(starts_at__lte=now)
             .filter(ends_at__gte=now)
             .order_by("starts_at")
-            .select_related()[:5]
+            .select_related()[:10]
         )
+
+        queryset = {'ongoing': ongoing, 'upcoming': upcoming}
+
         return queryset
 
 
