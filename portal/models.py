@@ -561,7 +561,6 @@ class Project(TimestampedModel):
             )
 
     def sync_discord(self, is_deleted=False):
-        print("here")
         active_semester = Semester.get_active()
 
         if not active_semester:
