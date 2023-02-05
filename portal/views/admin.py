@@ -9,7 +9,7 @@ from django.db.models import Q
 from django.shortcuts import render
 
 from portal.forms import SemesterCSVUploadForm
-from portal.models import Enrollment, Project, ProjectPitch, Semester, User
+from portal.models import Enrollment, Project, ProjectPitch, Semester, SmallGroup, User
 
 logger = logging.getLogger(__name__)
 
@@ -173,6 +173,10 @@ def import_submitty_teams(request):
                         )
                         defaults["project"] = project
                         defaults["is_project_lead"] = rcs_id == owner_rcs_id
+
+                        # Upsert small group
+                        small_group, is_new = SmallGroup.objects.get_or_create(semester=semester, name=f"Small Group {row['Team Rotating Section']}")
+                        small_group.projects.add(project)
 
                     # Upsert enrollment
                     enrollment, is_new = Enrollment.objects.update_or_create(
