@@ -11,6 +11,7 @@ https://docs.djangoproject.com/en/4.1/ref/settings/
 """
 import os
 from pathlib import Path
+
 from django.contrib.messages import constants as messages
 from dotenv import load_dotenv
 from sentry_sdk.integrations.django import DjangoIntegration

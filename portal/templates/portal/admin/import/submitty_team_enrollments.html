@@ -5,29 +5,11 @@
     <div class="container">
         <div class="columns">
             <div class="column is-3">
-                <aside class="menu">
-                    <p class="menu-label">
-                        Import
-                    </p>
-                    <ul class="menu-list">
-                        <li><a href="{% url 'import_enrollments' %}">From Submitty</a></li>
-                        <li><a>Users</a></li>
-                        <li><a class="is-active">Projects</a></li>
-                    </ul>
-                    <p class="menu-label">
-                        Export
-                    </p>
-                    <ul class="menu-list">
-                        <li><a>Users</a></li>
-                        <li><a>Enrollments</a></li>
-                        <li><a>Projects</a></li>
-                        <li><a>Meetings</a></li>
-                    </ul>
-                </aside>
+                {% include "_menu.html" %}
             </div>
 
             <div class="column">
-                <h1 class="title">Import Projects & Pitches from Google Forms</h1>
+                <h1 class="title">Import Teams From Submitty</h1>
 
                 <div class="content">
                     <p>The CSV should be exported from Submitty and is expected to contain the following columns (order doesn't matter, exact name does):</p>

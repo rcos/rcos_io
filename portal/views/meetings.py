@@ -2,17 +2,13 @@ import random
 import string
 from typing import Any, Dict, cast
 
-from django.http import HttpResponseForbidden
-
-from django.shortcuts import render
-from django.http import HttpRequest
 from django.contrib import messages
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth.mixins import LoginRequiredMixin, UserPassesTestMixin
 from django.core.cache import cache
 from django.db import IntegrityError
-from django.http import JsonResponse
-from django.shortcuts import redirect
+from django.http import HttpRequest, HttpResponseForbidden, JsonResponse
+from django.shortcuts import redirect, render
 from django.urls import reverse
 from django.utils import timezone
 from django.views.decorators.cache import cache_page
@@ -80,7 +76,7 @@ class MeetingIndexView(ListView):
             .select_related()[:10]
         )
 
-        queryset = {'ongoing': ongoing, 'upcoming': upcoming}
+        queryset = {"ongoing": ongoing, "upcoming": upcoming}
 
         return queryset
 
