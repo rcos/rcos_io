@@ -3,7 +3,12 @@
 {% load portal_extras %}
 
 {% block title %}
-Your Attendance | RCOS IO
+{% if target_user == request.user %}
+Your {{ target_semester }} Attendance
+{% else %}
+{{ target_semester }} Attendance for {{ target_user }}
+{% endif %}
+| RCOS IO
 {% endblock %}
 
 {% block content %}
@@ -47,18 +52,22 @@ Your Attendance | RCOS IO
                                 <a href="{% url 'meetings_detail' meeting_row.meeting.pk %}">{{ meeting_row.meeting }}</a>
                             </td>
                             <td>
-                                {% if meeting_row.meeting.is_over %}
-                                    {% if meeting_row.attendance %}
-                                        {% if meeting_row.attendance.is_verified %}
-                                        <span class="tag is-success">ATTENDED</span>
+                                {% if meeting_row.meeting.is_attendance_taken %}
+                                    {% if meeting_row.meeting.is_over %}
+                                        {% if meeting_row.attendance %}
+                                            {% if meeting_row.attendance.is_verified %}
+                                            <span class="tag is-success">ATTENDED</span>
+                                            {% else %}
+                                            <span class="tag is-warning">PENDING VERIFICATION</span>
+                                            {% endif %}
                                         {% else %}
-                                        <span class="tag is-warning">PENDING VERIFICATION</span>
+                                        <span class="tag is-danger">NOT ATTENDED</span>
                                         {% endif %}
                                     {% else %}
-                                    <span class="tag is-danger">NOT ATTENDED</span>
+                                    <span class="tag">UPCOMING</span>
                                     {% endif %}
                                 {% else %}
-                                <span class="tag">UPCOMING</span>
+                                <span class="tag is-dark">ATTENDANCE NOT TAKEN</span>
                                 {% endif %}
                             </td>
                             <td>
