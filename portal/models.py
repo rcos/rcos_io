@@ -1041,6 +1041,7 @@ class Meeting(TimestampedModel):
     is_published = models.BooleanField(
         "published?", default=False, help_text="Whether the meeting is visible to users"
     )
+    is_attendance_taken = models.BooleanField("attendance taken?", default=True, help_text="Whether attendance is taken at this meeting. If false, all expected users are counted as attended.")
     starts_at = models.DateTimeField(help_text="When the meeting starts")
     ends_at = models.DateTimeField(help_text="When the meeting ends")
     location = models.CharField(
