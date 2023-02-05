@@ -140,3 +140,4 @@ GitHub.sublime-settings
 fake.py
 
 *.rdb
+db.json

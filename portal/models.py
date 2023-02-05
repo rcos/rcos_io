@@ -99,7 +99,7 @@ class Semester(TimestampedModel):
 
     @property
     def project_count(self):
-        return self.enrollments.distinct("project").order_by().count()
+        return self.enrollments.values("project").distinct().count()
 
     @property
     def is_active(self):
@@ -561,7 +561,6 @@ class Project(TimestampedModel):
             )
 
     def sync_discord(self, is_deleted=False):
-        print("here")
         active_semester = Semester.get_active()
 
         if not active_semester:
@@ -709,15 +708,6 @@ class Project(TimestampedModel):
         #                 f"Failed to create project Discord text channel for {self}",
         #                 exc_info=e,
         #             )
-
-    def get_semester_count(self):
-        return (
-            Project.objects.filter(id=self.id, enrollments__semester__isnull=False)
-            .order_by("enrollments__semester")
-            .distinct("enrollments__semester")
-            .values("enrollments__semester_id")
-            .count()
-        )
 
     def get_active_semesters(self):
         return (
