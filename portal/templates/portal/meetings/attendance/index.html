@@ -1,0 +1,88 @@
+{% extends "portal/base.html" %}
+{% load humanize %}
+{% load portal_extras %}
+
+{% block title %}
+Your Attendance | RCOS IO
+{% endblock %}
+
+{% block content %}
+<section class="hero is-dark">
+    <div class="hero-body">
+        <div class="container">
+            <h1 class="title is-1">
+                {% if target_user == request.user %}
+                Your Attendance
+                {% else %}
+                Attendance for <a href="{% url 'users_detail' target_user.pk %}{% target_semester_query %}">{{ target_user }}</a>
+                {% endif %}
+            </h1>
+            <nav class="breadcrumb is-2" aria-label="breadcrumbs">
+                <ul>
+                    {% for semester in user.get_active_semesters %}
+                    <li class="{% if target_semester == semester %}is-active has-text-weight-bold{% endif %}"><a href="?semester={{ semester.id }}">{{ semester }}</a></li>
+                    {% endfor %}
+                </ul>
+            </nav>
+        </div>
+    </div>
+</section>
+
+<section class="section">
+    <div class="container">
+        <div class="columns">
+            <div class="column">
+                <table class="table is-fullwidth">
+                    <thead>
+                        <tr>
+                            <th>Meeting</th>
+                            <th>Status</th>
+                            <th>Submitted</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for meeting_row in expected_meetings_rows %}
+                        <tr>
+                            <td>
+                                <a href="{% url 'meetings_detail' meeting_row.meeting.pk %}">{{ meeting_row.meeting }}</a>
+                            </td>
+                            <td>
+                                {% if meeting_row.meeting.is_over %}
+                                    {% if meeting_row.attendance %}
+                                        {% if meeting_row.attendance.is_verified %}
+                                        <span class="tag is-success">ATTENDED</span>
+                                        {% else %}
+                                        <span class="tag is-warning">PENDING VERIFICATION</span>
+                                        {% endif %}
+                                    {% else %}
+                                    <span class="tag is-danger">NOT ATTENDED</span>
+                                    {% endif %}
+                                {% else %}
+                                <span class="tag">UPCOMING</span>
+                                {% endif %}
+                            </td>
+                            <td>
+                                {{ meeting_row.attendance.created_at|default:"-" }}
+                            </td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+            <div class="column is-4">
+                <div class="box has-text-centered">
+                    <div class="block">
+                        <h2 class="subtitle has-text-grey">Large/Small Groups</h2>
+                        <h1 class="title">{{ group_meetings_attended }} of {{ group_meetings_total }} attended</h1>
+                    </div>
+                    <div class="block">
+                        <h2 class="subtitle has-text-grey">Workshops</h2>
+                        <h1 class="title">{{ workshops_attended }} of {{ workshops_total }} attended</h1>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+{% endblock %}
