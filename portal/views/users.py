@@ -1,5 +1,6 @@
 from django.contrib import messages
 from django.contrib.auth.decorators import login_required, user_passes_test
+from django.core.paginator import EmptyPage, InvalidPage, PageNotAnInteger, Paginator
 from django.shortcuts import redirect
 from django.urls import reverse
 
@@ -10,6 +11,7 @@ from . import SearchableListView, SemesterFilteredDetailView, SemesterFilteredLi
 class UserIndexView(SearchableListView, SemesterFilteredListView):
     template_name = "portal/users/index.html"
     context_object_name = "users"
+    paginate_by = 50
 
     # Default to all active RPI members
     queryset = User.rpi
@@ -26,15 +28,26 @@ class UserIndexView(SearchableListView, SemesterFilteredListView):
     def get_context_data(self, **kwargs):
         data = super().get_context_data(**kwargs)
 
-        enrollments = Enrollment.objects.filter(
-            user__in=self.get_queryset()
-        ).select_related("semester", "project")
+        paginator = Paginator(self.get_queryset(), self.paginate_by)
+
+        page = self.request.GET.get("page")
+
+        try:
+            users = paginator.page(page)
+        except PageNotAnInteger:
+            users = paginator.page(1)
+        except (EmptyPage, InvalidPage):
+            users = paginator.page(paginator.num_pages)
+
+        enrollments = Enrollment.objects.filter(user__in=users).select_related(
+            "semester", "project"
+        )
 
         if self.target_semester:
             enrollments = enrollments.filter(semester=self.target_semester)
 
         user_rows = []
-        for user in self.get_queryset():
+        for user in users:
             user_row = {
                 "user": user,
             }
