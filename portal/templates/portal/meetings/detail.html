@@ -148,27 +148,50 @@
 </section>
 
 {% if can_manage_attendance %}
-<section class="hero is-light">
-    <div class="hero-body">
+    <section class="hero is-light">
+        <div class="hero-body">
+            <div class="container">
+                <h1 class="title">Attendance</h1>
+            </div>
+        </div>
+    </section>
+    {% if meeting.is_attendance_taken %}
+    <section class="section">
         <div class="container">
-            <h1 class="title">Attendance</h1>
-        </div>
-    </div>
-</section>
-<section class="section">
-    <div class="container">
 
-        <div class="tabs">
-            <ul>
-                <li class="{% if not target_small_group %}is-active{% endif %}"><a href="?small_group=">All Students</a></li>
-                {% for small_group in meeting.semester.small_groups.all %}
-                <li class="{% if target_small_group == small_group %}is-active{% endif %}"><a href="?small_group={{ small_group.pk }}">{{ small_group }}</a></li>
-                {% endfor %}
-            </ul>
-        </div>
-        
-        <div class="box has-text-centered attendance-box" id="main-attendance-box">
+            <div class="tabs">
+                <ul>
+                    <li class="{% if not target_small_group %}is-active{% endif %}"><a href="?small_group=">All Students</a></li>
+                    {% for small_group in meeting.semester.small_groups.all %}
+                    <li class="{% if target_small_group == small_group %}is-active{% endif %}"><a href="?small_group={{ small_group.pk }}">{{ small_group }}</a></li>
+                    {% endfor %}
+                </ul>
+            </div>
+            
+            <div class="box has-text-centered attendance-box" id="main-attendance-box">
+                {% if code %}
+                    <details>
+                        <summary>Attendance Code</summary>
+                        <h1 class="title">{{ code }}</h1>
+                    </details>
+                    {% if not target_small_group and meeting.type == "small_group" %}
+                    <p class="has-text-grey">Do not show this during Small Group meetings. Use your Small Group's.</p>
+                    {% endif %}
+                {% else %}
+                    <p class="has-text-grey">
+                        {% if meeting.is_upcoming %}
+                        The attendance code will be displayed here when the meeting starts.
+                        <a href="#" onclick="window.location.reload()">Refresh</a> the page when the meeting starts.
+                        {% elif meeting.is_over %}
+                        The meeting has ended and the attendance code can no longer be displayed. You can still add
+                        students manually below.
+                        {% endif %}
+                    </p>
+                {% endif %}
+            </div>
+
             {% if code %}
+            <div class="notification is-dark attendance-box block" id="pinned-attendance-box">
                 <details>
                     <summary>Attendance Code</summary>
                     <h1 class="title">{{ code }}</h1>
@@ -176,115 +199,99 @@
                 {% if not target_small_group and meeting.type == "small_group" %}
                 <p class="has-text-grey">Do not show this during Small Group meetings. Use your Small Group's.</p>
                 {% endif %}
-            {% else %}
-                <p class="has-text-grey">
-                    {% if meeting.is_upcoming %}
-                    The attendance code will be displayed here when the meeting starts.
-                    <a href="#" onclick="window.location.reload()">Refresh</a> the page when the meeting starts.
-                    {% elif meeting.is_over %}
-                    The meeting has ended and the attendance code can no longer be displayed. You can still add
-                    students manually below.
-                    {% endif %}
-                </p>
+            </div>
             {% endif %}
-        </div>
+            
 
-        {% if code %}
-        <div class="notification is-dark attendance-box block" id="pinned-attendance-box">
-            <details>
-                <summary>Attendance Code</summary>
-                <h1 class="title">{{ code }}</h1>
-            </details>
-            {% if not target_small_group and meeting.type == "small_group" %}
-            <p class="has-text-grey">Do not show this during Small Group meetings. Use your Small Group's.</p>
-            {% endif %}
-        </div>
-        {% endif %}
-        
-
-        <div class="columns mt-6 block is-vcentered" id="attendance">
-            <div class="column is-narrow">
-                <a href="#attendance" onclick="window.location.reload()" class="button">Refresh</a>
-            </div>
-            <div class="column is-narrow">
-                <strong>{% widthratio attendance_ratio 1 100 %}% ({{ attended_users|length }} of {{ expected_users|length }}) attended</strong>
-            </div>
-            <div class="column">
-                <progress class="progress" value="{{ attendance_ratio }}"></progress>
-            </div>
-        </div>
-
-        <form action="{% url 'verify_attendance' %}" method="post" class="block">
-            {% csrf_token %}
-            <input type="hidden" name="meeting" value="{{ meeting.pk }}">
-            <div class="field has-addons">
-                <div class="control">
-                    <input type="text" list="rcs_ids" name="rcs_id" class="input" placeholder="Student RCS ID" required>
-                    <datalist id="rcs_ids">
-                        {% for user in non_attended_users  %}
-                        <option value="{{ user.rcs_id }}">
-                        {% endfor %}
-                    </datalist>
+            <div class="columns mt-6 block is-vcentered" id="attendance">
+                <div class="column is-narrow">
+                    <a href="#attendance" onclick="window.location.reload()" class="button">Refresh</a>
                 </div>
-                <div class="control">
-                    <button type="submit" class="button">Manually Add Attendance</button>
+                <div class="column is-narrow">
+                    <strong>{% widthratio attendance_ratio 1 100 %}% ({{ attended_users|length }} of {{ expected_users|length }}) attended</strong>
+                </div>
+                <div class="column">
+                    <progress class="progress" value="{{ attendance_ratio }}"></progress>
                 </div>
             </div>
-        </form>
 
-        <div class="columns">
-            <div class="column">
-                <h2 class="subtitle">Attended</h2>
-                <small>{{ attended_users|length }} total</small>
-                <ul style="max-height: 400px; overflow-y: auto;">
-                    {% for user in attended_users %}
-                    <li>
-                        <a href="{{ user.get_absolute_url }}?semester={{ meeting.semester.pk }}">{{ user }}</a>
-                    </li>
-                    {% endfor %}
-                </ul>
-            </div>
+            <form action="{% url 'verify_attendance' %}" method="post" class="block">
+                {% csrf_token %}
+                <input type="hidden" name="meeting" value="{{ meeting.pk }}">
+                <div class="field has-addons">
+                    <div class="control">
+                        <input type="text" list="rcs_ids" name="rcs_id" class="input" placeholder="Student RCS ID" required>
+                        <datalist id="rcs_ids">
+                            {% for user in non_attended_users  %}
+                            <option value="{{ user.rcs_id }}">
+                            {% endfor %}
+                        </datalist>
+                    </div>
+                    <div class="control">
+                        <button type="submit" class="button">Manually Add Attendance</button>
+                    </div>
+                </div>
+            </form>
 
-            <div class="column">
-                <h2 class="subtitle">Requires Verification</h2>
-                <small>{{ needs_verification_users|length }} total</small>
-                <ul>
-                    {% for user in needs_verification_users %}
-                    <li class="mb-2">
-                        <form action="{% url 'verify_attendance' %}" method="post">
-                            {% csrf_token %}
+            <div class="columns">
+                <div class="column">
+                    <h2 class="subtitle">Attended</h2>
+                    <small>{{ attended_users|length }} total</small>
+                    <ul style="max-height: 400px; overflow-y: auto;">
+                        {% for user in attended_users %}
+                        <li>
                             <a href="{{ user.get_absolute_url }}?semester={{ meeting.semester.pk }}">{{ user }}</a>
-                            <input type="hidden" name="user" value="{{ user.pk }}">
-                            <input type="hidden" name="meeting" value="{{ meeting.pk }}">
-                            <button class="button is-small">Verify</button>
-                        </form>
-                    </li>
-                    {% endfor %}
-                </ul>
-            </div>
+                        </li>
+                        {% endfor %}
+                    </ul>
+                </div>
 
-            <div class="column">
-                <h2 class="subtitle">Not Attended</h2>
-                <small>{{ non_attended_users|length }} total</small>
-                <ul style="max-height: 400px; overflow-y: auto;">
-                    {% for user in non_attended_users %}
-                    <li>
-                        <a href="{{ user.get_absolute_url }}?semester={{ meeting.semester.pk }}">{{ user }}</a>
-                    </li>
-                    {% endfor %}
-                </ul>
+                <div class="column">
+                    <h2 class="subtitle">Requires Verification</h2>
+                    <small>{{ needs_verification_users|length }} total</small>
+                    <ul>
+                        {% for user in needs_verification_users %}
+                        <li class="mb-2">
+                            <form action="{% url 'verify_attendance' %}" method="post">
+                                {% csrf_token %}
+                                <a href="{{ user.get_absolute_url }}?semester={{ meeting.semester.pk }}">{{ user }}</a>
+                                <input type="hidden" name="user" value="{{ user.pk }}">
+                                <input type="hidden" name="meeting" value="{{ meeting.pk }}">
+                                <button class="button is-small">Verify</button>
+                            </form>
+                        </li>
+                        {% endfor %}
+                    </ul>
+                </div>
+
+                <div class="column">
+                    <h2 class="subtitle">Not Attended</h2>
+                    <small>{{ non_attended_users|length }} total</small>
+                    <ul style="max-height: 400px; overflow-y: auto;">
+                        {% for user in non_attended_users %}
+                        <li>
+                            <a href="{{ user.get_absolute_url }}?semester={{ meeting.semester.pk }}">{{ user }}</a>
+                        </li>
+                        {% endfor %}
+                    </ul>
+                </div>
             </div>
         </div>
-    </div>
-</section>
-{% elif active_enrollment.is_mentor %}
+    </section>
+    {% elif active_enrollment.is_mentor %}
 
-<section class="section">
-    <div class="container">
-        <p class="has-text-grey has-text-centered">Mentors cannot manage Mentor meeting attendance.</p>
-    </div>
-</section>
-
+    <section class="section">
+        <div class="container">
+            <p class="has-text-grey has-text-centered">Mentors cannot manage Mentor meeting attendance.</p>
+        </div>
+    </section>
+    {% else %}
+    <section class="section">
+        <div class="container">
+            <p class="has-text-grey has-text-centered">Attendance {{ meeting.is_over|yesno:"was not taken,is not being taken" }} at this meeting.</p>
+        </div>
+    </section>
+    {% endif %}
 {% endif %}
 
 <script>
