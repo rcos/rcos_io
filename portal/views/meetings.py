@@ -385,7 +385,10 @@ def user_attendance(request: HttpRequest, pk: Any):
 
         # Increment counts
         if meeting.is_attendance_taken:
-            if meeting.type == Meeting.SMALL_GROUP or meeting.type == Meeting.LARGE_GROUP:
+            if (
+                meeting.type == Meeting.SMALL_GROUP
+                or meeting.type == Meeting.LARGE_GROUP
+            ):
                 group_meetings_total += 1
             elif meeting.type == Meeting.WORKSHOP:
                 workshops_total += 1
