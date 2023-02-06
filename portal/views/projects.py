@@ -3,6 +3,7 @@ from typing import Any
 from django.contrib import messages
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.contrib.messages.views import SuccessMessageMixin
+from django.core.paginator import EmptyPage, InvalidPage, PageNotAnInteger, Paginator
 from django.http import Http404, HttpResponseForbidden
 from django.shortcuts import redirect
 from django.urls import reverse
@@ -23,6 +24,7 @@ from . import (
 class ProjectIndexView(SearchableListView, SemesterFilteredListView):
     template_name = "portal/projects/index.html"
     context_object_name = "projects"
+    paginate_by = 25
 
     # Default to all approved projects
     queryset = (
@@ -55,16 +57,27 @@ class ProjectIndexView(SearchableListView, SemesterFilteredListView):
         data = super().get_context_data(**kwargs)
         data["is_seeking_members"] = self.is_seeking_members
 
+        paginator = Paginator(self.get_queryset(), self.paginate_by)
+
+        page = self.request.GET.get("page")
+
+        try:
+            projects = paginator.page(page)
+        except PageNotAnInteger:
+            projects = paginator.page(1)
+        except (EmptyPage, InvalidPage):
+            projects = paginator.page(paginator.num_pages)
+
         projects_rows = []
-        enrollments = Enrollment.objects.filter(
-            project__in=self.get_queryset()
-        ).select_related("user")
+        enrollments = Enrollment.objects.filter(project__in=projects).select_related(
+            "user"
+        )
         if self.target_semester:
             enrollments = enrollments.filter(
                 semester=self.target_semester
             ).select_related("semester")
 
-        for project in self.get_queryset():
+        for project in projects:
             projects_row = {
                 "project": project,
                 "enrollments": len(
