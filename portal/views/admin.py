@@ -3,12 +3,13 @@ from csv import DictReader
 from io import TextIOWrapper
 from typing import TypedDict
 
+from django.contrib import messages
 from django.contrib.auth.decorators import login_required, user_passes_test
 from django.db.models import Q
 from django.shortcuts import render
 
 from portal.forms import SemesterCSVUploadForm
-from portal.models import Enrollment, Project, ProjectPitch, Semester, User
+from portal.models import Enrollment, Project, ProjectPitch, Semester, SmallGroup, User
 
 logger = logging.getLogger(__name__)
 
@@ -28,6 +29,20 @@ SubmittyCSVRow = TypedDict(
         "Registration Section": str,
         "Rotation Section": int,
         "Group": str,
+    },
+)
+
+# e.g. "Frank,Matranga,merchb,00001_nib2,BidOS,4,9"
+SubmittyWithTeamsCSVRow = TypedDict(
+    "SubmittyWithTeamsCSVRow",
+    {
+        "Given Name": str,
+        "Family Name": str,
+        "User ID": str,  # RCS ID
+        "Team ID": str,  # {id}_{project lead rcs id}
+        "Team Name": str,  # project name
+        "Team Registration Section": str,
+        "Team Rotating Section": str,
     },
 )
 
@@ -100,8 +115,95 @@ def import_submitty_enrollments(request):
 
     return render(
         request,
-        "portal/admin/import/submitty_enrollments.html",
-        {"form": form, "expected_columns": SubmittyCSVRow.__required_keys__},
+        "portal/admin/import/import.html",
+        {
+            "title": "Import Student Enrollments from Submitty",
+            "source": "Submitty",
+            "form": form,
+            "expected_columns": SubmittyCSVRow.__required_keys__,
+        },
+    )
+
+
+@login_required
+@user_passes_test(is_admin)
+def import_submitty_teams(request):
+    if request.method == "POST":
+        form = SemesterCSVUploadForm(request.POST, request.FILES)
+        if form.is_valid():
+            file = request.FILES["csv"]
+            semester = Semester.objects.get(pk=request.POST["semester"])
+
+            rows = TextIOWrapper(file, encoding="utf-8", newline="")
+            for row in DictReader(rows):
+                row: SubmittyWithTeamsCSVRow
+                try:
+                    rcs_id = row["User ID"]
+                    # Find or create user
+                    try:
+                        user = User.objects.get(rcs_id=rcs_id)
+                    except User.DoesNotExist:
+                        user = User(email=rcs_id + "@rpi.edu")
+
+                    if not user.first_name:
+                        user.first_name = row["Given Name"]
+                    if not user.last_name:
+                        user.last_name = row["Family Name"]
+
+                    user.save()
+                    try:
+                        credits = int(row["Team Registration Section"])
+                        if not (0 <= credits <= 4):
+                            credits = 0
+                    except ValueError as e:
+                        logger.warning(
+                            f"Failed to parse credits: '{row['Team Registration Section']}' defaulting to 0"
+                        )
+                        credits = 0
+
+                    defaults = {"credits": credits}
+
+                    # Upsert project
+                    if row["Team Name"].strip():
+                        owner_rcs_id = row["Team ID"].split("_")[1]
+                        owner = User.objects.filter(rcs_id=owner_rcs_id).first()
+                        project, is_new = Project.objects.update_or_create(
+                            name__iexact=row["Team Name"],
+                            defaults={"owner": owner, "is_approved": True},
+                        )
+                        defaults["project"] = project
+                        defaults["is_project_lead"] = rcs_id == owner_rcs_id
+
+                        # Upsert small group
+                        small_group, is_new = SmallGroup.objects.get_or_create(
+                            semester=semester,
+                            name=f"Small Group {row['Team Rotating Section']}",
+                        )
+                        small_group.projects.add(project)
+
+                    # Upsert enrollment
+                    enrollment, is_new = Enrollment.objects.update_or_create(
+                        semester=semester, user=user, defaults=defaults
+                    )
+
+                    logger.info(
+                        "Created" if is_new else "Updated", "enrollment", enrollment
+                    )
+                except:
+                    pass
+            messages.success(request, f"Successfully imported projects and teams!")
+    else:
+        form = SemesterCSVUploadForm()
+
+    return render(
+        request,
+        "portal/admin/import/import.html",
+        {
+            "title": "Import Teams from Submitty",
+            "source": "Submitty",
+            "form": form,
+            "expected_columns": SubmittyWithTeamsCSVRow.__required_keys__,
+        },
     )
 
 
@@ -161,6 +263,11 @@ def import_google_form_projects(request):
 
     return render(
         request,
-        "portal/admin/import/google_forms_projects.html",
-        {"form": form, "expected_columns": SubmittyCSVRow.__required_keys__},
+        "portal/admin/import/import.html",
+        {
+            "title": "Import Projects from Google Forms",
+            "source": "Google Forms",
+            "form": form,
+            "expected_columns": GoogleFormProjectPitchRow.__required_keys__,
+        },
     )

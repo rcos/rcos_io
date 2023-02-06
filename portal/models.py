@@ -12,7 +12,7 @@ from django.core.validators import MaxValueValidator, MinValueValidator
 from django.db import models
 from django.db.models import Q
 from django.db.models.functions import Lower
-from django.db.models.signals import post_save, pre_save, post_delete
+from django.db.models.signals import post_delete, post_save, pre_save
 from django.template.defaultfilters import slugify
 from django.urls import reverse
 from django.utils import formats, timezone
@@ -502,6 +502,7 @@ class Project(TimestampedModel):
     )
     owner = models.ForeignKey(
         User,
+        blank=True,
         null=True,
         on_delete=models.SET_NULL,
         related_name="owned_projects",
@@ -522,7 +523,7 @@ class Project(TimestampedModel):
     )
 
     description = models.TextField(
-        max_length=10_000, help_text="A description of the project"
+        max_length=10_000, help_text="A description of the project", blank=True
     )
 
     external_chat_url = models.URLField(
