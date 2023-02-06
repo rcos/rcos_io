@@ -53,18 +53,20 @@ Your {{ target_semester }} Attendance
                             </td>
                             <td>
                                 {% if meeting_row.meeting.is_attendance_taken %}
-                                    {% if meeting_row.meeting.is_over %}
-                                        {% if meeting_row.attendance %}
-                                            {% if meeting_row.attendance.is_verified %}
-                                            <span class="tag is-success">ATTENDED</span>
-                                            {% else %}
-                                            <span class="tag is-warning">PENDING VERIFICATION</span>
-                                            {% endif %}
+                                    {% if meeting_row.attendance %}
+                                        {% if meeting_row.attendance.is_verified %}
+                                        <span class="tag is-success">ATTENDED</span>
                                         {% else %}
-                                        <span class="tag is-danger">NOT ATTENDED</span>
+                                        <span class="tag is-warning">PENDING VERIFICATION</span>
                                         {% endif %}
                                     {% else %}
+                                    {% if meeting_row.meeting.is_over %}
+                                    <span class="tag is-danger">NOT ATTENDED</span>
+                                    {% elif meeting_row.meeting.is_ongoing %}
+                                    <span class="tag is-info">ONGOING</span>
+                                    {% else %}
                                     <span class="tag">UPCOMING</span>
+                                    {% endif %}
                                     {% endif %}
                                 {% else %}
                                 <span class="tag is-dark">ATTENDANCE NOT TAKEN</span>
