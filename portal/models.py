@@ -480,8 +480,8 @@ def pre_save_user(instance, sender, *args, **kwargs):
             pass
 
 
-pre_save.connect(pre_save_user, sender=User)
-post_save.connect(sync_discord, sender=User)
+# pre_save.connect(pre_save_user, sender=User)
+# post_save.connect(sync_discord, sender=User)
 
 
 class ProjectTag(TimestampedModel):
@@ -737,7 +737,7 @@ class Project(TimestampedModel):
         indexes = [models.Index(fields=["name", "description"])]
 
 
-post_save.connect(sync_discord, sender=Project)
+# post_save.connect(sync_discord, sender=Project)
 
 
 class ProjectRepository(TimestampedModel):
@@ -990,7 +990,7 @@ class Enrollment(TimestampedModel):
         get_latest_by = ["semester"]
 
 
-post_save.connect(sync_discord, sender=Enrollment)
+# post_save.connect(sync_discord, sender=Enrollment)
 
 
 class PublicManager(models.Manager):
@@ -1235,8 +1235,8 @@ class Meeting(TimestampedModel):
         get_latest_by = ["starts_at"]
 
 
-post_save.connect(sync_discord, sender=Meeting)
-post_delete.connect(sync_discord_on_delete, sender=Meeting)
+# post_save.connect(sync_discord, sender=Meeting)
+# post_delete.connect(sync_discord_on_delete, sender=Meeting)
 
 
 class MeetingAttendance(TimestampedModel):

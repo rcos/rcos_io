@@ -169,7 +169,11 @@ def import_submitty_teams(request):
                         owner = User.objects.filter(rcs_id=owner_rcs_id).first()
                         project, is_new = Project.objects.update_or_create(
                             name__iexact=row["Team Name"],
-                            defaults={"owner": owner, "is_approved": True},
+                            defaults={
+                                "owner": owner,
+                                "name": row["Team Name"],
+                                "is_approved": True,
+                            },
                         )
                         defaults["project"] = project
                         defaults["is_project_lead"] = rcs_id == owner_rcs_id
