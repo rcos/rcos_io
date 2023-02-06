@@ -175,7 +175,10 @@ def import_submitty_teams(request):
                         defaults["is_project_lead"] = rcs_id == owner_rcs_id
 
                         # Upsert small group
-                        small_group, is_new = SmallGroup.objects.get_or_create(semester=semester, name=f"Small Group {row['Team Rotating Section']}")
+                        small_group, is_new = SmallGroup.objects.get_or_create(
+                            semester=semester,
+                            name=f"Small Group {row['Team Rotating Section']}",
+                        )
                         small_group.projects.add(project)
 
                     # Upsert enrollment
