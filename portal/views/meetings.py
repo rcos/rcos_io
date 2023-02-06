@@ -379,6 +379,7 @@ def user_attendance(request: HttpRequest, pk: Any):
     # Connect meetings with the user's attendances to display in a table
     expected_meetings_rows = []
     for meeting in user_expected_meetings:
+        meeting: Meeting
         row = {
             "meeting": meeting,
             "attendance": next(
@@ -387,19 +388,20 @@ def user_attendance(request: HttpRequest, pk: Any):
         }
 
         # Increment counts
-        if meeting.type == Meeting.SMALL_GROUP or meeting.type == Meeting.LARGE_GROUP:
-            group_meetings_total += 1
-        elif meeting.type == Meeting.WORKSHOP:
-            workshops_total += 1
-
-        if row["attendance"] and row["attendance"].is_verified:
-            if (
-                meeting.type == Meeting.SMALL_GROUP
-                or meeting.type == Meeting.LARGE_GROUP
-            ):
-                group_meetings_attended += 1
+        if meeting.is_attendance_taken:
+            if meeting.type == Meeting.SMALL_GROUP or meeting.type == Meeting.LARGE_GROUP:
+                group_meetings_total += 1
             elif meeting.type == Meeting.WORKSHOP:
-                workshops_attended += 1
+                workshops_total += 1
+
+            if row["attendance"] and row["attendance"].is_verified:
+                if (
+                    meeting.type == Meeting.SMALL_GROUP
+                    or meeting.type == Meeting.LARGE_GROUP
+                ):
+                    group_meetings_attended += 1
+                elif meeting.type == Meeting.WORKSHOP:
+                    workshops_attended += 1
 
         expected_meetings_rows.append(row)
 
