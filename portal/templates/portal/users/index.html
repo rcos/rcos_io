@@ -21,6 +21,8 @@ Users | RCOS IO
 
         {% include "./filters.html" %}
 
+        {% include "portal/includes/pagination.html" %}
+
         <div class="table-container">
             <table class="table is-fullwidth is-striped is-hoverable">
                 <thead>
@@ -96,7 +98,7 @@ Users | RCOS IO
         <div class="buttons">
             <a href="{% url 'admin:portal_user_changelist' %}" class="button">View in Admin</a>
             <a href="{% url 'admin:portal_user_add' %}" class="button">Add in Admin</a>
-            <a href="{% url 'admin_import_submitty' %}" class="button">Import from Submitty</a>
+            <a href="{% url 'import_enrollments' %}" class="button">Import from Submitty</a>
         </div>
         {% endif %}
     </div>

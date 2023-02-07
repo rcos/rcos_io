@@ -1,0 +1,40 @@
+{% extends "portal/base.html" %}
+
+{% block content %}
+<section class="section">
+    <div class="container">
+        <div class="columns">
+            <div class="column is-3">
+                {% include "./_menu.html" %}
+            </div>
+
+            <div class="column">
+                <h1 class="title">{{ title }}</h1>
+
+                <div class="content">
+                    <p>The CSV should be exported from {{ source }} and is expected to contain the following columns (order doesn't matter, exact name does):</p>
+                    <ul>
+                        {% for col in expected_columns %}
+                        <li><code>{{ col }}</code></li>
+                        {% endfor %}
+                    </ul>
+                    <p>
+                        You can upload the same file (or the same file with later additions)
+                        without worrying about duplicating any data. Users and enrollments are updated if found and created when not found.
+                    </p>
+                </div>
+
+                <hr>
+                <form method="post" enctype="multipart/form-data" class="box">
+                    {% include "portal/includes/formerrors.html" %}
+                    {% csrf_token %}
+                    {{ form.as_div }}
+                    <br>
+                    <button type="submit" class="button">Upload</button>
+                </form>
+            </div>
+        </div>
+        
+    </div>
+</section>
+{% endblock %}

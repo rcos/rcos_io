@@ -1,0 +1,13 @@
+<nav class="pagination" role="navigation" aria-label="pagination">
+    <ul class="pagination-list">
+        {% for p in page_obj.paginator.page_range %}
+        <li>
+            <a
+                class="pagination-link {% if p == page_obj.number %}is-current{% endif %}"
+                aria-label="Goto page {{ p }}"
+                href="?semester={{ target_semester.pk }}&search={{ search }}&page={{ p }}"
+            >{{ p }}</a>
+        </li>
+        {% endfor %}
+    </ul>
+</nav>

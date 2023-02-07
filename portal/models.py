@@ -12,7 +12,7 @@ from django.core.validators import MaxValueValidator, MinValueValidator
 from django.db import models
 from django.db.models import Q
 from django.db.models.functions import Lower
-from django.db.models.signals import post_save, pre_save, post_delete
+from django.db.models.signals import post_delete, post_save, pre_save
 from django.template.defaultfilters import slugify
 from django.urls import reverse
 from django.utils import formats, timezone
@@ -99,7 +99,7 @@ class Semester(TimestampedModel):
 
     @property
     def project_count(self):
-        return self.enrollments.distinct("project").order_by().count()
+        return self.enrollments.values("project").distinct().count()
 
     @property
     def is_active(self):
@@ -410,6 +410,11 @@ class User(AbstractUser, TimestampedModel):
 
         return True, None
 
+    def get_expected_meetings(self, semester=Semester):
+        # Determine what kinds of meetings this student is expected to attend
+        meeting_types = [Meeting.LARGE_GROUP, Meeting.SMALL_GROUP, Meeting.WORKSHOP]
+        return Meeting.objects.filter(type__in=meeting_types, semester=semester)
+
     def sync_discord(self, is_deleted=False):
         # Discord nickname and roles
         if self.discord_user_id:
@@ -475,8 +480,8 @@ def pre_save_user(instance, sender, *args, **kwargs):
             pass
 
 
-pre_save.connect(pre_save_user, sender=User)
-post_save.connect(sync_discord, sender=User)
+# pre_save.connect(pre_save_user, sender=User)
+# post_save.connect(sync_discord, sender=User)
 
 
 class ProjectTag(TimestampedModel):
@@ -497,6 +502,7 @@ class Project(TimestampedModel):
     )
     owner = models.ForeignKey(
         User,
+        blank=True,
         null=True,
         on_delete=models.SET_NULL,
         related_name="owned_projects",
@@ -517,7 +523,7 @@ class Project(TimestampedModel):
     )
 
     description = models.TextField(
-        max_length=10_000, help_text="A description of the project"
+        max_length=10_000, help_text="A description of the project", blank=True
     )
 
     external_chat_url = models.URLField(
@@ -556,7 +562,6 @@ class Project(TimestampedModel):
             )
 
     def sync_discord(self, is_deleted=False):
-        print("here")
         active_semester = Semester.get_active()
 
         if not active_semester:
@@ -705,15 +710,6 @@ class Project(TimestampedModel):
         #                 exc_info=e,
         #             )
 
-    def get_semester_count(self):
-        return (
-            Project.objects.filter(id=self.id, enrollments__semester__isnull=False)
-            .order_by("enrollments__semester")
-            .distinct("enrollments__semester")
-            .values("enrollments__semester_id")
-            .count()
-        )
-
     def get_active_semesters(self):
         return (
             Semester.objects.filter(enrollments__project=self.id)
@@ -741,7 +737,7 @@ class Project(TimestampedModel):
         indexes = [models.Index(fields=["name", "description"])]
 
 
-post_save.connect(sync_discord, sender=Project)
+# post_save.connect(sync_discord, sender=Project)
 
 
 class ProjectRepository(TimestampedModel):
@@ -994,7 +990,7 @@ class Enrollment(TimestampedModel):
         get_latest_by = ["semester"]
 
 
-post_save.connect(sync_discord, sender=Enrollment)
+# post_save.connect(sync_discord, sender=Enrollment)
 
 
 class PublicManager(models.Manager):
@@ -1045,6 +1041,11 @@ class Meeting(TimestampedModel):
     type = models.CharField(choices=TYPE_CHOICES, max_length=100)
     is_published = models.BooleanField(
         "published?", default=False, help_text="Whether the meeting is visible to users"
+    )
+    is_attendance_taken = models.BooleanField(
+        "attendance taken?",
+        default=True,
+        help_text="Whether attendance is taken at this meeting. If false, all expected users are counted as attended.",
     )
     starts_at = models.DateTimeField(help_text="When the meeting starts")
     ends_at = models.DateTimeField(help_text="When the meeting ends")
@@ -1234,8 +1235,8 @@ class Meeting(TimestampedModel):
         get_latest_by = ["starts_at"]
 
 
-post_save.connect(sync_discord, sender=Meeting)
-post_delete.connect(sync_discord_on_delete, sender=Meeting)
+# post_save.connect(sync_discord, sender=Meeting)
+# post_delete.connect(sync_discord_on_delete, sender=Meeting)
 
 
 class MeetingAttendance(TimestampedModel):

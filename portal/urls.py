@@ -1,6 +1,10 @@
 from django.urls import path
 
-from portal.views.admin import import_google_form_projects, import_submitty_enrollments
+from portal.views.admin import (
+    import_google_form_projects,
+    import_submitty_enrollments,
+    import_submitty_teams,
+)
 from portal.views.small_groups import SmallGroupDetailView, SmallGroupIndexView
 
 from .views.auth import (
@@ -20,6 +24,7 @@ from .views.meetings import (
     SubmitAttendanceFormView,
     manually_add_or_verify_attendance,
     meetings_api,
+    user_attendance,
 )
 from .views.projects import (
     ProjectAddPitch,
@@ -47,6 +52,7 @@ urlpatterns = [
     path("users/", UserIndexView.as_view(), name="users_index"),
     path("users/enroll/", enroll_user, name="users_enroll"),
     path("users/<int:pk>", UserDetailView.as_view(), name="users_detail"),
+    path("users/<int:pk>/attendance", user_attendance, name="user_attendance"),
     path(
         "projects/",
         ProjectIndexView.as_view(),
@@ -80,13 +86,18 @@ urlpatterns = [
         name="small_groups_detail",
     ),
     path(
-        "admin/import/submitty",
+        "admin/import/enrollments",
         import_submitty_enrollments,
-        name="admin_import_submitty",
+        name="import_enrollments",
+    ),
+    path(
+        "admin/import/teams",
+        import_submitty_teams,
+        name="import_teams",
     ),
     path(
         "admin/import/projects",
         import_google_form_projects,
-        name="admin_import_projects",
+        name="import_projects",
     ),
 ]

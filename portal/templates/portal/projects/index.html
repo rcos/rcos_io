@@ -25,6 +25,8 @@ Projects | RCOS IO
         </div>
 
         {% include "./filters.html" %}
+        {% include "portal/includes/pagination.html" %}
+
         <div class="table-container">
             <table class="table is-fullwidth is-striped is-hoverable">
                 <thead>
@@ -33,7 +35,7 @@ Projects | RCOS IO
                         <th>Tags</th>
                         {% if target_semester %}
                         <th>Lead</th>
-                        <!-- <th>Team Size</th> -->
+                        <th>Team Size</th>
                         <th>🔗</th>
                         {% else %}
                         <th>Owner</th>
@@ -78,7 +80,7 @@ Projects | RCOS IO
                             {% endfor %}
                             
                         </td>
-                        <!-- <td>{{ project_data.enrollments }}</td> -->
+                        <td>{{ project_data.enrollments }}</td>
                         <td>
                             {% if project_data.pitch %}
                             <a target="_blank" href="{{ project_data.pitch.url }}">Pitch</a>

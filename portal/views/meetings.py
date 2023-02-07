@@ -1,14 +1,14 @@
 import random
 import string
-from typing import Any, Dict
+from typing import Any, Dict, cast
 
 from django.contrib import messages
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth.mixins import LoginRequiredMixin, UserPassesTestMixin
 from django.core.cache import cache
 from django.db import IntegrityError
-from django.http import JsonResponse
-from django.shortcuts import redirect
+from django.http import HttpRequest, HttpResponseForbidden, JsonResponse
+from django.shortcuts import redirect, render
 from django.urls import reverse
 from django.utils import timezone
 from django.views.decorators.cache import cache_page
@@ -23,6 +23,7 @@ from ..models import (
     Meeting,
     MeetingAttendance,
     MeetingAttendanceCode,
+    Semester,
     SmallGroup,
     User,
 )
@@ -75,7 +76,7 @@ class MeetingIndexView(ListView):
             .select_related()[:10]
         )
 
-        queryset = {'ongoing': ongoing, 'upcoming': upcoming}
+        queryset = {"ongoing": ongoing, "upcoming": upcoming}
 
         return queryset
 
@@ -343,3 +344,76 @@ def manually_add_or_verify_attendance(request):
 
         return redirect(reverse("meetings_detail", args=(meeting.pk,)) + "#attendance")
     return redirect(reverse("meetings_index"))
+
+
+@login_required
+def user_attendance(request: HttpRequest, pk: Any):
+    target_user = cast(User, User.objects.get(pk=pk))
+
+    if not request.user.is_superuser and target_user != request.user:
+        return HttpResponseForbidden()
+
+    # Fetch the desired semester
+    try:
+        target_semester = Semester.objects.get(pk=request.GET["semester"])
+    except Semester.DoesNotExist:
+        messages.error(request, "No such semester found.")
+        return redirect(reverse("users_detail", args=(target_user.pk,)))
+
+    # Fetch target user's meeting attendance along with the meetings they *should* be attending
+    user_expected_meetings = target_user.get_expected_meetings(target_semester)
+    user_attendances = MeetingAttendance.objects.filter(
+        user=target_user, meeting__in=user_expected_meetings
+    )
+
+    # Counts
+    group_meetings_total = 0
+    group_meetings_attended = 0
+    workshops_total = 0
+    workshops_attended = 0
+
+    # Connect meetings with the user's attendances to display in a table
+    expected_meetings_rows = []
+    for meeting in user_expected_meetings:
+        meeting: Meeting
+        row = {
+            "meeting": meeting,
+            "attendance": next(
+                (ua for ua in user_attendances if ua.meeting_id == meeting.pk), None
+            ),
+        }
+
+        # Increment counts
+        if meeting.is_attendance_taken:
+            if (
+                meeting.type == Meeting.SMALL_GROUP
+                or meeting.type == Meeting.LARGE_GROUP
+            ):
+                group_meetings_total += 1
+            elif meeting.type == Meeting.WORKSHOP:
+                workshops_total += 1
+
+            if row["attendance"] and row["attendance"].is_verified:
+                if (
+                    meeting.type == Meeting.SMALL_GROUP
+                    or meeting.type == Meeting.LARGE_GROUP
+                ):
+                    group_meetings_attended += 1
+                elif meeting.type == Meeting.WORKSHOP:
+                    workshops_attended += 1
+
+        expected_meetings_rows.append(row)
+
+    return render(
+        request,
+        "portal/meetings/attendance/index.html",
+        {
+            "target_user": target_user,
+            "target_semester": target_semester,
+            "expected_meetings_rows": expected_meetings_rows,
+            "group_meetings_total": group_meetings_total,
+            "group_meetings_attended": group_meetings_attended,
+            "workshops_total": workshops_total,
+            "workshops_attended": workshops_attended,
+        },
+    )
