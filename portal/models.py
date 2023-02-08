@@ -1366,8 +1366,8 @@ class MeetingAttendanceCode(TimestampedModel):
     small_group = models.ForeignKey(
         SmallGroup,
         on_delete=models.CASCADE,
-        null=True,
         blank=True,
+        null=True,
         related_name="attendance_codes",
     )
 
@@ -1376,15 +1376,19 @@ class MeetingAttendanceCode(TimestampedModel):
         return self.meeting.is_ongoing
 
     def __str__(self) -> str:
-        return self.code
+        return self.code or "Unknown Attendance Code"
 
     class Meta:
         indexes = [
             models.Index(fields=["code"]),
+            models.Index(fields=["meeting"]),
+            models.Index(fields=["meeting", "small_group"]),
         ]
         constraints = [
+            # Don't allow multiple attendance codes for the same meeting and small group
+            # Unfortunately, this doesn't prevent duplicate attendance codes for null small group and same meeting
             models.UniqueConstraint(
-                fields=["code", "meeting", "small_group"],
+                fields=["meeting", "small_group"],
                 name="unique_meeting_attendance_small_group_code",
             )
         ]
