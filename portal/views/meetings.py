@@ -199,7 +199,7 @@ class MeetingDetailView(DetailView):
                     code = self.object.attendance_codes.filter(**query).order_by("code").first()
                 return code
 
-            if self.object.is_ongoing or True:
+            if self.object.is_ongoing:
                 code = cache.get_or_set(f"attendance_codes:{self.object.pk}:{small_group.pk if small_group else 'none'}", default=get_or_create_attendance_code, timeout=60*30)
             else:
                 code = None
