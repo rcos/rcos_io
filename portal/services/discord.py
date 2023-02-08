@@ -135,8 +135,6 @@ def upsert_server_member(
 
     if nickname is not None:
         data["nick"] = nickname
-    if roles is not None:
-        data["roles"] = roles
 
     response = requests.put(
         f"{DISCORD_API_ENDPOINT}/guilds/{settings.DISCORD_SERVER_ID}/members/{user_id}",
@@ -148,20 +146,19 @@ def upsert_server_member(
     response.raise_for_status()
 
     joined_server = response.status_code == 201
-    updated_member = joined_server
 
-    # If the member was already in the guild, need to update them
-    if response.status_code == 204 and (nickname is not None or roles is not None):
-        del data["access_token"]
-        response = requests.patch(
-            f"{DISCORD_API_ENDPOINT}/guilds/{settings.DISCORD_SERVER_ID}/members/{user_id}",
-            json=data,
+    # Add roles
+    for role in roles if roles else []:
+        response = requests.put(
+            f"{DISCORD_API_ENDPOINT}/guilds/{settings.DISCORD_SERVER_ID}/members/{user_id}/roles/{role}",
+            json={
+                "roles": roles
+            },
             headers=HEADERS,
             timeout=3,
         )
-        updated_member = response.status_code == 200
 
-    return joined_server, updated_member
+    return joined_server
 
 
 def get_user(user_id: str) -> Union[DiscordUser, None]:
