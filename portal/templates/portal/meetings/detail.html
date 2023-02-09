@@ -276,6 +276,10 @@
                     </ul>
                 </div>
             </div>
+
+            {% if meeting.is_over and small_group_attendance_ratios %}
+            {% include "./_attendance_charts.html" %}
+            {% endif %}
         </div>
     </section>
     {% elif active_enrollment.is_mentor %}

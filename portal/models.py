@@ -1151,7 +1151,7 @@ class Meeting(TimestampedModel):
             expected_users =  User.rpi.filter(enrollments__semester=self.semester_id)
         return expected_users
 
-    def get_attendance_data(self, small_group: Optional["SmallGroup"]):
+    def get_attendance_data(self, small_group: Optional["SmallGroup"] = None):
         expected_users =  self.expected_attendance_users
 
         query = {
@@ -1186,6 +1186,14 @@ class Meeting(TimestampedModel):
             "non_attended_users": non_attended_users,
             "attendance_ratio": len(attended_users) / expected_users.count() if expected_users.count() > 0 else 0
         }
+
+    def get_small_group_attendance_ratios(self):
+        small_groups = {}
+        for small_group in SmallGroup.objects.filter(semester_id=self.semester_id):
+            attendance_data = self.get_attendance_data(small_group)
+            small_groups[small_group.name] = attendance_data["attendance_ratio"]
+
+        return small_groups
 
     @property
     def attended_users(self):

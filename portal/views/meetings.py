@@ -180,6 +180,9 @@ class MeetingDetailView(DetailView):
 
             data["code"] = code
 
+            if self.request.user.is_superuser:
+                data["small_group_attendance_ratios"] = cache.get_or_set(f"small_group_attendance_ratios:{self.object.pk}", self.object.get_small_group_attendance_ratios, 60 * 30)
+
             data = {
                 **data,
                 **self.object.get_attendance_data(small_group),

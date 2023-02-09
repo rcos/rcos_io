@@ -1,0 +1,33 @@
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+<div>
+    <canvas id="myChart"></canvas>
+</div>
+
+{{ small_group_attendance_ratios|json_script:"small_group_attendance_ratios" }}
+
+<script>
+    const ctx = document.getElementById('myChart');
+    const value = JSON.parse(document.getElementById('small_group_attendance_ratios').textContent);
+
+    new Chart(ctx, {
+        type: 'bar',
+        data: {
+            labels: Object.keys(value),
+            datasets: [{
+                backgroundColor: 'rgba(218, 41, 28, 0.6)',
+                label: '% attended',
+                data: Object.values(value).map(v => Math.round(v * 100)),
+                borderWidth: 1
+            }]
+        },
+        options: {
+            scales: {
+                y: {
+                    beginAtZero: true
+                },
+            },
+            indexAxis: 'y',
+        }
+    });
+</script>
