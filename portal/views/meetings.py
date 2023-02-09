@@ -140,43 +140,17 @@ class MeetingDetailView(DetailView):
         if can_manage_attendance:
             data["can_manage_attendance"] = True
 
-            expected_users = self.object.expected_attendance_users
-            attended_users = self.object.attended_users
-
-            non_attended_users = expected_users.exclude(
-                pk__in=attended_users.values_list("pk", flat=True)
-            )
-            needs_verification_users = self.object.attendances.filter(
-                meetingattendance__is_verified=False
-            )
+            if self.request.user.is_superuser:
+                data["small_groups"] = SmallGroup.objects.all()
+            else:
+                data["small_groups"] = self.request.user.mentored_small_groups.filter(semester_id=self.object.semester_id)
 
             small_group_pk = self.request.GET.get("small_group")
             small_group = None
             if small_group_pk:
                 small_group = SmallGroup.objects.get(pk=small_group_pk)
-                small_group_user_ids = small_group.get_users().values_list(
-                    "pk", flat=True
-                )
-                expected_users = expected_users.filter(pk__in=small_group_user_ids)
-                attended_users = attended_users.filter(pk__in=small_group_user_ids)
-                non_attended_users = non_attended_users.filter(
-                    pk__in=small_group_user_ids
-                )
-                needs_verification_users = needs_verification_users.filter(
-                    pk__in=small_group_user_ids
-                )
-
-            data["target_small_group"] = small_group
-            data["attended_users"] = attended_users
-            data["non_attended_users"] = non_attended_users
-            data["needs_verification_users"] = needs_verification_users
-            data["expected_users"] = expected_users
-            data["attendance_ratio"] = (
-                attended_users.count() / expected_users.count()
-                if expected_users.count() > 0
-                else 0
-            )
-
+                data["target_small_group"] = small_group
+            
             query = {
                 
             }
@@ -205,6 +179,11 @@ class MeetingDetailView(DetailView):
                 code = None
 
             data["code"] = code
+
+            data = {
+                **data,
+                **self.object.get_attendance_data(small_group),
+            }
 
         return data
 
@@ -253,7 +232,7 @@ class SubmitAttendanceFormView(LoginRequiredMixin, UserRequiresSetupMixin, FormV
             ):
                 messages.warning(
                     self.request,
-                    "That is not your Small Group's attendance code... Nice try.",
+                    "That is not your Small Group's attendance code... Nice try. If we're wrong about this, let your Mentor know immediately!",
                 )
                 capture_message(f"User {self.request.user} submitted attendance code {meeting_attendance_code} for meeting {meeting_attendance_code.meeting} from wrong Small Group")
                 return redirect(reverse("submit_attendance"))

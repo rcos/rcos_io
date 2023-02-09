@@ -162,8 +162,8 @@
             <div class="tabs">
                 <ul>
                     <li class="{% if not target_small_group %}is-active{% endif %}"><a href="?small_group=#attendance-hero">All Students</a></li>
-                    {% for small_group in meeting.semester.small_groups.all %}
-                    <li class="{% if target_small_group == small_group %}is-active{% endif %}"><a href="?small_group={{ small_group.pk }}#attendance-hero">{{ small_group }}</a></li>
+                    {% for small_group in small_groups %}
+                    <li class="{% if target_small_group.pk == small_group.pk %}is-active{% endif %}"><a href="?small_group={{ small_group.pk }}#attendance-hero">{{ small_group }}</a></li>
                     {% endfor %}
                 </ul>
             </div>
