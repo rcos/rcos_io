@@ -5,7 +5,6 @@
 ### Requirements
 
 - Python 3.11+
-- a Postgres database
 
 ### Setup
 
@@ -17,7 +16,7 @@
     - see `.env.example` for the expected variables
 6. Setup database `./manage.py migrate`
 7. Create a superuser for testing `./manage.py createsuperuser`
-8. ~~Load test data (optional) `./manage.py loaddata full`~~ coming soon
+8. Ask existing maintainers for data JSON file
 
 
 ### Running

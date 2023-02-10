@@ -70,6 +70,7 @@ class Semester(TimestampedModel):
         null=True,
     )
     project_pitch_deadline = models.DateTimeField(
+        help_text="The last date users can pitch a project"
         blank=True,
         null=True,
     )
