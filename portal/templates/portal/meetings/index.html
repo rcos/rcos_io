@@ -142,7 +142,7 @@ Meetings | RCOS IO
                 {% endfor %}
                 
                 {% if request.user.is_authenticated and request.user.is_rpi %}
-                <a href="{% url 'user_attendance' request.user.pk %}{% active_semester_query %}" class="button">Your Attendance</a>
+                <a href="{% url 'user_attendance' request.user.pk %}{% active_semester_query %}" class="button mt-3">Your Attendance</a>
                 {% endif %}
             </div>
             <div class="column">
