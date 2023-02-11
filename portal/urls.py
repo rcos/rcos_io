@@ -37,7 +37,6 @@ from .views.users import UserDetailView, UserIndexView, enroll_user
 urlpatterns = [
     path("", IndexView.as_view(), name="index"),
     path("handbook", HandbookView.as_view(), name="handbook"),
-
     # Auth Routes
     path("profile", profile, name="profile"),
     path("auth/impersonate", impersonate, name="impersonate"),
@@ -51,13 +50,11 @@ urlpatterns = [
     path("auth/github", start_github_flow, name="github_flow"),
     path("auth/github/callback", github_flow_callback, name="link_github_callback"),
     path("auth/github/unlink", unlink_github, name="unlink_github"),
-    
     # User Routes
     path("users/", UserIndexView.as_view(), name="users_index"),
     path("users/enroll/", enroll_user, name="users_enroll"),
     path("users/<int:pk>", UserDetailView.as_view(), name="users_detail"),
     path("users/<int:pk>/attendance", user_attendance, name="user_attendance"),
-    
     # Project Routes
     path(
         "projects/",
@@ -72,7 +69,6 @@ urlpatterns = [
         ProjectAddPitch.as_view(),
         name="projects_add_pitch",
     ),
-
     # Meeting Routes
     path("meetings/", MeetingIndexView.as_view(), name="meetings_index"),
     path("attend", SubmitAttendanceFormView.as_view(), name="submit_attendance"),
@@ -83,7 +79,6 @@ urlpatterns = [
     ),
     path("meetings/<int:pk>", MeetingDetailView.as_view(), name="meetings_detail"),
     path("api/meetings", meetings_api, name="meetings_api"),
-    
     # Small Group Routes
     path(
         "small_groups/",
@@ -95,7 +90,6 @@ urlpatterns = [
         SmallGroupDetailView.as_view(),
         name="small_groups_detail",
     ),
-
     # Admin Routes
     path(
         "admin/import/enrollments",

@@ -1,13 +1,14 @@
+import logging
 import random
 import string
 from typing import Any, Dict, Optional, cast
-import logging
 
 from django.contrib import messages
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth.mixins import LoginRequiredMixin, UserPassesTestMixin
 from django.core.cache import cache
 from django.db import IntegrityError
+from django.db.models import Q
 from django.http import HttpRequest, HttpResponseForbidden, JsonResponse
 from django.shortcuts import redirect, render
 from django.urls import reverse
@@ -15,11 +16,10 @@ from django.utils import timezone
 from django.views.decorators.cache import cache_page
 from django.views.generic import DetailView, ListView
 from django.views.generic.edit import FormView
-from django.db.models import Q
+from sentry_sdk import capture_exception, capture_message
 
 from portal.forms import SubmitAttendanceForm
 from portal.views import UserRequiresSetupMixin
-from sentry_sdk import capture_exception, capture_message
 
 from ..models import (
     Enrollment,
@@ -32,6 +32,7 @@ from ..models import (
 )
 
 logger = logging.getLogger(__name__)
+
 
 def generate_code(code_length: int = 5):
     """
@@ -135,7 +136,11 @@ class MeetingDetailView(DetailView):
 
         data["can_manage_attendance"] = False
 
-        can_manage_attendance = cache.get_or_set(f"can_manage_attendance:{self.object.pk}:{self.request.user.pk}", default=self.can_manage_attendance, timeout=60 * 60 * 24)
+        can_manage_attendance = cache.get_or_set(
+            f"can_manage_attendance:{self.object.pk}:{self.request.user.pk}",
+            default=self.can_manage_attendance,
+            timeout=60 * 60 * 24,
+        )
 
         if can_manage_attendance:
             data["can_manage_attendance"] = True
@@ -143,22 +148,21 @@ class MeetingDetailView(DetailView):
             if self.request.user.is_superuser:
                 data["small_groups"] = SmallGroup.objects.all()
             else:
-                data["small_groups"] = self.request.user.mentored_small_groups.filter(semester_id=self.object.semester_id)
+                data["small_groups"] = self.request.user.mentored_small_groups.filter(
+                    semester_id=self.object.semester_id
+                )
 
             small_group_pk = self.request.GET.get("small_group")
             small_group = None
             if small_group_pk:
                 small_group = SmallGroup.objects.get(pk=small_group_pk)
                 data["target_small_group"] = small_group
-            
-            query = {
-                
-            }
+
+            query = {}
             if small_group:
                 query["small_group"] = small_group
             else:
                 query["small_group__isnull"] = True
-
 
             def get_or_create_attendance_code():
                 try:
@@ -167,21 +171,35 @@ class MeetingDetailView(DetailView):
                         defaults={"code": generate_code(), "small_group": small_group},
                     )
                 except MeetingAttendanceCode.MultipleObjectsReturned as err:
-                    logger.warning(f"Two or more global attendance codes found for meeting {self.object.pk}")
+                    logger.warning(
+                        f"Two or more global attendance codes found for meeting {self.object.pk}"
+                    )
                     capture_exception(err)
 
-                    code = self.object.attendance_codes.filter(**query).order_by("code").first()
+                    code = (
+                        self.object.attendance_codes.filter(**query)
+                        .order_by("code")
+                        .first()
+                    )
                 return code
 
             if self.object.is_ongoing:
-                code = cache.get_or_set(f"attendance_codes:{self.object.pk}:{small_group.pk if small_group else 'none'}", default=get_or_create_attendance_code, timeout=60*30)
+                code = cache.get_or_set(
+                    f"attendance_codes:{self.object.pk}:{small_group.pk if small_group else 'none'}",
+                    default=get_or_create_attendance_code,
+                    timeout=60 * 30,
+                )
             else:
                 code = None
 
             data["code"] = code
 
             if self.request.user.is_superuser:
-                data["small_group_attendance_ratios"] = cache.get_or_set(f"small_group_attendance_ratios:{self.object.pk}", self.object.get_small_group_attendance_ratios, 60 * 30)
+                data["small_group_attendance_ratios"] = cache.get_or_set(
+                    f"small_group_attendance_ratios:{self.object.pk}",
+                    self.object.get_small_group_attendance_ratios,
+                    60 * 30,
+                )
 
             data = {
                 **data,
@@ -237,7 +255,9 @@ class SubmitAttendanceFormView(LoginRequiredMixin, UserRequiresSetupMixin, FormV
                     self.request,
                     "That is not your Small Group's attendance code... Nice try. If we're wrong about this, let your Mentor know immediately!",
                 )
-                capture_message(f"User {self.request.user} submitted attendance code {meeting_attendance_code} for meeting {meeting_attendance_code.meeting} from wrong Small Group")
+                capture_message(
+                    f"User {self.request.user} submitted attendance code {meeting_attendance_code} for meeting {meeting_attendance_code.meeting} from wrong Small Group"
+                )
                 return redirect(reverse("submit_attendance"))
 
             new_attendance = MeetingAttendance(
@@ -279,6 +299,7 @@ class SubmitAttendanceFormView(LoginRequiredMixin, UserRequiresSetupMixin, FormV
 def manually_add_or_verify_attendance(request):
     if request.method == "POST":
         meeting: Meeting = Meeting.objects.get(pk=request.POST["meeting"])
+        small_group_id = request.POST.get("small_group", None)
 
         user_id = request.POST.get("user", "").strip()
         rcs_id = request.POST.get("rcs_id", "").strip()
@@ -343,7 +364,11 @@ def manually_add_or_verify_attendance(request):
             attendance.save()
             messages.success(request, f"Added attendance for {user}!")
 
-        return redirect(reverse("meetings_detail", args=(meeting.pk,)) + "#attendance")
+        return redirect(
+            reverse("meetings_detail", args=(meeting.pk,))
+            + ("?small_group=" + small_group_id if small_group_id else "")
+            + "#attendance"
+        )
     return redirect(reverse("meetings_index"))
 
 
