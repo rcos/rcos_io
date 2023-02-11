@@ -218,6 +218,9 @@
             <form action="{% url 'verify_attendance' %}" method="post" class="block">
                 {% csrf_token %}
                 <input type="hidden" name="meeting" value="{{ meeting.pk }}">
+                {% if target_small_group %}
+                <input type="hidden" name="small_group" value="{{ target_small_group.pk }}">
+                {% endif %}
                 <div class="field has-addons">
                     <div class="control">
                         <input type="text" list="rcs_ids" name="rcs_id" class="input" placeholder="Student RCS ID" required>
@@ -256,6 +259,9 @@
                                 {% csrf_token %}
                                 <a href="{{ user.get_absolute_url }}?semester={{ meeting.semester.pk }}">{{ user }}</a>
                                 <input type="hidden" name="user" value="{{ user.pk }}">
+                                {% if target_small_group %}
+                                <input type="hidden" name="small_group" value="{{ target_small_group.pk }}">
+                                {% endif %}
                                 <input type="hidden" name="meeting" value="{{ meeting.pk }}">
                                 <button class="button is-small">Verify</button>
                             </form>

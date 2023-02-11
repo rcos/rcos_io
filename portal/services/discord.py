@@ -151,9 +151,7 @@ def upsert_server_member(
     for role in roles if roles else []:
         response = requests.put(
             f"{DISCORD_API_ENDPOINT}/guilds/{settings.DISCORD_SERVER_ID}/members/{user_id}/roles/{role}",
-            json={
-                "roles": roles
-            },
+            json={"roles": roles},
             headers=HEADERS,
             timeout=3,
         )
