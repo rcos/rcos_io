@@ -148,7 +148,7 @@
 </section>
 
 {% if can_manage_attendance %}
-    <section class="hero is-light">
+    <section class="hero is-light" id="attendance-hero">
         <div class="hero-body">
             <div class="container">
                 <h1 class="title">Attendance</h1>
@@ -161,9 +161,9 @@
 
             <div class="tabs">
                 <ul>
-                    <li class="{% if not target_small_group %}is-active{% endif %}"><a href="?small_group=">All Students</a></li>
-                    {% for small_group in meeting.semester.small_groups.all %}
-                    <li class="{% if target_small_group == small_group %}is-active{% endif %}"><a href="?small_group={{ small_group.pk }}">{{ small_group }}</a></li>
+                    <li class="{% if not target_small_group %}is-active{% endif %}"><a href="?small_group=#attendance-hero">All Students</a></li>
+                    {% for small_group in small_groups %}
+                    <li class="{% if target_small_group.pk == small_group.pk %}is-active{% endif %}"><a href="?small_group={{ small_group.pk }}#attendance-hero">{{ small_group }}</a></li>
                     {% endfor %}
                 </ul>
             </div>
@@ -276,6 +276,10 @@
                     </ul>
                 </div>
             </div>
+
+            {% if meeting.is_over and small_group_attendance_ratios %}
+            {% include "./_attendance_charts.html" %}
+            {% endif %}
         </div>
     </section>
     {% elif active_enrollment.is_mentor %}

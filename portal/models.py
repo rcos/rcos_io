@@ -2,7 +2,7 @@ import logging
 import re
 from decimal import Decimal
 from time import sleep
-from typing import Optional, Tuple, cast
+from typing import Optional, Tuple, TypedDict, cast
 
 from django.conf import settings
 from django.contrib.auth.models import AbstractUser, BaseUserManager
@@ -70,6 +70,7 @@ class Semester(TimestampedModel):
         null=True,
     )
     project_pitch_deadline = models.DateTimeField(
+        help_text="The last date users can pitch a project",
         blank=True,
         null=True,
     )
@@ -1134,8 +1135,9 @@ class Meeting(TimestampedModel):
 
     @property
     def expected_attendance_users(self):
+         # Get expected users based on meeting type and desired small group
         if self.type == Meeting.COORDINATOR:
-            return User.rpi.filter(
+            expected_users = User.rpi.filter(
                 Q(enrollments__semester=self.semester_id)
                 & (
                     Q(enrollments__is_coordinator=True)
@@ -1143,11 +1145,56 @@ class Meeting(TimestampedModel):
                 )
             )
         elif self.type == Meeting.MENTOR:
-            return User.rpi.filter(
+            expected_users =  User.rpi.filter(
                 enrollments__semester=self.semester_id, enrollments__is_mentor=True
             )
         else:
-            return User.rpi.filter(enrollments__semester=self.semester_id)
+            expected_users =  User.rpi.filter(enrollments__semester=self.semester_id)
+        return expected_users
+
+    def get_attendance_data(self, small_group: Optional["SmallGroup"] = None):
+        expected_users =  self.expected_attendance_users
+
+        query = {
+            "meeting": self
+        }
+
+        if small_group:
+            small_group_user_ids = small_group.get_users().values_list(
+                "pk", flat=True
+            ) if small_group else None
+            expected_users = expected_users.filter(pk__in=small_group_user_ids)
+            query["user__in"] = small_group_user_ids
+
+        attendances = MeetingAttendance.objects.filter(**query).select_related("user")
+
+        needs_verification_users = []
+        attended_users = []
+        for attendance in attendances:
+            attendance: MeetingAttendance 
+            if attendance.is_verified:
+                attended_users.append(attendance.user)
+            else:
+                needs_verification_users.append(attendance.user)
+
+        attendance_submitted_users = attended_users + needs_verification_users
+        non_attended_users = expected_users.exclude(pk__in=[u.pk for u in attendance_submitted_users])
+
+        return {
+            "expected_users": expected_users,
+            "needs_verification_users": needs_verification_users,
+            "attended_users": attended_users,
+            "non_attended_users": non_attended_users,
+            "attendance_ratio": len(attended_users) / expected_users.count() if expected_users.count() > 0 else 0
+        }
+
+    def get_small_group_attendance_ratios(self):
+        small_groups = {}
+        for small_group in SmallGroup.objects.filter(semester_id=self.semester_id):
+            attendance_data = self.get_attendance_data(small_group)
+            small_groups[small_group.name] = attendance_data["attendance_ratio"]
+
+        return small_groups
 
     @property
     def attended_users(self):
@@ -1366,8 +1413,8 @@ class MeetingAttendanceCode(TimestampedModel):
     small_group = models.ForeignKey(
         SmallGroup,
         on_delete=models.CASCADE,
-        null=True,
         blank=True,
+        null=True,
         related_name="attendance_codes",
     )
 
@@ -1376,15 +1423,19 @@ class MeetingAttendanceCode(TimestampedModel):
         return self.meeting.is_ongoing
 
     def __str__(self) -> str:
-        return self.code
+        return self.code or "Unknown Attendance Code"
 
     class Meta:
         indexes = [
             models.Index(fields=["code"]),
+            models.Index(fields=["meeting"]),
+            models.Index(fields=["meeting", "small_group"]),
         ]
         constraints = [
+            # Don't allow multiple attendance codes for the same meeting and small group
+            # Unfortunately, this doesn't prevent duplicate attendance codes for null small group and same meeting
             models.UniqueConstraint(
-                fields=["code", "meeting", "small_group"],
+                fields=["meeting", "small_group"],
                 name="unique_meeting_attendance_small_group_code",
             )
         ]

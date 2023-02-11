@@ -66,7 +66,7 @@ def unlink_discord(request):
 def discord_flow_callback(request):
     code = request.GET.get("code")
     if not code:
-        raise BadRequest
+        raise BadRequest("Denied Discord consent.")
 
     try:
         discord_user_tokens = discord.get_tokens(code)
@@ -95,7 +95,7 @@ def discord_flow_callback(request):
             return redirect(reverse("profile"))
 
         try:
-            joined_server, updated_member = discord.upsert_server_member(
+            joined_server = discord.upsert_server_member(
                 discord_access_token,
                 discord_user_info["id"],
                 request.user.display_name,
@@ -107,18 +107,7 @@ def discord_flow_callback(request):
             if joined_server:
                 # If the user was added to the server
                 messages.success(request, "Added you to the RCOS Discord server!")
-            else:
-                # If the user was already in the server (since failure to join raises error)
-                if updated_member:
-                    messages.success(
-                        request,
-                        "Successfully updated your name and roles in the Discord server!",
-                    )
-                else:
-                    messages.warning(
-                        request,
-                        "Failed to update your name and roles in the Discord server...",
-                    )
+            
         except HTTPError as e:
             capture_exception(e)
             messages.warning(request, "Failed to add you to the RCOS Discord server...")

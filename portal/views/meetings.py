@@ -1,6 +1,7 @@
 import random
 import string
-from typing import Any, Dict, cast
+from typing import Any, Dict, Optional, cast
+import logging
 
 from django.contrib import messages
 from django.contrib.auth.decorators import login_required
@@ -14,9 +15,11 @@ from django.utils import timezone
 from django.views.decorators.cache import cache_page
 from django.views.generic import DetailView, ListView
 from django.views.generic.edit import FormView
+from django.db.models import Q
 
 from portal.forms import SubmitAttendanceForm
 from portal.views import UserRequiresSetupMixin
+from sentry_sdk import capture_exception, capture_message
 
 from ..models import (
     Enrollment,
@@ -28,6 +31,7 @@ from ..models import (
     User,
 )
 
+logger = logging.getLogger(__name__)
 
 def generate_code(code_length: int = 5):
     """
@@ -83,20 +87,21 @@ class MeetingIndexView(ListView):
 
 class MeetingDetailView(DetailView):
     object: Meeting
+    small_group: Optional[SmallGroup]
     template_name = "portal/meetings/detail.html"
     model = Meeting
     context_object_name = "meeting"
 
     def can_manage_attendance(self):
         if not self.request.user.is_authenticated:
-            return None, False
+            return False
 
         active_enrollment = self.request.user.enrollments.filter(
             semester_id=self.object.semester_id
         ).first()
 
         if self.request.user.is_superuser:
-            return active_enrollment, True
+            return True
 
         # Mentors can manage general meeting attendance except mentor and coordinator meetings
         if (
@@ -104,13 +109,13 @@ class MeetingDetailView(DetailView):
             and active_enrollment.is_mentor
             and self.object.type not in (Meeting.MENTOR, Meeting.COORDINATOR)
         ):
-            return active_enrollment, True
+            return True
 
         # Meeting hosts also can manage attendance
         if self.object.host == self.request.user:
-            return active_enrollment, True
+            return True
 
-        return active_enrollment, False
+        return False
 
     def get_context_data(self, **kwargs):
         data = super().get_context_data(**kwargs)
@@ -129,64 +134,59 @@ class MeetingDetailView(DetailView):
             data["submit_attendance_form"] = None
 
         data["can_manage_attendance"] = False
-        active_enrollment, can_manage_attendance = self.can_manage_attendance()
-        data["active_enrollment"] = active_enrollment
+
+        can_manage_attendance = cache.get_or_set(f"can_manage_attendance:{self.object.pk}:{self.request.user.pk}", default=self.can_manage_attendance, timeout=60 * 60 * 24)
+
         if can_manage_attendance:
             data["can_manage_attendance"] = True
 
-            expected_users = self.object.expected_attendance_users
-            attended_users = self.object.attended_users
-
-            non_attended_users = expected_users.exclude(
-                pk__in=attended_users.values_list("pk", flat=True)
-            )
-            needs_verification_users = self.object.attendances.filter(
-                meetingattendance__is_verified=False
-            )
+            if self.request.user.is_superuser:
+                data["small_groups"] = SmallGroup.objects.all()
+            else:
+                data["small_groups"] = self.request.user.mentored_small_groups.filter(semester_id=self.object.semester_id)
 
             small_group_pk = self.request.GET.get("small_group")
             small_group = None
             if small_group_pk:
                 small_group = SmallGroup.objects.get(pk=small_group_pk)
-                small_group_user_ids = small_group.get_users().values_list(
-                    "pk", flat=True
-                )
-                attended_users = attended_users.filter(pk__in=small_group_user_ids)
-                non_attended_users = non_attended_users.filter(
-                    pk__in=small_group_user_ids
-                )
-                needs_verification_users = needs_verification_users.filter(
-                    pk__in=small_group_user_ids
-                )
-
-            data["target_small_group"] = small_group
-            data["attended_users"] = attended_users
-            data["non_attended_users"] = non_attended_users
-            data["needs_verification_users"] = needs_verification_users
-            data["expected_users"] = expected_users
-            data["attendance_ratio"] = (
-                attended_users.count() / expected_users.count()
-                if expected_users.count() > 0
-                else 0
-            )
-
+                data["target_small_group"] = small_group
+            
             query = {
-                "meeting": self.object,
+                
             }
             if small_group:
                 query["small_group"] = small_group
             else:
                 query["small_group__isnull"] = True
 
+
+            def get_or_create_attendance_code():
+                try:
+                    code, is_code_new = self.object.attendance_codes.get_or_create(
+                        **query,
+                        defaults={"code": generate_code(), "small_group": small_group},
+                    )
+                except MeetingAttendanceCode.MultipleObjectsReturned as err:
+                    logger.warning(f"Two or more global attendance codes found for meeting {self.object.pk}")
+                    capture_exception(err)
+
+                    code = self.object.attendance_codes.filter(**query).order_by("code").first()
+                return code
+
             if self.object.is_ongoing:
-                code, is_code_new = self.object.attendance_codes.get_or_create(
-                    **query,
-                    defaults={"code": generate_code(), "small_group": small_group},
-                )
+                code = cache.get_or_set(f"attendance_codes:{self.object.pk}:{small_group.pk if small_group else 'none'}", default=get_or_create_attendance_code, timeout=60*30)
             else:
                 code = None
 
             data["code"] = code
+
+            if self.request.user.is_superuser:
+                data["small_group_attendance_ratios"] = cache.get_or_set(f"small_group_attendance_ratios:{self.object.pk}", self.object.get_small_group_attendance_ratios, 60 * 30)
+
+            data = {
+                **data,
+                **self.object.get_attendance_data(small_group),
+            }
 
         return data
 
@@ -235,8 +235,9 @@ class SubmitAttendanceFormView(LoginRequiredMixin, UserRequiresSetupMixin, FormV
             ):
                 messages.warning(
                     self.request,
-                    "That is not your Small Group's attendance code... Nice try.",
+                    "That is not your Small Group's attendance code... Nice try. If we're wrong about this, let your Mentor know immediately!",
                 )
+                capture_message(f"User {self.request.user} submitted attendance code {meeting_attendance_code} for meeting {meeting_attendance_code.meeting} from wrong Small Group")
                 return redirect(reverse("submit_attendance"))
 
             new_attendance = MeetingAttendance(
