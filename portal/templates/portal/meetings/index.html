@@ -167,7 +167,7 @@ Meetings | RCOS IO
     document.addEventListener("DOMContentLoaded", function () {
         var calendarEl = document.getElementById("calendar");
         var calendar = new FullCalendar.Calendar(calendarEl, {
-            initialView: "dayGridMonth",
+            initialView: "listMonth",
             events: "/api/meetings"
         });
         calendar.render();
