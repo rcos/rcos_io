@@ -53,10 +53,11 @@
     integrity="sha256-wKSlmJX2aO3MGLwAyZeYmYpSBBI42kGszk55a52vKqs=" crossorigin="anonymous"></script>
 
 <script>
+    const calendarEl = document.getElementById("calendar");
+    let calendar;
     document.addEventListener("DOMContentLoaded", function () {
-        var calendarEl = document.getElementById("calendar");
-        var calendar = new FullCalendar.Calendar(calendarEl, {
-            initialView: "dayGridMonth",
+        calendar = new FullCalendar.Calendar(calendarEl, {
+            initialView: "listMonth",
             events: "/api/meetings"
         });
         calendar.render();
