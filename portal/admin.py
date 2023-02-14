@@ -243,7 +243,7 @@ class MeetingAdmin(admin.ModelAdmin):
     list_display = ("display_name", "type", "starts_at", "is_published")
     search_fields = ("name", "type")
     list_filter = ("starts_at", "type", "is_published")
-    inlines = (MeetingAttendanceCodeInline, MeetingAttendanceInline)
+    # inlines = (MeetingAttendanceCodeInline, MeetingAttendanceInline)
     actions = (make_published,)
 
 
@@ -254,12 +254,12 @@ class SmallGroupAdmin(admin.ModelAdmin):
     list_filter = ("semester",)
 
 
-@admin.register(StatusUpdate)
-class StatusUpdateAdmin(admin.ModelAdmin):
-    list_display = ("display_name", "semester", "opens_at", "closes_at")
-    search_fields = ("name", "location")
-    list_filter = ("semester", "opens_at")
-    inlines = (StatusUpdateSubmissionInline,)
+# @admin.register(StatusUpdate)
+# class StatusUpdateAdmin(admin.ModelAdmin):
+#     list_display = ("display_name", "semester", "opens_at", "closes_at")
+#     search_fields = ("name", "location")
+#     list_filter = ("semester", "opens_at")
+#     inlines = (StatusUpdateSubmissionInline,)
 
 
 @admin.register(ProjectTag)
