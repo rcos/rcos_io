@@ -120,7 +120,7 @@
             <form action="{% url 'impersonate' %}" method="post">
                 {% csrf_token %}
                 <input type="hidden" name="email" value="{{ user.email }}">
-                <button class="button is-warning">Impersonate</button>
+                <button class="button is-warning">Login as User</button>
             </form>
         </div>
         {% endif %}
