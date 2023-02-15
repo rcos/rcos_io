@@ -29,13 +29,34 @@
                             {% if enrollment %}
                             <h2 class="title is-2">Welcome to RCOS IO!</h2>
                             <div class="content block">
-                                <p>
-                                    This site is under (very) active development. You might find bugs or performance issues. When you do, please open <a href="https://github.com/rcos/rcos_io/issues/new" target="_blank">issues</a> on the repository!
-                                </p>
 
-                                <p>The data in this site is incomplete, so don't worry if it doesn't list your project or doesn't say that you're on a project. For Spring 2023, it's main usage will be attendance taking. We will join the attendance data with Submitty data at the end of the year for grading.</p>
+                                <form action="{% url 'users_enroll' request.user.pk %}" method="post">
+                                    {% csrf_token %}
+                                    <input type="hidden" name="semester" value="{{ active_semester.pk }}">
 
-                                <p>Feel free to discuss the site on Discord in <a href="https://discord.com/channels/738593165438746634/1062827617599901757">#rcos-io</a>.</p>
+                                    <div class="field">
+                                        <label class="label" for="project">Project</label>
+                                        <div class="select">
+                                            <select name="project" id="project">
+                                                <option value="">No project</option>
+                                                {% for project in active_semester.projects %}
+                                                <option value="{{ project.pk }}" {% if project == enrollment.project %}selected{% endif %}>{{ project }}</option>
+                                                {% endfor %}
+                                            </select>
+                                        </div>
+                                        <p class="help">What project are you working on?</p>
+                                    </div>
+
+                                    <div class="field">
+                                        <label class="label" for="credits">Credits</label>
+                                        <div class="control">
+                                            <input class="input" id="credits" name="credits" type="number" min="0" max="4" placeholder="Credits" value="{{ enrollment.credits }}">
+                                        </div>
+                                        <p class="help">How many credits have you enrolled in RCOS for on SIS? Leave 0 if you are not registerd for the course.</p>
+                                    </div>
+
+                                    <button href="#" class="button is-primary  is-block is-fullwidth" type="submit">Confirm Details</button>
+                                </form>
                             </div>
                             {% else %}
                             {% include "./tiles/not_enrolled.html" %}

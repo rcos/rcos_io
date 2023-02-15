@@ -52,8 +52,8 @@ urlpatterns = [
     path("auth/github/unlink", unlink_github, name="unlink_github"),
     # User Routes
     path("users/", UserIndexView.as_view(), name="users_index"),
-    path("users/enroll/", enroll_user, name="users_enroll"),
     path("users/<int:pk>", UserDetailView.as_view(), name="users_detail"),
+    path("users/<int:pk>/enroll", enroll_user, name="users_enroll"),
     path("users/<int:pk>/attendance", user_attendance, name="user_attendance"),
     # Project Routes
     path(

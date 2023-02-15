@@ -17,7 +17,7 @@
         and will not be held to any attendance or grading policies, though we heavily encourage you to attend all meetings
         and contribute as much as you can. <span class="has-text-grey">This is a good option for those new to RCOS who want to try it out.</span>
     </p>
-    <form action="{% url 'users_enroll' %}" method="post" onsubmit="return confirm('Are you sure?')">
+    <form action="{% url 'users_enroll' request.user.pk %}" method="post" onsubmit="return confirm('Are you sure?')">
         {% csrf_token %}
         <input type="hidden" name="semester" value="{{ active_semester.pk }}">
         <button href="#" class="button is-primary  is-block is-fullwidth" type="submit">Enroll in RCOS {{ active_semester }}</button>

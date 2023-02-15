@@ -88,6 +88,10 @@ class Semester(TimestampedModel):
         help_text="The last day of the semester according to the RPI Academic Calendar: https://info.rpi.edu/registrar/academic-calendar",
     )
 
+    @property
+    def projects(self):
+        return Project.objects.filter(enrollments__semester_id=self.pk).distinct()
+
     @classmethod
     def get_active(cls):
         """Returns the currently ongoing semester or `None` if none exists."""

@@ -4,7 +4,7 @@ from django.core.paginator import EmptyPage, InvalidPage, PageNotAnInteger, Pagi
 from django.shortcuts import redirect
 from django.urls import reverse
 
-from ..models import Enrollment, Semester, User
+from ..models import Enrollment, Project, Semester, User
 from . import SearchableListView, SemesterFilteredDetailView, SemesterFilteredListView
 
 
@@ -78,16 +78,32 @@ class UserDetailView(SemesterFilteredDetailView):
 
 
 @login_required
-def enroll_user(request):
+def enroll_user(request, pk: str):
     if not request.user.is_setup:
         messages.error(
             request,
-            "Please fill your profile out and connect your Discord and GitHub before enrolling.",
+            "Please fill your profile out and connect your Discord and GitHub first.",
         )
         return redirect(reverse("profile"))
 
     if request.method == "POST":
         semester = Semester.objects.get(pk=request.POST["semester"])
-        messages.success(request, f"Welcome to RCOS {semester}!")
-        Enrollment(user=request.user, semester=semester).save()
+
+        user = User.objects.get(pk=pk)
+
+        project = None
+        if request.POST.get("project", None):
+            project = Project.objects.get(pk=request.POST.get("project", None))
+
+        credits = 0
+        if request.POST.get("credits", 0):
+            credits = int(request.POST.get("credits", 0))
+
+        messages.success(request, f"Confirmed your enrollment!")
+        enrollment, is_new = Enrollment.objects.update_or_create(
+            user=user,
+            semester=semester,
+            defaults={"project": project, "credits": credits},
+        )
+
     return redirect("/")
