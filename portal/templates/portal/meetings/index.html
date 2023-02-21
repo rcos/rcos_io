@@ -20,6 +20,13 @@ Meetings | RCOS IO
         color: black;
         cursor: default;
     }
+
+    #refresh_box {
+        height: 5rem;
+        position: fixed;
+        top: auto;
+        left: auto;
+    }
 </style>
 <section class="section">
     <div class="container">
@@ -160,6 +167,18 @@ Meetings | RCOS IO
     </div>
 </section>
 
+<div id="refresh_box" class="modal is-active is-clipped box is-flex-direction-row is-align-items-center columns mr-4 mb-4">
+    <div class="column is-two-thirds mr-0 pr-0">
+        Auto-refreshing in
+    </div>
+    <div class="column ml-1 pl-0">
+        <p id="refresh-counter" class="is-size-3">5</p>
+    </div>
+    <div class="column ml-3 pl-0">
+        <button id="pause-refresh" class="button"><i class="fa-solid fa-stop"></i></button>
+    </div>
+</div>
+
 <script src="https://cdn.jsdelivr.net/npm/fullcalendar@6.0.1/index.global.min.js"
     integrity="sha256-wKSlmJX2aO3MGLwAyZeYmYpSBBI42kGszk55a52vKqs=" crossorigin="anonymous"></script>
 
@@ -171,6 +190,33 @@ Meetings | RCOS IO
             events: "/api/meetings"
         });
         calendar.render();
+    });
+</script>
+
+<script>
+    const ctr_elem = document.getElementById('refresh-counter');
+    let ctr = 5;
+    let paused = false;
+
+    const countdown = () => {
+        if(ctr <= 0){
+            location.reload();
+        }
+
+        if(paused){
+            return;
+        }
+
+        ctr -= 0.1;
+        ctr_elem.innerText = Math.ceil(ctr);
+        setTimeout(countdown, 100);
+    }
+
+    setTimeout(countdown, 100);
+
+    document.getElementById('pause-refresh').addEventListener('click', () => {
+        paused = true;
+        document.getElementById('refresh_box').classList.add('is-hidden');
     });
 </script>
 {% endblock %}
