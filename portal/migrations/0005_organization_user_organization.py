@@ -5,7 +5,6 @@ from django.db import migrations, models
 
 
 class Migration(migrations.Migration):
-
     dependencies = [
         ("portal", "0004_remove_project_portal_proj_name_ae220a_idx_and_more"),
     ]

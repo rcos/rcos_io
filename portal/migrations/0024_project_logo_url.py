@@ -4,7 +4,6 @@ from django.db import migrations, models
 
 
 class Migration(migrations.Migration):
-
     dependencies = [
         ("portal", "0023_alter_enrollment_unique_together_and_more"),
     ]

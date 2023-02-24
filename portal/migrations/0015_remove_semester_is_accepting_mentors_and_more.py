@@ -4,7 +4,6 @@ from django.db import migrations, models
 
 
 class Migration(migrations.Migration):
-
     dependencies = [
         ("portal", "0014_semester_portal_seme_start_d_c8b5dc_idx"),
     ]

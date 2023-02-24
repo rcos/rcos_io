@@ -252,22 +252,40 @@
                 <div class="column">
                     <h2 class="subtitle">Requires Verification</h2>
                     <small>{{ needs_verification_users|length }} total</small>
-                    <ul>
-                        {% for user in needs_verification_users %}
-                        <li class="mb-2">
-                            <form action="{% url 'verify_attendance' %}" method="post">
-                                {% csrf_token %}
-                                <a href="{{ user.get_absolute_url }}?semester={{ meeting.semester.pk }}">{{ user }}</a>
-                                <input type="hidden" name="user" value="{{ user.pk }}">
-                                {% if target_small_group %}
-                                <input type="hidden" name="small_group" value="{{ target_small_group.pk }}">
-                                {% endif %}
-                                <input type="hidden" name="meeting" value="{{ meeting.pk }}">
-                                <button class="button is-small">Verify</button>
-                            </form>
-                        </li>
-                        {% endfor %}
-                    </ul>
+                    <table>
+                        <tbody>
+                            {% for user in needs_verification_users %}
+                            <tr>
+                                <td>
+                                    <a class="is-inline-block mr-2" href="{{ user.get_absolute_url }}?semester={{ meeting.semester.pk }}">{{ user }}</a>
+                                </td>
+                                <td>
+                                    <form action="{% url 'verify_attendance' %}" method="post" class="is-inline-block">
+                                        {% csrf_token %}
+                                        <input type="hidden" name="user" value="{{ user.pk }}">
+                                        {% if target_small_group %}
+                                        <input type="hidden" name="small_group" value="{{ target_small_group.pk }}">
+                                        {% endif %}
+                                        <input type="hidden" name="meeting" value="{{ meeting.pk }}">
+                                        <input type="hidden" name="action" value="accept">
+                                        <button class="button is-small is-success is-light">Present</button>
+                                    </form>
+        
+                                    <form action="{% url 'verify_attendance' %}" method="post" class="is-inline-block" onsubmit="return confirm('Double check that {{ user }} is not present before continuing.')">
+                                        {% csrf_token %}
+                                        <input type="hidden" name="user" value="{{ user.pk }}">
+                                        {% if target_small_group %}
+                                        <input type="hidden" name="small_group" value="{{ target_small_group.pk }}">
+                                        {% endif %}
+                                        <input type="hidden" name="meeting" value="{{ meeting.pk }}">
+                                        <input type="hidden" name="action" value="deny">
+                                        <button class="button is-small is-danger is-light">Not Present</button>
+                                    </form>
+                                </td>
+                            </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
                 </div>
 
                 <div class="column">

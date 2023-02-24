@@ -265,6 +265,12 @@ class SubmitAttendanceFormView(LoginRequiredMixin, UserRequiresSetupMixin, FormV
                 > meeting_attendance_code.meeting.attendance_chance_verification_required,
             )
 
+            # If the user has previously failed verification, require verification
+            # until they get explicitly verified.
+            # This cache key is cleared when a Mentor verifies them.
+            if cache.has_key(f"failed-verification:{user.pk}"):
+                new_attendance.is_verified = False
+
             try:
                 new_attendance.save()
             except IntegrityError:
@@ -349,31 +355,49 @@ def manually_add_or_verify_attendance(request):
 
         user.enrollments.get_or_create(semester_id=meeting.semester_id)
 
-        try:
-            attendance = MeetingAttendance.objects.get(user=user, meeting=meeting)
-            if not attendance.is_verified:
-                attendance.is_verified = True
-                attendance.save()
-                user.send_message(f"Your attendance for **{meeting}** has been" \
-                                  " verified by a Mentor!")
-        except MeetingAttendance.DoesNotExist:
-            attendance = MeetingAttendance(
-                meeting=meeting, user=user, is_verified=True, is_added_by_admin=True
-            )
-            attendance.save()
-            messages.success(request, f"Added attendance for {user}!")
+        action = request.POST.get("action", "accept")
 
-        # Submit attendance for submitter themselves
-        try:
-            MeetingAttendance(user=request.user, meeting=meeting).save()
-        except IntegrityError:
-            pass
+        if action not in ["accept", "deny"]:
+            messages.error(request, "Action not understood.")
+            return redirect(reverse("meetings_detail", args=(meeting.pk,)))
+
+        if action == "accept":
+            try:
+                attendance = MeetingAttendance.objects.get(user=user, meeting=meeting)
+                if not attendance.is_verified:
+                    attendance.is_verified = True
+                    attendance.save()
+                    user.send_message(
+                        f"Your attendance for **{meeting}** has been"
+                        " verified by a Mentor!"
+                    )
+
+                    # Clear the cache of any record of this person previously failing verification
+                    cache.delete(f"failed-verification:{user.pk}")
+            except MeetingAttendance.DoesNotExist:
+                attendance = MeetingAttendance(
+                    meeting=meeting, user=user, is_verified=True, is_added_by_admin=True
+                )
+                attendance.save()
+                messages.success(request, f"Added attendance for {user}!")
+
+            # Submit attendance for submitter themselves
+            try:
+                MeetingAttendance(user=request.user, meeting=meeting).save()
+            except IntegrityError:
+                pass
+        elif action == "deny":
+            cache.set(
+                f"failed-verification:{user.pk}", 1, 60 * 60 * 24 * 30 * 3
+            )  # 3 months
+            MeetingAttendance.objects.filter(user=user, meeting=meeting).delete()
 
         return redirect(
             reverse("meetings_detail", args=(meeting.pk,))
             + ("?small_group=" + small_group_id if small_group_id else "")
             + "#attendance"
         )
+
     return redirect(reverse("meetings_index"))
 
 

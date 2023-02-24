@@ -1,4 +1,3 @@
-
 from django.conf import settings
 from django.contrib import messages
 from django.contrib.auth.mixins import UserPassesTestMixin
@@ -12,7 +11,6 @@ from ..models import Semester
 
 
 def load_semesters(request):
-
     semesters = cache.get_or_set("semesters", Semester.objects.all(), 60 * 60 * 24)
     active_semester = (
         cache.get_or_set(
