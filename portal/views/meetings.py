@@ -5,15 +5,13 @@ from typing import Any, Dict, Optional, cast
 
 from django.contrib import messages
 from django.contrib.auth.decorators import login_required
-from django.contrib.auth.mixins import LoginRequiredMixin, UserPassesTestMixin
+from django.contrib.auth.mixins import LoginRequiredMixin
 from django.core.cache import cache
 from django.db import IntegrityError
-from django.db.models import Q
 from django.http import HttpRequest, HttpResponseForbidden, JsonResponse
 from django.shortcuts import redirect, render
 from django.urls import reverse
 from django.utils import timezone
-from django.views.decorators.cache import cache_page
 from django.views.generic import DetailView, ListView
 from django.views.generic.edit import FormView
 from sentry_sdk import capture_exception, capture_message
@@ -272,7 +270,7 @@ class SubmitAttendanceFormView(LoginRequiredMixin, UserRequiresSetupMixin, FormV
             except IntegrityError:
                 messages.warning(
                     self.request,
-                    f"You've already submitted attendance for this meeting!",
+                    "You've already submitted attendance for this meeting!",
                 )
                 return redirect(reverse("submit_attendance"))
 

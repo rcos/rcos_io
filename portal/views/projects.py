@@ -88,7 +88,7 @@ class ProjectIndexView(SearchableListView, SemesterFilteredListView):
                 projects_row["leads"] = [
                     e
                     for e in enrollments
-                    if e.project_id == project.pk and e.is_project_lead == True
+                    if e.project_id == project.pk and e.is_project_lead is True
                 ]
                 projects_row["pitch"] = next(
                     (

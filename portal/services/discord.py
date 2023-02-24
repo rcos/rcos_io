@@ -1,4 +1,4 @@
-from typing import Any, Dict, Literal, NotRequired, Optional, TypedDict, Union, cast
+from typing import Any, Dict, NotRequired, Optional, TypedDict, Union, cast
 
 import requests
 from django.conf import settings

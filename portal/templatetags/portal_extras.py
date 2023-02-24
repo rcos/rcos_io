@@ -1,10 +1,9 @@
 from typing import Any, Dict
 
 from django import template
-from django.db.models import Q
 from django.utils import timezone
 
-from portal.models import Enrollment, User
+from portal.models import User
 
 register = template.Library()
 

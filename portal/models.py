@@ -2,7 +2,7 @@ import logging
 import re
 from decimal import Decimal
 from time import sleep
-from typing import Optional, Tuple, TypedDict, cast
+from typing import Optional, Tuple
 
 from django.conf import settings
 from django.contrib.auth.models import AbstractUser, BaseUserManager
@@ -12,7 +12,6 @@ from django.core.validators import MaxValueValidator, MinValueValidator
 from django.db import models
 from django.db.models import Q
 from django.db.models.functions import Lower
-from django.db.models.signals import post_delete, post_save, pre_save
 from django.template.defaultfilters import slugify
 from django.urls import reverse
 from django.utils import formats, timezone
@@ -884,7 +883,7 @@ class ProjectEnrollmentApplication(TimestampedModel):
 
     def accept(self):
         """Approves the user's request to join this project. Enrolls the user to the project and marks as approved."""
-        if self.is_accepted != None:
+        if self.is_accepted is not None:
             return
 
         # Mark as accepted
@@ -903,7 +902,7 @@ class ProjectEnrollmentApplication(TimestampedModel):
         )
 
     def reject(self):
-        if self.is_accepted != None:
+        if self.is_accepted is not None:
             return
 
         # Mark as denied

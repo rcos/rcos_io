@@ -27,7 +27,7 @@ class rcos_up_railway_app(FastHttpUser):
                 "upgrade-insecure-requests": "1",
             },
             catch_response=True,
-        ) as resp:
+        ):
             pass
         with self.client.request(
             "GET",
@@ -42,7 +42,7 @@ class rcos_up_railway_app(FastHttpUser):
                 "upgrade-insecure-requests": "1",
             },
             catch_response=True,
-        ) as resp:
+        ):
             pass
         with self.client.request(
             "GET",
@@ -57,7 +57,7 @@ class rcos_up_railway_app(FastHttpUser):
                 "upgrade-insecure-requests": "1",
             },
             catch_response=True,
-        ) as resp:
+        ):
             pass
         with self.client.request(
             "GET",
@@ -72,7 +72,7 @@ class rcos_up_railway_app(FastHttpUser):
                 "upgrade-insecure-requests": "1",
             },
             catch_response=True,
-        ) as resp:
+        ):
             pass
         with self.client.request(
             "GET",
@@ -87,7 +87,7 @@ class rcos_up_railway_app(FastHttpUser):
                 "upgrade-insecure-requests": "1",
             },
             catch_response=True,
-        ) as resp:
+        ):
             pass
         with self.client.request(
             "GET",
@@ -102,7 +102,7 @@ class rcos_up_railway_app(FastHttpUser):
                 "upgrade-insecure-requests": "1",
             },
             catch_response=True,
-        ) as resp:
+        ):
             pass
         with self.client.request(
             "GET",
@@ -117,7 +117,7 @@ class rcos_up_railway_app(FastHttpUser):
                 "upgrade-insecure-requests": "1",
             },
             catch_response=True,
-        ) as resp:
+        ):
             pass
         with self.client.request(
             "GET",
@@ -132,7 +132,7 @@ class rcos_up_railway_app(FastHttpUser):
                 "upgrade-insecure-requests": "1",
             },
             catch_response=True,
-        ) as resp:
+        ):
             pass
 
         with self.client.request(
@@ -148,7 +148,7 @@ class rcos_up_railway_app(FastHttpUser):
                 "upgrade-insecure-requests": "1",
             },
             catch_response=True,
-        ) as resp:
+        ):
             pass
         with self.client.request(
             "GET",
@@ -163,7 +163,7 @@ class rcos_up_railway_app(FastHttpUser):
                 "upgrade-insecure-requests": "1",
             },
             catch_response=True,
-        ) as resp:
+        ):
             pass
 
 
