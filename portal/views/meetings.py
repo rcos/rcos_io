@@ -307,7 +307,7 @@ def manually_add_or_verify_attendance(request):
             return redirect(reverse("meetings_detail", args=(meeting.pk,)))
 
         try:
-            user = (
+            user: User = (
                 User.objects.get(pk=user_id)
                 if user_id
                 else User.objects.get(rcs_id=rcs_id)
@@ -354,7 +354,8 @@ def manually_add_or_verify_attendance(request):
             if not attendance.is_verified:
                 attendance.is_verified = True
                 attendance.save()
-                messages.info(request, f"Verified attendance for {user}.")
+                user.send_message(f"Your attendance for **{meeting}** has been" \
+                                  " verified by a Mentor!")
         except MeetingAttendance.DoesNotExist:
             attendance = MeetingAttendance(
                 meeting=meeting, user=user, is_verified=True, is_added_by_admin=True
