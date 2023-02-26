@@ -1,4 +1,3 @@
-from urllib import request
 
 from django.core.cache import cache
 from django.db.models import Q
@@ -6,7 +5,7 @@ from django.utils import timezone
 from django.views.generic.base import TemplateView
 
 from portal.forms import SubmitAttendanceForm
-from portal.models import Enrollment, Meeting, Project, Semester
+from portal.models import Enrollment, Meeting, Project
 
 
 class IndexView(TemplateView):

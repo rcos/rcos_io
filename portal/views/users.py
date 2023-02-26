@@ -1,5 +1,5 @@
 from django.contrib import messages
-from django.contrib.auth.decorators import login_required, user_passes_test
+from django.contrib.auth.decorators import login_required
 from django.core.paginator import EmptyPage, InvalidPage, PageNotAnInteger, Paginator
 from django.shortcuts import redirect
 from django.urls import reverse
@@ -99,7 +99,7 @@ def enroll_user(request, pk: str):
         if request.POST.get("credits", 0):
             credits = int(request.POST.get("credits", 0))
 
-        messages.success(request, f"Confirmed your enrollment!")
+        messages.success(request, "Confirmed your enrollment!")
         enrollment, is_new = Enrollment.objects.update_or_create(
             user=user,
             semester=semester,

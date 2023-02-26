@@ -1,9 +1,9 @@
 from crispy_forms.helper import FormHelper
-from crispy_forms.layout import Field, Layout, Submit
+from crispy_forms.layout import Submit
 from django import forms
 from django.core.exceptions import ValidationError
 
-from portal.models import MeetingAttendanceCode, Project, Semester, User
+from portal.models import Project, Semester, User
 
 
 class BulmaTextInput(forms.Widget):

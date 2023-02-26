@@ -3,7 +3,6 @@ from time import sleep
 
 from django.contrib import admin
 from django.contrib.auth.admin import UserAdmin
-from django.db.models.functions import Lower
 
 from .models import *
 

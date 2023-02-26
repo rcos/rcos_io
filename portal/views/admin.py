@@ -155,7 +155,7 @@ def import_submitty_teams(request):
                         credits = int(row["Team Registration Section"])
                         if not (0 <= credits <= 4):
                             credits = 0
-                    except ValueError as e:
+                    except ValueError:
                         logger.warning(
                             f"Failed to parse credits: '{row['Team Registration Section']}' defaulting to 0"
                         )
@@ -195,7 +195,7 @@ def import_submitty_teams(request):
                     )
                 except:
                     pass
-            messages.success(request, f"Successfully imported projects and teams!")
+            messages.success(request, "Successfully imported projects and teams!")
     else:
         form = SemesterCSVUploadForm()
 

@@ -1,4 +1,3 @@
-from curses.has_key import has_key
 
 from django.conf import settings
 from django.contrib import messages
@@ -9,7 +8,7 @@ from django.shortcuts import get_object_or_404, redirect
 from django.urls import reverse
 from django.views.generic import DetailView, ListView
 
-from ..models import Enrollment, Semester
+from ..models import Semester
 
 
 def load_semesters(request):
