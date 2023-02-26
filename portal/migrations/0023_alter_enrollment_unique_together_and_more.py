@@ -4,7 +4,6 @@ from django.db import migrations, models
 
 
 class Migration(migrations.Migration):
-
     dependencies = [
         ("portal", "0022_enrollment_portal_enro_user_id_794ee8_idx_and_more"),
     ]

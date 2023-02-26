@@ -6,7 +6,6 @@ import portal.models
 
 
 class Migration(migrations.Migration):
-
     dependencies = [
         ("portal", "0001_initial"),
     ]

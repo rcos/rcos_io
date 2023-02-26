@@ -5,7 +5,6 @@ from django.db import migrations, models
 
 
 class Migration(migrations.Migration):
-
     dependencies = [
         ("portal", "0015_remove_semester_is_accepting_mentors_and_more"),
     ]

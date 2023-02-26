@@ -6,7 +6,6 @@ import portal.models
 
 
 class Migration(migrations.Migration):
-
     dependencies = [
         ("portal", "0002_alter_user_managers_alter_user_rcs_id"),
     ]

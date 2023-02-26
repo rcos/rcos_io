@@ -4,7 +4,6 @@ from django.db import migrations
 
 
 class Migration(migrations.Migration):
-
     dependencies = [
         ("portal", "0017_remove_semester_mentor_application_deadline_and_more"),
     ]

@@ -4,7 +4,6 @@ from django.db import migrations, models
 
 
 class Migration(migrations.Migration):
-
     dependencies = [
         ("portal", "0021_meetingattendancecode_portal_meet_code_a7947d_idx"),
     ]

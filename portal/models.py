@@ -381,7 +381,7 @@ class User(AbstractUser, TimestampedModel):
         if not sent:
             # Send backup email
             # TODO: send_mail
-            raise NotImplementedError
+            pass
 
     def get_active_semesters(self):
         return (

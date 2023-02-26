@@ -4,7 +4,6 @@ from django.db import migrations, models
 
 
 class Migration(migrations.Migration):
-
     dependencies = [
         ("portal", "0016_alter_project_options_alter_smallgroup_options_and_more"),
     ]

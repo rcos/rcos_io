@@ -4,7 +4,6 @@ from django.db import migrations, models
 
 
 class Migration(migrations.Migration):
-
     dependencies = [
         ("portal", "0025_meeting_attendance_chance_verification_required_and_more"),
     ]
