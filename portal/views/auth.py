@@ -124,7 +124,7 @@ def discord_flow_callback(request):
             )
             return redirect(reverse("magiclink:login") + "?next=/auth/discord")
 
-    return redirect(reverse("profile"))
+    return redirect(reverse("dashboard"))
 
 
 def start_github_flow(request):
@@ -173,7 +173,7 @@ def github_flow_callback(request):
                 "No RCOS account found that matches your GitHub. Please sign in with email first and then link your GitHub account on your profile!",
             )
             return redirect(reverse("magiclink:login") + "?next=/auth/github")
-    return redirect(reverse("profile"))
+    return redirect(reverse("dashboard"))
 
 
 @login_required
