@@ -3,15 +3,18 @@ from django.contrib import messages
 from django.contrib.auth import login
 from django.contrib.auth.decorators import login_required
 from django.core.exceptions import BadRequest
+from django.core.mail import send_mail
 from django.db import IntegrityError
 from django.shortcuts import redirect, render
 from django.urls import reverse
+from django.utils import timezone
 from requests import HTTPError
 from sentry_sdk import capture_exception
 
 from portal.forms import ChangeEmailForm, UserProfileForm
 from portal.models import User
 from portal.services import discord, github
+from portal.views.meetings import generate_code
 
 
 @login_required
@@ -121,7 +124,7 @@ def discord_flow_callback(request):
             )
             return redirect(reverse("magiclink:login") + "?next=/auth/discord")
 
-    return redirect(reverse("profile"))
+    return redirect(reverse("dashboard"))
 
 
 def start_github_flow(request):
@@ -170,7 +173,7 @@ def github_flow_callback(request):
                 "No RCOS account found that matches your GitHub. Please sign in with email first and then link your GitHub account on your profile!",
             )
             return redirect(reverse("magiclink:login") + "?next=/auth/github")
-    return redirect(reverse("profile"))
+    return redirect(reverse("dashboard"))
 
 
 @login_required
