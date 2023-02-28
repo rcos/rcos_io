@@ -35,7 +35,7 @@ MarkupSafe==2.1.2
 msgpack==1.0.4
 multidict==6.0.4
 mypy-extensions==1.0.0
-packaging==23.0
+packaging==20.9
 pathspec==0.11.0
 pip-review==1.3.0
 platformdirs==3.0.0
