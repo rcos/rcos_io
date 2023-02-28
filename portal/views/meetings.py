@@ -1,15 +1,16 @@
+import csv
 import logging
 import random
 import string
 from typing import Any, Dict, Optional, cast
 
 from django.contrib import messages
-from django.contrib.auth.decorators import login_required
+from django.contrib.auth.decorators import login_required, user_passes_test
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.core.cache import cache
 from django.db import IntegrityError
-from django.http import HttpRequest, HttpResponseForbidden, JsonResponse
-from django.shortcuts import redirect, render
+from django.http import HttpRequest, HttpResponse, HttpResponseForbidden, JsonResponse
+from django.shortcuts import get_object_or_404, redirect, render
 from django.urls import reverse
 from django.utils import timezone
 from django.views.generic import DetailView, ListView
@@ -18,6 +19,7 @@ from sentry_sdk import capture_exception, capture_message
 
 from portal.forms import SubmitAttendanceForm
 from portal.views import UserRequiresSetupMixin
+from portal.views.admin import is_admin
 
 from ..models import (
     Enrollment,
@@ -472,3 +474,28 @@ def user_attendance(request: HttpRequest, pk: Any):
             "workshops_attended": workshops_attended,
         },
     )
+
+@login_required
+@user_passes_test(is_admin)
+def export_meeting_attendance(request, pk: Any):
+    meeting = get_object_or_404(Meeting, pk=pk)
+    
+    filename = "RCOS " + str(meeting) + " Attendance"
+
+    # Set the appropriate response headers so the browser expects a CSV file download
+    response = HttpResponse(
+        content_type='text/csv',
+        headers={'Content-Disposition': f'attachment; filename="{filename}.csv"'},
+    )
+
+    # Create a CSV writer that writes to the response
+    writer = csv.writer(response)
+
+    # Write the headers
+    writer.writerow(['user id', 'given name', 'family name', 'grade1', 'totalgrade'])
+
+    # Iterate through every **verified** attendance and write a CSV row
+    for user in meeting.attendances.filter(meetingattendance__is_verified=True):
+        writer.writerow([user.rcs_id, user.first_name, user.last_name, 1, 1])
+
+    return response
