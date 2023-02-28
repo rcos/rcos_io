@@ -127,7 +127,7 @@
                     document.addEventListener("DOMContentLoaded", function () {
                         var calendarEl = document.getElementById("calendar");
                         var calendar = new FullCalendar.Calendar(calendarEl, {
-                            initialView: "dayGridMonth",
+                            initialView: "listMonth",
                             events: "/api/meetings",
                             initialDate: "{{ meeting.starts_at.isoformat }}"
                         });
@@ -301,6 +301,12 @@
                 </div>
             </div>
 
+            {% if meeting.is_over %}
+            <div class="buttons my-5">
+                <a href="{% url 'export_meeting_attendance' meeting.pk %}" class="button is-info is-light is-fullwidth">Export Attendance in Submitty Format (.csv)</a>
+            </div>
+            {% endif %}
+            
             {% if meeting.is_over and small_group_attendance_ratios %}
             {% include "./_attendance_charts.html" %}
             {% endif %}

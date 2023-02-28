@@ -9,7 +9,7 @@ from django.urls import reverse
 from requests import HTTPError
 from sentry_sdk import capture_exception
 
-from portal.forms import ChangeEmailForm, UserProfileForm
+from portal.forms import UserProfileForm
 from portal.models import User
 from portal.services import discord, github
 
@@ -29,7 +29,7 @@ def profile(request):
     return render(
         request,
         "portal/auth/profile.html",
-        {"form": form, "change_email_form": ChangeEmailForm()},
+        {"form": form},
     )
 
 

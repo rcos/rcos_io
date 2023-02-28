@@ -22,6 +22,7 @@ from .views.meetings import (
     MeetingDetailView,
     MeetingIndexView,
     SubmitAttendanceFormView,
+    export_meeting_attendance,
     manually_add_or_verify_attendance,
     meetings_api,
     user_attendance,
@@ -78,6 +79,7 @@ urlpatterns = [
         name="verify_attendance",
     ),
     path("meetings/<int:pk>", MeetingDetailView.as_view(), name="meetings_detail"),
+    path("meetings/<int:pk>/export", export_meeting_attendance, name="export_meeting_attendance"),
     path("api/meetings", meetings_api, name="meetings_api"),
     # Small Group Routes
     path(
@@ -105,5 +107,5 @@ urlpatterns = [
         "admin/import/projects",
         import_google_form_projects,
         name="import_projects",
-    ),
+    )
 ]

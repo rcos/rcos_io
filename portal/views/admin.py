@@ -61,6 +61,13 @@ GoogleFormProjectPitchRow = TypedDict(
     },
 )
 
+AttendanceExportRow = TypedDict("AttendanceExportRow", {
+    "user id": str,
+    "given name": str,
+    "family name": str,
+    "grade1": float,
+    "totalgrade": float
+})
 
 @login_required
 @user_passes_test(is_admin)
