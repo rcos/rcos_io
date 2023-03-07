@@ -369,10 +369,6 @@ def manually_add_or_verify_attendance(request):
                 if not attendance.is_verified:
                     attendance.is_verified = True
                     attendance.save()
-                    user.send_message(
-                        f"Your attendance for **{meeting}** has been"
-                        " verified by a Mentor!"
-                    )
 
                     # Clear the cache of any record of this person previously failing verification
                     cache.delete(f"failed-verification:{user.pk}")
