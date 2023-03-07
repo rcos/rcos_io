@@ -23,3 +23,7 @@
 
 1. `./manage.py runserver`
 2. Navigate to http://127.0.0.1:8000/auth/login/ and enter the email of your superuser and choose "Login (admin)"
+
+## Deploying to RCOS IO
+
+1. `git push origin main:production`
