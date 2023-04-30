@@ -128,13 +128,27 @@
 
 
             // Notification dismissal
-            (document.querySelectorAll('.notification') || []).forEach(($not) => {
+            (document.querySelectorAll('.notification') || []).forEach(($not, index) => {
                 // Dismiss after a few seconds
-                setTimeout(() => {
+                let dismissTimeout = setTimeout(() => {
                     if ($not && $not.parentElement) {
                         $not.parentElement.removeChild($not);
                     }
-                }, 8 * 1000);
+                }, (5+index) * 1000);
+
+                // When you mouse over a notification, stop counting down to dismiss it
+                $not.addEventListener('mouseover', () => {
+                    clearTimeout(dismissTimeout);
+                });
+
+                // When you mouse off of a notification, restart the dismiss timer
+                $not.addEventListener('mouseleave', () => {
+                    dismissTimeout = setTimeout(() => {
+                        if ($not && $not.parentElement) {
+                            $not.parentElement.removeChild($not);
+                        }
+                    }, (5 + index) * 1000);
+                });
                 
                 // Dismiss button
                 const dismissButton = $not.querySelector('.delete');
