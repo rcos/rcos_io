@@ -1,3 +1,5 @@
+"""
+"""
 from django.conf import settings
 from django.contrib import messages
 from django.contrib.auth import login
@@ -16,6 +18,7 @@ from portal.services import discord, github
 
 @login_required
 def profile(request):
+    """Renders the logged in user's profile and saves changes when edited."""
     if request.method == "POST":
         form = UserProfileForm(request.POST, instance=request.user)
 
@@ -34,6 +37,10 @@ def profile(request):
 
 
 def impersonate(request):
+    """
+    Forces a login as the desired user. Only possible in DEBUG mode locally
+    and with a logged in superuser in production.
+    """
     if settings.DEBUG or request.user.is_superuser:
         email = request.POST["email"]
         user = User.objects.get(email=email)
@@ -48,6 +55,8 @@ def start_discord_flow(request):
 
 @login_required
 def unlink_discord(request):
+    """Disconnects the logged in user's Discord account"""
+
     request.user.discord_user_id = None
 
     try:
@@ -65,6 +74,7 @@ def discord_flow_callback(request):
     if not code:
         raise BadRequest("Denied Discord consent.")
 
+    # Complete Discord OAuth2 flow to get tokens and then Discord user id
     try:
         discord_user_tokens = discord.get_tokens(code)
         discord_access_token = discord_user_tokens["access_token"]
@@ -82,15 +92,19 @@ def discord_flow_callback(request):
             request.user.save()
             messages.success(
                 request,
-                f"Successfully linked Discord account @{discord_user_info['username']}#{discord_user_info['discriminator']} to your profile.",
+                f"Successfully linked Discord account @{discord_user_info['username']}"
+                f"#{discord_user_info['discriminator']} to your profile.",
             )
         except IntegrityError:
             messages.warning(
                 request,
-                f"Discord account @{discord_user_info['username']}#{discord_user_info['discriminator']} is already linked to another user!",
+                f"Discord account @{discord_user_info['username']}"
+                f"#{discord_user_info['discriminator']} is already linked "
+                "to another user!",
             )
             return redirect(reverse("profile"))
 
+        # Attempt to add the Discord user to the server
         try:
             joined_server = discord.upsert_server_member(
                 discord_access_token,
@@ -117,7 +131,9 @@ def discord_flow_callback(request):
         except User.DoesNotExist:
             messages.warning(
                 request,
-                "No RCOS account found that matches your Discord. Please sign in with email first and then link your Discord account on your profile!",
+                "No RCOS account found that matches your Discord. "
+                "Please sign in with email first "
+                "and then link your Discord account on your profile!",
             )
             return redirect(reverse("magiclink:login") + "?next=/auth/discord")
 
@@ -133,6 +149,7 @@ def github_flow_callback(request):
     if not code:
         raise BadRequest
 
+    # Complete OAuth2 flow to receive access token and then GitHub username
     try:
         github_user_tokens = github.get_tokens(code)
         github_access_token = github_user_tokens["access_token"]
@@ -146,13 +163,15 @@ def github_flow_callback(request):
         messages.error(request, "Failed to link your GitHub. Try again.")
         return redirect(reverse("profile"))
 
+    # Determine whether to link user or log them in based on an existing link
     if request.user.is_authenticated:
         request.user.github_username = github_username
         try:
             request.user.save()
             messages.success(
                 request,
-                f"Successfully linked GitHub account @{github_username} to your profile.",
+                f"Successfully linked GitHub account @{github_username} "
+                "to your profile.",
             )
         except IntegrityError:
             messages.warning(
@@ -160,21 +179,25 @@ def github_flow_callback(request):
                 f"GitHub account @{github_username} is already linked to another user!",
             )
     else:
-        # Login
+        # Login user with that linked GitHub account
         try:
             user = User.objects.get(github_username=github_username)
             login(request, user, backend="django.contrib.auth.backends.ModelBackend")
         except User.DoesNotExist:
             messages.warning(
                 request,
-                "No RCOS account found that matches your GitHub. Please sign in with email first and then link your GitHub account on your profile!",
+                "No RCOS account found that matches your GitHub. "
+                "Please sign in with email first and then "
+                "link your GitHub account on your profile!",
             )
             return redirect(reverse("magiclink:login") + "?next=/auth/github")
+
     return redirect(reverse("profile"))
 
 
 @login_required
 def unlink_github(request):
+    """Disconnects the logged in user's GitHub account"""
     request.user.github_username = None
 
     try:

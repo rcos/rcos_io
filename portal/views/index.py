@@ -8,6 +8,8 @@ from portal.models import Enrollment, Meeting, Project
 
 
 class IndexView(TemplateView):
+    """Renders either the splash page or the user dashboard."""
+
     template_name = "portal/index/index.html"
 
     def get_context_data(self, **kwargs):
@@ -19,12 +21,15 @@ class IndexView(TemplateView):
             .filter(ends_at__gte=timezone.now())
             .first()
         )
-
+        
         if self.request.user.is_authenticated:
             data["ongoing_meeting"] = Meeting.get_ongoing(self.request.user)
         else:
-            data["ongoing_meeting"] = None
             data["submit_attendance_form"] = SubmitAttendanceForm()
+
+            # Fetch and cache ongoing meeting and stats for the splash page
+            # We cache it since it doesn't matter if it's slightly outdated
+            data["ongoing_meeting"] = None
             data["enrollment_count"] = cache.get_or_set(
                 "enrollment_count", Enrollment.objects.count(), 60 * 60 * 24
             )
@@ -44,6 +49,11 @@ class IndexView(TemplateView):
 
 
 class HandbookView(TemplateView):
+    """
+    Renders an embedded iframe of the RCOS Handbook,
+    optionally with a initial route to display.
+    """
+
     template_name = "portal/index/handbook.html"
 
     def get_context_data(self, **kwargs):
