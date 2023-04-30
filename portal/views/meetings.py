@@ -1,6 +1,7 @@
 import csv
 import logging
 import random
+import re
 import string
 from typing import Any, Dict, Optional, cast
 
@@ -16,6 +17,7 @@ from django.utils import timezone
 from django.views.generic import DetailView, ListView
 from django.views.generic.edit import FormView
 from sentry_sdk import capture_exception, capture_message
+from django.db.models import Q
 
 from portal.forms import SubmitAttendanceForm
 from portal.views import UserRequiresSetupMixin
@@ -307,88 +309,95 @@ def manually_add_or_verify_attendance(request):
         meeting: Meeting = Meeting.objects.get(pk=request.POST["meeting"])
         small_group_id = request.POST.get("small_group", None)
 
-        user_id = request.POST.get("user", "").strip()
-        rcs_id = request.POST.get("rcs_id", "").strip()
-
-        if not user_id and not rcs_id:
-            messages.warning(request, "You did not enter a user ID or RCS ID!")
-            return redirect(reverse("meetings_detail", args=(meeting.pk,)))
-
-        try:
-            user: User = (
-                User.objects.get(pk=user_id)
-                if user_id
-                else User.objects.get(rcs_id=rcs_id)
-            )
-        except User.DoesNotExist:
-            messages.error(request, "User not found.")
-            return redirect(reverse("meetings_detail", args=(meeting.pk,)))
-
-        try:
-            submitter_enrollment = request.user.enrollments.get(
-                semester=meeting.semester
-            )
-            if (
-                not request.user.is_superuser
-                and not submitter_enrollment.is_faculty_advisor
-                and not submitter_enrollment.is_coordinator
-                and not submitter_enrollment.is_mentor
-            ):
-                return redirect(reverse("meetings_index"))
-
-            if (
-                not request.user.is_superuser
-                and not submitter_enrollment.is_coordinator
-                and submitter_enrollment.is_mentor
-                and meeting.type == Meeting.MENTOR
-            ):
-                messages.warning(
-                    request,
-                    "You cannot manually submit attendance for a Mentor meeting!",
-                )
-                return redirect(reverse("meetings_detail", args=(meeting.pk,)))
-        except Enrollment.DoesNotExist:
-            if not request.user.is_superuser:
-                messages.error(
-                    request,
-                    "You must be an enrolled Faculty Advisor/Coordinator/Mentor to perform this action.",
-                )
-                return redirect(reverse("meetings_detail", args=(meeting.pk,)))
-
-        user.enrollments.get_or_create(semester_id=meeting.semester_id)
-
         action = request.POST.get("action", "accept")
 
         if action not in ["accept", "deny"]:
             messages.error(request, "Action not understood.")
             return redirect(reverse("meetings_detail", args=(meeting.pk,)))
 
-        if action == "accept":
-            try:
-                attendance = MeetingAttendance.objects.get(user=user, meeting=meeting)
-                if not attendance.is_verified:
-                    attendance.is_verified = True
-                    attendance.save()
+        user_ids = [
+            s.strip() for s in re.split(r',|;|\s', request.POST.get("user", ""))
+            if s.strip()
+        ]
 
-                    # Clear the cache of any record of this person previously failing verification
-                    cache.delete(f"failed-verification:{user.pk}")
-            except MeetingAttendance.DoesNotExist:
-                attendance = MeetingAttendance(
-                    meeting=meeting, user=user, is_verified=True, is_added_by_admin=True
+        # Split RCS IDs on whitespaces, commands, semicolons, and remove parentheses
+        rcs_ids = [
+            re.sub(r'\(|\)', '', s.strip()) for s in re.split(r',|;|\s', request.POST.get("rcs_id", ""))
+            if s.strip()
+        ]
+
+        if not user_ids and not rcs_ids:
+            messages.warning(request, "You did not enter a user ID or RCS ID!")
+            return redirect(reverse("meetings_detail", args=(meeting.pk,)))
+
+        if user_ids:
+            users = User.objects.filter(pk__in=user_ids)
+        else:
+            users = User.objects.filter(rcs_id__in=rcs_ids)
+
+        for user in users:
+            try:
+                submitter_enrollment = request.user.enrollments.get(
+                    semester=meeting.semester
                 )
-                attendance.save()
-                messages.success(request, f"Added attendance for {user}!")
+                if (
+                    not request.user.is_superuser
+                    and not submitter_enrollment.is_faculty_advisor
+                    and not submitter_enrollment.is_coordinator
+                    and not submitter_enrollment.is_mentor
+                ):
+                    return redirect(reverse("meetings_index"))
 
-            # Submit attendance for submitter themselves
-            try:
-                MeetingAttendance(user=request.user, meeting=meeting).save()
-            except IntegrityError:
-                pass
-        elif action == "deny":
-            cache.set(
-                f"failed-verification:{user.pk}", 1, 60 * 60 * 24 * 30 * 3
-            )  # 3 months
-            MeetingAttendance.objects.filter(user=user, meeting=meeting).delete()
+                if (
+                    not request.user.is_superuser
+                    and not submitter_enrollment.is_coordinator
+                    and submitter_enrollment.is_mentor
+                    and meeting.type == Meeting.MENTOR
+                ):
+                    messages.warning(
+                        request,
+                        "You cannot manually submit attendance for a Mentor meeting!",
+                    )
+                    return redirect(reverse("meetings_detail", args=(meeting.pk,)))
+            except Enrollment.DoesNotExist:
+                if not request.user.is_superuser:
+                    messages.error(
+                        request,
+                        "You must be an enrolled Faculty Advisor/Coordinator/Mentor to perform this action.",
+                    )
+                    return redirect(reverse("meetings_detail", args=(meeting.pk,)))
+
+            user.enrollments.get_or_create(semester_id=meeting.semester_id)
+            
+            if action == "accept":
+                try:
+                    attendance = MeetingAttendance.objects.get(user=user, meeting=meeting)
+                    if not attendance.is_verified:
+                        attendance.is_verified = True
+                        attendance.save()
+
+                        # Clear the cache of any record of this person previously failing verification
+                        cache.delete(f"failed-verification:{user.pk}")
+                except MeetingAttendance.DoesNotExist:
+                    attendance = MeetingAttendance(
+                        meeting=meeting,
+                        user=user,
+                        is_verified=True,
+                        is_added_by_admin=True
+                    )
+                    attendance.save()
+                    messages.success(request, f"Added attendance for {user}!")
+
+                # Submit attendance for submitter themselves
+                try:
+                    MeetingAttendance(user=request.user, meeting=meeting).save()
+                except IntegrityError:
+                    pass
+            elif action == "deny":
+                cache.set(
+                    f"failed-verification:{user.pk}", 1, 60 * 60 * 24 * 30 * 3
+                )  # 3 months
+                MeetingAttendance.objects.filter(user=user, meeting=meeting).delete()
 
         return redirect(
             reverse("meetings_detail", args=(meeting.pk,))
