@@ -244,9 +244,11 @@
                             {% for user in attended_users %}
                             <tr>
                                 <td>
-                                    <form method="post">
+                                    <form method="post" action="{% url 'verify_attendance' %}" method="post">
                                         {% csrf_token %}
-                                        <input type="hidden" name="user_id" value="{{ user.pk }}">
+                                        <input type="hidden" name="user" value="{{ user.pk }}">
+                                        <input type="hidden" name="meeting" value="{{ meeting.pk }}">
+                                        <input type="hidden" name="action" value="delete">
                                         <button class="button is-small is-danger is-inverted" type="submit">❌</button>
                                     </form>
                                 </td>

@@ -311,7 +311,7 @@ def manually_add_or_verify_attendance(request):
 
         action = request.POST.get("action", "accept")
 
-        if action not in ["accept", "deny"]:
+        if action not in ["accept", "deny", "delete"]:
             messages.error(request, "Action not understood.")
             return redirect(reverse("meetings_detail", args=(meeting.pk,)))
 
@@ -392,6 +392,7 @@ def manually_add_or_verify_attendance(request):
                 # Submit attendance for submitter themselves
                 try:
                     MeetingAttendance(user=request.user, meeting=meeting).save()
+
                 except IntegrityError:
                     pass
             elif action == "deny":
@@ -399,6 +400,10 @@ def manually_add_or_verify_attendance(request):
                     f"failed-verification:{user.pk}", 1, 60 * 60 * 24 * 30 * 3
                 )  # 3 months
                 MeetingAttendance.objects.filter(user=user, meeting=meeting).delete()
+                messages.success(request, f"Denied attendance verification for {user}!")
+            elif action == "delete":
+                MeetingAttendance.objects.filter(user=user, meeting=meeting).delete()
+                messages.success(request, f"Removed attendance for {user}!")
 
         return redirect(
             reverse("meetings_detail", args=(meeting.pk,))
