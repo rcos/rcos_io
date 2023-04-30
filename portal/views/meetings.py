@@ -322,7 +322,8 @@ def manually_add_or_verify_attendance(request):
 
         # Split RCS IDs on whitespaces, commands, semicolons, and remove parentheses
         rcs_ids = [
-            re.sub(r'\(|\)', '', s.strip()) for s in re.split(r',|;|\s', request.POST.get("rcs_id", ""))
+            re.sub(r'\(|\)', '', s.strip()).removesuffix("@rpi.edu")
+            for s in re.split(r',|;|\s', request.POST.get("rcs_id", ""))
             if s.strip()
         ]
 
