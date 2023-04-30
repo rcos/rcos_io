@@ -45,6 +45,17 @@
         #pinned-attendance-box .title {
             font-size: 5rem;
         }
+
+        .messages {
+            position: fixed;
+            right: 0;
+            top: 0;
+            z-index: 100;
+        }
+
+        .messages .notification {
+            width: 25rem;
+        }
     </style>
 </head>
 
@@ -54,10 +65,9 @@
     {% if messages %}
     <div class="messages">
             {% for message in messages %}
-            <div class="notification {{ message.tags }} mb-0">
-                <div class="container">
-                    {{ message }}
-                </div>
+            <div class="notification {{ message.tags }} mb-1">
+                <button class="delete"></button>
+                {{ message }}
             </div>
             {% endfor %}
         </div>
@@ -113,6 +123,25 @@
 
                 if (e.keyCode === 27) { // Escape key
                     closeAllModals();
+                }
+            });
+
+
+            // Notification dismissal
+            (document.querySelectorAll('.notification') || []).forEach(($not) => {
+                // Dismiss after a few seconds
+                setTimeout(() => {
+                    if ($not && $not.parentElement) {
+                        $not.parentElement.removeChild($not);
+                    }
+                }, 8 * 1000);
+                
+                // Dismiss button
+                const dismissButton = $not.querySelector('.delete');
+                if (dismissButton) {
+                    dismissButton.addEventListener('click', () => {
+                        $not.parentElement.removeChild($not);
+                    })
                 }
             });
         });
