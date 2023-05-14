@@ -19,11 +19,13 @@ Small Groups | RCOS IO
         <h1 class="title">Small Groups</h1>
         <h2 class="subtitle">{{ target_semester|default:"All Semesters" }}</h2>
 
+        {% include "./filters.html" %}
+
         {% if target_semester %}
-        <div class="columns is-multiline">
+        <div class="columns is-multiline mt-5">
             {% for small_group in small_groups %}
-            <div class="column is-half">
-                <div class="box">
+            <div class="column is-one-third">
+                <div class="box" style="height: 100%">
                     <h2 class="title mb-1"><a href="{{ small_group.get_absolute_url }}">{{ small_group }}</a></h2>
                     <p class="mb-3 has-text-grey">
                         <span class="icon">
@@ -33,7 +35,7 @@ Small Groups | RCOS IO
                     </p>
                     <div class="columns">
                         <div class="column">
-                            <h3 class="subtitle mb-1">Mentors</h3>
+                            <h3 class="subtitle mb-1">Mentor</h3>
                             <ul>
                                 {% for mentor in small_group.mentors.all %}
                                 <li><a href="{{ mentor.get_absolute_url }}{% target_semester_query %}">{{ mentor }}</a></li>
@@ -51,9 +53,14 @@ Small Groups | RCOS IO
                     </div>
                 </div>
             </div>
+            {% empty %}
+            <div class="column">
+                <p class="has-text-grey has-text-centered">We do not currently have small group data for <b>{{ target_semester }}</b>.</p>
+            </div>
             {% endfor %}
         </div>
         {% else %}
+        <p class="has-text-grey has-text-centered mt-5">Select a semester to view its Small Groups.</p>
         {% endif %}
 
         {% if request.user.is_superuser %}

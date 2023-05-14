@@ -5,6 +5,8 @@
             {{ semester }}
         </option>
         {% endfor %}
+        {% if include_all_semesters is None or include_all_semesters%}
         <option value="" {% if not target_semester %}selected{% endif%}>All Semesters</option>
+        {% endif %}
     </select>
 </div>

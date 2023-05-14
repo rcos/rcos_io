@@ -5,10 +5,17 @@ from . import SearchableListView, SemesterFilteredListView
 
 
 class SmallGroupIndexView(SearchableListView, SemesterFilteredListView):
+    require_semester = True
     template_name = "portal/small_groups/index.html"
     context_object_name = "small_groups"
     queryset = SmallGroup.objects.select_related()
-    search_fields = ("name", "projects__name", "mentors__rcs_id")
+    search_fields = (
+        "name",
+        "projects__name",
+        "mentors__rcs_id",
+        "mentors__first_name",
+        "mentors__last_name",
+    )
 
 
 class SmallGroupDetailView(DetailView):
