@@ -41,6 +41,20 @@ class TimestampedModel(models.Model):
         abstract = True
 
 
+class Room(TimestampedModel):
+    """
+    Represents a physical room on campus that events/small group meetings
+    can be held in."
+    """
+
+    building = models.CharField(max_length=100)
+    room = models.CharField(max_length=100)
+    capacity = models.PositiveIntegerField(blank=True, null=True)
+
+    def __str__(self) -> str:
+        return f"{self.building} {self.room}"
+
+
 class Semester(TimestampedModel):
     """Represents an RPI semeseter that RCOS takes place during."""
 
@@ -86,6 +100,8 @@ class Semester(TimestampedModel):
         "last day",
         help_text="The last day of the semester according to the RPI Academic Calendar: https://info.rpi.edu/registrar/academic-calendar",
     )
+
+    rooms = models.ManyToManyField(Room, related_name="semesters")
 
     @property
     def projects(self):
@@ -1058,6 +1074,7 @@ class Meeting(TimestampedModel):
         blank=True,
         help_text="Where the meeting takes place either physically or virtually",
     )
+    room = models.ForeignKey(Room, on_delete=models.RESTRICT, blank=True, null=True)
     description_markdown = models.TextField(
         max_length=10000,
         blank=True,
@@ -1371,8 +1388,10 @@ class SmallGroup(TimestampedModel):
     name = models.CharField(
         max_length=100, blank=True, help_text="Public-facing name of the Small Group"
     )
+    room = models.ForeignKey(Room, on_delete=models.RESTRICT, blank=True, null=True)
     location = models.CharField(
         max_length=200,
+        blank=True,
         help_text="The location the Small Group meets for Small Group meetings",
     )
     discord_category_id = models.CharField(max_length=200, blank=True)

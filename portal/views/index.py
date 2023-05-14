@@ -21,7 +21,7 @@ class IndexView(TemplateView):
             .filter(ends_at__gte=timezone.now())
             .first()
         )
-        
+
         if self.request.user.is_authenticated:
             data["ongoing_meeting"] = Meeting.get_ongoing(self.request.user)
         else:

@@ -43,6 +43,11 @@ def make_published(modeladmin, request, queryset):
 
 
 # Inlines
+class RoomInline(admin.TabularInline):
+    model = Room
+    extra = 1
+
+
 class UserInline(admin.TabularInline):
     model = User
     extra = 1
@@ -101,6 +106,11 @@ class SmallGroupInline(admin.TabularInline):
 # Model Admins
 
 
+@admin.register(Room)
+class RoomAdmin(admin.ModelAdmin):
+    list_display = ("building", "room", "capacity")
+
+
 @admin.register(Semester)
 class SemesterAdmin(admin.ModelAdmin):
     fieldsets = (
@@ -118,6 +128,7 @@ class SemesterAdmin(admin.ModelAdmin):
                 ]
             },
         ),
+        ("Rooms", {"fields": ("rooms",)}),
     )
     list_display = (
         "name",

@@ -316,14 +316,15 @@ def manually_add_or_verify_attendance(request):
             return redirect(reverse("meetings_detail", args=(meeting.pk,)))
 
         user_ids = [
-            s.strip() for s in re.split(r',|;|\s', request.POST.get("user", ""))
+            s.strip()
+            for s in re.split(r",|;|\s", request.POST.get("user", ""))
             if s.strip()
         ]
 
         # Split RCS IDs on whitespaces, commands, semicolons, and remove parentheses
         rcs_ids = [
-            re.sub(r'\(|\)', '', s.strip()).removesuffix("@rpi.edu")
-            for s in re.split(r',|;|\s', request.POST.get("rcs_id", ""))
+            re.sub(r"\(|\)", "", s.strip()).removesuffix("@rpi.edu")
+            for s in re.split(r",|;|\s", request.POST.get("rcs_id", ""))
             if s.strip()
         ]
 
@@ -369,10 +370,12 @@ def manually_add_or_verify_attendance(request):
                     return redirect(reverse("meetings_detail", args=(meeting.pk,)))
 
             user.enrollments.get_or_create(semester_id=meeting.semester_id)
-            
+
             if action == "accept":
                 try:
-                    attendance = MeetingAttendance.objects.get(user=user, meeting=meeting)
+                    attendance = MeetingAttendance.objects.get(
+                        user=user, meeting=meeting
+                    )
                     if not attendance.is_verified:
                         attendance.is_verified = True
                         attendance.save()
@@ -384,7 +387,7 @@ def manually_add_or_verify_attendance(request):
                         meeting=meeting,
                         user=user,
                         is_verified=True,
-                        is_added_by_admin=True
+                        is_added_by_admin=True,
                     )
                     attendance.save()
                     messages.success(request, f"Added attendance for {user}!")
@@ -486,24 +489,25 @@ def user_attendance(request: HttpRequest, pk: Any):
         },
     )
 
+
 @login_required
 @user_passes_test(is_admin)
 def export_meeting_attendance(request, pk: Any):
     meeting = get_object_or_404(Meeting, pk=pk)
-    
+
     filename = "RCOS " + str(meeting) + " Attendance"
 
     # Set the appropriate response headers so the browser expects a CSV file download
     response = HttpResponse(
-        content_type='text/csv',
-        headers={'Content-Disposition': f'attachment; filename="{filename}.csv"'},
+        content_type="text/csv",
+        headers={"Content-Disposition": f'attachment; filename="{filename}.csv"'},
     )
 
     # Create a CSV writer that writes to the response
     writer = csv.writer(response)
 
     # Write the headers
-    writer.writerow(['user id', 'given name', 'family name', 'grade1', 'totalgrade'])
+    writer.writerow(["user id", "given name", "family name", "grade1", "totalgrade"])
 
     # Iterate through every **verified** attendance and write a CSV row
     for user in meeting.attendances.filter(meetingattendance__is_verified=True):

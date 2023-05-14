@@ -6,16 +6,20 @@ from portal.models import Project, Semester, User
 
 # Inputs
 
+
 class BulmaTextInput(forms.Widget):
     template_name = "portal/widgets/text_input.html"
 
 
 # Base Forms
 
+
 class SemesterForm(forms.Form):
     semester = forms.ModelChoiceField(queryset=Semester.objects.all())
 
+
 # Forms
+
 
 class UserProfileForm(forms.ModelForm):
     def __init__(self, *args, **kwargs):
@@ -37,6 +41,7 @@ class ProposeProjectForm(forms.ModelForm):
             "external_chat_url",
             "homepage_url",
         ]
+
 
 class SubmitAttendanceForm(forms.Form):
     code = forms.CharField(
