@@ -1,42 +1,52 @@
-<nav class="level">
-    <form class="level-left">
-        <input type="hidden" name="semester" value="{{ target_semester.id|default:'' }}">
-        <div class="level-item">
-            <p class="subtitle is-6">
-                <strong>{{ user_rows|length }}</strong> result{{ user_rows|pluralize }}
-            </p>
-        </div>
-        <div class="level-item">
-            <div class="field has-addons">
-                <p class="control">
-                    <input type="search" id="search" name="search" class="input"
-                        placeholder="By name, graduation year, etc." value="{{ search|default:'' }}" />
-                </p>
-                <p class="control">
-                    <button class="button">
-                        Search
-                    </button>
+<nav class="mb-5">
+    <form class="level" id="filters">
+        <div class="level-left">
+            <input type="hidden" name="semester" value="{{ target_semester.id|default:'' }}">
+            <div class="level-item">
+                <p class="subtitle is-6">
+                    <strong>{{ user_rows|length }}</strong> result{{ user_rows|pluralize }}
                 </p>
             </div>
+            <div class="level-item">
+                <div class="field has-addons">
+                    <p class="control">
+                        <input type="search" id="search" name="search" class="input"
+                            placeholder="By name, graduation year, etc." value="{{ search|default:'' }}" />
+                    </p>
+                    <p class="control">
+                        <button class="button">
+                            Search
+                        </button>
+                    </p>
+                </div>
+            </div>
+
+            {% include "portal/includes/pagination.html" %}
+        </div>
+
+        <div class="level-right">
+            {% include "portal/includes/semester_select.html" %}
+            <!-- <p class="level-item">
+                        <a
+                            class="button is-success"
+                            {% if can_propose_project.0 %}
+                            href="{% url 'projects_propose' %}"
+                            {% else %}
+                            disabled
+                            title="{{ can_propose_project.1 }}"
+                            {% endif %}
+                        >Propose Project</a></p> -->
         </div>
     </form>
-
-    <div class="level-right">
-        {% for semester in semesters %}
-        <p class="level-item">
-            {% if target_semester == semester %}
-            <strong>{{ semester }}</strong>
-            {% else %}
-            <a href="?semester={{ semester.id }}">{{ semester }}</a>
-            {% endif %}
-        </p>
-        {% endfor %}
-        <p class="level-item">
-            {% if target_semester %}
-            <a href="?semester=">All Semesters</a>
-            {% else %}
-            <strong>All Semesters</strong>
-            {% endif %}
-        </p>
-    </div>
 </nav>
+
+<script>
+    document.addEventListener('DOMContentLoaded', function () {
+        const filtersForm = document.getElementById("filters");
+        const semesterSelect = filtersForm.querySelector("select[name='semester']");
+
+        semesterSelect.addEventListener('change', function (ev) {
+            filtersForm.submit();
+        });
+    });
+</script>

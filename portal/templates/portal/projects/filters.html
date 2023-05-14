@@ -1,4 +1,4 @@
-<nav>
+<nav class="mb-5">
     <form class="level" id="filters">
         <div class="level-left">
             <input type="hidden" name="semester" value="{{ target_semester.id|default:'' }}">
@@ -33,6 +33,11 @@
                     </p>
                 </div>
             </div>
+
+            {% include "portal/includes/pagination.html" %}
+        </div>
+
+        <div class="level-item">
         </div>
 
         <div class="level-right">

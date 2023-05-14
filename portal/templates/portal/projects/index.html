@@ -19,13 +19,8 @@ Projects | RCOS IO
     <div class="container">
         <h1 class="title">Projects</h1>
         <h2 class="subtitle">{{ target_semester|default:"All Semesters" }}</h2>
-        
-        <div class="notification is-warning">
-            <p><strong>NOTE:</strong> We are working on getting all projects onto the site. Don't worry if yours is not listed yet!</p>
-        </div>
 
         {% include "./filters.html" %}
-        {% include "portal/includes/pagination.html" %}
 
         <div class="table-container">
             <table class="table is-fullwidth is-striped is-hoverable">
