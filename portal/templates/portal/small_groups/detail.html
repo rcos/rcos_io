@@ -25,36 +25,52 @@
 <section class="section">
     <div class="container">
         <div class="columns">
-            <div class="column">
+            <div class="column is-3">
                 <h2 class="subtitle is-3">
-                    Projects
+                    Mentors
                 </h2>
-                
                 <ul>
-                    {% for project in small_group.projects.all %}
-                    <li><a href="{{ project.get_absolute_url }}?semester={{ small_group.semester.id }}">{{ project }}</a></li>
+                    {% for mentor in small_group.mentors.all %}
+                    <li><a href="{{ mentor.get_absolute_url }}{% target_semester_query %}">{{ mentor }}</a></li>
                     {% endfor %}
                 </ul>
             </div>
             <div class="column">
                 <h2 class="subtitle is-3 mb-1">
-                    Team Members
+                    Projects
                 </h2>
-                <small class="has-text-grey mb-2">0 total</small>
+                <small class="has-text-grey mb-2">{{ small_group.projects.all|length }} total</small>
                 
-                <ul>
+                <div class="columns is-multiline mt-2">
                     {% for project in small_group.projects.all %}
-                    <li class="mt-2">
-                        <small class="has-text-grey">{{ project }}</small>
-                    </li>
-                    {% project_enrollments project small_group.semester as enrollments %}
-                    {% for enrollment in enrollments %}
-                    <li><a href="{{ enrollment.get_absolute_url }}">{{ enrollment.user }}</a></li>
+                    <div class="column is-half">
+                        <div class="card" style="height: 100%">
+                            <div class="card-header">
+                                <p class="card-header-title">{{ project }}</p>
+                            </div>
+                            <div class="card-content">
+                                <div class="columns is-multiline">
+                                    {% project_enrollments project small_group.semester as enrollments %}
+                                    {% for enrollment in enrollments %}
+                                    <div class="column is-half py-1">
+                                        <a href="{{ enrollment.get_absolute_url }}">{{ enrollment.user }}</a>
+                                    </div>
+                                    {% endfor %}
+                                </div>
+                            </div>
+                        </div>
+                    </div>
                     {% endfor %}
-                    {% endfor %}
-                </ul>
+                </div>
             </div>
         </div>
+
+        {% if request.user.is_superuser %}
+        <hr>
+        <div class="buttons">
+            <a href="{% url 'admin:portal_smallgroup_change' small_group.pk %}" class="button">Edit in Admin</a>
+        </div>
+        {% endif %}
     </div>
 </section>
 {% endblock %}
