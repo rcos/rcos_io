@@ -82,7 +82,7 @@ Projects | RCOS IO
                             {% endif %}
                         </td>
                         {% else %}
-                        <td><a href="{{ project.owner.get_absolute_url }}">{{ project_data.project.owner|default:"-" }}</a></td>
+                        <td><a href="{{ project_data.project.owner.get_absolute_url }}">{{ project_data.project.owner|default:"-" }}</a></td>
                         <td>
                             {% for semester in project_data.project.get_active_semesters %}
                             <a class="is-block" href="{{ project_data.project.get_absolute_url }}?semester={{ semester.id }}">{{ semester }}</a>
