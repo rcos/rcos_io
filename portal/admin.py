@@ -54,51 +54,61 @@ class UserInline(admin.TabularInline):
 
 
 class EnrollmentInline(admin.TabularInline):
+    classes = ["collapse"]
     model = Enrollment
     extra = 1
 
 
 class MeetingAttendanceInline(admin.TabularInline):
+    classes = ["collapse"]
     model = MeetingAttendance
     extra = 1
 
 
 class MeetingAttendanceCodeInline(admin.TabularInline):
+    classes = ["collapse"]
     model = MeetingAttendanceCode
     extra = 1
 
 
 class StatusUpdateSubmissionInline(admin.StackedInline):
+    classes = ["collapse"]
     model = StatusUpdateSubmission
     extra = 1
 
 
 class ProjectPitchInline(admin.TabularInline):
+    classes = ["collapse"]
     model = ProjectPitch
     extra = 1
 
 
 class ProjectProposalInline(admin.TabularInline):
+    classes = ["collapse"]
     model = ProjectProposal
     extra = 1
 
 
 class ProjectPresentationInline(admin.TabularInline):
+    classes = ["collapse"]
     model = ProjectPresentation
     extra = 1
 
 
 class ProjectRepositoryInline(admin.TabularInline):
+    classes = ["collapse"]
     model = ProjectRepository
     extra = 1
 
 
 class MentorApplicationInline(admin.TabularInline):
+    classes = ["collapse"]
     model = MentorApplication
     extra = 1
 
 
 class SmallGroupInline(admin.TabularInline):
+    classes = ["collapse"]
     model = SmallGroup
     extra = 1
 
@@ -119,13 +129,14 @@ class SemesterAdmin(admin.ModelAdmin):
         (
             "Deadlines",
             {
+                "classes": ("collapse",),
                 "fields": [
                     "mentor_application_deadline",
                     "enrollment_deadline",
                     "project_enrollment_application_deadline",
                     "project_pitch_deadline",
                     "project_proposal_deadline",
-                ]
+                ],
             },
         ),
         ("Rooms", {"fields": ("rooms",)}),
@@ -149,7 +160,11 @@ class SemesterAdmin(admin.ModelAdmin):
 
 @admin.register(Organization)
 class OrganizationAdmin(admin.ModelAdmin):
-    pass
+    fieldsets = (
+        (None, {"fields": ("name", "homepage_url")}),
+        ("Emails", {"fields": (("email_domain", "email_domain_secondary"),)}),
+        ("Discord", {"classes": ("collapse",), "fields": ("discord_role_id",)}),
+    )
 
 
 @admin.register(User)
@@ -170,23 +185,32 @@ class UserAdmin(UserAdmin):
             "Personal info",
             {
                 "fields": (
-                    "first_name",
-                    "last_name",
+                    ("first_name", "last_name"),
                     "role",
                     "rcs_id",
                     "graduation_year",
-                    "email",
-                    "password",
-                    "is_approved",
                 )
             },
         ),
-        ("Important dates", {"fields": ("last_login", "date_joined")}),
+        ("Account", {"fields": ("email", "password", "is_approved")}),
+        (
+            "Important dates",
+            {"classes": ["collapse"], "fields": (("last_login", "date_joined"),)},
+        ),
         (
             "Linked Accounts",
-            {"fields": ("organization", "github_username", "discord_user_id")},
+            {
+                "classes": ["collapse"],
+                "fields": ("organization", "github_username", "discord_user_id"),
+            },
         ),
-        ("Permissions", {"fields": ("is_active", "is_staff", "is_superuser")}),
+        (
+            "Permissions",
+            {
+                "classes": ["collapse"],
+                "fields": ("is_active", "is_staff", "is_superuser"),
+            },
+        ),
     )
     ordering = ("first_name",)
     inlines = (EnrollmentInline,)
@@ -214,6 +238,40 @@ class ProjectAdmin(admin.ModelAdmin):
     actions = (
         make_approved,
         sync_discord,
+    )
+
+    fieldsets = (
+        (
+            None,
+            {
+                "fields": (
+                    ("name", "slug"),
+                    "owner",
+                    "organization",
+                    "is_approved",
+                    "description",
+                    "tags",
+                )
+            },
+        ),
+        (
+            "Links",
+            {
+                "classes": ["collapse"],
+                "fields": ("homepage_url", "logo_url", "external_chat_url"),
+            },
+        ),
+        (
+            "Discord",
+            {
+                "classes": ["collapse"],
+                "fields": (
+                    "discord_role_id",
+                    "discord_text_channel_id",
+                    "discord_voice_channel_id",
+                ),
+            },
+        ),
     )
 
     def formfield_for_foreignkey(self, db_field, request, **kwargs):
@@ -247,14 +305,73 @@ class EnrollmentAdmin(admin.ModelAdmin):
         "is_mentor",
     )
 
+    fieldsets = (
+        (
+            None,
+            {
+                "fields": (
+                    "semester",
+                    "user",
+                    "project",
+                )
+            },
+        ),
+        (
+            "Roles",
+            {
+                "fields": (
+                    (
+                        "is_project_lead",
+                        "is_mentor",
+                        "is_coordinator",
+                        "is_faculty_advisor",
+                    ),
+                )
+            },
+        ),
+        (
+            "Grading",
+            {"fields": ("credits", "is_for_pay", "final_grade", "notes_markdown")},
+        ),
+    )
+
 
 @admin.register(Meeting)
 class MeetingAdmin(admin.ModelAdmin):
     list_display = ("display_name", "type", "starts_at", "is_published")
     search_fields = ("name", "type")
     list_filter = ("starts_at", "type", "is_published")
-    # inlines = (MeetingAttendanceCodeInline, MeetingAttendanceInline)
+    inlines = (MeetingAttendanceCodeInline, MeetingAttendanceInline)
     actions = (make_published,)
+
+    fieldsets = (
+        (
+            None,
+            {
+                "fields": (
+                    "semester",
+                    "name",
+                    "type",
+                    "location",
+                    "room",
+                    ("starts_at", "ends_at"),
+                    "host",
+                    "description_markdown",
+                )
+            },
+        ),
+        ("Links", {"fields": ("presentation_url", "recording_url")}),
+        (
+            "Advanced info",
+            {
+                "classes": ("collapse",),
+                "fields": (
+                    "attendance_chance_verification_required",
+                    "discord_event_id",
+                ),
+            },
+        ),
+    )
 
 
 @admin.register(SmallGroup)
@@ -262,6 +379,31 @@ class SmallGroupAdmin(admin.ModelAdmin):
     list_display = ("display_name", "location", "semester")
     search_fields = ("name", "location")
     list_filter = ("semester",)
+
+    fieldsets = (
+        (
+            None,
+            {
+                "fields": (
+                    "semester",
+                    "name",
+                    "room",
+                    "location",  # TODO: Remove
+                )
+            },
+        ),
+        (
+            "Assignments",
+            {"fields": ("projects", "mentors")},
+        ),
+        (
+            "Discord",
+            {
+                "classes": ("collapse",),
+                "fields": ("discord_category_id", "discord_role_id"),
+            },
+        ),
+    )
 
 
 # @admin.register(StatusUpdate)

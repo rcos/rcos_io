@@ -73,17 +73,16 @@ class SemesterFilteredListView(ListView):
         semester_id = self.request.GET.get("semester")
         if semester_id and not self.target_semester:
             self.target_semester = get_object_or_404(Semester, pk=semester_id)
-        
+
         if not self.target_semester and self.require_semester:
             # If not semester requested and one must be set, fetch active semester or 404
             self.target_semester = Semester.get_active()
 
             if not self.target_semester:
                 self.target_semester = Semester.objects.latest("start_date")
-            
+
             if not self.target_semester:
                 raise Http404("No semesters available.")
-
 
         if self.target_semester:
             queryset = queryset.filter(
