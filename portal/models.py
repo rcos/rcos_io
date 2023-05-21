@@ -3,6 +3,7 @@ import re
 from decimal import Decimal
 from time import sleep
 from typing import Optional, Tuple
+from dataclasses import dataclass
 
 from django.conf import settings
 from django.contrib.auth.models import AbstractUser, BaseUserManager
@@ -30,6 +31,18 @@ def sync_discord(sender, instance, created, *args, **kwargs):
 def sync_discord_on_delete(sender, instance, *args, **kwargs):
     instance.sync_discord(is_deleted=True)
 
+@dataclass
+class Eligibility:
+    is_eligible: bool
+    reason: Optional[str]
+
+    @staticmethod
+    def ineligible(reason: str):
+        return Eligibility(False, reason)
+
+    @staticmethod
+    def eligible():
+        return Eligibility(True, None)
 
 class TimestampedModel(models.Model):
     """A base model that all other models should inherit from. It adds timestamps for creation and updating."""
@@ -112,6 +125,13 @@ class Semester(TimestampedModel):
         """Returns the currently ongoing semester or `None` if none exists."""
         now = timezone.now().date()
         return cls.objects.filter(start_date__lte=now, end_date__gte=now).first()
+
+    @classmethod
+    def get_next(cls):
+        """Returns the closest semester that hasn't started yet."""
+        now = timezone.now().date()
+        return cls.objects.filter(start_date__gte=now).order_by("start_date").first()
+
 
     @property
     def enrollment_count(self):
@@ -406,31 +426,70 @@ class User(AbstractUser, TimestampedModel):
             .distinct()
         )
 
+    # Permissions
+
+    def can_enroll(self, semester: Semester) -> Eligibility:
+        now = timezone.now()
+        if semester.is_active and (semester.enrollment_deadline and now > semester.enrollment_deadline):
+            return Eligibility.ineligible("It is passed the enrollment deadline.")
+
+        if not semester.is_active and semester != Semester.get_next():
+            return Eligibility.ineligible("There are no upcoming semesters in the system yet.")
+
+        return Eligibility.eligible()
+
     def can_propose_project(
         self, semester: Optional[Semester]
-    ) -> Tuple[bool, Optional[str]]:
+    ) -> Eligibility:
         if not self.is_approved or not self.is_active:
-            return False, "Your account is not approved or active."
+            return Eligibility.ineligible("Your account is not approved or active.")
 
-        # TODO: check deadline
-        if not semester or not semester.is_active:
-            return (
-                False,
+        now = timezone.now()
+        if not semester:
+            return Eligibility.ineligible("No semester selected.")
+        
+        if not semester.is_active or (semester.project_pitch_deadline and now > semester.project_pitch_deadline):
+            return Eligibility.ineligible(
                 "The current semester is not accepting new projects at this time.",
             )
 
         if self.owned_projects.filter(is_approved=False).count() > 0:
-            return False, "You have an unapproved project pending."
+            return Eligibility.ineligible("You have an unapproved project pending.")
 
         try:
             if Enrollment.objects.get(user=self, semester=semester).project:
-                return False, "You're already enrolled on a project this semester."
+                return Eligibility.ineligible(
+                                   "You're already enrolled on a project this semester.")
         except Enrollment.DoesNotExist:
             pass
 
-        return True, None
+        return Eligibility.eligible()
 
-    def get_expected_meetings(self, semester=Semester):
+    def can_apply_as_mentor(self, semester: Semester) -> Eligibility:
+        if not self.is_approved or not self.is_active:
+            return Eligibility.ineligible("Your account is not approved or active.")
+
+        now = timezone.now()
+        if not semester:
+            return Eligibility.ineligible("No semester selected.")
+        
+        if not semester.is_active or (semester.project_pitch_deadline and now > semester.project_pitch_deadline):
+            return Eligibility.ineligible(
+                "The current semester is not accepting new mentor applications at this time.",
+            )
+
+        try:
+            if MentorApplication.objects.get(user=self, semester=semester):
+                return Eligibility.ineligible(
+                                   "You already applied this semester.")
+        except MentorApplication.DoesNotExist:
+            pass
+
+        return Eligibility.eligible()
+
+    # End Permissions
+
+    def get_expected_meetings(self, semester: Semester):
         # Determine what kinds of meetings this student is expected to attend
         meeting_types = [Meeting.LARGE_GROUP, Meeting.SMALL_GROUP, Meeting.WORKSHOP]
         return Meeting.objects.filter(type__in=meeting_types, semester=semester)

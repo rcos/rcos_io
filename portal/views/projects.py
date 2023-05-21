@@ -76,6 +76,7 @@ class ProjectIndexView(SearchableListView, SemesterFilteredListView):
             enrollments = enrollments.filter(
                 semester=self.target_semester
             ).select_related("semester")
+            data["can_propose_project"] = self.request.user.can_propose_project(self.target_semester)
 
         for project in projects:
             projects_row = {

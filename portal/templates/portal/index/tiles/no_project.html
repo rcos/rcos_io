@@ -45,14 +45,14 @@
         {% endfor %}
         </ul>
     </div>
-    <!-- {% if can_propose_project.0 %}
+    <!-- {% if can_propose_project.is_eligible %}
     <a
         class="button is-block is-outlined is-primary mb-2"
-        {% if can_propose_project.0 %}
+        {% if can_propose_project.is_eligible %}
         href="{% url 'projects_propose' %}"
         {% else %}
         disabled
-        title="{{ can_propose_project.1 }}"
+        title="{{ can_propose_project.reason }}"
         {% endif %}
     >Propose Project</a>
     {% endif %} -->
