@@ -1,5 +1,10 @@
 # RCOS IO
 
+RCOS IO is the latest iteration of an admin and member portal for the Rensselaer Center for Open Source. It was created by Coordinators in 2022 and will be maintained by alumnus Frank Matranga until at least 2028, solving the issue of loss of experience as student leadership comes and goes.
+
+## Feature List
+- TODO
+
 ## Local Development
 
 ### Requirements
@@ -24,6 +29,6 @@
 1. `./manage.py runserver`
 2. Navigate to http://127.0.0.1:8000/auth/login/ and enter the email of your superuser and choose "Login (admin)"
 
-## Deploying to RCOS IO
+## Deploying to Production
 
 1. `git push origin main:production`
