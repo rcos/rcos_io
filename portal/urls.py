@@ -5,6 +5,7 @@ from portal.views.admin import (
     import_submitty_enrollments,
     import_submitty_teams,
 )
+from portal.views.discord import DiscordAdminIndex, delete_discord_channels
 from portal.views.small_groups import SmallGroupDetailView, SmallGroupIndexView
 
 from .views.auth import (
@@ -95,6 +96,13 @@ urlpatterns = [
         "small_groups/<int:pk>",
         SmallGroupDetailView.as_view(),
         name="small_groups_detail",
+    ),
+    # Discord Administration Routes
+    path("admin/discord", DiscordAdminIndex.as_view(), name="discord_admin_index"),
+    path(
+        "admin/discord/delete-channels",
+        delete_discord_channels,
+        name="discord_admin_delete_channels",
     ),
     # Admin Routes
     path(

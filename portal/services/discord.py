@@ -1,4 +1,4 @@
-from typing import Any, Dict, NotRequired, Optional, TypedDict, Union, cast
+from typing import Any, Dict, List, NotRequired, Optional, TypedDict, Union, cast
 
 import requests
 from django.conf import settings
@@ -485,3 +485,34 @@ def delete_server_event(
     )
     response.raise_for_status()
     return response.json()
+
+
+class ServerChannel(TypedDict):
+    """https://discord.com/developers/docs/resources/channel#channel-object-channel-structure"""
+
+    id: str
+    type: int
+    name: NotRequired[str]
+    topic: NotRequired[str]
+    position: NotRequired[int]
+    parent_id: NotRequired[str]
+
+
+def get_server_channels():
+    response = requests.get(
+        f"{DISCORD_API_ENDPOINT}/guilds/{settings.DISCORD_SERVER_ID}/channels",
+        headers=HEADERS,
+        timeout=3,
+    )
+    response.raise_for_status()
+    return cast(List[ServerChannel], response.json())
+
+
+def delete_channel(channel_id: str):
+    response = requests.delete(
+        f"{DISCORD_API_ENDPOINT}/channels/{channel_id}",
+        headers=HEADERS,
+        timeout=3,
+    )
+    response.raise_for_status()
+    return cast(ServerChannel, response.json())

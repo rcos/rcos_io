@@ -183,6 +183,8 @@ LANGUAGE_CODE = "en-us"
 
 TIME_ZONE = "America/New_York"
 
+CELERY_TIMEZONE = TIME_ZONE
+
 USE_I18N = True
 
 USE_TZ = True
@@ -345,3 +347,6 @@ LOGGING = {
         "level": "WARNING",
     },
 }
+
+CELERY_BROKER_URL = os.environ["REDIS_URL"]
+CELERY_RESULT_BACKEND = os.environ["REDIS_URL"]

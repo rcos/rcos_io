@@ -1,0 +1,46 @@
+{% extends "portal/base.html" %}
+
+{% block title %}
+Discord Administration | RCOS IO
+{% endblock %}
+
+{% block content %}
+<section class="section">
+    <div class="container">
+        <h1 class="title">Discord Server Administration</h1>
+        
+        <form action="{% url 'discord_admin_delete_channels' %}" method="post" onsubmit="return confirm('Delete these channels?')" class="content">
+            {% csrf_token %}
+            <ul>
+                {% for channel_key, channels in categories %}
+                <li>
+                    <label><input name="channelID" type="checkbox" value="{{ channel_key.0 }}" class="category" data-category-id="{{ channel_key.0 }}" /> {{ channel_key.1 }}</label>
+
+                    <ul>
+                        {% for child_channel in channels %}
+                        <li>
+                            <label><input name="channelID" type="checkbox" value="{{ child_channel.id }}" data-parent-id="{{ child_channel.parent_id }}" /> {{ child_channel.name }}</label>
+                        </li>
+                        {% endfor %}
+                    </ul>
+                </li>
+                {% endfor %}
+            </ul>
+            <button class="button is-danger" type="submit">Delete Channels</button>
+        </form>
+    </div>
+</section>
+
+<script>
+document.addEventListener("DOMContentLoaded", function() {
+    document.querySelectorAll("input[type='checkbox'].category").forEach((categoryCheckbox) => {
+        const categoryID = categoryCheckbox.dataset.categoryId;
+        categoryCheckbox.addEventListener("change", (event) => {
+            if (event.target.checked) {
+                document.querySelectorAll(`input[data-parent-id='${categoryID}']`).forEach((checkbox) => checkbox.checked = event.target.checked)
+            }
+        })
+    })
+})
+</script>
+{% endblock %}

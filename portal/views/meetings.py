@@ -431,7 +431,7 @@ def user_attendance(request: HttpRequest, pk: Any):
     except (Semester.DoesNotExist, MultiValueDictKeyError):
         messages.error(request, "No such semester found.")
         return redirect(reverse("users_detail", args=(target_user.pk,)))
-    
+
     # Fetch target user's meeting attendance along with the meetings they *should* be attending
     user_expected_meetings = target_user.get_expected_meetings(target_semester)
     user_attendances = MeetingAttendance.objects.filter(
