@@ -1117,7 +1117,7 @@ class Meeting(TimestampedModel):
         on_delete=models.SET_NULL,
         help_text="Optional host for the meeting (e.g. mentor hosting a workshop)",
     )
-    type = models.CharField(choices=TYPE_CHOICES, max_length=100)
+    type = models.CharField(choices=TYPE_CHOICES, max_length=100, default=SMALL_GROUP)
     is_published = models.BooleanField(
         "published?", default=False, help_text="Whether the meeting is visible to users"
     )

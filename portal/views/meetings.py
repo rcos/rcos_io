@@ -5,6 +5,7 @@ import re
 import string
 from typing import Any, Dict, Optional, cast
 
+from django.utils.datastructures import MultiValueDictKeyError
 from django.contrib import messages
 from django.contrib.auth.decorators import login_required, user_passes_test
 from django.contrib.auth.mixins import LoginRequiredMixin
@@ -427,10 +428,10 @@ def user_attendance(request: HttpRequest, pk: Any):
     # Fetch the desired semester
     try:
         target_semester = Semester.objects.get(pk=request.GET["semester"])
-    except Semester.DoesNotExist:
+    except (Semester.DoesNotExist, MultiValueDictKeyError):
         messages.error(request, "No such semester found.")
         return redirect(reverse("users_detail", args=(target_user.pk,)))
-
+    
     # Fetch target user's meeting attendance along with the meetings they *should* be attending
     user_expected_meetings = target_user.get_expected_meetings(target_semester)
     user_attendances = MeetingAttendance.objects.filter(
