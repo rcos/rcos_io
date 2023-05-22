@@ -1105,7 +1105,8 @@ class Meeting(TimestampedModel):
     }
 
     semester = models.ForeignKey(
-        Semester, on_delete=models.CASCADE, related_name="meetings"
+        Semester, on_delete=models.CASCADE, related_name="meetings",
+        default=Semester.get_active
     )
     name = models.CharField(
         max_length=100, blank=True, help_text="The optional title of the meeting"
@@ -1442,7 +1443,7 @@ class MentorApplication(TimestampedModel):
 
 class SmallGroup(TimestampedModel):
     semester = models.ForeignKey(
-        Semester, on_delete=models.CASCADE, related_name="small_groups"
+        Semester, on_delete=models.CASCADE, related_name="small_groups",
     )
     name = models.CharField(
         max_length=100, blank=True, help_text="Public-facing name of the Small Group"
