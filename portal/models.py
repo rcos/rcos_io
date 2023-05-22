@@ -114,7 +114,7 @@ class Semester(TimestampedModel):
         help_text="The last day of the semester according to the RPI Academic Calendar: https://info.rpi.edu/registrar/academic-calendar",
     )
 
-    rooms = models.ManyToManyField(Room, related_name="semesters")
+    rooms = models.ManyToManyField(Room, related_name="semesters", blank=True)
 
     @property
     def projects(self):

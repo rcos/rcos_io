@@ -193,7 +193,7 @@ class ProjectAddPitch(CreateView):
 
     def get(self, request, *args: str, **kwargs: Any):
         self.semester = Semester.get_active()
-        self.project = Project.objects.get(pk=self.kwargs["slug"])
+        self.project = Project.objects.get(slug=self.kwargs["slug"])
         if not self.project.owner == self.request.user:
             return HttpResponseForbidden()
 
@@ -201,7 +201,7 @@ class ProjectAddPitch(CreateView):
 
     def form_valid(self, form):
         self.semester = Semester.get_active()
-        self.project = Project.objects.get(pk=self.kwargs["slug"])
+        self.project = Project.objects.get(slug=self.kwargs["slug"])
         if not self.project.owner == self.request.user:
             return HttpResponseForbidden()
 
