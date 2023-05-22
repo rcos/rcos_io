@@ -1,8 +1,15 @@
+import time
+from typing import List
 from celery import shared_task
+from requests import HTTPError
 
 from portal.services import discord
 
-
 @shared_task
-def send_discord_message():
-    discord.send_message("796073787316895814", {"content": "YES! IT works!!!"})
+def delete_discord_channels(channel_ids: List[str]):
+    for channel_id in channel_ids:
+        try:
+            discord.delete_channel(channel_id)
+        except HTTPError as e:
+            print(e, e.response)
+        time.sleep(2)

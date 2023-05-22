@@ -6,11 +6,13 @@ from django.views.generic.base import TemplateView
 from django.contrib.auth.decorators import login_required, user_passes_test
 from django.shortcuts import redirect
 from django.http import HttpRequest, HttpResponse
+from django.contrib import messages
+from django.urls import reverse
 
 from portal.services import discord
 from portal.views.admin import is_admin
 
-from portal.tasks import send_discord_message
+from portal import tasks
 
 
 @method_decorator(login_required, name="dispatch")
@@ -61,10 +63,10 @@ def delete_discord_channels(request: HttpRequest) -> HttpResponse:
             if channel_id != "None"
         ]
 
-        # Delete these channels
-        send_discord_message.delay()
-        # for channel_id in channel_ids:
-        #     discord.delete_channel(channel_id)
-        #     time.sleep(1)
+        # TODO: run some checks about these channels
 
-    return redirect("/")
+        # Kick off a task to delete these channels
+        tasks.delete_discord_channels.delay(channel_ids)
+        messages.success(request, "Deleting the Discord channels in the background...")
+
+    return redirect(reverse("discord_admin_index"))
