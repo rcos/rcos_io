@@ -20,7 +20,7 @@ from portal import tasks
 class DiscordAdminIndex(TemplateView):
     """"""
 
-    template_name = "portal/discord/index.html"
+    template_name = "portal/admin/discord/index.html"
 
     def get_context_data(self, **kwargs):
         data = super().get_context_data(**kwargs)
