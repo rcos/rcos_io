@@ -14,7 +14,7 @@ from portal.models import Enrollment, Project, ProjectPitch, Semester, SmallGrou
 logger = logging.getLogger(__name__)
 
 
-def is_admin(user):
+def is_admin(user: User):
     return user.is_superuser
 
 

@@ -429,19 +429,6 @@ class User(AbstractUser, TimestampedModel):
 
     # Permissions
 
-    def can_enroll(self, semester: Semester) -> Eligibility:
-        now = timezone.now()
-        if semester.is_active and (
-            semester.enrollment_deadline and now > semester.enrollment_deadline
-        ):
-            return Eligibility.ineligible("It is passed the enrollment deadline.")
-
-        if not semester.is_active and semester != Semester.get_next():
-            return Eligibility.ineligible(
-                "There are no upcoming semesters in the system yet."
-            )
-
-        return Eligibility.eligible()
 
     def can_propose_project(self, semester: Optional[Semester]) -> Eligibility:
         if not self.is_approved or not self.is_active:

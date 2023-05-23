@@ -84,6 +84,7 @@ INSTALLED_APPS = [
     "crispy_forms",
     "crispy_bulma",
     "debug_toolbar",
+    # "django_celery_beat"
 ]
 
 CRISPY_ALLOWED_TEMPLATE_PACKS = ("bulma",)

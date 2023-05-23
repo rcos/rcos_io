@@ -65,7 +65,7 @@
     {% if messages %}
     <div class="messages">
         {% for message in messages %}
-        <div class="notification {{ message.tags }} mb-1">
+        <div class="notification {{ message.tags }} mb-1 dissmissable">
             <button class="delete"></button>
             {{ message }}
         </div>
@@ -127,7 +127,7 @@
 
 
             // Notification dismissal
-            (document.querySelectorAll('.notification') || []).forEach(($not, index) => {
+            (document.querySelectorAll('.notification.dissmissable') || []).forEach(($not, index) => {
                 // Dismiss after a few seconds
                 let dismissTimeout = setTimeout(() => {
                     if ($not && $not.parentElement) {
