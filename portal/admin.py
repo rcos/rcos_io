@@ -352,6 +352,7 @@ class MeetingAdmin(admin.ModelAdmin):
                     "semester",
                     "name",
                     "type",
+                    "is_published",
                     "location",
                     "room",
                     ("starts_at", "ends_at"),

@@ -5,6 +5,7 @@ from time import sleep
 from typing import Optional, Tuple
 from dataclasses import dataclass
 
+from django.db.models.signals import pre_save
 from django.conf import settings
 from django.contrib.auth.models import AbstractUser, BaseUserManager
 from django.core.cache import cache
@@ -553,7 +554,7 @@ def pre_save_user(instance, sender, *args, **kwargs):
             pass
 
 
-# pre_save.connect(pre_save_user, sender=User)
+pre_save.connect(pre_save_user, sender=User)
 # post_save.connect(sync_discord, sender=User)
 
 
