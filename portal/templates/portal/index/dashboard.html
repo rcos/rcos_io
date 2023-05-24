@@ -21,61 +21,69 @@
 
 <section class="section">
     <div class="container">
-        <div class="tile is-ancestor">
-            <div class="tile is-parent is-vertical">
-                <div class="tile box is-child is-flex  is-flex-direction-column">
-                    {% if active_semester %}
-                        {% if request.user.is_approved %}
-                            {% if enrollment %}
-                            <h2 class="title is-2">Welcome to RCOS IO!</h2>
-                            <div class="content block">
-
-                                <form action="{% url 'users_enroll' request.user.pk %}" method="post">
-                                    {% csrf_token %}
-                                    <input type="hidden" name="semester" value="{{ active_semester.pk }}">
-
-                                    <div class="field">
-                                        <label class="label" for="project">Project</label>
-                                        <div class="select">
-                                            <select name="project" id="project">
-                                                <option value="">No project</option>
-                                                {% for project in active_semester.projects %}
-                                                <option value="{{ project.pk }}" {% if project == enrollment.project %}selected{% endif %}>{{ project }}</option>
-                                                {% endfor %}
-                                            </select>
+        
+        <div class="tile is-ancestor is-vertical">
+            {% if request.user.is_approved %}
+            <div class="tile is-child">
+                {% include "./tiles/deadlines.html" %}
+            </div>
+            {% endif %}
+            <div class="tile is-parent">
+                <div class="tile is-vertical is-parent">
+                    <div class="tile box is-child is-flex  is-flex-direction-column">
+                        {% if active_semester %}
+                            {% if request.user.is_approved %}
+                                {% if enrollment %}
+                                <h2 class="title is-2">Welcome to RCOS IO!</h2>
+                                <div class="content block">
+    
+                                    <form action="{% url 'users_enroll' request.user.pk %}" method="post">
+                                        {% csrf_token %}
+                                        <input type="hidden" name="semester" value="{{ active_semester.pk }}">
+    
+                                        <div class="field">
+                                            <label class="label" for="project">Project</label>
+                                            <div class="select">
+                                                <select name="project" id="project">
+                                                    <option value="">No project</option>
+                                                    {% for project in active_semester.projects %}
+                                                    <option value="{{ project.pk }}" {% if project == enrollment.project %}selected{% endif %}>{{ project }}</option>
+                                                    {% endfor %}
+                                                </select>
+                                            </div>
+                                            <p class="help">What project are you working on?</p>
                                         </div>
-                                        <p class="help">What project are you working on?</p>
-                                    </div>
-
-                                    <div class="field">
-                                        <label class="label" for="credits">Credits</label>
-                                        <div class="control">
-                                            <input class="input" id="credits" name="credits" type="number" min="0" max="4" placeholder="Credits" value="{{ enrollment.credits }}">
+    
+                                        <div class="field">
+                                            <label class="label" for="credits">Credits</label>
+                                            <div class="control">
+                                                <input class="input" id="credits" name="credits" type="number" min="0" max="4" placeholder="Credits" value="{{ enrollment.credits }}">
+                                            </div>
+                                            <p class="help">How many credits have you enrolled in RCOS for on SIS? Leave 0 if you are not registerd for the course.</p>
                                         </div>
-                                        <p class="help">How many credits have you enrolled in RCOS for on SIS? Leave 0 if you are not registerd for the course.</p>
-                                    </div>
-
-                                    <button href="#" class="button is-primary  is-block is-fullwidth" type="submit">Confirm Details</button>
-                                </form>
-                            </div>
+    
+                                        <button href="#" class="button is-primary  is-block is-fullwidth" type="submit">Confirm Details</button>
+                                    </form>
+                                </div>
+                                {% else %}
+                                {% include "./tiles/not_enrolled.html" %}
+                                {% endif %}
                             {% else %}
-                            {% include "./tiles/not_enrolled.html" %}
+                            {% include "./tiles/not_approved.html" %}
                             {% endif %}
                         {% else %}
-                        {% include "./tiles/not_approved.html" %}
+                            <p class="has-text-grey">When a semester starts, you'll be able to access useful information on this dashboard!</p>
                         {% endif %}
-                    {% else %}
-                        <p class="has-text-grey">When a semester starts, you'll be able to access useful information on this dashboard!</p>
-                    {% endif %}
+                    </div>
                 </div>
-            </div>
-
-            <div class="tile is-vertical is-parent">
-                <div class="tile is-child box">
-                    {% include "./tiles/support.html" %}
-                </div>
-                <div class="tile is-child box">
-                    {% include "./tiles/meetings.html" %}
+    
+                <div class="tile is-vertical is-parent">
+                        <div class="tile is-child box">
+                            {% include "./tiles/support.html" %}
+                        </div>
+                        <div class="tile is-child box">
+                            {% include "./tiles/meetings.html" %}
+                        </div>
                 </div>
             </div>
         </div>

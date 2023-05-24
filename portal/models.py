@@ -5,7 +5,7 @@ from time import sleep
 from typing import Optional, Tuple
 from dataclasses import dataclass
 
-from django.db.models.signals import pre_save
+from django.db.models.signals import pre_save, post_save
 from django.conf import settings
 from django.contrib.auth.models import AbstractUser, BaseUserManager
 from django.core.cache import cache
@@ -31,6 +31,11 @@ def sync_discord(sender, instance, created, *args, **kwargs):
 
 def sync_discord_on_delete(sender, instance, *args, **kwargs):
     instance.sync_discord(is_deleted=True)
+
+
+def clear_semester_cache(sender, instance, created, *args, **kwargs):
+    cache.delete("semesters")
+    cache.delete("active_semester")
 
 
 @dataclass
@@ -162,6 +167,9 @@ class Semester(TimestampedModel):
             models.Index(fields=["start_date"]),
             models.Index(fields=["start_date", "end_date"]),
         ]
+
+
+post_save.connect(clear_semester_cache, sender=Semester)
 
 
 class Organization(TimestampedModel):
@@ -429,7 +437,6 @@ class User(AbstractUser, TimestampedModel):
         )
 
     # Permissions
-
 
     def can_propose_project(self, semester: Optional[Semester]) -> Eligibility:
         if not self.is_approved or not self.is_active:

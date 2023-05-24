@@ -1,0 +1,29 @@
+<nav class="level">
+    {% if active_semester and active_semester.mentor_application_deadline %}
+    <div class="level-item has-text-centered">
+        <div>
+            <p class="heading">Mentor Applications Deadline</p>
+            <p class="title">{{ active_semester.mentor_application_deadline|date:"n/j g:i a" }}</p>
+        </div>
+    </div>
+    {% endif %}
+
+    {% if active_semester and active_semester.project_pitch_deadline %}
+    <div class="level-item has-text-centered">
+        <div>
+            <p class="heading">Project Pitches Deadline</p>
+            <p class="title">{{ active_semester.project_pitch_deadline|date:"n/j g:i a" }}</p>
+            <p class="heading"><a href="https://docs.google.com/forms/d/e/1FAIpQLSfth5BEBlQ3mdRGUHf6eY3CM8enbujGZie84xsijbh2bpyEXQ/viewform?usp=sf_link" target="_blank">Submit</a></p>
+        </div>
+    </div>
+    {% endif %}
+    
+    {% if active_semester and active_semester.project_proposal_deadline %}
+    <div class="level-item has-text-centered">
+        <div>
+            <p class="heading">Project Proposals Deadline</p>
+            <p class="title">{{ active_semester.project_proposal_deadline|date:"n/j g:i a" }}</p>
+        </div>
+    </div>
+    {% endif %}
+</nav>
