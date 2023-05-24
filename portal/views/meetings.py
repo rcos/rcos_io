@@ -149,7 +149,7 @@ class MeetingDetailView(DetailView):
             data["can_manage_attendance"] = True
 
             if self.request.user.is_superuser:
-                data["small_groups"] = SmallGroup.objects.all()
+                data["small_groups"] = SmallGroup.objects.filter(semester_id=self.object.semester_id)
             else:
                 data["small_groups"] = self.request.user.mentored_small_groups.filter(
                     semester_id=self.object.semester_id
