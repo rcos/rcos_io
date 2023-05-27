@@ -19,8 +19,8 @@
 </form>
 <hr>
 <small class="has-text-grey is-block">Ongoing Meeting
-    {% if ongoing_meeting.location %}
-    at <strong>{{ ongoing_meeting.location }}</strong></small>
+    {% if ongoing_meeting.room %}
+    at <strong>{{ ongoing_meeting.room }}</strong></small>
     {% endif %}
 <a class="is-size-5 is-block mb-2" href="{{ ongoing_meeting.get_absolute_url }}">{{ ongoing_meeting }}</a>
 {% if ongoing_meeting.presentation_embed_url %}

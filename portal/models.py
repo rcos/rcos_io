@@ -1133,11 +1133,6 @@ class Meeting(TimestampedModel):
     )
     starts_at = models.DateTimeField(help_text="When the meeting starts")
     ends_at = models.DateTimeField(help_text="When the meeting ends")
-    location = models.CharField(
-        max_length=500,
-        blank=True,
-        help_text="Where the meeting takes place either physically or virtually",
-    )
     room = models.ForeignKey(Room, on_delete=models.RESTRICT, blank=True, null=True)
     description_markdown = models.TextField(
         max_length=10000,
@@ -1320,7 +1315,7 @@ class Meeting(TimestampedModel):
                             scheduled_start_time=self.starts_at.isoformat(),
                             scheduled_end_time=self.ends_at.isoformat(),
                             description=description,
-                            location=self.location,
+                            location=str(self.room),
                         )
                         self.discord_event_id = event["id"]
                         self.save()
@@ -1331,7 +1326,7 @@ class Meeting(TimestampedModel):
                             scheduled_start_time=self.starts_at.isoformat(),
                             scheduled_end_time=self.ends_at.isoformat(),
                             description=description,
-                            location=self.location,
+                            location=str(self.room),
                         )
                     elif self.discord_event_id and not self.is_published:
                         discord.delete_server_event(self.discord_event_id)
@@ -1455,11 +1450,6 @@ class SmallGroup(TimestampedModel):
         max_length=100, blank=True, help_text="Public-facing name of the Small Group"
     )
     room = models.ForeignKey(Room, on_delete=models.RESTRICT, blank=True, null=True)
-    location = models.CharField(
-        max_length=200,
-        blank=True,
-        help_text="The location the Small Group meets for Small Group meetings",
-    )
     discord_category_id = models.CharField(max_length=200, blank=True)
     discord_role_id = models.CharField(max_length=200, blank=True)
 
@@ -1468,7 +1458,11 @@ class SmallGroup(TimestampedModel):
 
     @property
     def display_name(self):
-        return self.name or self.location or "Unnamed Small Group"
+        if self.name:
+            return self.name
+        if self.room:
+            return str(self.room)
+        return "Unnamed Small Group"
 
     def get_absolute_url(self):
         return reverse("small_groups_detail", args=[str(self.id)])
@@ -1494,7 +1488,7 @@ class SmallGroup(TimestampedModel):
         return self.display_name
 
     class Meta:
-        ordering = ["semester", Lower("name"), "location"]
+        ordering = ["semester", Lower("name"), "room"]
 
 
 class MeetingAttendanceCode(TimestampedModel):

@@ -60,10 +60,10 @@ Meetings | RCOS IO
                                 <span class="icon">
                                     <i class="fa-solid fa-location-dot"></i>
                                 </span>
-                                {% if meeting.location %}
-                                {{ meeting.location }}
+                                {% if meeting.room %}
+                                {{ meeting.room }}
                                 {% else %}
-                                <span class="has-text-grey">No location specified.</span>
+                                <span class="has-text-grey">No room specified.</span>
                                 {% endif %}
                             </li>
                             {% if meeting.host %}
@@ -119,10 +119,10 @@ Meetings | RCOS IO
                                 <span class="icon">
                                     <i class="fa-solid fa-location-dot"></i>
                                 </span>
-                                {% if meeting.location %}
-                                {{ meeting.location }}
+                                {% if meeting.room %}
+                                {{ meeting.room }}
                                 {% else %}
-                                <span class="has-text-grey">No location specified.</span>
+                                <span class="has-text-grey">No room specified.</span>
                                 {% endif %}
                             </li>
                             {% if meeting.host %}

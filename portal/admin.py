@@ -353,7 +353,6 @@ class MeetingAdmin(admin.ModelAdmin):
                     "name",
                     "type",
                     "is_published",
-                    "location",
                     "room",
                     ("starts_at", "ends_at"),
                     "host",
@@ -377,8 +376,8 @@ class MeetingAdmin(admin.ModelAdmin):
 
 @admin.register(SmallGroup)
 class SmallGroupAdmin(admin.ModelAdmin):
-    list_display = ("display_name", "location", "semester")
-    search_fields = ("name", "location")
+    list_display = ("display_name", "room", "semester")
+    search_fields = ("name", "room")
     list_filter = ("semester",)
 
     fieldsets = (
@@ -389,7 +388,6 @@ class SmallGroupAdmin(admin.ModelAdmin):
                     "semester",
                     "name",
                     "room",
-                    "location",  # TODO: Remove
                 )
             },
         ),
@@ -410,7 +408,7 @@ class SmallGroupAdmin(admin.ModelAdmin):
 # @admin.register(StatusUpdate)
 # class StatusUpdateAdmin(admin.ModelAdmin):
 #     list_display = ("display_name", "semester", "opens_at", "closes_at")
-#     search_fields = ("name", "location")
+#     search_fields = ("name", "room")
 #     list_filter = ("semester", "opens_at")
 #     inlines = (StatusUpdateSubmissionInline,)
 
