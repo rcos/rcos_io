@@ -25,6 +25,9 @@ class UserProfileForm(forms.ModelForm):
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
         self.helper = FormHelper()
+        
+        if self.initial.get("role", None) == User.RPI:
+            pass
 
     class Meta:
         model = User
