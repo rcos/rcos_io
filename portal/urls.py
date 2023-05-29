@@ -6,6 +6,7 @@ from portal.views.admin import (
     import_submitty_teams,
 )
 from portal.views.discord import DiscordAdminIndex, delete_discord_channels
+from portal.views.mentors import MentorApplicationView
 from portal.views.small_groups import SmallGroupDetailView, SmallGroupIndexView
 
 from .views.auth import (
@@ -86,6 +87,12 @@ urlpatterns = [
         name="export_meeting_attendance",
     ),
     path("api/meetings", meetings_api, name="meetings_api"),
+    # Mentor Routes
+    path(
+        "mentors/apply",
+        MentorApplicationView.as_view(),
+        name="mentors_apply",
+    ),
     # Small Group Routes
     path(
         "small_groups/",

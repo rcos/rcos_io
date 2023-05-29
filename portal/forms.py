@@ -2,7 +2,7 @@ from crispy_forms.helper import FormHelper
 from crispy_forms.layout import Submit
 from django import forms
 
-from portal.models import Project, Semester, User
+from portal.models import MentorApplication, Project, Semester, User
 
 # Inputs
 
@@ -60,3 +60,12 @@ class SubmitAttendanceForm(forms.Form):
 
 class SemesterCSVUploadForm(SemesterForm):
     csv = forms.FileField()
+
+class MentorApplicationForm(forms.ModelForm):
+    class Meta:
+        model = MentorApplication
+        fields = [
+            "why",
+            "skills",
+        ]
+
