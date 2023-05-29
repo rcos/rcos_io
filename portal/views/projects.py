@@ -8,6 +8,7 @@ from django.http import Http404, HttpResponseForbidden
 from django.shortcuts import redirect
 from django.urls import reverse
 from django.views.generic.edit import CreateView
+from portal.checks import CheckUserCanProposeProject, FailedCheck
 
 from portal.forms import ProposeProjectForm
 from portal.services import github
@@ -78,9 +79,7 @@ class ProjectIndexView(SearchableListView, SemesterFilteredListView):
             ).select_related("semester")
 
             if self.request.user.is_authenticated:
-                data["can_propose_project"] = self.request.user.can_propose_project(
-                    self.target_semester
-                )
+                data["can_propose_project_check"] = CheckUserCanProposeProject().check(self.request.user, self.target_semester)
 
         for project in projects:
             projects_row = {
@@ -163,7 +162,8 @@ class ProjectProposeView(
 
     def get(self, request, *args, **kwargs):
         active_semester = Semester.get_active()
-        if not self.request.user.can_propose_project(active_semester):
+
+        if not CheckUserCanProposeProject().passes(self.request.user, active_semester):
             messages.error(
                 self.request, "You are not currently eligible to propose new projects."
             )
@@ -173,7 +173,7 @@ class ProjectProposeView(
 
     def form_valid(self, form):
         active_semester = Semester.get_active()
-        if not self.request.user.can_propose_project(active_semester):
+        if not CheckUserCanProposeProject().passes(self.request.user, active_semester):
             messages.error(
                 self.request, "You are not currently eligible to propose new projects."
             )

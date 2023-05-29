@@ -37,21 +37,6 @@ def clear_semester_cache(sender, instance, created, *args, **kwargs):
     cache.delete("semesters")
     cache.delete("active_semester")
 
-
-@dataclass
-class Eligibility:
-    is_eligible: bool
-    reason: Optional[str]
-
-    @staticmethod
-    def ineligible(reason: str):
-        return Eligibility(False, reason)
-
-    @staticmethod
-    def eligible():
-        return Eligibility(True, None)
-
-
 class TimestampedModel(models.Model):
     """A base model that all other models should inherit from. It adds timestamps for creation and updating."""
 
@@ -295,7 +280,7 @@ class User(AbstractUser, TimestampedModel):
     graduation_year = models.PositiveIntegerField(
         null=True,
         blank=True,
-        help_text="If the user is an RPI user, their graduation year.",
+        help_text="If you are a student, your graduation year.",
         validators=[MaxValueValidator(2028), MinValueValidator(1950)],
     )
 
@@ -435,61 +420,6 @@ class User(AbstractUser, TimestampedModel):
             .order_by("-start_date")
             .distinct()
         )
-
-    # Permissions
-
-    def can_propose_project(self, semester: Optional[Semester]) -> Eligibility:
-        if not self.is_approved or not self.is_active:
-            return Eligibility.ineligible("Your account is not approved or active.")
-
-        now = timezone.now()
-        if not semester:
-            return Eligibility.ineligible("No semester selected.")
-
-        if not semester.is_active or (
-            semester.project_pitch_deadline and now > semester.project_pitch_deadline
-        ):
-            return Eligibility.ineligible(
-                "The current semester is not accepting new projects at this time.",
-            )
-
-        if self.owned_projects.filter(is_approved=False).count() > 0:
-            return Eligibility.ineligible("You have an unapproved project pending.")
-
-        try:
-            if Enrollment.objects.get(user=self, semester=semester).project:
-                return Eligibility.ineligible(
-                    "You're already enrolled on a project this semester."
-                )
-        except Enrollment.DoesNotExist:
-            pass
-
-        return Eligibility.eligible()
-
-    def can_apply_as_mentor(self, semester: Semester) -> Eligibility:
-        if not self.is_approved or not self.is_active:
-            return Eligibility.ineligible("Your account is not approved or active.")
-
-        now = timezone.now()
-        if not semester:
-            return Eligibility.ineligible("No semester selected.")
-
-        if not semester.is_active or (
-            semester.project_pitch_deadline and now > semester.project_pitch_deadline
-        ):
-            return Eligibility.ineligible(
-                "The current semester is not accepting new mentor applications at this time.",
-            )
-
-        try:
-            if MentorApplication.objects.get(user=self, semester=semester):
-                return Eligibility.ineligible("You already applied this semester.")
-        except MentorApplication.DoesNotExist:
-            pass
-
-        return Eligibility.eligible()
-
-    # End Permissions
 
     def get_expected_meetings(self, semester: Semester):
         # Determine what kinds of meetings this student is expected to attend

@@ -56,9 +56,13 @@
                 </div>
             </div>
 
-            <div class="box">
-                <p>{{ project.description }}</p>
+            {% if project.description %}
+            <div class="content">
+                <blockquote class="has-background-dark">
+                    <em>{{ project.description }}</em>
+                </blockquote>
             </div>
+            {% endif %}
         </div>
     </div>
 </section>
@@ -73,10 +77,6 @@
 </section>
 <section class="section">
     <div class="container">
-
-        <div class="notification is-warning">
-            <p><strong>NOTE:</strong> We are working on getting all project teams from Submitty into the site. The team listed here is most likely incomplete.</p>
-        </div>
 
         {% include "portal/projects/sections/team.html" with enrollments=target_semester_enrollments %}
 
@@ -108,10 +108,6 @@
 </section>
 <section class="section">
     <div class="container">
-        <div class="notification is-warning">
-            <p><strong>NOTE:</strong> We are working on getting all project teams from Submitty into the site. The teams listed here are most likely incomplete.</p>
-        </div>
-
         {% for semester, enrollments in enrollments_by_semester.items %}
         <h2 class="subtitle"><a href="?semester={{ semester.id }}">{{ semester }}</a></h2>
         {% include "portal/projects/sections/team.html" %}
