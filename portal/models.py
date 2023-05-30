@@ -2,8 +2,7 @@ import logging
 import re
 from decimal import Decimal
 from time import sleep
-from typing import Optional, Tuple
-from dataclasses import dataclass
+from typing import Optional
 
 from django.db.models.signals import pre_save, post_save
 from django.conf import settings

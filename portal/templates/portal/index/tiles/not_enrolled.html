@@ -1,25 +1,56 @@
 <h2 class="title is-2">Not Enrolled</h2>
 
-<div class="content block">
-    <p class="block">To participate in RCOS, you must enroll by clicking the button below OR by registering for RCOS on SIS. Note that if you recently registered on SIS, there is a delay before it gets into our system. You can click below to get enrolled quicker.</p>
-    <p class="block">
-        If you <strong>register for the course on SIS</strong>, you can receive course credit for the semester. You will be graded on the follow aspects:
-        <ul>
-            <li>attendance</li>
-            <li>open source contributions</li>
-            <li>status updates & project documentation</li>
-            <li>presentations</li>
-            <li><a href="{% url 'handbook' %}?initial_route=/grading/rubric" target="handbook">view rubric</a></li>
-        </ul>
+{% if can_enroll_check %}
+    {% if is_user_rpi_check %}
+        <div class="content block">
+            <p class="block">To participate in RCOS, you must enroll by clicking the button below OR by registering for RCOS on SIS. Note that if you recently registered on SIS, there is a delay before it gets into our system. You can click below to get enrolled quicker.</p>
+            <p class="block">
+                If you <strong>register for the course on SIS</strong>, you can receive course credit for the semester. You will be graded on the follow aspects:
+                <ul>
+                    <li>attendance</li>
+                    <li>open source contributions</li>
+                    <li>status updates & project documentation</li>
+                    <li>presentations</li>
+                    <li><a href="{% url 'handbook' %}?initial_route=/grading/rubric" target="handbook">view rubric</a></li>
+                </ul>
+            </p>
+            <p class="block">
+                If you do <strong class="has-text-danger">not register</strong> for the course on SIS, you can still participate fully in RCOS for just experience
+                and will not be held to any attendance or grading policies, though we heavily encourage you to attend all meetings
+                and contribute as much as you can. <span class="has-text-grey">This is a good option for those new to RCOS who want to try it out.</span>
+            </p>
+            <form action="{% url 'users_enroll' request.user.pk %}" method="post" onsubmit="return confirm('Are you sure?')">
+                {% csrf_token %}
+                <input type="hidden" name="semester" value="{{ active_semester.pk }}">
+                <button href="#" class="button is-primary is-block is-fullwidth" type="submit">Enroll in RCOS {{ active_semester }}</button>
+            </form>
+        </div>
+    {% else %}
+        <div class="content block">
+            <p>
+                As an external participant of RCOS, you can "enroll" in a semester to:
+                <ul>
+                    <li>propose and run a project</li>
+                    <li>be an external mentor of a Small Group of projects</li>
+                </ul>
+            </p>
+            <form action="{% url 'users_enroll' request.user.pk %}" method="post" onsubmit="return confirm('Are you sure?')">
+                {% csrf_token %}
+                <input type="hidden" name="semester" value="{{ active_semester.pk }}">
+                <button href="#" class="button is-primary is-block is-fullwidth" type="submit">Enroll in RCOS {{ active_semester }}</button>
+            </form>
+        </div>
+    {% endif %}
+{% else %}
+<div class="content">
+    <p>
+        You currently are not able to enroll for the following reason:
     </p>
-    <p class="block">
-        If you do <strong class="has-text-danger">not register</strong> for the course on SIS, you can still participate fully in RCOS for just experience
-        and will not be held to any attendance or grading policies, though we heavily encourage you to attend all meetings
-        and contribute as much as you can. <span class="has-text-grey">This is a good option for those new to RCOS who want to try it out.</span>
-    </p>
-    <form action="{% url 'users_enroll' request.user.pk %}" method="post" onsubmit="return confirm('Are you sure?')">
-        {% csrf_token %}
-        <input type="hidden" name="semester" value="{{ active_semester.pk }}">
-        <button href="#" class="button is-primary  is-block is-fullwidth" type="submit">Enroll in RCOS {{ active_semester }}</button>
-    </form>
+    <article class="message is-danger">
+        <div class="message-body">
+            {{ can_enroll_check }}
+        </div>
+      </article>
 </div>
+
+{% endif %}

@@ -1,3 +1,6 @@
+"""
+Views related to projects.
+"""
 from typing import Any
 
 from django.contrib import messages

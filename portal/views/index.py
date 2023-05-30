@@ -2,6 +2,7 @@ from django.core.cache import cache
 from django.db.models import Q
 from django.utils import timezone
 from django.views.generic.base import TemplateView
+from portal.checks import CheckUserCanEnroll, CheckUserRPI
 
 from portal.forms import SubmitAttendanceForm
 from portal.models import Enrollment, Meeting, Project
@@ -24,6 +25,9 @@ class IndexView(TemplateView):
 
         if self.request.user.is_authenticated:
             data["ongoing_meeting"] = Meeting.get_ongoing(self.request.user)
+            data["is_user_rpi_check"] = CheckUserRPI().check(self.request.user, None)
+            data["can_enroll_check"] = CheckUserCanEnroll().check(self.request.user, active_semester)
+            print(data["can_enroll_check"].passed)
         else:
             data["submit_attendance_form"] = SubmitAttendanceForm()
 
