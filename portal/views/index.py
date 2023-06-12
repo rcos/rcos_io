@@ -29,6 +29,8 @@ class IndexView(TemplateView):
             data["ongoing_meeting"] = Meeting.get_ongoing(self.request.user)
             data["is_user_rpi_check"] = CheckUserRPI().check(self.request.user, None)
             data["can_enroll_check"] = CheckUserCanEnroll().check(self.request.user, active_semester)
+
+            self.request.user.enrollments.filter(semester=active_semester).first() if active_semester is not None else None
         else:
             data["submit_attendance_form"] = SubmitAttendanceForm()
 

@@ -99,11 +99,13 @@ def enroll_user(request, pk: str):
         if request.POST.get("credits", 0):
             credits = int(request.POST.get("credits", 0))
 
+        is_project_lead = request.POST.get("is_project_lead", None) == "on"
+
         messages.success(request, "Confirmed your enrollment!")
         enrollment, is_new = Enrollment.objects.update_or_create(
             user=user,
             semester=semester,
-            defaults={"project": project, "credits": credits},
+            defaults={"project": project, "credits": credits, "is_project_lead": is_project_lead},
         )
 
     return redirect("/")

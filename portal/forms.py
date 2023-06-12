@@ -42,7 +42,6 @@ class ProposeProjectForm(forms.ModelForm):
             "homepage_url",
         ]
 
-
 class SubmitAttendanceForm(forms.Form):
     code = forms.CharField(
         label="Attendance Code",

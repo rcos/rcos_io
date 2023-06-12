@@ -37,7 +37,7 @@ def clear_semester_cache(sender, instance, created, *args, **kwargs):
     cache.delete("active_semester")
 
 class TimestampedModel(models.Model):
-    """A base model that all other models should inherit from. It adds timestamps for creation and updating."""  # noqa: E501
+    """A base model that all other models should inherit from. It adds timestamps for creation and updating."""
 
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
