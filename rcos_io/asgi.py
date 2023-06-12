@@ -1,5 +1,4 @@
-"""
-ASGI config for rcos_io project.
+"""ASGI config for rcos_io project.
 
 It exposes the ASGI callable as a module-level variable named ``application``.
 

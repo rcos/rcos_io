@@ -1,18 +1,16 @@
 """Views relating to the administration of the RCOS Discord server."""
 
-import time
+from django.contrib import messages
+from django.contrib.auth.decorators import login_required, user_passes_test
+from django.http import HttpRequest, HttpResponse
+from django.shortcuts import redirect
+from django.urls import reverse
 from django.utils.decorators import method_decorator
 from django.views.generic.base import TemplateView
-from django.contrib.auth.decorators import login_required, user_passes_test
-from django.shortcuts import redirect
-from django.http import HttpRequest, HttpResponse
-from django.contrib import messages
-from django.urls import reverse
-
-from portal.services import discord
-from portal.views.admin import is_admin
 
 from portal import tasks
+from portal.services import discord
+from portal.views.admin import is_admin
 
 
 @method_decorator(login_required, name="dispatch")

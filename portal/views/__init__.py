@@ -38,8 +38,7 @@ class SemesterFilteredDetailView(DetailView):
 
 
 class SemesterFilteredListView(ListView):
-    """
-    Render some list of objects, set by self.model or self.queryset. self.queryset can actually be any iterable of items, not just a queryset.
+    """Render some list of objects, set by self.model or self.queryset. self.queryset can actually be any iterable of items, not just a queryset.
 
     If `semester` query parameter is present AND valid:
         - finds semester and passes it to template as `target_semester`
@@ -49,6 +48,7 @@ class SemesterFilteredListView(ListView):
         - throws a 404
 
     Example:
+    -------
     ```
     class ProjectIndexView(SemesterFilteredListView):
         template_name = "portal/projects/index.html"
@@ -99,13 +99,13 @@ class SemesterFilteredListView(ListView):
 
 
 class SearchableListView(ListView):
-    """
-    Render some list of objects, set by self.model or self.queryset. self.queryset can actually be any iterable of items, not just a queryset.
+    """Render some list of objects, set by self.model or self.queryset. self.queryset can actually be any iterable of items, not just a queryset.
 
     If `search` query parameter is present AND valid:
         - filters queryset by searching through columns `self.search_fields`
 
     Example:
+    -------
     ```
     class ProjectIndexView(SearchableListView):
         template_name = "portal/projects/index.html"
@@ -121,7 +121,7 @@ class SearchableListView(ListView):
     search_fields = tuple()
 
     def get_queryset(self):
-        """Apply search"""
+        """Apply search."""
         queryset = super().get_queryset()
 
         self.search = self.request.GET.get("search")

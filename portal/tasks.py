@@ -1,16 +1,17 @@
+import os
 import time
-from typing import List
+
 from celery import shared_task
-from requests import HTTPError
 from django.db.models import Manager
 from django.utils import timezone
-import os
+from requests import HTTPError
 
-from portal.services import discord
 from portal.models import Meeting
+from portal.services import discord
+
 
 @shared_task
-def delete_discord_channels(channel_ids: List[str]):
+def delete_discord_channels(channel_ids: list[str]):
     for channel_id in channel_ids:
         try:
             discord.delete_channel(channel_id)

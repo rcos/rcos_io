@@ -12,9 +12,7 @@ GITHUB_AUTH_URL = (
 
 
 class GitHubTokens(TypedDict):
-    """
-    https://docs.github.com/en/developers/apps/building-oauth-apps/authorizing-oauth-apps#response
-    """
+    """https://docs.github.com/en/developers/apps/building-oauth-apps/authorizing-oauth-apps#response."""
 
     access_token: str
     scope: str
@@ -22,13 +20,14 @@ class GitHubTokens(TypedDict):
 
 
 def get_tokens(code: str) -> GitHubTokens:
-    """
-    Given an authorization code, request an access token for a GitHub user.
-    Returns:
+    """Given an authorization code, request an access token for a GitHub user.
+
+    Returns
+    -------
         GitHubTokens
     Raises:
         HTTPError on failed request
-    See https://docs.github.com/en/developers/apps/building-oauth-apps/authorizing-oauth-apps
+    See https://docs.github.com/en/developers/apps/building-oauth-apps/authorizing-oauth-apps.
     """
     response = requests.post(
         "https://github.com/login/oauth/access_token",
@@ -64,12 +63,13 @@ def get_user_username(client: Client) -> str:
 
 
 def client_factory(token: str = settings.GITHUB_API_TOKEN):
-    """
-    Creates a new GQL client pointing to the Hasura API.
+    """Creates a new GQL client pointing to the Hasura API.
     Instead of using one client across the app, one client should be made per request
     to avoid threading errors.
-    Returns:
-        new GQL client
+
+    Returns
+    -------
+        new GQL client.
     """
     transport = RequestsHTTPTransport(
         url="https://api.github.com/graphql",

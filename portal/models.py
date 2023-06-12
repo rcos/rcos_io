@@ -4,7 +4,6 @@ from decimal import Decimal
 from time import sleep
 from typing import Optional
 
-from django.db.models.signals import pre_save, post_save
 from django.conf import settings
 from django.contrib.auth.models import AbstractUser, BaseUserManager
 from django.core.cache import cache
@@ -13,6 +12,7 @@ from django.core.validators import MaxValueValidator, MinValueValidator
 from django.db import models
 from django.db.models import Q
 from django.db.models.functions import Lower
+from django.db.models.signals import post_save, pre_save
 from django.template.defaultfilters import slugify
 from django.urls import reverse
 from django.utils import formats, timezone
@@ -37,7 +37,7 @@ def clear_semester_cache(sender, instance, created, *args, **kwargs):
     cache.delete("active_semester")
 
 class TimestampedModel(models.Model):
-    """A base model that all other models should inherit from. It adds timestamps for creation and updating."""
+    """A base model that all other models should inherit from. It adds timestamps for creation and updating."""  # noqa: E501
 
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
@@ -47,9 +47,8 @@ class TimestampedModel(models.Model):
 
 
 class Room(TimestampedModel):
-    """
-    Represents a physical room on campus that events/small group meetings
-    can be held in."
+    """Represents a physical room on campus that events/small group meetings
+    can be held in.".
     """
 
     building = models.CharField(max_length=100)
@@ -177,7 +176,6 @@ class Organization(TimestampedModel):
 
     def sync_discord(self, is_deleted=False):
         """Ensures that a Discord role exists for the organization, and that all its members have it assigned."""
-
         # Ensure existence of role
         # TODO: if role ID is set, check that is still exists and recreate if not
         if not self.discord_role_id:
@@ -319,7 +317,7 @@ class User(AbstractUser, TimestampedModel):
 
         if self.role == User.RPI:
             if self.graduation_year:
-                chunks.append(f"’{str(self.graduation_year)[2:]}")
+                chunks.append(f"`{str(self.graduation_year)[2:]}")
             if len(chunks) > 0 and self.rcs_id:
                 chunks.append(f"({self.rcs_id})")
             elif self.rcs_id:
@@ -398,7 +396,6 @@ class User(AbstractUser, TimestampedModel):
 
     def send_message(self, message_content: str):
         """Send a direct message to the user via Discord. If Discord is not linked or it fails, sends an email."""
-
         sent = False
         if self.discord_user_id:
             try:
@@ -1053,7 +1050,7 @@ class Meeting(TimestampedModel):
     )
     type = models.CharField(choices=TYPE_CHOICES, max_length=100, default=SMALL_GROUP)
     is_published = models.BooleanField(
-        "published?", default=False, help_text="Whether the meeting is visible to users"
+        "published?", default=True, help_text="Whether the meeting is visible to users"
     )
     is_attendance_taken = models.BooleanField(
         "attendance taken?",
@@ -1226,7 +1223,7 @@ class Meeting(TimestampedModel):
 
     def sync_discord(self, is_deleted=False):
         description = f"""**{self.get_type_display()} Meeting**
-        
+
         View details: {settings.PUBLIC_BASE_URL}/meetings/{self.pk}
         {f'Slides: {self.presentation_url}' if self.presentation_url else ''}
         """

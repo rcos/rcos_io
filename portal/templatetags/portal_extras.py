@@ -1,4 +1,4 @@
-from typing import Any, Dict
+from typing import Any
 
 from django import template
 from django.utils import timezone
@@ -44,7 +44,7 @@ def user_enrollment(user, semester):
 
 
 @register.simple_tag
-def project_documents(project, semester) -> Dict[str, Any]:
+def project_documents(project, semester) -> dict[str, Any]:
     if semester:
         return {
             "pitch": project.pitches.filter(semester=semester).first(),
@@ -56,7 +56,7 @@ def project_documents(project, semester) -> Dict[str, Any]:
 
 
 @register.simple_tag
-def project_small_group(project, semester) -> Dict[str, Any]:
+def project_small_group(project, semester) -> dict[str, Any]:
     if semester and project:
         return project.small_groups.filter(semester=semester).first()
     return None

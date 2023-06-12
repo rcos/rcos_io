@@ -1,6 +1,4 @@
-"""
-Views related to small groups.
-"""
+"""Views related to small groups."""
 from django.views.generic import DetailView
 
 from ..models import SmallGroup

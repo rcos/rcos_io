@@ -1,7 +1,7 @@
 import logging
 from csv import DictReader
 from io import TextIOWrapper
-from typing import TypedDict
+from typing import Any, TypedDict
 
 from django.contrib import messages
 from django.contrib.auth.decorators import login_required, user_passes_test
@@ -172,7 +172,7 @@ def import_submitty_teams(request):
                         )
                         credits = 0
 
-                    defaults = {"credits": credits}
+                    defaults: dict[str, Any] = {"credits": credits}
 
                     # Upsert project
                     if row["Team Name"].strip():

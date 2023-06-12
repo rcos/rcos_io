@@ -4,7 +4,25 @@ from time import sleep
 from django.contrib import admin
 from django.contrib.auth.admin import UserAdmin
 
-from .models import *
+from portal.models import (
+    Enrollment,
+    Meeting,
+    MeetingAttendance,
+    MeetingAttendanceCode,
+    MentorApplication,
+    Organization,
+    Project,
+    ProjectPitch,
+    ProjectPresentation,
+    ProjectProposal,
+    ProjectRepository,
+    ProjectTag,
+    Room,
+    Semester,
+    SmallGroup,
+    StatusUpdateSubmission,
+    User,
+)
 
 logger = logging.getLogger(__name__)
 

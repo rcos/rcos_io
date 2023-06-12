@@ -1,6 +1,4 @@
-"""
-Views related to projects.
-"""
+"""Views related to projects."""
 from typing import Any
 
 from django.contrib import messages
@@ -11,8 +9,8 @@ from django.http import Http404, HttpResponseForbidden
 from django.shortcuts import redirect
 from django.urls import reverse
 from django.views.generic.edit import CreateView
-from portal.checks import CheckUserCanProposeProject, FailedCheck
 
+from portal.checks import CheckUserCanProposeProject
 from portal.forms import ProposeProjectForm
 from portal.services import github
 
@@ -47,7 +45,7 @@ class ProjectIndexView(SearchableListView, SemesterFilteredListView):
     )
 
     def get_queryset(self):
-        """Apply filters (semester is already handled)"""
+        """Apply filters (semester is already handled)."""
         queryset = super().get_queryset()
 
         self.is_seeking_members = self.request.GET.get("is_seeking_members") == "yes"

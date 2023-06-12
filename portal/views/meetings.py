@@ -3,9 +3,8 @@ import logging
 import random
 import re
 import string
-from typing import Any, Dict, Optional, cast
+from typing import Any, cast
 
-from django.utils.datastructures import MultiValueDictKeyError
 from django.contrib import messages
 from django.contrib.auth.decorators import login_required, user_passes_test
 from django.contrib.auth.mixins import LoginRequiredMixin
@@ -13,12 +12,13 @@ from django.core.cache import cache
 from django.db import IntegrityError
 from django.http import HttpRequest, HttpResponse, HttpResponseForbidden, JsonResponse
 from django.shortcuts import get_object_or_404, redirect, render
+from django.template.response import TemplateResponse
 from django.urls import reverse
 from django.utils import timezone
-from django.views.generic import DetailView, ListView
+from django.utils.datastructures import MultiValueDictKeyError
+from django.views.generic import DetailView
 from django.views.generic.edit import FormView
 from sentry_sdk import capture_exception, capture_message
-from django.db.models import Q
 
 from portal.forms import SubmitAttendanceForm
 from portal.views import UserRequiresSetupMixin
@@ -38,10 +38,7 @@ logger = logging.getLogger(__name__)
 
 
 def generate_code(code_length: int = 5):
-    """
-    Generates & returns a new attendance code.
-    """
-
+    """Generates & returns a new attendance code."""
     code = ""
 
     for _ in range(code_length):
@@ -50,7 +47,8 @@ def generate_code(code_length: int = 5):
     return code
 
 
-def meeting_to_event(meeting: Meeting) -> Dict[str, Any]:
+def meeting_to_event(meeting: Meeting) -> dict[str, Any]:
+    """Maps a Meeting database object to a dictionary in FullcalendarJS format."""
     return {
         "id": meeting.id,
         "title": meeting.display_name,
@@ -60,38 +58,24 @@ def meeting_to_event(meeting: Meeting) -> Dict[str, Any]:
         "color": meeting.color,
     }
 
+def meetings_index(request: HttpRequest) -> HttpResponse:
+    now = timezone.now()
 
-class MeetingIndexView(ListView):
-    template_name = "portal/meetings/index.html"
-    context_object_name = "meetings"
-
-    # Fetch 10 most recent published meetings, calendar will fetch all from API separately
-    def get_queryset(self):
-        now = timezone.now()
-
-        upcoming = (
-            Meeting.get_user_queryset(self.request.user)
-            .filter(starts_at__gte=now)
-            .order_by("starts_at")
-            .select_related()[:10]
-        )
-
-        ongoing = (
-            Meeting.get_user_queryset(self.request.user)
+    return TemplateResponse(request, "portal/meetings/index.html", {
+        "ongoing":  Meeting.get_user_queryset(request.user)
             .filter(starts_at__lte=now)
             .filter(ends_at__gte=now)
             .order_by("starts_at")
-            .select_related()[:10]
-        )
-
-        queryset = {"ongoing": ongoing, "upcoming": upcoming}
-
-        return queryset
-
+            .select_related()[:3],
+        "upcoming": Meeting.get_user_queryset(request.user)
+            .filter(starts_at__gte=now)
+            .order_by("starts_at")
+            .select_related()[:3],
+    })
 
 class MeetingDetailView(DetailView):
     object: Meeting
-    small_group: Optional[SmallGroup]
+    small_group: SmallGroup | None
     template_name = "portal/meetings/detail.html"
     model = Meeting
     context_object_name = "meeting"

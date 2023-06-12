@@ -2,20 +2,19 @@
 
 from dataclasses import dataclass
 from datetime import datetime
-from typing import List, Optional, TypedDict
-from portal.models import Enrollment, MentorApplication, Semester, User
-from collections.abc import Callable
+
 from django.utils import timezone
-from django.apps import apps
+
+from portal.models import Enrollment, MentorApplication, Semester, User
 
 
 class FailedCheck(Exception):
     """A failed check with a reason and possible fix."""
 
     reason: str
-    fix: Optional[str]
+    fix: str | None
 
-    def __init__(self, reason: str, fix: Optional[str] = None) -> None:
+    def __init__(self, reason: str, fix: str | None = None) -> None:
         self.reason = reason
         self.fix = fix
         super().__init__(reason)
@@ -40,30 +39,30 @@ class CheckResult:
 
 
 class Check:
-    dependencies: List["Check"] = []
+    dependencies: list["Check"] = []
     """The checks that will run before this one."""
 
     fail_reason: str
     """The fallback fail reason if this check fails."""
 
-    fix: Optional[str] = None
+    fix: str | None = None
     """The way for the user to pass this check (if applicable)."""
 
-    def run(self, user: User, semester: Optional[Semester] = None):
+    def run(self, user: User, semester: Semester | None = None):
         for dep in self.dependencies:
             dep.run(user, semester)
 
-    def fail(self, fail_reason: Optional[str] = None, fix: Optional[str] = None):
+    def fail(self, fail_reason: str | None = None, fix: str | None = None):
         raise FailedCheck(fail_reason or self.fail_reason, fix)
 
-    def check(self, user: User, semester: Optional[Semester]):
+    def check(self, user: User, semester: Semester | None):
         try:
             self.run(user, semester)
             return CheckResult(passed=True, fail_reason="", fix="")
         except FailedCheck as e:
             return CheckResult(passed=False, fail_reason=e.reason, fix=e.fix or "")
 
-    def passes(self, user: User, semester: Optional[Semester]):
+    def passes(self, user: User, semester: Semester | None):
         try:
             self.run(user, semester)
             return True
@@ -75,14 +74,14 @@ class CheckUserAuthenticated(Check):
     fail_reason = "You are not logged in."
     fix = "Login!"
 
-    def run(self, user: User, semester: Optional[None] = None):
+    def run(self, user: User, semester: Semester | None = None):
         super().run(user, semester)
         if not user.is_authenticated:
             self.fail()
 
 
 class CheckSemesterActive(Check):
-    def run(self, user: User, semester: Optional[Semester] = None):
+    def run(self, user: User, semester: Semester | None = None):
         super().run(user, semester)
 
         if not semester:
@@ -97,7 +96,7 @@ class CheckUserApproved(Check):
     fail_reason = "Your account has not yet been approved."
     fix = "Contact a Coordinator/Faculty Advisor to verify your identity."
 
-    def run(self, user: User, semester: Optional[Semester] = None):
+    def run(self, user: User, semester: Semester | None = None):
         super().run(user, semester)
         if not user.is_approved:
             self.fail()
@@ -130,7 +129,7 @@ class CheckUserRPI(Check):
     dependencies = [CheckUserApproved()]
     fail_reason = "You are not an approved RPI student/faculty."
 
-    def run(self, user: User, semester: Optional[None] = None):
+    def run(self, user: User, semester: Semester | None = None):
         super().run(user, semester)
         if not user.role == User.RPI:
             self.fail()
@@ -142,7 +141,7 @@ class CheckBeforeSemesterDeadline(Check):
         self.deadline_key = deadline_key
         self.deadline_name = deadline_name
 
-    def run(self, user: User, semester: Optional[None] = None):
+    def run(self, user: User, semester: Semester | None = None):
         super().run(user, semester)
 
         try:
@@ -154,7 +153,8 @@ class CheckBeforeSemesterDeadline(Check):
             now = timezone.now()
             if now > deadline:
                 self.fail(
-                    f"The {self.deadline_name} deadline ({deadline.strftime('%-m/%-d %-I:%M %p')}) has passed."
+                    f"The {self.deadline_name} deadline " \
+                        "({deadline.strftime('%-m/%-d %-I:%M %p')}) has passed."
                 )
 
 

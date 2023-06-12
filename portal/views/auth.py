@@ -1,13 +1,12 @@
-"""
-Views relating to user actions.
-"""
+"""Views relating to user actions."""
 from django.conf import settings
 from django.contrib import messages
 from django.contrib.auth import login
 from django.contrib.auth.decorators import login_required
 from django.core.exceptions import BadRequest
 from django.db import IntegrityError
-from django.shortcuts import redirect, render
+from django.shortcuts import redirect
+from django.template.response import TemplateResponse
 from django.urls import reverse
 from requests import HTTPError
 from sentry_sdk import capture_exception
@@ -30,7 +29,7 @@ def profile(request):
     else:
         form = UserProfileForm(instance=request.user)
 
-    return render(
+    return TemplateResponse(
         request,
         "portal/auth/profile.html",
         {"form": form},
@@ -39,7 +38,7 @@ def profile(request):
 
 def impersonate(request):
     """
-    Forces a login as the desired user. Only possible in DEBUG mode locally
+    Force a login as the desired user. Only possible in DEBUG mode locally
     and with a logged in superuser in production.
     """
     if settings.DEBUG or request.user.is_superuser:
@@ -56,8 +55,7 @@ def start_discord_flow(request):
 
 @login_required
 def unlink_discord(request):
-    """Disconnects the logged in user's Discord account"""
-
+    """Disconnects the logged in user's Discord account."""
     request.user.discord_user_id = None
 
     try:
@@ -198,7 +196,7 @@ def github_flow_callback(request):
 
 @login_required
 def unlink_github(request):
-    """Disconnects the logged in user's GitHub account"""
+    """Disconnects the logged in user's GitHub account."""
     request.user.github_username = None
 
     try:

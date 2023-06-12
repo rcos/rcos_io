@@ -19,14 +19,14 @@ from .views.auth import (
     unlink_discord,
     unlink_github,
 )
-from .views.index import HandbookView, IndexView
+from .views.index import IndexView, handbook
 from .views.meetings import (
     MeetingDetailView,
-    MeetingIndexView,
     SubmitAttendanceFormView,
     export_meeting_attendance,
     manually_add_or_verify_attendance,
     meetings_api,
+    meetings_index,
     user_attendance,
 )
 from .views.projects import (
@@ -39,7 +39,7 @@ from .views.users import UserDetailView, UserIndexView, enroll_user
 
 urlpatterns = [
     path("", IndexView.as_view(), name="index"),
-    path("handbook", HandbookView.as_view(), name="handbook"),
+    path("handbook", handbook, name="handbook"),
     # Auth Routes
     path("profile", profile, name="profile"),
     path("auth/impersonate", impersonate, name="impersonate"),
@@ -73,7 +73,7 @@ urlpatterns = [
         name="projects_add_pitch",
     ),
     # Meeting Routes
-    path("meetings/", MeetingIndexView.as_view(), name="meetings_index"),
+    path("meetings/", meetings_index, name="meetings_index"),
     path("attend", SubmitAttendanceFormView.as_view(), name="submit_attendance"),
     path(
         "meetings/attendance/verify",

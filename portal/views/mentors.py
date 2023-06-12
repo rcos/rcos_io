@@ -1,14 +1,12 @@
-"""
-Views relating to mentors and the actions they can take.
-"""
+"""Views relating to mentors and the actions they can take."""
 from django.contrib import messages
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.contrib.messages.views import SuccessMessageMixin
 from django.shortcuts import redirect
 from django.urls import reverse, reverse_lazy
 from django.views.generic.edit import CreateView
-from portal.checks import CheckUserCanApplyAsMentor
 
+from portal.checks import CheckUserCanApplyAsMentor
 from portal.forms import MentorApplicationForm
 
 from ..models import Semester
