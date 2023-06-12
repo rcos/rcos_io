@@ -62,12 +62,12 @@ def meetings_index(request: HttpRequest) -> HttpResponse:
     now = timezone.now()
 
     return TemplateResponse(request, "portal/meetings/index.html", {
-        "ongoing":  Meeting.get_user_queryset(request.user)
+        "ongoing_meetings":  Meeting.get_user_queryset(request.user)
             .filter(starts_at__lte=now)
             .filter(ends_at__gte=now)
             .order_by("starts_at")
             .select_related()[:3],
-        "upcoming": Meeting.get_user_queryset(request.user)
+        "upcoming_meetings": Meeting.get_user_queryset(request.user)
             .filter(starts_at__gte=now)
             .order_by("starts_at")
             .select_related()[:3],
