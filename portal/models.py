@@ -262,7 +262,7 @@ class User(AbstractUser, TimestampedModel):
         blank=True,
         on_delete=models.SET_NULL,
         related_name="users",
-        help_text="The organization this user belongs to (optional)",
+        help_text="The organization you represent.",
     )
 
     # Set for RPI users only

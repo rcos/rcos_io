@@ -21,18 +21,15 @@ class SemesterForm(forms.Form):
 # Forms
 
 
-class UserProfileForm(forms.ModelForm):
-    def __init__(self, *args, **kwargs):
-        super().__init__(*args, **kwargs)
-        self.helper = FormHelper()
+class ExternalUserProfileForm(forms.ModelForm):
+    class Meta:
+        model = User
+        fields = ["first_name", "last_name", "organization"]
 
-        if self.initial.get("role", None) == User.RPI:
-            pass
-
+class RPIUserProfileForm(forms.ModelForm):
     class Meta:
         model = User
         fields = ["first_name", "last_name", "graduation_year"]
-
 
 class ProposeProjectForm(forms.ModelForm):
     class Meta:

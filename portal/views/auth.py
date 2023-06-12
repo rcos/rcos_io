@@ -5,29 +5,30 @@ from django.contrib.auth import login
 from django.contrib.auth.decorators import login_required
 from django.core.exceptions import BadRequest
 from django.db import IntegrityError
+from django.http import HttpRequest, HttpResponse
 from django.shortcuts import redirect
 from django.template.response import TemplateResponse
 from django.urls import reverse
 from requests import HTTPError
 from sentry_sdk import capture_exception
 
-from portal.forms import UserProfileForm
+from portal.forms import ExternalUserProfileForm, RPIUserProfileForm
 from portal.models import User
 from portal.services import discord, github
 
 
 @login_required
-def profile(request):
+def profile(request: HttpRequest) -> HttpResponse:
     """Renders the logged in user's profile and saves changes when edited."""
     if request.method == "POST":
-        form = UserProfileForm(request.POST, instance=request.user)
+        form = ExternalUserProfileForm(request.POST, instance=request.user) if request.user.role == User.EXTERNAL else RPIUserProfileForm(request.POST, instance=request.user)
 
         if form.is_valid():
             messages.success(request, "Your profile was updated.")
             form.save()
             return redirect(reverse("profile"))
     else:
-        form = UserProfileForm(instance=request.user)
+        form = ExternalUserProfileForm(instance=request.user) if request.user.role == User.EXTERNAL else RPIUserProfileForm(instance=request.user)
 
     return TemplateResponse(
         request,
