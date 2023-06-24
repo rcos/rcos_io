@@ -1,11 +1,17 @@
 from django.contrib import messages
 from django.contrib.auth.decorators import login_required
 from django.core.paginator import EmptyPage, InvalidPage, PageNotAnInteger, Paginator
-from django.shortcuts import redirect
+from django.http import HttpRequest, HttpResponse
+from django.shortcuts import get_object_or_404, redirect
+from django.template.response import TemplateResponse
 from django.urls import reverse
 
 from ..models import Enrollment, Project, Semester, User
-from . import SearchableListView, SemesterFilteredDetailView, SemesterFilteredListView
+from . import (
+    SearchableListView,
+    SemesterFilteredListView,
+    target_semester_context,
+)
 
 
 class UserIndexView(SearchableListView, SemesterFilteredListView):
@@ -71,11 +77,11 @@ class UserIndexView(SearchableListView, SemesterFilteredListView):
         return data
 
 
-class UserDetailView(SemesterFilteredDetailView):
-    template_name = "portal/users/detail.html"
-    model = User
-    context_object_name = "user"
-
+def user_detail(request: HttpRequest, pk: int) -> HttpResponse:
+    """Fetches the profile of a an approved, active user."""
+    return TemplateResponse(request, "portal/users/detail.html", {
+        "user": get_object_or_404(User.objects.approved(), pk=pk)
+    } | target_semester_context(request))
 
 @login_required
 def enroll_user(request, pk: str):

@@ -229,6 +229,8 @@ class UserManager(BaseUserManager):
 
         return self._create_user(email, password, **extra_fields)
 
+    def approved(self):
+        return self.filter(is_active=True, is_approved=True)
 
 class RPIUserManager(BaseUserManager):
     def get_queryset(self):
