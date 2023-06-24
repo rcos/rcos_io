@@ -46,7 +46,7 @@
                     <div class="column is-half">
                         <div class="card" style="height: 100%">
                             <div class="card-header">
-                                <p class="card-header-title">{{ project }}</p>
+                                <p class="card-header-title"><a href="{{ project.get_absolute_url }}?semester={{ small_group.semester.pk }}">{{ project }}</a></p>
                             </div>
                             <div class="card-content">
                                 <div class="columns is-multiline">

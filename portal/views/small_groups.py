@@ -1,5 +1,7 @@
 """Views related to small groups."""
-from django.views.generic import DetailView
+from django.http import HttpRequest, HttpResponse
+from django.shortcuts import get_object_or_404
+from django.template.response import TemplateResponse
 
 from ..models import SmallGroup
 from . import SearchableListView, SemesterFilteredListView
@@ -18,8 +20,8 @@ class SmallGroupIndexView(SearchableListView, SemesterFilteredListView):
         "mentors__last_name",
     )
 
-
-class SmallGroupDetailView(DetailView):
-    template_name = "portal/small_groups/detail.html"
-    model = SmallGroup
-    context_object_name = "small_group"
+def small_group_detail(request: HttpRequest, pk: int) -> HttpResponse:
+    """Fetches and displays an overview for a particular small group."""
+    return TemplateResponse(request, "portal/small_groups/detail.html", {
+        "small_group": get_object_or_404(SmallGroup, pk=pk)
+    })

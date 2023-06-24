@@ -3,7 +3,7 @@ from django.contrib import messages
 from django.contrib.auth.mixins import UserPassesTestMixin
 from django.contrib.postgres.search import SearchVector
 from django.core.cache import cache
-from django.http import Http404
+from django.http import Http404, HttpRequest
 from django.shortcuts import get_object_or_404, redirect
 from django.urls import reverse
 from django.views.generic import DetailView, ListView
@@ -24,6 +24,10 @@ def load_semesters(request):
     )
 
     return {"semesters": semesters, "active_semester": active_semester}
+
+def target_semester_context(request: HttpRequest):
+    semester_id = request.GET.get("semester")
+    return { "target_semester": get_object_or_404(Semester, pk=semester_id) } if semester_id else {}
 
 
 class SemesterFilteredDetailView(DetailView):

@@ -1,5 +1,6 @@
 import logging
 import re
+from collections import defaultdict
 from decimal import Decimal
 from time import sleep
 from typing import Optional
@@ -16,10 +17,11 @@ from django.db.models.signals import post_save, pre_save
 from django.template.defaultfilters import slugify
 from django.urls import reverse
 from django.utils import formats, timezone
+from gql import Client
 from requests import HTTPError
 from sentry_sdk import capture_exception
 
-from portal.services import discord
+from portal.services import discord, github
 
 logger = logging.getLogger(__name__)
 
@@ -500,6 +502,10 @@ class ProjectTag(TimestampedModel):
         return self.name
 
 
+class ProjectQuerySet(models.QuerySet):
+    def approved(self):
+        return self.filter(is_approved=True)
+
 class Project(TimestampedModel):
     """Represents an open source project in RCOS."""
 
@@ -727,6 +733,25 @@ class Project(TimestampedModel):
     def get_absolute_url(self):
         return reverse("projects_detail", kwargs={"slug": self.slug})
 
+    def get_repositories(self, client: Client):
+        return [
+            github.get_repository_details(client, repo.url)["repository"]
+            for repo in self.repositories.all()
+        ]
+
+    def get_semester_team(self, semester: Semester):
+        """Fetches enrollments for a given semester."""
+        return Enrollment.objects.filter(
+            semester=semester, project=self
+        ).order_by("-is_project_lead")
+
+    def get_all_teams(self):
+        """Fetches teams for each semester."""
+        enrollments_by_semester = defaultdict(list)
+        for enrollment in self.enrollments.order_by("-is_project_lead").all():
+            enrollments_by_semester[enrollment.semester].append(enrollment)
+        return dict(enrollments_by_semester)
+
     def is_seeking_members(self, semester: Semester) -> Optional["ProjectPitch"]:
         return self.pitches.filter(semester=semester, project=self).first()
 
@@ -737,6 +762,8 @@ class Project(TimestampedModel):
 
     def __str__(self) -> str:
         return self.name
+
+    objects = ProjectQuerySet.as_manager()
 
     class Meta:
         ordering = [Lower("name")]

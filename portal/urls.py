@@ -7,7 +7,7 @@ from portal.views.admin import (
 )
 from portal.views.discord import DiscordAdminIndex, delete_discord_channels
 from portal.views.mentors import MentorApplicationView
-from portal.views.small_groups import SmallGroupDetailView, SmallGroupIndexView
+from portal.views.small_groups import SmallGroupIndexView, small_group_detail
 
 from .views.auth import (
     discord_flow_callback,
@@ -31,9 +31,9 @@ from .views.meetings import (
 )
 from .views.projects import (
     ProjectAddPitch,
-    ProjectDetailView,
     ProjectIndexView,
     ProjectProposeView,
+    project_detail,
 )
 from .views.users import UserDetailView, UserIndexView, enroll_user
 
@@ -65,8 +65,7 @@ urlpatterns = [
         name="projects_index",
     ),
     path("projects/propose/", ProjectProposeView.as_view(), name="projects_propose"),
-    path("projects/<int:pk>", ProjectDetailView.as_view(), name="projects_detail"),
-    path("projects/<slug:slug>", ProjectDetailView.as_view(), name="projects_detail"),
+    path("projects/<slug:slug>", project_detail, name="projects_detail"),
     path(
         "projects/<slug:slug>/pitch",
         ProjectAddPitch.as_view(),
@@ -101,7 +100,7 @@ urlpatterns = [
     ),
     path(
         "small_groups/<int:pk>",
-        SmallGroupDetailView.as_view(),
+        small_group_detail,
         name="small_groups_detail",
     ),
     # Discord Administration Routes

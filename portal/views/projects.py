@@ -5,10 +5,12 @@ from django.contrib import messages
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.contrib.messages.views import SuccessMessageMixin
 from django.core.paginator import EmptyPage, InvalidPage, PageNotAnInteger, Paginator
-from django.http import Http404, HttpResponseForbidden
-from django.shortcuts import redirect
+from django.http import HttpRequest, HttpResponse, HttpResponseForbidden
+from django.shortcuts import get_object_or_404, redirect
+from django.template.response import TemplateResponse
 from django.urls import reverse
 from django.views.generic.edit import CreateView
+from gql.transport.exceptions import TransportServerError
 
 from portal.checks import CheckUserCanProposeProject
 from portal.forms import ProposeProjectForm
@@ -17,9 +19,9 @@ from portal.services import github
 from ..models import Enrollment, Project, ProjectPitch, Semester
 from . import (
     SearchableListView,
-    SemesterFilteredDetailView,
     SemesterFilteredListView,
     UserRequiresSetupMixin,
+    target_semester_context,
 )
 
 
@@ -80,7 +82,9 @@ class ProjectIndexView(SearchableListView, SemesterFilteredListView):
             ).select_related("semester")
 
             if self.request.user.is_authenticated:
-                data["can_propose_project_check"] = CheckUserCanProposeProject().check(self.request.user, self.target_semester)
+                data["can_propose_project_check"] = CheckUserCanProposeProject().check(
+                    self.request.user, self.target_semester
+                )
 
         for project in projects:
             projects_row = {
@@ -110,48 +114,30 @@ class ProjectIndexView(SearchableListView, SemesterFilteredListView):
         return data
 
 
-class ProjectDetailView(SemesterFilteredDetailView):
-    template_name = "portal/projects/detail.html"
-    model = Project
-    context_object_name = "project"
+def project_detail(request: HttpRequest, slug: str) -> HttpResponse:
+    """Fetches a project and its details either at the semester level or aggregated across all semesters."""
 
-    def get_object(self, queryset=None):
-        project: Project = super().get_object(queryset)
-        if (
-            not project.is_approved
-            and not self.request.user.is_superuser
-            and not self.request.user == project.owner
-        ):
-            raise Http404()
-        return project
+    project: Project = get_object_or_404(
+        Project.objects.approved()
+        .prefetch_related("tags", "pitches")
+        .select_related("owner", "organization"),
+        slug=slug,
+    )
+    context: dict[str, Any] = {"project": project} | target_semester_context(request)
 
-    def get_context_data(self, **kwargs):
-        data = super().get_context_data(**kwargs)
+    # Fetch enrollments for either target semester or teams across semesters
+    if "target_semester" in context:
+        context["target_semester_enrollments"] = project.get_semester_team(context["target_semester"])
+    else:
+        context["enrollments_by_semester"] = project.get_all_teams()
 
-        if "target_semester" in data:
-            data["target_semester_enrollments"] = Enrollment.objects.filter(
-                semester=data["target_semester"], project=self.object
-            ).order_by("-is_project_lead")
-        else:
-            enrollments_by_semester = {}
-            for enrollment in self.object.enrollments.order_by(
-                "-is_project_lead"
-            ).all():
-                if enrollment.semester not in enrollments_by_semester:
-                    enrollments_by_semester[enrollment.semester] = []
-                enrollments_by_semester[enrollment.semester].append(enrollment)
-            data["enrollments_by_semester"] = enrollments_by_semester
-        client = github.client_factory()
+    # Fetch project repositories
+    try:
+        context["repositories"] = project.get_repositories(github.client_factory())
+    except TransportServerError:
+        context["repositories"] = []
 
-        try:
-            data["repositories"] = [
-                github.get_repository_details(client, repo.url)["repository"]
-                for repo in self.object.repositories.all()
-            ]
-        except:
-            data["repositories"] = []
-
-        return data
+    return TemplateResponse(request, "portal/projects/detail.html", context)
 
 
 class ProjectProposeView(
