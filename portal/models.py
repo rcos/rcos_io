@@ -1356,7 +1356,7 @@ class MentorApplication(TimestampedModel):
     skills = models.ManyToManyField(
         ProjectTag,
         blank=True,
-        related_name="mentors",
+        related_name="mentor_applications",
         help_text="What skills can you offer help for?",
     )
     is_accepted = models.BooleanField(

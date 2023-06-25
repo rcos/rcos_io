@@ -1,0 +1,57 @@
+{% extends "portal/base.html" %}
+{% block content %}
+<section class="section">
+    <div class="container">
+        <h1 class="title">Mentor Applications</h1>
+
+        {% if target_semester %}
+
+        <table class="table is-fullwidth">
+            <thead>
+                <tr>
+                    <th>User</th>
+                    <th>Reason</th>
+                    <th>Skillset</th>
+                    <th>Actions</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for application in pending_applications %}
+                <tr>
+                    <td><a href="{{ application.user.get_absolute_url }}">{{ application.user }}</a></td>
+                    <td>{{ application.why }}</td>
+                    <td>{{ application.skills.all|join:", " }}</td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+
+        <table class="table">
+            <thead>
+                <tr>
+                    <th>Skill</th>
+                    <th>Count</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for tag in tags_with_counts %}
+                <tr>
+                    <td>{{ tag.name }}</td>
+                    <td>{{ tag.application_count}}</td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+
+        {% else %}
+        <div class="columns is-multiline">
+            {% for semester in semesters %}
+            <div class="column is-3">
+                <div class="box"><a href="?semester={{ semester.pk }}">{{ semester }}</a></div>
+            </div>
+            {% endfor %}
+        </div>
+        {% endif %}
+    </div>
+</section>
+{% endblock %}

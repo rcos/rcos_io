@@ -25,9 +25,16 @@ def load_semesters(request):
 
     return {"semesters": semesters, "active_semester": active_semester}
 
-def target_semester_context(request: HttpRequest):
-    semester_id = request.GET.get("semester")
-    return { "target_semester": get_object_or_404(Semester, pk=semester_id) } if semester_id else {}
+def target_semester_context(request: HttpRequest, default_to_active_semester=False):
+    target_semester = None
+
+    semester_id = request.GET.get("semester", None)
+    if semester_id:
+        target_semester = get_object_or_404(Semester, pk=semester_id)
+    elif default_to_active_semester:
+        target_semester = Semester.get_active()
+
+    return { "target_semester": target_semester } if target_semester else {}
 
 
 class SemesterFilteredDetailView(DetailView):

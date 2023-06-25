@@ -1,22 +1,37 @@
 """Views relating to mentors and the actions they can take."""
+from typing import Any
+
 from django.contrib import messages
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.contrib.messages.views import SuccessMessageMixin
+from django.db.models import Count, Q
+from django.http import HttpRequest, HttpResponse
 from django.shortcuts import redirect
+from django.template.response import TemplateResponse
 from django.urls import reverse, reverse_lazy
 from django.views.generic.edit import CreateView
 
 from portal.checks import CheckUserCanApplyAsMentor
 from portal.forms import MentorApplicationForm
 
-from ..models import Semester
+from ..models import ProjectTag, Semester
 from . import (
-    UserRequiresSetupMixin,
+    target_semester_context,
 )
 
 
+def mentor_applications_index(request: HttpRequest) -> HttpResponse:
+    context: dict[str, Any] = target_semester_context(request)
+
+    if "target_semester" in context:
+        context["pending_applications"] = context["target_semester"].mentor_applications.filter(is_accepted__isnull=True)
+        context["tags_with_counts"] = ProjectTag.objects.annotate(application_count=Count("mentor_applications", filter=Q(mentor_applications__semester=context["target_semester"]))).order_by("-application_count")
+    else:
+        context["semesters"] = Semester.objects.all()
+    return TemplateResponse(request, "portal/mentors/index.html", context)
+
 class MentorApplicationView(
-    SuccessMessageMixin, LoginRequiredMixin, UserRequiresSetupMixin, CreateView
+    SuccessMessageMixin, LoginRequiredMixin, CreateView
 ):
     form_class = MentorApplicationForm
     template_name = "portal/mentors/application.html"
