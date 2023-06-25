@@ -3,45 +3,125 @@
 <section class="section">
     <div class="container">
         <h1 class="title">Mentor Applications</h1>
+        <h2 class="subtitle">{{ target_semester|default:"All Semesters" }}</h2>
 
         {% if target_semester %}
 
-        <table class="table is-fullwidth">
-            <thead>
-                <tr>
-                    <th>User</th>
-                    <th>Reason</th>
-                    <th>Skillset</th>
-                    <th>Actions</th>
-                </tr>
-            </thead>
-            <tbody>
-                {% for application in pending_applications %}
-                <tr>
-                    <td><a href="{{ application.user.get_absolute_url }}">{{ application.user }}</a></td>
-                    <td>{{ application.why }}</td>
-                    <td>{{ application.skills.all|join:", " }}</td>
-                </tr>
-                {% endfor %}
-            </tbody>
-        </table>
+        <div class="box">
+            <h3 class="title is-4">{{ pending_applications|length }} Pending Application{{pending_applications|pluralize:"s"}}</h3>
+            <table class="table is-fullwidth">
+                <thead>
+                    <tr>
+                        <th>User</th>
+                        <th>Reason</th>
+                        <th>Skillset</th>
+                        <th>Actions</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for application in pending_applications %}
+                    <tr>
+                        <td><a href="{{ application.user.get_absolute_url }}">{{ application.user }}</a></td>
+                        <td>{{ application.why }}</td>
+                        <td>{{ application.skills.all|join:", " }}</td>
+                        <td>
+                            <button class="button is-small is-success" title="Not yet implemented" disabled>Accept</button>
+                            <button class="button is-small is-danger" title="Not yet implemented" disabled>Deny</button>
+                        </td>
+                    </tr>
+                    {% empty %}
+                    <tr>
+                        <td colspan="4" class="has-text-centered has-text-grey">No pending applications at this time.</td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
 
-        <table class="table">
-            <thead>
-                <tr>
-                    <th>Skill</th>
-                    <th>Count</th>
-                </tr>
-            </thead>
-            <tbody>
-                {% for tag in tags_with_counts %}
-                <tr>
-                    <td>{{ tag.name }}</td>
-                    <td>{{ tag.application_count}}</td>
-                </tr>
-                {% endfor %}
-            </tbody>
-        </table>
+        <hr>
+
+        <div class="columns">
+            <div class="column">
+                <div class="box">
+                    <h3 class="title is-5">Skillsets</h3>
+                    <table class="table is-narrow is-fullwidth">
+                        <thead>
+                            <tr>
+                                <th>Skill</th>
+                                <th>Pending Count</th>
+                                <th>Accepted Count</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for tag in tags_with_counts %}
+                            <tr>
+                                <td>{{ tag.name }}</td>
+                                <td>{{ tag.pending_application_count }}</td>
+                                <td>{{ tag.accepted_application_count }}</td>
+                            </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+            <div class="column">
+                <div class="box">
+                    <h3 class="title is-5">Accepted Applications</h3>
+
+                    <table class="table is-fullwidth">
+                        <thead>
+                            <tr>
+                                <th>User</th>
+                                <th>Skillset</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for application in accepted_applications %}
+                            <tr>
+                                <td><a href="{{ application.user.get_absolute_url }}">{{ application.user }}</a></td>
+                                <td>{{ application.skills.all|join:", " }}</td>
+                            </tr>
+                            {% empty %}
+                            <tr>
+                                <td colspan="2" class="has-text-centered has-text-grey">No accepted applications at this time.</td>
+                            </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+            </div>            
+            <div class="column">
+                <div class="box">
+                    <h3 class="title is-5">Denied Applications</h3>
+
+                    <table class="table is-fullwidth">
+                        <thead>
+                            <tr>
+                                <th>User</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for application in denied_applications %}
+                            <tr>
+                                <td><a href="{{ application.user.get_absolute_url }}">{{ application.user }}</a></td>
+                            </tr>
+                            {% empty %}
+                            <tr>
+                                <td class="has-text-centered has-text-grey">No denied applications at this time.</td>
+                            </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+        
+        {% if request.user.is_superuser %}
+        <hr>
+        <div class="buttons">
+            <a href="{% url 'admin:portal_semester_change' target_semester.pk %}#mentor_applications-group" class="button">Edit in Admin</a>
+        </div>
+        {% endif %}
 
         {% else %}
         <div class="columns is-multiline">

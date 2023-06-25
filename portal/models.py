@@ -1377,6 +1377,8 @@ class MentorApplication(TimestampedModel):
         # TODO: figure out message
         # self.user.send_message()
 
+        # TODO: Add Mentors Discord role
+
     def deny(self):
         if not self.semester.is_active:
             return
