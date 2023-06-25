@@ -97,14 +97,72 @@
     </div>
 </section>
 
+{% if target_semester %}
+<section class="hero is-light">
+    <div class="hero-body">
+        <div class="container">
+            <h1 class="title">{{ target_semester }}</h1>
+        </div>
+    </div>
+</section>
 <section class="section">
     <div class="container">
-        {% if request.user.is_superuser or request.user == user and user.is_rpi%}
-        <div class="block">
-            <a href="{% url 'user_attendance' user.pk %}{% active_semester_query %}" class="button">Attendance</a>
-        </div>
-        {% endif %}
-        <p class="has-text-grey">More coming soon...</p>
+        <p class="has-text-gray">Detailed semester overview coming soon! <a href="?semester=">View full overview</a></p>
+    </div>
+</section>
+{% else %}
+<section class="section">
+    <div class="container">
+        <h2 class="title is-4">{{ user.first_name|default:user.display_name }}'s RCOS History</h2>
+        <table class="table is-fullwidth">
+            <thead>
+                <tr>
+                    <th>Semester</th>
+                    <th>Credits</th>
+                    <th>Project</th>
+                    <th></th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for enrollment in enrollments %}
+                <tr>
+                    <td>
+                        {{ enrollment.semester }}
+                        {% if enrollment.is_faculty_advisor %}
+                        <span class="tag">Faculty Advisor</span>
+                        {% endif %}
+
+                        {% if enrollment.is_coordinator %}
+                        <span class="tag is-warning">Coordinator</span>
+                        {% endif %}
+
+                        {% if enrollment.is_mentor %}
+                        <span class="tag is-info">Mentor</span>
+                        {% endif %}
+                    </td>
+                    <td>{{ enrollment.credits }}</td>
+                    <td>
+                        {% if enrollment.project %}
+                        <a href="{{ enrollment.project.get_absolute_url }}{% target_semester_query %}">{{ enrollment.project }}</a>
+                        {% else %}
+                        <span class="has-text-gray">-</span>
+                        {% endif %}
+                    </td>
+                    <td>
+                        {% if request.user.is_superuser or request.user == user and user.is_rpi %}
+                        <a href="{% url 'user_attendance' user.pk %}{% active_semester_query %}">View Attendance</a>
+                        {% endif %}
+                    </td>
+                </tr>
+                {% empty %}
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</section>
+{% endif %}
+<section class="section">
+    <div class="container">
 
         {% if debug or request.user.is_superuser %}
         <hr>

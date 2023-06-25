@@ -1,3 +1,4 @@
+from typing import Any
 from django.contrib import messages
 from django.contrib.auth.decorators import login_required
 from django.core.paginator import EmptyPage, InvalidPage, PageNotAnInteger, Paginator
@@ -79,9 +80,16 @@ class UserIndexView(SearchableListView, SemesterFilteredListView):
 
 def user_detail(request: HttpRequest, pk: int) -> HttpResponse:
     """Fetches the profile of a an approved, active user."""
-    return TemplateResponse(request, "portal/users/detail.html", {
+    context: dict[str, Any] = {
         "user": get_object_or_404(User.objects.approved(), pk=pk)
-    } | target_semester_context(request))
+    } | target_semester_context(request)
+
+    if "target_semester" in context:
+        context["enrollment"] = Enrollment.objects.filter(semester_id=context["target_semester"].pk, user_id=request.user.pk).first()
+    else:
+        context["enrollments"] = request.user.enrollments.select_related("semester", "project")
+
+    return TemplateResponse(request, "portal/users/detail.html", context)
 
 @login_required
 def enroll_user(request, pk: str):
