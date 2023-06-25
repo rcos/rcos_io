@@ -20,8 +20,9 @@
 <hr>
 <small class="has-text-grey is-block">Ongoing Meeting
     {% if ongoing_meeting.room %}
-    at <strong>{{ ongoing_meeting.room }}</strong></small>
+    at <strong>{{ ongoing_meeting.room }}</strong>
     {% endif %}
+</small>
 <a class="is-size-5 is-block mb-2" href="{{ ongoing_meeting.get_absolute_url }}">{{ ongoing_meeting }}</a>
 {% if ongoing_meeting.presentation_embed_url %}
 <iframe

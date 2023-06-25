@@ -4,6 +4,7 @@
         <div>
             <p class="heading">Mentor Applications Deadline</p>
             <p class="title">{{ active_semester.mentor_application_deadline|date:"n/j g:i a" }}</p>
+            <p class="heading"><a href="{% url 'mentors_apply' %}" target="_blank">Apply</a></p>
         </div>
     </div>
     {% endif %}

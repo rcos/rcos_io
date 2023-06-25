@@ -38,42 +38,7 @@
                                 <h2 class="title is-2">Welcome to RCOS IO!</h2>
                                 <div class="content block">
                                     <p>Please confirm your enrollment details:</p>
-                                    <form action="{% url 'users_enroll' request.user.pk %}" method="post">
-                                        {% csrf_token %}
-                                        <input type="hidden" name="semester" value="{{ active_semester.pk }}">
-                                        
-                                        <div class="field">
-                                            <label class="label" for="project">Project</label>
-                                            <div class="select">
-                                                <select name="project" id="project">
-                                                    <option value="">No project</option>
-                                                    {% for project in active_semester.projects %}
-                                                    <option value="{{ project.pk }}" {% if project == enrollment.project %}selected{% endif %}>{{ project }}</option>
-                                                    {% endfor %}
-                                                </select>
-                                            </div>
-                                            <p class="help">What project are you working on?</p>
-                                        </div>
-
-                                        {% if request.user.is_rpi %}
-                                        <div class="field">
-                                            <label class="checkbox">
-                                                <input type="checkbox" name="is_project_lead" id="is_project_lead" {% if enrollment.is_project_lead %}checked{% endif %}>
-                                                Are you a Project Lead?
-                                            </label>
-                                        </div>
-
-                                        <div class="field">
-                                            <label class="label" for="credits">Credits</label>
-                                            <div class="control">
-                                                <input class="input" id="credits" name="credits" type="number" min="0" max="4" placeholder="Credits" value="{{ enrollment.credits }}">
-                                            </div>
-                                            <p class="help">How many credits have you enrolled in RCOS for on SIS? Leave 0 if you are not registerd for the course.</p>
-                                        </div>
-                                        {% endif %}
-
-                                        <button href="#" class="button is-primary  is-block is-fullwidth" type="submit">Confirm Details</button>
-                                    </form>
+                                    {% include "./tiles/confirm_enrollment_form.html" %}
                                 </div>
                                 {% else %}
                                 {% include "./tiles/not_enrolled.html" %}
