@@ -1,0 +1,14 @@
+<form id="semester-form">
+    {% include "portal/includes/semester_select.html" %}
+</form>
+
+<script>
+    document.addEventListener('DOMContentLoaded', function () {
+        const semesterForm = document.getElementById("semester-form");
+        const semesterSelect = semesterForm.querySelector("select[name='semester']");
+
+        semesterSelect.addEventListener('change', function (ev) {
+            semesterForm.submit();
+        });
+    });
+</script>

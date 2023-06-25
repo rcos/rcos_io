@@ -34,7 +34,7 @@
         
                     {{ form|crispy }}
         
-                    <button type="submit" class="button">Update Profile</button>
+                    <button type="submit" class="button">Update Profile</button> <a href="{% url 'users_detail' request.user.pk %}" class="button is-link">View Public Profile</a>
                 </form>
             </div>
             <div class="column is-4">

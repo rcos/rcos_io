@@ -246,7 +246,7 @@ class User(AbstractUser, TimestampedModel):
 
     RPI = "rpi"
     EXTERNAL = "external"
-    ROLE_CHOICES = ((RPI, "RPI"), (EXTERNAL, "External"))
+    ROLE_CHOICES = ((RPI, "RPI User"), (EXTERNAL, "External User"))
 
     USERNAME_FIELD = "email"
     REQUIRED_FIELDS = []

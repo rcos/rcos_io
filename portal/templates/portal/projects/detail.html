@@ -42,14 +42,7 @@
                             <h1 class="title is-1">{{ project }}</h1>
                         </div>
                     </div>
-                    <nav class="breadcrumb is-2" aria-label="breadcrumbs">
-                        <ul>
-                            {% for semester in project.get_active_semesters %}
-                            <li class="{% if target_semester == semester %}is-active has-text-weight-bold{% endif %}"><a href="?semester={{ semester.id }}">{{ semester }}</a></li>
-                            {% endfor %}
-                            <li class="{% if not target_semester %}is-active has-text-weight-bold{% endif %}"><a href="?semester=">All Semesters</a></li>
-                        </ul>
-                    </nav>
+                    {% include "portal/includes/semester_select_form.html" with semesters=project.get_active_semesters %}
                 </div>
                 <div class="column is-5">
                     {% include "portal/projects/sections/overview.html" %}
