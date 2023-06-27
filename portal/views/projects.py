@@ -12,11 +12,11 @@ from django.urls import reverse
 from django.views.generic.edit import CreateView
 from gql.transport.exceptions import TransportServerError
 
-from portal.checks import CheckUserCanCreateProject
+from portal.checks import CheckUserCanCreateProject, CheckUserCanPitchProject, CheckUserCanSubmitProjectProposal
 from portal.forms import ProjectCreateForm
 from portal.services import github
 
-from ..models import Enrollment, Project, ProjectPitch, Semester
+from ..models import Enrollment, Project, ProjectPitch, ProjectProposal, Semester
 from . import (
     SearchableListView,
     SemesterFilteredListView,
@@ -188,11 +188,12 @@ class ProjectCreateView(
         return response
 
 
-class ProjectAddPitch(CreateView):
+class ProjectAddPitch(CreateView, LoginRequiredMixin, SuccessMessageMixin):
     model = ProjectPitch
     template_name = "portal/projects/pitch.html"
     fields = ["url"]
     success_url = "/"
+    success_message = "You project pitch was submitted!"
 
     def get_context_data(self, **kwargs: Any):
         data = super().get_context_data(**kwargs)
@@ -203,16 +204,69 @@ class ProjectAddPitch(CreateView):
     def get(self, request, *args: str, **kwargs: Any):
         self.semester = Semester.get_active()
         self.project = Project.objects.get(slug=self.kwargs["slug"])
-        if not self.project.owner == self.request.user:
-            return HttpResponseForbidden()
+
+        check = CheckUserCanPitchProject().check(self.request.user, self.semester, self.project)
+        if not check.passed:
+            messages.error(
+                self.request, f"You are not currently eligible to pitch this project: {check.fail_reason} {check.fix}"
+            )
+            return redirect(reverse("projects_index"))
 
         return super().get(request, *args, **kwargs)
 
     def form_valid(self, form):
         self.semester = Semester.get_active()
         self.project = Project.objects.get(slug=self.kwargs["slug"])
-        if not self.project.owner == self.request.user:
-            return HttpResponseForbidden()
+
+        check = CheckUserCanPitchProject().check(self.request.user, self.semester, self.project)
+        if not check.passed:
+            messages.error(
+                self.request, f"You are not currently eligible to pitch this project: {check.fail_reason} {check.fix}"
+            )
+            return redirect(reverse("projects_index"))
+
+        form.instance.semester = self.semester
+        form.instance.project = self.project
+        return super().form_valid(form)
+
+class ProjectAddProposal(CreateView, LoginRequiredMixin, SuccessMessageMixin):
+    model = ProjectProposal
+    template_name = "portal/projects/proposal.html"
+    fields = ["url"]
+    success_url = "/"
+    success_message = "Your project proposal document was submitted!"
+
+    def get_context_data(self, **kwargs: Any):
+        data = super().get_context_data(**kwargs)
+        data["project"] = self.project
+        data["semester"] = self.semester
+        return data
+
+    def get(self, request, *args: str, **kwargs: Any):
+        self.semester = Semester.get_active()
+        self.project = Project.objects.get(slug=self.kwargs["slug"])
+
+        # Check permission to submit proposal
+        check = CheckUserCanSubmitProjectProposal().check(self.request.user, self.semester, self.project)
+        if not check.passed:
+            messages.error(
+                self.request, f"You are not currently eligible to submit a project proposal: {check.fail_reason} {check.fix}"
+            )
+            return redirect(reverse("projects_index"))
+
+        return super().get(request, *args, **kwargs)
+
+    def form_valid(self, form):
+        self.semester = Semester.get_active()
+        self.project = Project.objects.get(slug=self.kwargs["slug"])
+
+        # Check permission to submit proposal
+        check = CheckUserCanSubmitProjectProposal().check(self.request.user, self.semester, self.project)
+        if not check.passed:
+            messages.error(
+                self.request, f"You are not currently eligible to submit a project proposal: {check.fail_reason} {check.fix}"
+            )
+            return redirect(reverse("projects_index"))
 
         form.instance.semester = self.semester
         form.instance.project = self.project

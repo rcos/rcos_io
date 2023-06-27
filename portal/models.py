@@ -813,7 +813,7 @@ class ProjectProposal(TimestampedModel):
     project = models.ForeignKey(
         Project, on_delete=models.CASCADE, related_name="proposals"
     )
-    url = models.URLField(help_text="Link to the actual proposal document")
+    url = models.URLField("Proposal Document URL", help_text="Link to the proposal document, typically a Google Doc. Make sure it is publicly viewable!")
 
     grade = models.DecimalField(
         max_digits=3,

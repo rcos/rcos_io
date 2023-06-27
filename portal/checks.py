@@ -5,7 +5,7 @@ from datetime import datetime
 
 from django.utils import timezone
 
-from portal.models import Enrollment, MentorApplication, Semester, User
+from portal.models import Enrollment, MentorApplication, Project, Semester, User
 
 
 class FailedCheck(Exception):
@@ -48,23 +48,34 @@ class Check:
     fix: str | None = None
     """The way for the user to pass this check (if applicable)."""
 
-    def run(self, user: User, semester: Semester | None = None):
+    def run(
+        self,
+        user: User,
+        semester: Semester | None = None,
+        project: Project | None = None,
+    ):
+        print(self.dependencies)
         for dep in self.dependencies:
-            dep.run(user, semester)
+            dep.run(user, semester, project)
 
     def fail(self, fail_reason: str | None = None, fix: str | None = None):
         raise FailedCheck(fail_reason or self.fail_reason, fix)
 
-    def check(self, user: User, semester: Semester | None):
+    def check(
+        self,
+        user: User,
+        semester: Semester | None = None,
+        project: Project | None = None,
+    ):
         try:
-            self.run(user, semester)
+            self.run(user, semester, project)
             return CheckResult(passed=True, fail_reason="", fix="")
         except FailedCheck as e:
             return CheckResult(passed=False, fail_reason=e.reason, fix=e.fix or "")
 
-    def passes(self, user: User, semester: Semester | None):
+    def passes(self, user: User, semester: Semester | None, project: Project | None):
         try:
-            self.run(user, semester)
+            self.run(user, semester, project)
             return True
         except FailedCheck:
             return False
@@ -74,15 +85,25 @@ class CheckUserAuthenticated(Check):
     fail_reason = "You are not logged in."
     fix = "Login!"
 
-    def run(self, user: User, semester: Semester | None = None):
-        super().run(user, semester)
+    def run(
+        self,
+        user: User,
+        semester: Semester | None = None,
+        project: Project | None = None,
+    ):
+        super().run(user, semester, project)
         if not user.is_authenticated:
             self.fail()
 
 
 class CheckSemesterActive(Check):
-    def run(self, user: User, semester: Semester | None = None):
-        super().run(user, semester)
+    def run(
+        self,
+        user: User,
+        semester: Semester | None = None,
+        project: Project | None = None,
+    ):
+        super().run(user, semester, project)
 
         if not semester:
             return self.fail("No semester found.")
@@ -96,8 +117,13 @@ class CheckUserApproved(Check):
     fail_reason = "Your account has not yet been approved."
     fix = "Contact a Coordinator/Faculty Advisor to verify your identity."
 
-    def run(self, user: User, semester: Semester | None = None):
-        super().run(user, semester)
+    def run(
+        self,
+        user: User,
+        semester: Semester | None = None,
+        project: Project | None = None,
+    ):
+        super().run(user, semester, project)
         if not user.is_approved:
             self.fail()
 
@@ -107,8 +133,8 @@ class CheckUserSetup(Check):
     fail_reason = "You have not completed your profile."
     fix = "On the profile page, fill out your details and link your GitHub and Discord accounts."
 
-    def run(self, user: User, semester: Semester | None):
-        super().run(user, semester)
+    def run(self, user: User, semester: Semester | None, project: Project | None):
+        super().run(user, semester, project)
         missing = []
         if not user.first_name:
             missing.append("first name")
@@ -129,8 +155,13 @@ class CheckUserRPI(Check):
     dependencies = [CheckUserApproved()]
     fail_reason = "You are not an approved RPI student/faculty."
 
-    def run(self, user: User, semester: Semester | None = None):
-        super().run(user, semester)
+    def run(
+        self,
+        user: User,
+        semester: Semester | None = None,
+        project: Project | None = None,
+    ):
+        super().run(user, semester, project)
         if not user.role == User.RPI:
             self.fail()
 
@@ -141,8 +172,13 @@ class CheckBeforeSemesterDeadline(Check):
         self.deadline_key = deadline_key
         self.deadline_name = deadline_name
 
-    def run(self, user: User, semester: Semester | None = None):
-        super().run(user, semester)
+    def run(
+        self,
+        user: User,
+        semester: Semester | None = None,
+        project: Project | None = None,
+    ):
+        super().run(user, semester, project)
 
         try:
             deadline: datetime | None = getattr(semester, self.deadline_key)
@@ -153,8 +189,8 @@ class CheckBeforeSemesterDeadline(Check):
             now = timezone.now()
             if now > deadline:
                 self.fail(
-                    f"The {self.deadline_name} deadline " \
-                        f"({deadline.strftime('%-m/%-d %-I:%M %p')}) has passed."
+                    f"The {self.deadline_name} deadline "
+                    f"({deadline.strftime('%-m/%-d %-I:%M %p')}) has passed."
                 )
 
 
@@ -166,25 +202,78 @@ class CheckUserCanEnroll(Check):
     ]
 
 
-class CheckUserCanCreateProject(Check):
-    dependencies = [
-        CheckUserSetup(),
-        CheckSemesterActive(),
-        CheckBeforeSemesterDeadline("project_pitch_deadline", "project pitch"),
-    ]
-    fail_reason = "You are not eligible to create projects at this time."
+class CheckUserNotAlreadyEnrolled(Check):
+    dependencies = [CheckSemesterActive()]
+    fail_reason = "You're already enrolled on a project this semester."
 
-    def run(self, user: User, semester: Semester):
-        super().run(user, semester)
+    def run(
+        self,
+        user: User,
+        semester: Semester | None = None,
+        project: Project | None = None,
+    ):
+        super().run(user, semester, project)
 
         if user.owned_projects.filter(is_approved=False).count() > 0:
             return self.fail("You have an unapproved project pending.")
 
         try:
             if Enrollment.objects.get(user=user, semester=semester).project:
-                return self.fail("You're already enrolled on a project this semester.")
+                return self.fail()
         except Enrollment.DoesNotExist:
             pass
+
+
+class CheckUserCanCreateProject(Check):
+    dependencies = [
+        CheckUserSetup(),
+        CheckSemesterActive(),
+        CheckUserNotAlreadyEnrolled(),
+        CheckBeforeSemesterDeadline("project_pitch_deadline", "project pitch"),
+    ]
+    fail_reason = "You are not eligible to create projects at this time."
+
+
+class CheckUserIsProjectLeadOrOwner(Check):
+    def run(
+        self,
+        user: User,
+        semester: Semester,
+        project: Project | None = None,
+    ):
+        super().run(user, semester, project)
+
+        enrollment = Enrollment.objects.get(user=user, semester=semester)
+
+        if not enrollment:
+            return self.fail(f"You are not enrolled for {semester}.")
+
+        if not project:
+            return self.fail(f"You are not enrolled on a project for {semester}.")
+
+        if not project.owner == user and not (
+            enrollment.project == project and enrollment.is_project_lead
+        ):
+            return self.fail(
+                f"You are not the owner or a current project lead of {project} for {semester}."
+            )
+
+
+class CheckUserCanPitchProject(Check):
+    dependencies = [
+        CheckUserSetup(),
+        CheckSemesterActive(),
+        CheckBeforeSemesterDeadline("project_pitch_deadline", "project pitch"),
+        CheckUserIsProjectLeadOrOwner(),
+    ]
+
+class CheckUserCanSubmitProjectProposal(Check):
+    dependencies = [
+        CheckUserSetup(),
+        CheckSemesterActive(),
+        CheckBeforeSemesterDeadline("project_proposal_deadline", "project proposal"),
+        CheckUserIsProjectLeadOrOwner(),
+    ]
 
 
 class CheckUserCanApplyAsMentor(Check):
@@ -198,7 +287,7 @@ class CheckUserCanApplyAsMentor(Check):
     ]
 
     def run(self, user: User, semester: Semester):
-        super().run(user, semester)
+        super().run(user, semester, project)
 
         try:
             if MentorApplication.objects.get(user=user, semester=semester):

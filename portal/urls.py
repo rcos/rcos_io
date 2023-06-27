@@ -31,6 +31,7 @@ from .views.meetings import (
 )
 from .views.projects import (
     ProjectAddPitch,
+    ProjectAddProposal,
     ProjectCreateView,
     ProjectIndexView,
     project_detail,
@@ -70,6 +71,11 @@ urlpatterns = [
         "projects/<slug:slug>/pitch",
         ProjectAddPitch.as_view(),
         name="projects_add_pitch",
+    ),
+    path(
+        "projects/<slug:slug>/propose",
+        ProjectAddProposal.as_view(),
+        name="projects_add_proposal",
     ),
     # Meeting Routes
     path("meetings/", meetings_index, name="meetings_index"),

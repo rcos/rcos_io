@@ -1,0 +1,30 @@
+{% extends "portal/base.html" %}
+{% load crispy_forms_tags %}
+{% block content %}
+<section class="section">
+    <div class="container">
+        <h1 class="title">Submit Project Proposal for {{ project }} {{ active_semester }}</h1>
+
+        <div class="content">
+           <p>Your project proposal gives us an idea of what your project is about, how many people you are working with, and what goals you have for the semester. We understand that your ideas and goals can change as the semester progresses, and that is fine! While your team's contributions to your project should be related to your milestones, we do not grade contributions based on how successful you were at reaching them. We encourage you to continually update each semester's proposal as well.</p>
+           <ul>
+                <li>project name</li>
+                <li>project lead(s)</li>
+                <li>team members</li>
+                <li>description</li>
+                <li><strong>monthly</strong> milestones</li>
+            </ul>
+            <a href="{% url 'handbook' %}?initial_route=/grading/documentation?id=proposal">View details and past examples in the Handbook</a>
+        </div>
+
+        <form method="post">
+            {% csrf_token %}
+
+            {{ form|crispy }}
+
+            <button type="submit" class="button">Submit Proposal</button>
+        </form>
+        
+    </div>
+</section>
+{% endblock %}
