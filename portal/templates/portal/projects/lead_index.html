@@ -1,0 +1,40 @@
+{% extends "portal/base.html" %}
+{% block content %}
+<section class="section">
+    <div class="container">
+        {% if active_semester %}
+        <h1 class="title">Lead a Project for {{ active_semester }}</h1>
+
+        <div class="content">
+            You have the option of starting a new RCOS project OR running one of your created projects again.
+        </div>
+
+        <div class="buttons">
+            <a href="{% url 'new_project' %}" class="button is-success">
+                <span class="icon">
+                    <i class="fa fa-plus"></i>
+                </span>
+                <span>Start New Project</span>
+            </a>
+            {% for project in request.user.owned_projects.all %}
+            <form action="{% url 'users_enroll' request.user.pk %}" method="post" class="mr-2">
+                {% csrf_token %}
+                <input type="hidden" name="semester" value="{{ active_semester.pk }}">
+                <input type="hidden" name="is_project_lead" value="on">
+                <input type="hidden" name="project" value="{{ project.pk }}">
+                <button class="button is-info" type="submit">
+                    <span class="icon">
+                        <i class="fa-solid fa-recycle"></i>
+                    </span>
+                    <span>{{ project }}</span>
+                </button>
+            </form>
+            {% endfor %}
+        </div>
+        {% else %}
+        <h1 class="title">RCOS Isn't Active Right Now</h1>
+        <p>Come back when there's an active semester.</p>
+        {% endif %}
+    </div>
+</section>
+{% endblock %}

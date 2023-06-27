@@ -35,6 +35,7 @@ from .views.projects import (
     ProjectCreateView,
     ProjectIndexView,
     project_detail,
+    project_lead_index,
 )
 from .views.users import UserIndexView, enroll_user, user_detail
 
@@ -65,6 +66,7 @@ urlpatterns = [
         ProjectIndexView.as_view(),
         name="projects_index",
     ),
+    path("projects/lead/", project_lead_index, name="project_lead_index"),
     path("projects/new/", ProjectCreateView.as_view(), name="new_project"),
     path("projects/<slug:slug>", project_detail, name="projects_detail"),
     path(

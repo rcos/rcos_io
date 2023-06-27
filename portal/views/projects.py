@@ -2,17 +2,22 @@
 from typing import Any
 
 from django.contrib import messages
+from django.contrib.auth.decorators import login_required
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.contrib.messages.views import SuccessMessageMixin
 from django.core.paginator import EmptyPage, InvalidPage, PageNotAnInteger, Paginator
-from django.http import HttpRequest, HttpResponse, HttpResponseForbidden
+from django.http import HttpRequest, HttpResponse
 from django.shortcuts import get_object_or_404, redirect
 from django.template.response import TemplateResponse
 from django.urls import reverse
 from django.views.generic.edit import CreateView
 from gql.transport.exceptions import TransportServerError
 
-from portal.checks import CheckUserCanCreateProject, CheckUserCanPitchProject, CheckUserCanSubmitProjectProposal
+from portal.checks import (
+    CheckUserCanCreateProject,
+    CheckUserCanPitchProject,
+    CheckUserCanSubmitProjectProposal,
+)
 from portal.forms import ProjectCreateForm
 from portal.services import github
 
@@ -24,6 +29,13 @@ from . import (
     target_semester_context,
 )
 
+
+@login_required
+def project_lead_index(request: HttpRequest) -> HttpResponse:
+    """Shows users options to either start a new project or continue an owned project."""
+
+    return TemplateResponse(request, "portal/projects/lead_index.html", {
+    })
 
 class ProjectIndexView(SearchableListView, SemesterFilteredListView):
     template_name = "portal/projects/index.html"
