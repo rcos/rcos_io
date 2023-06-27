@@ -83,6 +83,7 @@ INSTALLED_APPS = [
     "crispy_forms",
     "crispy_bulma",
     "debug_toolbar",
+    "cacheops",
     # "django_celery_beat"
 ]
 
@@ -350,3 +351,15 @@ LOGGING = {
 
 CELERY_BROKER_URL = os.environ["REDIS_URL"]
 CELERY_RESULT_BACKEND = os.environ["REDIS_URL"]
+
+CACHEOPS_REDIS = os.environ["REDIS_URL"]
+CACHEOPS_DEFAULTS = {
+    'timeout': 60*60
+}
+CACHEOPS = {
+    'auth.user': {'ops': 'get', 'timeout': 60*15},
+    'auth.*': {'ops': ('fetch', 'get')},
+    'auth.permission': {'ops': 'all'},
+    'portal.*': {'ops': 'all'},
+    '*.*': {},
+}
