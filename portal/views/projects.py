@@ -125,6 +125,11 @@ def project_detail(request: HttpRequest, slug: str) -> HttpResponse:
     )
     context: dict[str, Any] = {"project": project} | target_semester_context(request)
 
+    if request.user.is_authenticated:
+        active_enrollment = request.user.get_active_enrollment()
+        is_owner_or_lead = (active_enrollment.project == project and active_enrollment.is_project_lead) if active_enrollment else False
+        context["is_owner_or_lead"] = is_owner_or_lead
+
     # Fetch enrollments for either target semester or teams across semesters
     if "target_semester" in context:
         context["target_semester_enrollments"] = project.get_semester_team(context["target_semester"])

@@ -81,8 +81,8 @@
         <div id="documents">
             {% if project_docs.pitch %}
             <a href="{{ project_docs.pitch.url }}" class="button is-link" target="_blank"><span class="icon">🔗</span><span>Pitch Slides</span></a>
-            {% else %}
-            <a class="button is-warning" href="{% url 'projects_add_pitch' project.slug %}">Submit Pitch Project</a>
+            {% elif is_owner_or_lead %}
+            <a class="button is-warning" href="{% url 'projects_add_pitch' project.slug %}">Submit Project Pitch Slides</a>
             {% endif %}
             {% if project_docs.proposal %}
             <a href="{{ project_docs.proposal.url }}" class="button is-link" target="_blank"><span class="icon">🔗</span><span>Proposal</span></a>
