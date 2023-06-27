@@ -144,6 +144,9 @@
                     <td>
                         {% if enrollment.project %}
                         <a href="{{ enrollment.project.get_absolute_url }}{% target_semester_query %}">{{ enrollment.project }}</a>
+                        {% if enrollment.is_project_lead %}
+                        <span class="tag">Lead</span>
+                        {% endif %}
                         {% else %}
                         <span class="has-text-gray">-</span>
                         {% endif %}
