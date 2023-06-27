@@ -52,7 +52,7 @@ class MentorApplicationView(
         if not check.passed:
             messages.error(
                 self.request,
-                "You are not currently eligible to propose new projects: " \
+                "You are not currently eligible to apply to be a Mentor: " \
                     f"{check.fail_reason}",
             )
             return redirect(reverse("users_index"))
@@ -65,7 +65,7 @@ class MentorApplicationView(
         if not check.passed:
             messages.error(
                 self.request,
-                f"You are not currently eligible to propose new projects: {check.fail_reason}",
+                f"You are not currently eligible to apply to be a Mentor: {check.fail_reason}",
             )
             return redirect(reverse("users_index"))
 

@@ -12,8 +12,8 @@ from django.urls import reverse
 from django.views.generic.edit import CreateView
 from gql.transport.exceptions import TransportServerError
 
-from portal.checks import CheckUserCanProposeProject
-from portal.forms import ProposeProjectForm
+from portal.checks import CheckUserCanCreateProject
+from portal.forms import ProjectCreateForm
 from portal.services import github
 
 from ..models import Enrollment, Project, ProjectPitch, Semester
@@ -82,7 +82,7 @@ class ProjectIndexView(SearchableListView, SemesterFilteredListView):
             ).select_related("semester")
 
             if self.request.user.is_authenticated:
-                data["can_propose_project_check"] = CheckUserCanProposeProject().check(
+                data["can_create_project_check"] = CheckUserCanCreateProject().check(
                     self.request.user, self.target_semester
                 )
 
@@ -140,19 +140,21 @@ def project_detail(request: HttpRequest, slug: str) -> HttpResponse:
     return TemplateResponse(request, "portal/projects/detail.html", context)
 
 
-class ProjectProposeView(
+class ProjectCreateView(
     SuccessMessageMixin, LoginRequiredMixin, UserRequiresSetupMixin, CreateView
 ):
-    form_class = ProposeProjectForm
-    template_name = "portal/projects/propose.html"
-    success_message = "Your project has been proposed and will be reviwed by Mentors and Coordinators shortly."
+    form_class = ProjectCreateForm
+    template_name = "portal/projects/create.html"
+    success_message = "Your project has been created and you've been enrolled as Project Lead!"
 
     def get(self, request, *args, **kwargs):
         active_semester = Semester.get_active()
 
-        if not CheckUserCanProposeProject().passes(self.request.user, active_semester):
+        check = CheckUserCanCreateProject().check(self.request.user, active_semester)
+
+        if not check.passed:
             messages.error(
-                self.request, "You are not currently eligible to propose new projects."
+                self.request, f"You are not currently eligible to create new projects: {check.fail_reason} {check.fix}"
             )
             return redirect(reverse("projects_index"))
 
@@ -160,14 +162,25 @@ class ProjectProposeView(
 
     def form_valid(self, form):
         active_semester = Semester.get_active()
-        if not CheckUserCanProposeProject().passes(self.request.user, active_semester):
+        if not CheckUserCanCreateProject().passes(self.request.user, active_semester):
             messages.error(
-                self.request, "You are not currently eligible to propose new projects."
+                self.request, "You are not currently eligible to create new projects."
             )
             return redirect(reverse("projects_index"))
 
         form.instance.owner = self.request.user
-        return super().form_valid(form)
+        form.instance.organization = self.request.user.organization
+
+        # Enroll user in project as lead
+
+        response = super().form_valid(form)
+        Enrollment.objects.update_or_create(
+            semester=active_semester, user=self.request.user, defaults={
+                "is_project_lead": True,
+                "project": form.instance
+            }
+        )
+        return response
 
 
 class ProjectAddPitch(CreateView):

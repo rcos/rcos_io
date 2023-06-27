@@ -41,21 +41,10 @@
 
         </div>
         {% empty %}
-        <p class="has-text-grey">None have been proposed yet! Check back again soon.</p>
+        <p class="has-text-grey">None have been pitched yet! Check back again soon.</p>
         {% endfor %}
         </ul>
     </div>
-    <!-- {% if can_propose_project.is_eligible %}
-    <a
-        class="button is-block is-outlined is-primary mb-2"
-        {% if can_propose_project.is_eligible %}
-        href="{% url 'projects_propose' %}"
-        {% else %}
-        disabled
-        title="{{ can_propose_project.reason }}"
-        {% endif %}
-    >Propose Project</a>
-    {% endif %} -->
     <a href="{% url 'projects_index' %}?semester={{ active_semester.pk }}" class="button is-block is-link is-outlined">View All {{ active_semester }} Projects</a>
 </div>
 {% endif %}

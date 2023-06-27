@@ -154,7 +154,7 @@ class CheckBeforeSemesterDeadline(Check):
             if now > deadline:
                 self.fail(
                     f"The {self.deadline_name} deadline " \
-                        "({deadline.strftime('%-m/%-d %-I:%M %p')}) has passed."
+                        f"({deadline.strftime('%-m/%-d %-I:%M %p')}) has passed."
                 )
 
 
@@ -166,13 +166,13 @@ class CheckUserCanEnroll(Check):
     ]
 
 
-class CheckUserCanProposeProject(Check):
+class CheckUserCanCreateProject(Check):
     dependencies = [
         CheckUserSetup(),
         CheckSemesterActive(),
         CheckBeforeSemesterDeadline("project_pitch_deadline", "project pitch"),
     ]
-    fail_reason = "You are not eligible to propose projects at this time."
+    fail_reason = "You are not eligible to create projects at this time."
 
     def run(self, user: User, semester: Semester):
         super().run(user, semester)

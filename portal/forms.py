@@ -31,7 +31,7 @@ class RPIUserProfileForm(forms.ModelForm):
         model = User
         fields = ["first_name", "last_name", "graduation_year"]
 
-class ProposeProjectForm(forms.ModelForm):
+class ProjectCreateForm(forms.ModelForm):
     class Meta:
         model = Project
         fields = [
@@ -39,6 +39,7 @@ class ProposeProjectForm(forms.ModelForm):
             "description",
             "tags",
             "external_chat_url",
+            "logo_url",
             "homepage_url",
         ]
 

@@ -31,8 +31,8 @@ from .views.meetings import (
 )
 from .views.projects import (
     ProjectAddPitch,
+    ProjectCreateView,
     ProjectIndexView,
-    ProjectProposeView,
     project_detail,
 )
 from .views.users import UserIndexView, enroll_user, user_detail
@@ -64,7 +64,7 @@ urlpatterns = [
         ProjectIndexView.as_view(),
         name="projects_index",
     ),
-    path("projects/propose/", ProjectProposeView.as_view(), name="projects_propose"),
+    path("projects/new/", ProjectCreateView.as_view(), name="new_project"),
     path("projects/<slug:slug>", project_detail, name="projects_detail"),
     path(
         "projects/<slug:slug>/pitch",

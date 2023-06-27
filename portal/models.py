@@ -533,7 +533,7 @@ class Project(TimestampedModel):
     )
     is_approved = models.BooleanField(
         "approved?",
-        default=False,
+        default=True,
         help_text="Whether the project has been approved by Mentors/Coordinators to participate in RCOS",
     )
 
