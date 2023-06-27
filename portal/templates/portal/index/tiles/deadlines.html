@@ -1,5 +1,5 @@
 <nav class="level">
-    {% if active_semester and active_semester.mentor_application_deadline %}
+    {% if active_semester and active_semester.mentor_application_deadline and now < active_semester.mentor_application_deadline %}
     <div class="level-item has-text-centered">
         <div>
             <p class="heading">Mentor Applications Deadline</p>
@@ -9,7 +9,7 @@
     </div>
     {% endif %}
 
-    {% if active_semester and active_semester.project_pitch_deadline %}
+    {% if active_semester and active_semester.project_pitch_deadline and now < active_semester.project_pitch_deadline %}
     <div class="level-item has-text-centered">
         <div>
             <p class="heading">Project Pitches Deadline</p>
@@ -19,7 +19,7 @@
     </div>
     {% endif %}
     
-    {% if active_semester and active_semester.project_proposal_deadline %}
+    {% if active_semester and active_semester.project_proposal_deadline and now < active_semester.project_proposal_deadline %}
     <div class="level-item has-text-centered">
         <div>
             <p class="heading">Project Proposals Deadline</p>

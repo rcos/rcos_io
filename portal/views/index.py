@@ -26,6 +26,7 @@ class IndexView(TemplateView):
         )
 
         if self.request.user.is_authenticated:
+            data["now"] = timezone.now()
             data["ongoing_meeting"] = Meeting.get_ongoing(self.request.user)
             data["is_user_rpi_check"] = CheckUserRPI().check(self.request.user, None)
             data["can_enroll_check"] = CheckUserCanEnroll().check(self.request.user, active_semester)
