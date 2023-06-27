@@ -15,11 +15,11 @@
                 <li>what kind of members you're seeking (new/experienced/etc.)</li>
                 <li>repository link (if you have)</li>
             </ul>
-            <p>You'll briefly present this slide as and advertisement to the RCOS community during one of the Pitch Days at the very start of the semester.</p>
+            <p>You'll briefly present this slide as an advertisement to the RCOS community during one of the Pitch Days at the very start of the semester.</p>
             <a href="{% url 'handbook' %}?initial_route=/project_management/pitch">View details and past examples in the Handbook</a>
         </div>
 
-        <form method="post">
+        <form method="post" onsubmit="return confirm('Pitching your project means you want to advertise your project to the whole of RCOS to find team members. If you want to do a solo project or already have a team in mind, you do not have to pitch!')">
             {% csrf_token %}
 
             {{ form|crispy }}
