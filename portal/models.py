@@ -175,6 +175,7 @@ class Organization(TimestampedModel):
         max_length=200, help_text="The public homepage of the organization."
     )
     discord_role_id = models.CharField(max_length=100, blank=True)
+    logo_url = models.URLField(max_length=500, blank=True)
 
     def sync_discord(self, is_deleted=False):
         """Ensures that a Discord role exists for the organization, and that all its members have it assigned."""

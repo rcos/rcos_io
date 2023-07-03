@@ -179,7 +179,7 @@ class SemesterAdmin(admin.ModelAdmin):
 @admin.register(Organization)
 class OrganizationAdmin(admin.ModelAdmin):
     fieldsets = (
-        (None, {"fields": ("name", "homepage_url")}),
+        (None, {"fields": ("name", "homepage_url", "logo_url")}),
         ("Emails", {"fields": (("email_domain", "email_domain_secondary"),)}),
         ("Discord", {"classes": ("collapse",), "fields": ("discord_role_id",)}),
     )
