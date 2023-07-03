@@ -19,17 +19,17 @@ RCOS has to handle the data of typically 150+ students each semester (even 100+ 
 ### Requirements
 
 - Python 3.11+
+- [Poetry](https://python-poetry.org/docs/#installation)
 
 ### Setup
 
 1. Clone repository
-2. Install [Poetry](https://python-poetry.org/docs/#installation) 
-3. Install dependencies `poetry install`
-5. Create a `.env` file (not the placement of the `.`) and add environment values
+2. Install dependencies `poetry install`
+3. Create a `.env` file (not the placement of the `.`) and add environment values
     - see `.env.example` for the expected variables
-6. Activate Poetry shell `poetry shell`
-7. Setup database `./manage.py migrate` OR ask maintainers for test data DB file
-8. Create a superuser for testing `./manage.py createsuperuser`
+4. Activate Poetry shell `poetry shell`
+5. Setup database `./manage.py migrate` OR ask maintainers for test data DB file
+6. Create a superuser for testing `./manage.py createsuperuser`
 
 
 ### Running

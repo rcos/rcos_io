@@ -1,0 +1,43 @@
+{% extends "portal/base.html" %}
+{% load portal_extras %}
+
+{% block ogp %}
+<meta property="og:title" content="Organizations | RCOS IO" />
+<meta property="og:type" content="website" />
+<meta property="og:url" content="{{ request.build_absolute_uri }}" />
+<meta property="og:description" content="Organizations | Rensselaer Center for Open Source" />
+<meta property="og:image" content="https://raw.githubusercontent.com/rcos/rcos-branding/master/img/lockup-red.png" />
+{% endblock %}
+
+{% block title %}
+Organizations | RCOS IO
+{% endblock %}
+
+{% block content %}
+<section class="section">
+    <div class="container">
+        <h1 class="title">Organizations</h1>
+        <h2 class="subtitle">These organizations have pitched projects to the RCOS community and their members have served as project mentors.</h2>
+        <div class="columns is-multiline">
+            {% for org in organizations %}
+            <div class="column is-3">
+                <div class="card">
+                    <header class="card-header">
+                        <p class="card-header-title">{{ org }}</p>
+                    </header>
+                    <div class="card-image">
+                        <figure class="iamge is-4by3">
+                            <img src="{{ org.logo_url }}" alt="{{ org }} logo">
+                        </figure>
+                    </div>
+                    <footer class="card-footer">
+                        <a href="#" class="card-footer-item">{{ org.projects.count }} Projects</a>
+                    </footer>
+                </div>
+            </div>
+            {% empty %}
+            {% endfor %}
+        </div>
+    </div>
+</section>
+{% endblock %}

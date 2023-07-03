@@ -7,6 +7,7 @@ from portal.views.admin import (
 )
 from portal.views.discord import DiscordAdminIndex, delete_discord_channels
 from portal.views.mentors import MentorApplicationView, mentor_applications_index
+from portal.views.organizations import organizations_index
 from portal.views.small_groups import SmallGroupIndexView, small_group_detail
 
 from .views.auth import (
@@ -112,6 +113,8 @@ urlpatterns = [
         small_group_detail,
         name="small_groups_detail",
     ),
+    # Organization routes
+    path("organizations/", organizations_index, name="organizations_index"),
     # Discord Administration Routes
     path("admin/discord", DiscordAdminIndex.as_view(), name="discord_admin_index"),
     path(
