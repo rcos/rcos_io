@@ -8,21 +8,22 @@ from django.shortcuts import get_object_or_404, redirect
 from django.template.response import TemplateResponse
 from django.urls import reverse
 
-from ..models import Enrollment, Project, Semester, User
+from ..models import Enrollment, Organization, Project, Semester, User
 from . import (
+    OrganizationFilteredListView,
     SearchableListView,
     SemesterFilteredListView,
     target_semester_context,
 )
 
 
-class UserIndexView(SearchableListView, SemesterFilteredListView):
+class UserIndexView(SearchableListView, OrganizationFilteredListView, SemesterFilteredListView):
     template_name = "portal/users/index.html"
     context_object_name = "users"
     paginate_by = 50
 
     # Default to all active RPI members
-    queryset = User.rpi
+    queryset = User.objects.approved().select_related("organization")
 
     semester_filter_key = "enrollments__semester"
     search_fields = (
@@ -35,6 +36,8 @@ class UserIndexView(SearchableListView, SemesterFilteredListView):
 
     def get_context_data(self, **kwargs):
         data = super().get_context_data(**kwargs)
+
+        data["organizations"] = Organization.objects.all()
 
         paginator = Paginator(self.get_queryset(), self.paginate_by)
 

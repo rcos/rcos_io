@@ -8,7 +8,7 @@ from django.shortcuts import get_object_or_404, redirect
 from django.urls import reverse
 from django.views.generic import DetailView, ListView
 
-from ..models import Semester
+from ..models import Organization, Semester
 
 
 def load_semesters(request):
@@ -106,6 +106,38 @@ class SemesterFilteredListView(ListView):
         """Expose `target_semester` to the template if present."""
         data = super().get_context_data(**kwargs)
         data["target_semester"] = self.target_semester
+        return data
+
+class OrganizationFilteredListView(ListView):
+    """Render some list of objects, set by self.model or self.queryset. self.queryset can actually be any iterable of items, not just a queryset.
+
+    If `organization` query parameter is present AND valid:
+        - finds organization and passes it to template as `organization`
+        - filters queryset with `organization_id=organization`
+    """
+
+    organization = None
+
+    def get_queryset(self):
+        """Default to queryset, and filters down to a particular organization if requested."""
+        queryset = super().get_queryset()
+
+        org_id = self.request.GET.get("organization")
+
+        if org_id and not self.organization:
+            self.organization = get_object_or_404(Organization, pk=org_id)
+
+        if self.organization:
+            queryset = queryset.filter(
+                organization_id=org_id
+            )
+
+        return queryset
+
+    def get_context_data(self, **kwargs):
+        """Expose `organization` to the template if present."""
+        data = super().get_context_data(**kwargs)
+        data["organization"] = self.organization
         return data
 
 

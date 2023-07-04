@@ -1,42 +1,25 @@
 <nav class="mb-5">
-    <form class="level" id="filters">
-        <div class="level-left">
-            <input type="hidden" name="semester" value="{{ target_semester.id|default:'' }}">
-            <div class="level-item">
-                <p class="subtitle is-6">
-                    <strong>{{ user_rows|length }}</strong> result{{ user_rows|pluralize }}
-                </p>
-            </div>
-            <div class="level-item">
-                <div class="field has-addons">
-                    <p class="control">
-                        <input type="search" id="search" name="search" class="input"
-                            placeholder="By name, graduation year, etc." value="{{ search|default:'' }}" />
-                    </p>
-                    <p class="control">
-                        <button class="button">
-                            Search
-                        </button>
-                    </p>
-                </div>
-            </div>
+    <form id="filters">
+        <div class="field is-grouped is-grouped-multiline">
+            <p class="control">
+                {% include "portal/includes/semester_select.html" %}
+            </p>
 
-            {% include "portal/includes/pagination.html" %}
-        </div>
+            <p class="control">
+                {% include "portal/includes/organization_select.html" %}
+            </p>
 
-        <div class="level-right">
-            {% include "portal/includes/semester_select.html" %}
+            <p class="control is-expanded">
+                <input type="search" id="search" name="search" class="input is-small"
+                    placeholder="By name, GitHub, Discord, etc." value="{{ search|default:'' }}" />
+            </p>
+
+            <p class="control">
+                <button class="button is-small">
+                    Search
+                </button>
+            </p>
+            <span>{{ user_rows|length }} results</span>
         </div>
     </form>
 </nav>
-
-<script>
-    document.addEventListener('DOMContentLoaded', function () {
-        const filtersForm = document.getElementById("filters");
-        const semesterSelect = filtersForm.querySelector("select[name='semester']");
-
-        semesterSelect.addEventListener('change', function (ev) {
-            filtersForm.submit();
-        });
-    });
-</script>

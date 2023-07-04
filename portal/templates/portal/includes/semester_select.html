@@ -1,4 +1,4 @@
-<div class="select">
+<span class="select is-small">
     <select name="semester">
         {% for semester in semesters %}
         <option value="{{ semester.id }}" {% if semester == target_semester %} selected {% endif %}>
@@ -9,4 +9,4 @@
         <option value="" {% if not target_semester %}selected{% endif%}>All Semesters</option>
         {% endif %}
     </select>
-</div>
+</span>
