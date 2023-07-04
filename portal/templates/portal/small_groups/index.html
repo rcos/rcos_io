@@ -31,7 +31,7 @@ Small Groups | RCOS IO
                         <span class="icon">
                             <i class="fa-solid fa-location-dot"></i>
                         </span>
-                        {{ small_group.room }}
+                        {{ small_group.room|default:"No room assigned" }}
                     </p>
                     <div class="columns">
                         <div class="column">
