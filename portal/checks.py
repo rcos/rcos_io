@@ -54,7 +54,6 @@ class Check:
         semester: Semester | None = None,
         project: Project | None = None,
     ):
-        print(self.dependencies)
         for dep in self.dependencies:
             dep.run(user, semester, project)
 
