@@ -1,14 +1,15 @@
 <nav class="mb-5">
-    <form class="level" id="filters">
-        <div class="level-left">
-            <input type="hidden" name="semester" value="{{ target_semester.id|default:'' }}">
-            <div class="level-item">
-                <p class="subtitle is-6">
-                    <strong>{{ projects_rows|length }}</strong> result{{ projects_rows|pluralize }}
-                </p>
-            </div>
-            {% if target_semester and target_semester.is_active %}
-            <div class="level-item">
+    <form id="filters">
+        <div class="field is-grouped is-grouped-multiline is-align-items-center">
+            <p class="control">
+                {% include "portal/includes/semester_select.html" %}
+            </p>
+
+            <p class="control">
+                {% include "portal/includes/organization_select.html" %}
+            </p>
+
+            <p class="control mb-3">
                 <label class="checkbox">
                     <input
                         type="checkbox"
@@ -18,50 +19,32 @@
                     />
                     Seeking Members?
                 </label>
-            </div>
-            {% endif %}
-            <div class="level-item">
-                <div class="field has-addons">
-                    <p class="control">
-                        <input type="search" id="search" name="search" class="input"
-                            placeholder="By name, project lead, tags" value="{{ search|default:'' }}" />
-                    </p>
-                    <p class="control">
-                        <button class="button">
-                            Search
-                        </button>
-                    </p>
-                </div>
-            </div>
+            </p>
 
-            {% include "portal/includes/pagination.html" %}
-        </div>
+            <p class="control is-expanded">
+                <input type="search" id="search" name="search" class="input"
+                    placeholder="By name, project lead, technologies, etc." value="{{ search|default:'' }}" />
+            </p>
 
-        <div class="level-right">
-            {% include "portal/includes/semester_select.html" %}
-            {% if user.is_authenticated %}
-            <p class="level-item ml-2">
-                <a
-                    class="button is-success"
-                    {% if can_create_project_check.passed %}
-                    href="{% url 'new_project' %}"
-                    {% else %}
-                    disabled
-                    title="{{ can_create_project_check.fail_reason }} {{ can_create_project_check.fix }}"
-                    {% endif %}
-                >New Project</a></p>
-            {% endif %}
+            <p class="control">
+                <button class="button">
+                    Search
+                </button>
+            </p>
+
+            <p class="control">
+                {% if user.is_authenticated %}
+                    <a
+                        class="button is-success"
+                        {% if can_create_project_check.passed %}
+                        href="{% url 'new_project' %}"
+                        {% else %}
+                        disabled
+                        title="{{ can_create_project_check.fail_reason }} {{ can_create_project_check.fix }}"
+                        {% endif %}
+                    >New Project</a>
+                {% endif %}
+            </p>
         </div>
     </form>
 </nav>
-
-<script>
-    document.addEventListener('DOMContentLoaded', function () {
-        const filtersForm = document.getElementById("filters");
-        const semesterSelect = filtersForm.querySelector("select[name='semester']");
-
-        semesterSelect.addEventListener('change', function (ev) {
-            filtersForm.submit();
-        });
-    });
-</script>

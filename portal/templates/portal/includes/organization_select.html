@@ -1,10 +1,8 @@
-<span class="select is-small">
+<span class="select">
     <select name="organization">
-        {% if request.user.is_authenticated %}
-            <option value="">All users</option>
-            {% for org in organizations %}
-            <option value="{{ org.pk }}" {% if organization and organization.pk == org.pk %}selected{% endif %}>{{ org }}</option>
-            {% endfor %}
-        {% endif %}
+        <option value="">Any organization</option>
+        {% for org in organizations %}
+        <option value="{{ org.pk }}" {% if organization and organization.pk == org.pk %}selected{% endif %}>{{ org }}</option>
+        {% endfor %}
     </select>
 </span>

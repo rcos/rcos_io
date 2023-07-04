@@ -38,6 +38,7 @@ class UserIndexView(SearchableListView, OrganizationFilteredListView, SemesterFi
         data = super().get_context_data(**kwargs)
 
         data["organizations"] = Organization.objects.all()
+        data["total_count"] = self.get_queryset().count()
 
         paginator = Paginator(self.get_queryset(), self.paginate_by)
 

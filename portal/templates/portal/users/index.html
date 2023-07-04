@@ -21,9 +21,9 @@ Users | RCOS IO
 
         {% include "./filters.html" %}
 
-        {% include "portal/includes/pagination.html" %}
         <div class="table-container">
             <table class="table is-fullwidth is-striped is-hoverable">
+                <caption class="has-text-grey">{{ user_rows|length }} results shown of {{ total_count }} total</caption>
                 <thead>
                     <tr>
                         <th>Name</th>
@@ -86,19 +86,11 @@ Users | RCOS IO
 
         {% if user_rows|length == 0 %}
         <p class="has-text-centered has-text-grey">
-            No users
-            {% if target_semester %}
-            have enrolled for <b>{{ target_semester }}</b>.
-            {% else %}
-            have enrolled yet.
-            {% endif %}
+            No users found.
         </p>
         {% endif %}
 
-        <div class="flex">
-            
-            {% include "portal/includes/pagination.html" %}
-        </div>
+        {% include "portal/includes/pagination.html" %}
 
         {% if request.user.is_superuser %}
         <hr>

@@ -10,16 +10,15 @@
             </p>
 
             <p class="control is-expanded">
-                <input type="search" id="search" name="search" class="input is-small"
+                <input type="search" id="search" name="search" class="input"
                     placeholder="By name, GitHub, Discord, etc." value="{{ search|default:'' }}" />
             </p>
 
             <p class="control">
-                <button class="button is-small">
+                <button class="button">
                     Search
                 </button>
             </p>
-            <span>{{ user_rows|length }} results</span>
         </div>
     </form>
 </nav>

@@ -24,6 +24,7 @@ Projects | RCOS IO
 
         <div class="table-container">
             <table class="table is-fullwidth is-striped is-hoverable">
+                <caption class="has-text-grey">{{ projects_rows|length }} results shown of {{ total_count }} total</caption>
                 <thead>
                     <tr>
                         <th>Name</th>
@@ -99,14 +100,11 @@ Projects | RCOS IO
 
         {% if projects_rows|length == 0 %}
         <p class="has-text-centered has-text-grey">
-            No projects
-            {% if target_semester %}
-            listed for <b>{{ target_semester }}</b>.
-            {% else %}
-            have been posted yet.
-            {% endif %}
+            No projects found.
         </p>
         {% endif %}
+
+        {% include "portal/includes/pagination.html" %}
 
         {% if request.user.is_superuser %}
         <hr>

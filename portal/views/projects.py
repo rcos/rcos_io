@@ -21,8 +21,9 @@ from portal.checks import (
 from portal.forms import ProjectCreateForm
 from portal.services import github
 
-from ..models import Enrollment, Project, ProjectPitch, ProjectProposal, Semester
+from ..models import Enrollment, Organization, Project, ProjectPitch, ProjectProposal, Semester
 from . import (
+    OrganizationFilteredListView,
     SearchableListView,
     SemesterFilteredListView,
     UserRequiresSetupMixin,
@@ -37,7 +38,7 @@ def project_lead_index(request: HttpRequest) -> HttpResponse:
     return TemplateResponse(request, "portal/projects/lead_index.html", {
     })
 
-class ProjectIndexView(SearchableListView, SemesterFilteredListView):
+class ProjectIndexView(SearchableListView, OrganizationFilteredListView, SemesterFilteredListView):
     template_name = "portal/projects/index.html"
     context_object_name = "projects"
     paginate_by = 25
@@ -71,8 +72,9 @@ class ProjectIndexView(SearchableListView, SemesterFilteredListView):
 
     def get_context_data(self, **kwargs):
         data = super().get_context_data(**kwargs)
+        data["organizations"] = Organization.objects.all()
         data["is_seeking_members"] = self.is_seeking_members
-
+        data["total_count"] = self.get_queryset().count()
         paginator = Paginator(self.get_queryset(), self.paginate_by)
 
         page = self.request.GET.get("page")
