@@ -35,11 +35,15 @@
                         {% if active_semester %}
                             {% if request.user.is_approved %}
                                 {% if enrollment %}
-                                <h2 class="title is-2">Welcome to RCOS IO!</h2>
+                                <!-- <h2 class="title is-2">Welcome to RCOS IO!</h2>
                                 <div class="content block">
                                     <p>Please confirm your enrollment details:</p>
                                     {% include "./tiles/confirm_enrollment_form.html" %}
-                                </div>
+                                </div> -->
+                                    {% if enrollment.project %}
+                                    {% else %}
+                                    {% include "./tiles/no_project.html" %}
+                                    {% endif %}
                                 {% else %}
                                 {% include "./tiles/not_enrolled.html" %}
                                 {% endif %}

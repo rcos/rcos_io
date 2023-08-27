@@ -5,6 +5,7 @@ from django.contrib import messages
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.contrib.messages.views import SuccessMessageMixin
+from django.core.cache import cache
 from django.core.paginator import EmptyPage, InvalidPage, PageNotAnInteger, Paginator
 from django.http import HttpRequest, HttpResponse
 from django.shortcuts import get_object_or_404, redirect
@@ -21,7 +22,14 @@ from portal.checks import (
 from portal.forms import ProjectCreateForm
 from portal.services import github
 
-from ..models import Enrollment, Organization, Project, ProjectPitch, ProjectProposal, Semester
+from ..models import (
+    Enrollment,
+    Organization,
+    Project,
+    ProjectPitch,
+    ProjectProposal,
+    Semester,
+)
 from . import (
     OrganizationFilteredListView,
     SearchableListView,
@@ -35,10 +43,20 @@ from . import (
 def project_lead_index(request: HttpRequest) -> HttpResponse:
     """Shows users options to either start a new project or continue an owned project."""
 
-    return TemplateResponse(request, "portal/projects/lead_index.html", {
-    })
+    check = CheckUserCanCreateProject().check(
+        request.user, semester=cache.get("active_semester")
+    )
 
-class ProjectIndexView(SearchableListView, OrganizationFilteredListView, SemesterFilteredListView):
+    if not check.passed:
+        messages.error(request, f"You cannot lead a project at this time: {check.fail_reason} {check.fix}")
+        return redirect(reverse("projects_index"))
+
+    return TemplateResponse(request, "portal/projects/lead_index.html", {})
+
+
+class ProjectIndexView(
+    SearchableListView, OrganizationFilteredListView, SemesterFilteredListView
+):
     template_name = "portal/projects/index.html"
     context_object_name = "projects"
     paginate_by = 25
@@ -141,12 +159,18 @@ def project_detail(request: HttpRequest, slug: str) -> HttpResponse:
 
     if request.user.is_authenticated:
         active_enrollment = request.user.get_active_enrollment()
-        is_owner_or_lead = (active_enrollment.project == project and active_enrollment.is_project_lead) if active_enrollment else False
+        is_owner_or_lead = (
+            (active_enrollment.project == project and active_enrollment.is_project_lead)
+            if active_enrollment
+            else False
+        )
         context["is_owner_or_lead"] = is_owner_or_lead
 
     # Fetch enrollments for either target semester or teams across semesters
     if "target_semester" in context:
-        context["target_semester_enrollments"] = project.get_semester_team(context["target_semester"])
+        context["target_semester_enrollments"] = project.get_semester_team(
+            context["target_semester"]
+        )
     else:
         context["enrollments_by_semester"] = project.get_all_teams()
 
@@ -164,7 +188,9 @@ class ProjectCreateView(
 ):
     form_class = ProjectCreateForm
     template_name = "portal/projects/create.html"
-    success_message = "Your project has been created and you've been enrolled as Project Lead!"
+    success_message = (
+        "Your project has been created and you've been enrolled as Project Lead!"
+    )
 
     def get(self, request, *args, **kwargs):
         active_semester = Semester.get_active()
@@ -173,7 +199,8 @@ class ProjectCreateView(
 
         if not check.passed:
             messages.error(
-                self.request, f"You are not currently eligible to create new projects: {check.fail_reason} {check.fix}"
+                self.request,
+                f"You are not currently eligible to create new projects: {check.fail_reason} {check.fix}",
             )
             return redirect(reverse("projects_index"))
 
@@ -194,10 +221,9 @@ class ProjectCreateView(
 
         response = super().form_valid(form)
         Enrollment.objects.update_or_create(
-            semester=active_semester, user=self.request.user, defaults={
-                "is_project_lead": True,
-                "project": form.instance
-            }
+            semester=active_semester,
+            user=self.request.user,
+            defaults={"is_project_lead": True, "project": form.instance},
         )
         return response
 
@@ -219,10 +245,13 @@ class ProjectAddPitch(CreateView, LoginRequiredMixin, SuccessMessageMixin):
         self.semester = Semester.get_active()
         self.project = Project.objects.get(slug=self.kwargs["slug"])
 
-        check = CheckUserCanPitchProject().check(self.request.user, self.semester, self.project)
+        check = CheckUserCanPitchProject().check(
+            self.request.user, self.semester, self.project
+        )
         if not check.passed:
             messages.error(
-                self.request, f"You are not currently eligible to pitch this project: {check.fail_reason} {check.fix}"
+                self.request,
+                f"You are not currently eligible to pitch this project: {check.fail_reason} {check.fix}",
             )
             return redirect(reverse("projects_index"))
 
@@ -232,16 +261,20 @@ class ProjectAddPitch(CreateView, LoginRequiredMixin, SuccessMessageMixin):
         self.semester = Semester.get_active()
         self.project = Project.objects.get(slug=self.kwargs["slug"])
 
-        check = CheckUserCanPitchProject().check(self.request.user, self.semester, self.project)
+        check = CheckUserCanPitchProject().check(
+            self.request.user, self.semester, self.project
+        )
         if not check.passed:
             messages.error(
-                self.request, f"You are not currently eligible to pitch this project: {check.fail_reason} {check.fix}"
+                self.request,
+                f"You are not currently eligible to pitch this project: {check.fail_reason} {check.fix}",
             )
             return redirect(reverse("projects_index"))
 
         form.instance.semester = self.semester
         form.instance.project = self.project
         return super().form_valid(form)
+
 
 class ProjectAddProposal(CreateView, LoginRequiredMixin, SuccessMessageMixin):
     model = ProjectProposal
@@ -261,10 +294,13 @@ class ProjectAddProposal(CreateView, LoginRequiredMixin, SuccessMessageMixin):
         self.project = Project.objects.get(slug=self.kwargs["slug"])
 
         # Check permission to submit proposal
-        check = CheckUserCanSubmitProjectProposal().check(self.request.user, self.semester, self.project)
+        check = CheckUserCanSubmitProjectProposal().check(
+            self.request.user, self.semester, self.project
+        )
         if not check.passed:
             messages.error(
-                self.request, f"You are not currently eligible to submit a project proposal: {check.fail_reason} {check.fix}"
+                self.request,
+                f"You are not currently eligible to submit a project proposal: {check.fail_reason} {check.fix}",
             )
             return redirect(reverse("projects_index"))
 
@@ -275,10 +311,13 @@ class ProjectAddProposal(CreateView, LoginRequiredMixin, SuccessMessageMixin):
         self.project = Project.objects.get(slug=self.kwargs["slug"])
 
         # Check permission to submit proposal
-        check = CheckUserCanSubmitProjectProposal().check(self.request.user, self.semester, self.project)
+        check = CheckUserCanSubmitProjectProposal().check(
+            self.request.user, self.semester, self.project
+        )
         if not check.passed:
             messages.error(
-                self.request, f"You are not currently eligible to submit a project proposal: {check.fail_reason} {check.fix}"
+                self.request,
+                f"You are not currently eligible to submit a project proposal: {check.fail_reason} {check.fix}",
             )
             return redirect(reverse("projects_index"))
 

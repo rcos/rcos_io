@@ -37,12 +37,12 @@
                     <a
                         class="button is-success"
                         {% if can_create_project_check.passed %}
-                        href="{% url 'new_project' %}"
+                        href="{% url 'project_lead_index' %}"
                         {% else %}
                         disabled
                         title="{{ can_create_project_check.fail_reason }} {{ can_create_project_check.fix }}"
                         {% endif %}
-                    >New Project</a>
+                    >Lead Project</a>
                 {% endif %}
             </p>
         </div>

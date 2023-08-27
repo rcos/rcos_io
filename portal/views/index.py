@@ -5,7 +5,7 @@ from django.template.response import TemplateResponse
 from django.utils import timezone
 from django.views.generic.base import TemplateView
 
-from portal.checks import CheckUserCanEnroll, CheckUserRPI
+from portal.checks import CheckUserCanCreateProject, CheckUserCanEnroll, CheckUserRPI
 from portal.forms import SubmitAttendanceForm
 from portal.models import Enrollment, Meeting, Project
 
@@ -29,9 +29,16 @@ class IndexView(TemplateView):
             data["now"] = timezone.now()
             data["ongoing_meeting"] = Meeting.get_ongoing(self.request.user)
             data["is_user_rpi_check"] = CheckUserRPI().check(self.request.user, None)
-            data["can_enroll_check"] = CheckUserCanEnroll().check(self.request.user, active_semester)
+            data["can_enroll_check"] = CheckUserCanEnroll().check(
+                self.request.user, active_semester
+            )
+            data["can_create_project_check"] = CheckUserCanCreateProject().check(
+                self.request.user, active_semester
+            )
 
-            self.request.user.enrollments.filter(semester=active_semester).first() if active_semester is not None else None
+            self.request.user.enrollments.filter(
+                semester=active_semester
+            ).first() if active_semester is not None else None
         else:
             data["submit_attendance_form"] = SubmitAttendanceForm()
 
@@ -60,6 +67,8 @@ def handbook(request: HttpRequest) -> HttpResponse:
     """Renders an embedded iframe of the RCOS Handbook,
     optionally with a initial route to display.
     """
-    return TemplateResponse(request, "portal/index/handbook.html", {
-        "initial_route": request.GET.get("initial_route")
-    })
+    return TemplateResponse(
+        request,
+        "portal/index/handbook.html",
+        {"initial_route": request.GET.get("initial_route")},
+    )

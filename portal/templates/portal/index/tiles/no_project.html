@@ -41,10 +41,21 @@
 
         </div>
         {% empty %}
-        <p class="has-text-grey">None have been pitched yet! Check back again soon.</p>
+        <p class="has-text-grey">None have been pitched yet. Check back again soon.</p>
         {% endfor %}
         </ul>
     </div>
-    <a href="{% url 'projects_index' %}?semester={{ active_semester.pk }}" class="button is-block is-link is-outlined">View All {{ active_semester }} Projects</a>
+    <a href="{% url 'projects_index' %}?semester={{ active_semester.pk }}" class="button is-block is-link is-outlined mb-2">View All {{ active_semester }} Projects</a>
+    {% if can_create_project_check.passed %}
+    <a 
+        {% if can_create_project_check.passed %}
+        href="{% url 'project_lead_index' %}"
+        {% else %}
+        disabled
+        title="{{ can_create_project_check.fail_reason }} {{ can_create_project_check.fix }}"
+        {% endif %}
+        class="button is-block is-success is-outlined"
+    >Lead A Project</a>
+    {% endif %}
 </div>
 {% endif %}

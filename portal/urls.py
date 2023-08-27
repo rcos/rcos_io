@@ -24,11 +24,11 @@ from .views.index import IndexView, handbook
 from .views.meetings import (
     MeetingDetailView,
     SubmitAttendanceFormView,
-    schedule_workshop,
     export_meeting_attendance,
     manually_add_or_verify_attendance,
     meetings_api,
     meetings_index,
+    schedule_workshop,
     user_attendance,
 )
 from .views.projects import (

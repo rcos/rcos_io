@@ -128,14 +128,14 @@ Meetings | RCOS IO
                 {% endfor %}
                 
                 <div class="buttons mt-3">
-                    {% if can_schedule_workshops_check.passed %}
+                    <!-- {% if can_schedule_workshops_check.passed %}
                     <a href="{% url 'schedule_workshop' %}{% active_semester_query %}" class="button is-success">
                         <span class="icon">
                             <i class="fa-regular fa-calendar-plus"></i>
                         </span>
                         <span>Schedule Workshop</span>
                     </a>
-                    {% endif %}
+                    {% endif %} -->
                     {% if is_enrolled %}
                     <a href="{% url 'user_attendance' request.user.pk %}{% active_semester_query %}" class="button">
                         <span class="icon">
