@@ -52,10 +52,9 @@ class WorkshopCreateForm(forms.ModelForm):
             "description_markdown",
             "presentation_url"
         ]
-    starts_at = forms.DateField(initial=datetime.datetime.now(),
+    starts_at = forms.DateField(initial=datetime.datetime.now().isoformat(timespec="minutes"),
         widget=forms.widgets.DateTimeInput(attrs={'type': 'datetime-local'}))
-    # forms.DateField(widget=forms.DateTimeInput(attrs={'min': datetime.datetime.now().isoformat(timespec="minutes"), 'value': datetime.datetime.now().isoformat(timespec="minutes"), 'type': 'datetime-local'}), required=True)
-    # ends_at = forms.DateField(widget=forms.DateTimeInput(attrs={'min': datetime.datetime.now().isoformat(timespec="minutes"), 'type': 'datetime-local'}), required=True)
+    ends_at = forms.DateField(widget=forms.DateTimeInput(attrs={'min': datetime.datetime.now().isoformat(timespec="minutes"), 'type': 'datetime-local'}), required=True)
 
 class SubmitAttendanceForm(forms.Form):
     code = forms.CharField(

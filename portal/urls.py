@@ -83,7 +83,7 @@ urlpatterns = [
     ),
     # Meeting Routes
     path("meetings/", meetings_index, name="meetings_index"),
-    # path("meetings/new-workshop/", schedule_workshop, name="schedule_workshop"),
+    path("meetings/new-workshop/", schedule_workshop, name="schedule_workshop"),
     path("attend", SubmitAttendanceFormView.as_view(), name="submit_attendance"),
     path(
         "meetings/attendance/verify",

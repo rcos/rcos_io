@@ -1,4 +1,5 @@
 import csv
+from datetime import datetime
 import logging
 import random
 import re
@@ -10,7 +11,13 @@ from django.contrib.auth.decorators import login_required, user_passes_test
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.core.cache import cache
 from django.db import IntegrityError
-from django.http import HttpRequest, HttpResponse, HttpResponseForbidden, HttpResponseRedirect, JsonResponse
+from django.http import (
+    HttpRequest,
+    HttpResponse,
+    HttpResponseForbidden,
+    HttpResponseRedirect,
+    JsonResponse,
+)
 from django.shortcuts import get_object_or_404, redirect, render
 from django.template.response import TemplateResponse
 from django.urls import reverse
@@ -19,9 +26,9 @@ from django.utils.datastructures import MultiValueDictKeyError
 from django.views.generic import DetailView
 from django.views.generic.edit import FormView
 from sentry_sdk import capture_exception, capture_message
-from portal.checks import CheckUserCanScheduleWorkshop
 
-from portal.forms import WorkshopCreateForm, SubmitAttendanceForm
+from portal.checks import CheckUserCanScheduleWorkshop
+from portal.forms import SubmitAttendanceForm, WorkshopCreateForm
 from portal.views import UserRequiresSetupMixin
 from portal.views.admin import is_admin
 
@@ -522,6 +529,9 @@ def schedule_workshop(request: HttpRequest) -> HttpResponse:
         form.instance.semester = active_semester
         form.instance.type = Meeting.WORKSHOP
         form.instance.host = request.user
+        # e.g. 2023-08-27T14:00
+        form.instance.starts_at = timezone.datetime.strptime(request.POST["starts_at"], "%Y-%m-%dT%H:%M")
+        form.instance.ends_at = timezone.datetime.strptime(request.POST["ends_at"], "%Y-%m-%dT%H:%M")
 
         if form.is_valid():
             form.save()
@@ -530,7 +540,6 @@ def schedule_workshop(request: HttpRequest) -> HttpResponse:
     else:
         form = WorkshopCreateForm()
         form.fields["room"].queryset = active_semester.rooms
-
     return TemplateResponse(request, "portal/meetings/schedule_workshop.html", {
         "form": form
     })

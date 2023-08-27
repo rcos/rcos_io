@@ -242,9 +242,9 @@ class CheckUserIsProjectLeadOrOwner(Check):
     ):
         super().run(user, semester, project)
 
-        enrollment = Enrollment.objects.get(user=user, semester=semester)
-
-        if not enrollment:
+        try:
+            enrollment = Enrollment.objects.get(user=user, semester=semester)
+        except Enrollment.DoesNotExist:
             return self.fail(f"You are not enrolled for {semester}.")
 
         if not project:
@@ -267,9 +267,9 @@ class CheckUserIsMentorOrAbove(Check):
     ):
         super().run(user, semester, project)
 
-        enrollment = Enrollment.objects.get(user=user, semester=semester)
-
-        if not enrollment:
+        try:
+            enrollment = Enrollment.objects.get(user=user, semester=semester)
+        except Enrollment.DoesNotExist:
             return self.fail(f"You are not enrolled for {semester}.")
 
         if (
