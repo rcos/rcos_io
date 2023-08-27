@@ -91,6 +91,7 @@ CRISPY_ALLOWED_TEMPLATE_PACKS = ("bulma",)
 CRISPY_TEMPLATE_PACK = "bulma"
 
 CRISPY_CLASS_CONVERTERS = {"numberinput": "input"}
+CRISPY_CLASS_CONVERTERS = {"datetime": "input"}
 
 
 MIDDLEWARE = [

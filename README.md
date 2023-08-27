@@ -34,8 +34,9 @@ RCOS has to handle the data of typically 150+ students each semester (even 100+ 
 
 ### Running
 
-1. `./manage.py runserver`
-2. Navigate to http://127.0.0.1:8000/auth/login/ and enter the email of your superuser and choose "Login (admin)"
+1. `poetry shell`
+2. `./manage.py runserver`
+3. Navigate to http://127.0.0.1:8000/auth/login/ and enter the email of your superuser and choose "Login (admin)"
 
 ## Deploying to Production
 

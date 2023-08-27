@@ -10,7 +10,7 @@ from django.contrib.auth.decorators import login_required, user_passes_test
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.core.cache import cache
 from django.db import IntegrityError
-from django.http import HttpRequest, HttpResponse, HttpResponseForbidden, JsonResponse
+from django.http import HttpRequest, HttpResponse, HttpResponseForbidden, HttpResponseRedirect, JsonResponse
 from django.shortcuts import get_object_or_404, redirect, render
 from django.template.response import TemplateResponse
 from django.urls import reverse
@@ -19,8 +19,9 @@ from django.utils.datastructures import MultiValueDictKeyError
 from django.views.generic import DetailView
 from django.views.generic.edit import FormView
 from sentry_sdk import capture_exception, capture_message
+from portal.checks import CheckUserCanScheduleWorkshop
 
-from portal.forms import SubmitAttendanceForm
+from portal.forms import WorkshopCreateForm, SubmitAttendanceForm
 from portal.views import UserRequiresSetupMixin
 from portal.views.admin import is_admin
 
@@ -60,6 +61,7 @@ def meeting_to_event(meeting: Meeting) -> dict[str, Any]:
 
 def meetings_index(request: HttpRequest) -> HttpResponse:
     now = timezone.now()
+    active_semester = Semester.get_active()
 
     return TemplateResponse(request, "portal/meetings/index.html", {
         "ongoing_meetings":  Meeting.get_user_queryset(request.user)
@@ -71,6 +73,8 @@ def meetings_index(request: HttpRequest) -> HttpResponse:
             .filter(starts_at__gte=now)
             .order_by("starts_at")
             .select_related()[:3],
+        "is_enrolled": bool(request.user.enrollments.filter(semester=active_semester).first()) if request.user.is_authenticated else False,
+        "can_schedule_workshops_check": CheckUserCanScheduleWorkshop().check(request.user, active_semester)
     })
 
 class MeetingDetailView(DetailView):
@@ -196,7 +200,7 @@ class MeetingDetailView(DetailView):
         return data
 
 
-def meetings_api(request):
+def meetings_api(request: HttpRequest) -> HttpResponse:
     start, end = request.GET.get("start"), request.GET.get("end")
 
     meetings = Meeting.get_user_queryset(request.user).filter(
@@ -289,7 +293,7 @@ class SubmitAttendanceFormView(LoginRequiredMixin, UserRequiresSetupMixin, FormV
 
 
 @login_required
-def manually_add_or_verify_attendance(request):
+def manually_add_or_verify_attendance(request: HttpRequest) -> HttpResponse:
     if request.method == "POST":
         meeting: Meeting = Meeting.objects.get(pk=request.POST["meeting"])
         small_group_id = request.POST.get("small_group", None)
@@ -403,7 +407,7 @@ def manually_add_or_verify_attendance(request):
 
 
 @login_required
-def user_attendance(request: HttpRequest, pk: Any):
+def user_attendance(request: HttpRequest, pk: Any) -> HttpResponse:
     target_user = cast(User, User.objects.get(pk=pk))
 
     if not request.user.is_superuser and target_user != request.user:
@@ -477,7 +481,7 @@ def user_attendance(request: HttpRequest, pk: Any):
 
 @login_required
 @user_passes_test(is_admin)
-def export_meeting_attendance(request, pk: Any):
+def export_meeting_attendance(request: HttpRequest, pk: Any) -> HttpResponse:
     meeting = get_object_or_404(Meeting, pk=pk)
 
     filename = "RCOS " + str(meeting) + " Attendance"
@@ -499,3 +503,34 @@ def export_meeting_attendance(request, pk: Any):
         writer.writerow([user.rcs_id, user.first_name, user.last_name, 1, 1])
 
     return response
+
+@login_required
+def schedule_workshop(request: HttpRequest) -> HttpResponse:
+    active_semester = Semester.get_active()
+
+    # Check that user can create meetings
+    check = CheckUserCanScheduleWorkshop().check(request.user, active_semester)
+    if not check.passed:
+        messages.error(
+            request, f"You are not currently eligible to schedule meetings: {check.fail_reason} {check.fix}"
+        )
+        return redirect(reverse("projects_index"))
+
+
+    if request.method == "POST":
+        form = WorkshopCreateForm(request.POST)
+        form.instance.semester = active_semester
+        form.instance.type = Meeting.WORKSHOP
+        form.instance.host = request.user
+
+        if form.is_valid():
+            form.save()
+            messages.success(request, "Your meeting has been scheduled!")
+            return HttpResponseRedirect(form.instance.get_absolute_url())
+    else:
+        form = WorkshopCreateForm()
+        form.fields["room"].queryset = active_semester.rooms
+
+    return TemplateResponse(request, "portal/meetings/schedule_workshop.html", {
+        "form": form
+    })

@@ -28,25 +28,20 @@ Meetings | RCOS IO
         <div class="columns">
             <div class="column is-one-third">
                 {% if ongoing_meetings|length > 0 %}
-                <h2 class="title is-4 has-text-danger-dark">Ongoing</h2>
+                <h2 class="title is-4">Ongoing</h2>
 
                 {% for meeting in ongoing_meetings %}
-                <div class="card mb-2 has-background-danger-light">
+                <div class="card mb-2 has-border-danger">
                     <header class="card-header">
-                        <p class="card-header-title is-size-3">
-                            <a href="{{ meeting.get_absolute_url }}">
+                        <p class="card-header-title is-size-4">
+                            <a href="{{ meeting.get_absolute_url }}" class="is-flex-grow-1">
                                 {{ meeting.display_name }}
                             </a>
+                            <span class="tag" style="background-color: {{ meeting.color }}">{{ meeting.get_type_display }}</span>
                         </p>
                     </header>
                     <div class="card-content">
                         <ul class="is-size-6 mb-3">
-                            <li>
-                                <span class="icon">
-                                    <div style="width: 15px; height: 15px; background-color: {{ meeting.color }}; border-radius: 50%;" class="mr-1 is-inline-block"></div>
-                                </span>
-                                {{ meeting.get_type_display }}
-                            </li>
                             <li>
                                 <span class="icon">
                                     <i class="fa-regular fa-calendar-xmark"></i>
@@ -88,20 +83,15 @@ Meetings | RCOS IO
                 {% for meeting in upcoming_meetings %}
                 <div class="card mb-2">
                     <header class="card-header">
-                        <p class="card-header-title is-size-3">
-                            <a href="{{ meeting.get_absolute_url }}">
+                        <p class="card-header-title">
+                            <a href="{{ meeting.get_absolute_url }}" class="is-flex-grow-1">
                                 {{ meeting.display_name }}
                             </a>
+                            <span class="tag" style="background-color: {{ meeting.color }}">{{ meeting.get_type_display }}</span>
                         </p>
                     </header>
                     <div class="card-content">
                         <ul class="is-size-6 mb-3">
-                            <li>
-                                <span class="icon">
-                                    <div style="width: 15px; height: 15px; background-color: {{ meeting.color }}; border-radius: 50%;" class="mr-1 is-inline-block"></div>
-                                </span>
-                                {{ meeting.get_type_display }}
-                            </li>
                             <li>
                                 <span class="icon">
                                     <i class="fa-regular fa-calendar-xmark"></i>
@@ -122,7 +112,7 @@ Meetings | RCOS IO
                                 {% endif %}
                             </li>
                             {% if meeting.host %}
-                            <li>
+                            <li title="Hosted by {{ meeting.host }}">
                                 <span class="icon">
                                     <i class="fa-solid fa-chalkboard-user"></i>
                                 </span>
@@ -137,9 +127,24 @@ Meetings | RCOS IO
                 <p class="has-text-grey">No upcoming meetings are currently scheduled! Check back again later.</p>
                 {% endfor %}
                 
-                {% if request.user.is_authenticated and request.user.is_rpi %}
-                <a href="{% url 'user_attendance' request.user.pk %}{% active_semester_query %}" class="button mt-3">Your Attendance</a>
-                {% endif %}
+                <div class="buttons mt-3">
+                    {% if can_schedule_workshops_check.passed %}
+                    <a href="{% url 'schedule_workshop' %}{% active_semester_query %}" class="button is-success">
+                        <span class="icon">
+                            <i class="fa-regular fa-calendar-plus"></i>
+                        </span>
+                        <span>Schedule Workshop</span>
+                    </a>
+                    {% endif %}
+                    {% if is_enrolled %}
+                    <a href="{% url 'user_attendance' request.user.pk %}{% active_semester_query %}" class="button">
+                        <span class="icon">
+                            <i class="fa-solid fa-clipboard-user"></i>
+                        </span>
+                        <span>Your Attendance</span>
+                    </a>
+                    {% endif %}
+                </div>
             </div>
             <div class="column">
                 <div id="calendar"></div>

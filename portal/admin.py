@@ -371,6 +371,7 @@ class MeetingAdmin(admin.ModelAdmin):
                     "name",
                     "type",
                     "is_published",
+                    "is_attendance_taken",
                     "room",
                     ("starts_at", "ends_at"),
                     "host",

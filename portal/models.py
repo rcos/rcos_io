@@ -1089,7 +1089,7 @@ class Meeting(TimestampedModel):
     )
     starts_at = models.DateTimeField(help_text="When the meeting starts")
     ends_at = models.DateTimeField(help_text="When the meeting ends")
-    room = models.ForeignKey(Room, on_delete=models.RESTRICT, blank=True, null=True)
+    room = models.ForeignKey(Room, on_delete=models.RESTRICT, blank=True, null=True, help_text="Physical location of the meeting, or blank if on Discord")
     description_markdown = models.TextField(
         max_length=10000,
         blank=True,

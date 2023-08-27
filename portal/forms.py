@@ -1,14 +1,12 @@
+import datetime
 from crispy_forms.helper import FormHelper
 from crispy_forms.layout import Submit
 from django import forms
 
-from portal.models import MentorApplication, Project, Semester, User
+from portal.models import Meeting, MentorApplication, Project, Semester, User
 
 # Inputs
 
-
-class BulmaTextInput(forms.Widget):
-    template_name = "portal/widgets/text_input.html"
 
 
 # Base Forms
@@ -42,6 +40,22 @@ class ProjectCreateForm(forms.ModelForm):
             "logo_url",
             "homepage_url",
         ]
+
+class WorkshopCreateForm(forms.ModelForm):
+    class Meta:
+        model = Meeting
+        fields = [
+            "name",
+            "starts_at",
+            "ends_at",
+            "room",
+            "description_markdown",
+            "presentation_url"
+        ]
+    starts_at = forms.DateField(initial=datetime.datetime.now(),
+        widget=forms.widgets.DateTimeInput(attrs={'type': 'datetime-local'}))
+    # forms.DateField(widget=forms.DateTimeInput(attrs={'min': datetime.datetime.now().isoformat(timespec="minutes"), 'value': datetime.datetime.now().isoformat(timespec="minutes"), 'type': 'datetime-local'}), required=True)
+    # ends_at = forms.DateField(widget=forms.DateTimeInput(attrs={'min': datetime.datetime.now().isoformat(timespec="minutes"), 'type': 'datetime-local'}), required=True)
 
 class SubmitAttendanceForm(forms.Form):
     code = forms.CharField(

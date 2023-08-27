@@ -24,6 +24,7 @@ from .views.index import IndexView, handbook
 from .views.meetings import (
     MeetingDetailView,
     SubmitAttendanceFormView,
+    schedule_workshop,
     export_meeting_attendance,
     manually_add_or_verify_attendance,
     meetings_api,
@@ -82,6 +83,7 @@ urlpatterns = [
     ),
     # Meeting Routes
     path("meetings/", meetings_index, name="meetings_index"),
+    # path("meetings/new-workshop/", schedule_workshop, name="schedule_workshop"),
     path("attend", SubmitAttendanceFormView.as_view(), name="submit_attendance"),
     path(
         "meetings/attendance/verify",

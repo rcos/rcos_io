@@ -1,0 +1,17 @@
+{% extends "portal/base.html" %}
+{% load crispy_forms_tags %}
+{% block content %}
+<section class="section">
+    <div class="container">
+        <h1 class="title">Schedule Workshop for {{ active_semester }}</h1>
+
+        <form method="post">
+            {% csrf_token %}
+
+            {{ form|crispy }}
+
+            <button type="submit" class="button">Schedule</button>
+        </form>
+    </div>
+</section>
+{% endblock %}

@@ -258,6 +258,30 @@ class CheckUserIsProjectLeadOrOwner(Check):
             )
 
 
+class CheckUserIsMentorOrAbove(Check):
+    def run(
+        self,
+        user: User,
+        semester: Semester,
+        project: Project | None = None,
+    ):
+        super().run(user, semester, project)
+
+        enrollment = Enrollment.objects.get(user=user, semester=semester)
+
+        if not enrollment:
+            return self.fail(f"You are not enrolled for {semester}.")
+
+        if (
+            not enrollment.is_mentor
+            and not enrollment.is_coordinator
+            and not enrollment.is_faculty_advisor
+        ):
+            return self.fail(
+                f"You are not a Mentor, Coordinator, or Faculty Advisor for {semester}."
+            )
+
+
 class CheckUserCanPitchProject(Check):
     dependencies = [
         CheckUserSetup(),
@@ -265,6 +289,7 @@ class CheckUserCanPitchProject(Check):
         CheckBeforeSemesterDeadline("project_pitch_deadline", "project pitch"),
         CheckUserIsProjectLeadOrOwner(),
     ]
+
 
 class CheckUserCanSubmitProjectProposal(Check):
     dependencies = [
@@ -285,7 +310,12 @@ class CheckUserCanApplyAsMentor(Check):
         ),
     ]
 
-    def run(self, user: User, semester: Semester):
+    def run(
+        self,
+        user: User,
+        semester: Semester,
+        project: Project | None = None,
+    ):
         super().run(user, semester, project)
 
         try:
@@ -293,3 +323,13 @@ class CheckUserCanApplyAsMentor(Check):
                 return self.fail("You already applied to be a Mentor this semester.")
         except MentorApplication.DoesNotExist:
             pass
+
+
+class CheckUserCanScheduleWorkshop(Check):
+    dependencies = [
+        CheckUserSetup(),
+        CheckUserRPI(),
+        CheckSemesterActive(),
+        CheckUserIsMentorOrAbove(),
+    ]
+    fail_reason = "You are not eligible to schedule meetings at this time."
