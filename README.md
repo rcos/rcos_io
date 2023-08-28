@@ -11,6 +11,7 @@ RCOS has to handle the data of typically 150+ students each semester (even 100+ 
 - Python [Django](https://www.djangoproject.com/) backend
 - Plain old HTML frontend using
     - [Bulma CSS library](https://bulma.io/documentation/)
+- HTMX (coming soon)
 - [PostgreSQL](https://www.postgresql.org/) database
 - [Redis](https://redis.io/) cache
 
@@ -44,4 +45,6 @@ RCOS has to handle the data of typically 150+ students each semester (even 100+ 
 
 ## Updating Dependencies
 
-1. `poetry update`
+We use [MEND Renovate](https://www.mend.io/renovate/) to automatically open dependency update PRs.
+
+To manually update dependencies, run `poetry update`.
