@@ -18,12 +18,10 @@
 {% else %}
 <a href="{% url 'projects_add_pitch' enrollment.project.slug %}" class="button mb-2">Submit Project Pitch</a>
 {% endif %}
-<a href="{% url 'projects_detail' enrollment.project.slug %}?semester={{ active_semester.pk }}" class="button is-info">View Project Page</a>
 
 <hr>
 
-<table>
-    <thead></thead>
+<table class="table mb-4">
     <tbody>
         {% for enrollment in project_team_enrollments %}
         <tr>
@@ -40,3 +38,5 @@
         {% endfor %}
     </tbody>
 </table>
+
+<a href="{% url 'projects_detail' enrollment.project.slug %}?semester={{ active_semester.pk }}" class="button is-info">Manage Team</a>

@@ -264,7 +264,7 @@ class ProjectCreateView(
 
     def form_valid(self, form):
         active_semester = Semester.get_active()
-        if not CheckUserCanCreateProject().passes(self.request.user, active_semester):
+        if not CheckUserCanCreateProject().passes(self.request.user, active_semester, None):
             messages.error(
                 self.request, "You are not currently eligible to create new projects."
             )
