@@ -69,9 +69,33 @@
     </div>
 </section>
 <section class="section">
-    <div class="container">
-
-        {% include "portal/projects/sections/team.html" with enrollments=target_semester_enrollments %}
+    <div class="container ">
+        
+        <div class="is-flex mb-4">
+            {% if is_owner_or_lead %}
+            <form class="box mr-4" action="{% url 'modify_project_team' project.slug %}?action=add&semester={{ target_semester.pk }}" method="post">
+                {% csrf_token %}
+                <h4 class="is-size-4 mb-4">Add Team Member</h4>
+                <div class="field">
+                    <label class="label" for="rcs_id">RCS ID</label>
+                    <div class="control">
+                        <input class="input" type="text" name="rcs_id" id="rcs_id" placeholder="Type to search" list="enrolled_rcs_ids">
+                        <datalist id="enrolled_rcs_ids">
+                            {% for rcs_id in enrolled_rcs_ids %}
+                            <option>{{ rcs_id }}</option>
+                            {% endfor %}
+                        </datalist>
+                    </div>
+                </div>
+                <button class="button is-fullwidth" type="submit">Add</button>
+            </form>
+            {% endif %}
+            
+            <div class="is-flex-grow-1">
+                {% include "portal/projects/sections/team.html" with enrollments=target_semester_enrollments %}
+            </div>
+        </div>
+       
 
         {% if target_semester_enrollments|length == 0 %}
         <p class="has-text-grey"><b>{{ project }}</b> has no team for <b>{{ target_semester }}</b>!</p>

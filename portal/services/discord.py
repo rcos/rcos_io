@@ -76,6 +76,11 @@ class DiscordUser(TypedDict):
     banner: NotRequired[str]
     accent_color: NotRequired[str]
 
+def discord_username(user: DiscordUser):
+    if int(user["discriminator"]) > 0:
+        return user["username"] + "#" + user["discriminator"]
+    else:
+        return user["username"]
 
 def get_user_info(access_token: str) -> DiscordUser:
     """Given an access token get a Discord user's info including

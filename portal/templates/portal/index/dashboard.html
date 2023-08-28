@@ -1,5 +1,4 @@
 {% load portal_extras %}
-{% user_enrollment request.user active_semester as enrollment %}
 {% semester_admins active_semester as semester_admins %}
 {% load crispy_forms_tags %}
 
@@ -41,6 +40,11 @@
                                     {% include "./tiles/confirm_enrollment_form.html" %}
                                 </div> -->
                                     {% if enrollment.project %}
+                                        {% if enrollment.is_project_lead %}
+                                        {% include "./tiles/project_lead.html" %}
+                                        {% else %}
+                                        {% include "./tiles/team_member.html" %}
+                                        {% endif %}
                                     {% else %}
                                     {% include "./tiles/no_project.html" %}
                                     {% endif %}

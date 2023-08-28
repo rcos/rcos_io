@@ -70,10 +70,10 @@
                                     <img class="is-rounded" src="https://cdn.discordapp.com/avatars/{{ discord_user.id }}/{{ discord_user.avatar }}.png?size=32" alt="Discord avatar">
                                 </figure>
                                 <div class="is-size-5">
-                                    <span class="has-text-weight-bold">@{{ discord_user.username }}</span><small class="has-text-grey">#{{ discord_user.discriminator }}</small>
+                                    <span class="has-text-weight-bold">@{{ discord_user.username }}</span>{% if discord_user.discriminator != "0" %}<small class="has-text-grey">#{{ discord_user.discriminator }}</small>{% endif %}
                                 </div>
                             </div>
-                            {% endif %}
+                            {% endif %} 
                             {% endwith %}
                         </div>
                         {% endif %}

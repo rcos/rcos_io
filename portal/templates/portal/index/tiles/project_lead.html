@@ -1,5 +1,6 @@
 {% load portal_extras %}
-<h2 class="subtitle is-2 mb-2">Project Management</h2>
+<h4 class="is-size-4 has-text-grey">Your Project</h4>
+<h2 class="is-size-2 has-text-weight-medium">{{ enrollment.project }}</h2>
     
 <div class="content">
     <p>Your project was approved to participate in RCOS {{ active_semester }}! Now you can build your team.</p>
@@ -13,7 +14,29 @@
 {% project_documents enrollment.project active_semester as project_docs %}
 
 {% if project_docs.pitch %}
-<a href="{{ project_docs.pitch.url }}" target="_blank" class="button is-link">View Project Pitch</a>
+<a href="{{ project_docs.pitch.url }}" target="_blank" class="button is-link mb-2">View Project Pitch</a>
 {% else %}
-<a href="{% url 'projects_add_pitch' enrollment.project.pk %}" class="button">Submit Project Pitch</a>
+<a href="{% url 'projects_add_pitch' enrollment.project.slug %}" class="button mb-2">Submit Project Pitch</a>
 {% endif %}
+<a href="{% url 'projects_detail' enrollment.project.slug %}?semester={{ active_semester.pk }}" class="button is-info">View Project Page</a>
+
+<hr>
+
+<table>
+    <thead></thead>
+    <tbody>
+        {% for enrollment in project_team_enrollments %}
+        <tr>
+            <td>
+                {% if enrollment.is_project_lead %}
+                <span title="Project Lead">
+                    <i class="fa-solid fa-crown"></i>
+                </span>
+                {% endif %}
+            </td>
+            <td><a href="{{ enrollment.get_absolute_url }}">{{ enrollment.user }}</a></td>
+            <td>{{ enrollment.credits }} credits</td>
+        </tr>
+        {% endfor %}
+    </tbody>
+</table>

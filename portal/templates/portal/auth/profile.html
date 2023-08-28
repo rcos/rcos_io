@@ -45,7 +45,7 @@
                         <span class="is-align-self-center">
                             {% with request.user.discord_user as discord_user %}
                             {% if discord_user %}
-                            <p class="is-size-5">Linked to <strong>@{{ discord_user.username }}#{{ discord_user.discriminator }}</strong></p>
+                            <p class="is-size-5">Linked to <strong>@{{ discord_user.username }}{% if discord_user.discriminator != "0" %}#{{ discord_user.discriminator }}{% endif %}</strong></p>
                             <small>
                                 <a href="{% url 'unlink_discord' %}">Unlink</a>
                                 /

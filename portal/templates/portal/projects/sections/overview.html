@@ -36,14 +36,14 @@
     {% if project.homepage_url %}
     <li>
         <span class="icon">🏠</span>
-        <a href="{{ project.homepage_url }}">{{ project.homepage_url }}</a>
+        <a href="{{ project.homepage_url }}" target="_blank">{{ project.homepage_url }}</a>
     </li>
     {% endif %}
     
     {% if project.external_chat_url and request.user.is_authenticated and request.user.is_approved %}
     <li>
         <span class="icon">💬</span>
-        <a href="{{ project.external_chat_url }}">{{ project.external_chat_url }}</a>
+        <a href="{{ project.external_chat_url }}" target="_blank">{{ project.external_chat_url }}</a>
     </li>
     {% endif %}
 </ul>

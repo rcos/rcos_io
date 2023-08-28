@@ -92,14 +92,12 @@ def discord_flow_callback(request):
             request.user.save()
             messages.success(
                 request,
-                f"Successfully linked Discord account @{discord_user_info['username']}"
-                f"#{discord_user_info['discriminator']} to your profile.",
+                f"Successfully linked Discord account @{discord.discord_username(discord_user_info)} to your profile.",
             )
         except IntegrityError:
             messages.warning(
                 request,
-                f"Discord account @{discord_user_info['username']}"
-                f"#{discord_user_info['discriminator']} is already linked "
+                f"Discord account @{discord.discord_username(discord_user_info)} is already linked "
                 "to another user!",
             )
             return redirect(reverse("profile"))

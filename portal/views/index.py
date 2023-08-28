@@ -36,9 +36,19 @@ class IndexView(TemplateView):
                 self.request.user, active_semester
             )
 
-            self.request.user.enrollments.filter(
-                semester=active_semester
-            ).first() if active_semester is not None else None
+            data["enrollment"] = (
+                self.request.user.enrollments.filter(semester=active_semester).first()
+                if active_semester is not None
+                else None
+            )
+            data["project_team_enrollments"] = (
+                data["enrollment"]
+                .project.enrollments.filter(semester=active_semester)
+                .select_related("user")
+                .order_by('-is_project_lead', '-credits', '-user__first_name')
+                if data["enrollment"].project
+                else []
+            )
         else:
             data["submit_attendance_form"] = SubmitAttendanceForm()
 

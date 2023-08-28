@@ -11,7 +11,7 @@ from django.core.cache import cache
 from django.core.exceptions import ValidationError
 from django.core.validators import MaxValueValidator, MinValueValidator
 from django.db import models
-from django.db.models import Q
+from django.db.models import Manager, Q
 from django.db.models.functions import Lower
 from django.db.models.signals import post_save, pre_save
 from django.template.defaultfilters import slugify
@@ -112,6 +112,10 @@ class Semester(TimestampedModel):
     @property
     def projects(self):
         return Project.objects.filter(enrollments__semester_id=self.pk).distinct()
+
+    @property
+    def students(self):
+        return User.rpi.filter(enrollments__semester_id=self.pk).distinct()
 
     @classmethod
     def get_active(cls):
@@ -766,7 +770,7 @@ class Project(TimestampedModel):
     def __str__(self) -> str:
         return self.name
 
-    objects = ProjectQuerySet.as_manager()
+    objects: Manager["Project"] = ProjectQuerySet.as_manager()
 
     class Meta:
         ordering = [Lower("name")]

@@ -7,7 +7,12 @@ from django.contrib.auth.mixins import LoginRequiredMixin
 from django.contrib.messages.views import SuccessMessageMixin
 from django.core.cache import cache
 from django.core.paginator import EmptyPage, InvalidPage, PageNotAnInteger, Paginator
-from django.http import HttpRequest, HttpResponse
+from django.http import (
+    HttpRequest,
+    HttpResponse,
+    HttpResponseBadRequest,
+    HttpResponseForbidden,
+)
 from django.shortcuts import get_object_or_404, redirect
 from django.template.response import TemplateResponse
 from django.urls import reverse
@@ -29,6 +34,7 @@ from ..models import (
     ProjectPitch,
     ProjectProposal,
     Semester,
+    User,
 )
 from . import (
     OrganizationFilteredListView,
@@ -48,7 +54,10 @@ def project_lead_index(request: HttpRequest) -> HttpResponse:
     )
 
     if not check.passed:
-        messages.error(request, f"You cannot lead a project at this time: {check.fail_reason} {check.fix}")
+        messages.error(
+            request,
+            f"You cannot lead a project at this time: {check.fail_reason} {check.fix}",
+        )
         return redirect(reverse("projects_index"))
 
     return TemplateResponse(request, "portal/projects/lead_index.html", {})
@@ -166,6 +175,12 @@ def project_detail(request: HttpRequest, slug: str) -> HttpResponse:
         )
         context["is_owner_or_lead"] = is_owner_or_lead
 
+        # Populate all enrolled students RCS IDs for easy adding team members
+        if is_owner_or_lead:
+            context[
+                "enrolled_rcs_ids"
+            ] = active_enrollment.semester.students.values_list("rcs_id", flat=True)
+
     # Fetch enrollments for either target semester or teams across semesters
     if "target_semester" in context:
         context["target_semester_enrollments"] = project.get_semester_team(
@@ -181,6 +196,47 @@ def project_detail(request: HttpRequest, slug: str) -> HttpResponse:
         context["repositories"] = []
 
     return TemplateResponse(request, "portal/projects/detail.html", context)
+
+
+@login_required
+def modify_project_team(request: HttpRequest, slug: str) -> HttpResponse:
+    """Add/remove team members for a project."""
+
+    project = get_object_or_404(Project.objects.approved(), slug=slug)
+
+    semester_id = request.GET["semester"]
+    semester = get_object_or_404(Semester.objects.all(), pk=semester_id)
+
+    # Logged in user must be project lead to modify team
+    try:
+        Enrollment.objects.get(
+            semester_id=semester.pk,
+            user_id=request.user.pk,
+            project_id=project.pk,
+            is_project_lead=True,
+        )
+    except Enrollment.DoesNotExist:
+        return HttpResponseForbidden()
+
+    if request.method == "POST":
+        action = request.GET["action"]
+        rcs_id = request.POST["rcs_id"]
+
+        user = get_object_or_404(User.rpi, rcs_id=rcs_id)
+
+        if action == "add":
+            Enrollment.objects.update_or_create(
+                user=user,
+                semester=semester,
+                defaults={"project": project},
+            )
+            # TODO: Discord DM user
+        else:
+            raise HttpResponseBadRequest()
+
+    return redirect(
+        reverse("projects_detail", args=(slug,)) + "?semester=" + semester_id
+    )
 
 
 class ProjectCreateView(
