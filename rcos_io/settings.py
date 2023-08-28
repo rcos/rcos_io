@@ -276,6 +276,8 @@ MAGICLINK_LOGIN_SENT_TEMPLATE_NAME = "portal/magiclink/login_sent.html"
 
 MAGICLINK_LOGIN_FAILED_TEMPLATE_NAME = "portal/magiclink/login_failed.html"
 
+MAGICLINK_AUTH_TIMEOUT = 60 * 60 * 24 # 1 day
+
 MAGICLINK_TOKEN_USES = 5
 
 MAGICLINK_REQUIRE_SAME_BROWSER = False
