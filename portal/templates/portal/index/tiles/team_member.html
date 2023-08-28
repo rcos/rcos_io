@@ -1,4 +1,40 @@
 <h4 class="is-size-4 has-text-grey">Your Project</h4>
 <h2 class="is-size-2 has-text-weight-medium">{{ enrollment.project }}</h2>
 
-<div></div>
+<p>{{ enrollment.project.description }}</p>
+
+<div class="block">
+    <h4 class="subtitle mb-2">Your Team</h4>
+    <table class="is-fullwidth table">
+        <tbody>
+            {% for enrollment in project_team_enrollments %}
+            <tr>
+                <td>
+                    {% if enrollment.is_project_lead %}
+                    <span title="Project Lead">
+                        <i class="fa-solid fa-crown"></i>
+                    </span>
+                    {% endif %}
+                </td>
+                <td><a href="{{ enrollment.get_absolute_url }}">{{ enrollment.user }}</a></td>
+                <td>{{ enrollment.credits}} credits</td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</div>
+
+<div class="block">
+    <h4 class="subtitle mb-2">Your Repositories</h4>
+    <table class="is-fullwidth table">
+        <tbody>
+            {% for repo in enrollment.project.repositories.all %}
+            <tr>
+                <td><a href="{{ repo.url }}" target="_blank">{{ repo }}</a></td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</div>
+
+<a href="{% url 'projects_detail' enrollment.project.slug %}?semester={{ active_semester.pk }}" class="button is-info">View Project Page</a>
