@@ -339,14 +339,14 @@ files = [
 
 [[package]]
 name = "crispy-bulma"
-version = "0.9.0"
+version = "0.10.0"
 description = "Bulma template pack for django-crispy-forms"
 category = "main"
 optional = false
-python-versions = ">=3.7"
+python-versions = ">=3.8"
 files = [
-    {file = "crispy-bulma-0.9.0.tar.gz", hash = "sha256:2f77a8b26ac1ff3743e7bf7f95f78229e9dc12e101b2af35166d282635b37474"},
-    {file = "crispy_bulma-0.9.0-py3-none-any.whl", hash = "sha256:1613d001adea6612f28cdff66ac1d57b9475e817863b276f2412558d7051c303"},
+    {file = "crispy-bulma-0.10.0.tar.gz", hash = "sha256:438387e717536c84e82a5e5cfa12cc7b0089fa905dd03c5ffc36d83913df3b99"},
+    {file = "crispy_bulma-0.10.0-py3-none-any.whl", hash = "sha256:1f7ab3d46258faeed881ab17377c595293bb118d2b72aec9b03174240d6f6aea"},
 ]
 
 [package.dependencies]
@@ -1314,4 +1314,4 @@ multidict = ">=4.0"
 [metadata]
 lock-version = "2.0"
 python-versions = "^3.11"
-content-hash = "8682bb8b1731e7bda21e2ed712a0a1bdd9ca1ee4398d3634d61495363fdfa7b3"
+content-hash = "321ffbd3acbebc330df48c436b8917477037e4ec6c1d6f5bfb27d8c52731d814"
