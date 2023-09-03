@@ -142,3 +142,7 @@ fake.py
 *.rdb
 db.json
 portal/.DS_Store
+
+# Poetry
+
+poetry.lock
