@@ -30,8 +30,7 @@ RCOS has to handle the data of typically 150+ students each semester (even 100+ 
     - see `.env.example` for the expected variables
 4. Activate Poetry shell `poetry shell`
 5. Setup database `./manage.py migrate` OR ask maintainers for test data DB file
-6. Setup cache table in database `./manage.py createcachetable`
-7. Create a superuser for testing `./manage.py createsuperuser`
+6. Create a superuser for testing `./manage.py createsuperuser`
 
 
 ### Running
