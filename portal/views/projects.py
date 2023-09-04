@@ -1,5 +1,6 @@
 """Views related to projects."""
 from typing import Any
+import logging
 
 from django.contrib import messages
 from django.contrib.auth.decorators import login_required
@@ -23,8 +24,9 @@ from portal.checks import (
     CheckUserCanCreateProject,
     CheckUserCanPitchProject,
     CheckUserCanSubmitProjectProposal,
+    CheckUserIsProjectLeadOrOwner,
 )
-from portal.forms import ProjectCreateForm
+from portal.forms import ProjectCreateForm, ProjectEditForm
 from portal.services import github
 
 from ..models import (
@@ -33,6 +35,7 @@ from ..models import (
     Project,
     ProjectPitch,
     ProjectProposal,
+    ProjectRepository,
     Semester,
     User,
 )
@@ -43,6 +46,8 @@ from . import (
     UserRequiresSetupMixin,
     target_semester_context,
 )
+
+logger = logging.getLogger(__name__)
 
 
 @login_required
@@ -192,11 +197,57 @@ def project_detail(request: HttpRequest, slug: str) -> HttpResponse:
     # Fetch project repositories
     try:
         context["repositories"] = project.get_repositories(github.client_factory())
-    except TransportServerError:
+    except TransportServerError as e:
+        logger.error(e)
         context["repositories"] = []
 
     return TemplateResponse(request, "portal/projects/detail.html", context)
 
+
+@login_required
+def edit_project(request: HttpRequest, slug: str) -> HttpResponse:
+    """Allows project owners and active leads to edit project metadata."""
+    context = {}
+
+    # Fetch project
+    project: Project = get_object_or_404(
+        Project.objects.approved()
+        .prefetch_related("tags", "pitches")
+        .select_related("owner", "organization"),
+        slug=slug,
+    )
+    context: dict[str, Any] = {"project": project}
+
+    # Check permission to edit project
+    check = CheckUserIsProjectLeadOrOwner().check(request.user, Semester.get_active(), project)
+    if not check.passed:
+        messages.error(request, f"You cannot edit this project: {check.fail_reason} {check.fix}")
+        return redirect(project.get_absolute_url())
+
+    # Handle form
+    if request.method == "POST":
+        form = ProjectEditForm(request.POST, instance=project)
+
+        # Attempt to parse repository URLs
+        repository_urls = [url.strip().lower() for url in request.POST.get("repositories", "").split(",")]
+        ProjectRepository.objects.filter(project=project).exclude(url__in=repository_urls).delete()
+        for url in repository_urls:
+            if url:
+                try:
+                    ProjectRepository.objects.get_or_create(url=url, project=project)
+                except:
+                    messages.warning(request, f"Couldn't add repository '{url}'")
+
+        if form.is_valid():
+            messages.success(request, f"{project.name} was updated.")
+            form.save()
+            return redirect(project.get_absolute_url())
+    else:
+        form = ProjectEditForm(instance=project)
+
+    context["form"] = form
+
+    return TemplateResponse(request, "portal/projects/edit.html", context)
 
 @login_required
 def modify_project_team(request: HttpRequest, slug: str) -> HttpResponse:

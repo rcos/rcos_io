@@ -41,6 +41,19 @@ class ProjectCreateForm(forms.ModelForm):
             "homepage_url",
         ]
 
+class ProjectEditForm(forms.ModelForm):
+    class Meta:
+        model = Project
+        fields = [
+            "name",
+            "description",
+            "tags",
+            "external_chat_url",
+            "logo_url",
+            "homepage_url",
+        ]
+
+
 class WorkshopCreateForm(forms.ModelForm):
     class Meta:
         model = Meeting
