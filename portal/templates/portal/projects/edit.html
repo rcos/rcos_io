@@ -1,0 +1,30 @@
+{% extends "portal/base.html" %}
+{% load crispy_forms_tags %}
+
+{% block title %}
+Edit {{ project }} | RCOS IO
+{% endblock %}
+
+{% block content %}
+<section class="section">
+    <div class="container">
+        <h1 class="title">Edit {{ project }}</h1>
+    
+        <form method="post">
+            {% csrf_token %}
+    
+            {{ form|crispy }}
+
+            <div class="field">
+                <label for="repositories" class="label">GitHub repositories</label>
+                <div class="control">
+                    <input name="repositories" id="repositories" class="input" type="text" value="{{ project.repositories.all|join:', ' }}" placeholder="{{ project.repositories.all|join:', ' }}">
+                </div>
+                <p class="help">Comma-separated list of GitHub repository URLs</p>
+            </div>
+    
+            <button type="submit" class="button">Save Changes</button>
+        </form>
+    </div>
+</section>
+{% endblock %}

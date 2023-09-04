@@ -56,6 +56,10 @@
                 </blockquote>
             </div>
             {% endif %}
+
+            {% if is_owner_or_lead %}
+            <a class="button" href="{% url 'edit_project' project.slug %}">Edit Project</a>
+            {% endif %}
         </div>
     </div>
 </section>
@@ -151,7 +155,6 @@
         {% empty %}
         <p class="has-text-grey"><b>{{ project }}</b> has no source code repositories listed yet!</p>
         {% endfor %}
-        
         
         {% if request.user.is_superuser %}
         <hr>

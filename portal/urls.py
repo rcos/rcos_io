@@ -36,6 +36,7 @@ from .views.projects import (
     ProjectAddProposal,
     ProjectCreateView,
     ProjectIndexView,
+    edit_project,
     modify_project_team,
     project_detail,
     project_lead_index,
@@ -73,6 +74,7 @@ urlpatterns = [
     path("projects/new/", ProjectCreateView.as_view(), name="new_project"),
     path("projects/<slug:slug>", project_detail, name="projects_detail"),
     path("projects/<slug:slug>/team", modify_project_team, name="modify_project_team"),
+    path("projects/<slug:slug>/edit", edit_project, name="edit_project"),
     path(
         "projects/<slug:slug>/pitch",
         ProjectAddPitch.as_view(),
