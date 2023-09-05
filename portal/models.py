@@ -788,7 +788,7 @@ class ProjectRepository(TimestampedModel):
     url = models.URLField(help_text="URL of GitHub repository")
 
     def __str__(self) -> str:
-        return self.url.lstrip("https://github.com/")
+        return self.url
 
 class ProjectPitch(TimestampedModel):
     semester = models.ForeignKey(
