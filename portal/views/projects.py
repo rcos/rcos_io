@@ -1,7 +1,8 @@
 """Views related to projects."""
-from typing import Any
 import logging
+from typing import Any
 
+from django.conf import settings
 from django.contrib import messages
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth.mixins import LoginRequiredMixin
@@ -253,7 +254,7 @@ def edit_project(request: HttpRequest, slug: str) -> HttpResponse:
 def modify_project_team(request: HttpRequest, slug: str) -> HttpResponse:
     """Add/remove team members for a project."""
 
-    project = get_object_or_404(Project.objects.approved(), slug=slug)
+    project: Project = get_object_or_404(Project.objects.approved(), slug=slug)
 
     semester_id = request.GET["semester"]
     semester = get_object_or_404(Semester.objects.all(), pk=semester_id)
@@ -273,7 +274,7 @@ def modify_project_team(request: HttpRequest, slug: str) -> HttpResponse:
         action = request.GET["action"]
         rcs_id = request.POST["rcs_id"]
 
-        user = get_object_or_404(User.rpi, rcs_id=rcs_id)
+        user: User = get_object_or_404(User.rpi, rcs_id=rcs_id)
 
         if action == "add":
             Enrollment.objects.update_or_create(
@@ -281,7 +282,8 @@ def modify_project_team(request: HttpRequest, slug: str) -> HttpResponse:
                 semester=semester,
                 defaults={"project": project},
             )
-            # TODO: Discord DM user
+            # Notify user
+            user.send_message(f"{request.user.discord_mention} added you to the **{project}** team on RCOS IO! {settings.PUBLIC_BASE_URL}{project.get_absolute_url()}?semester={semester_id}")
         else:
             raise HttpResponseBadRequest()
 

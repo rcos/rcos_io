@@ -392,6 +392,13 @@ class User(AbstractUser, TimestampedModel):
         )
 
     @property
+    def discord_mention(self):
+        if self.discord_user_id:
+            return f"<@{self.discord_user_id}>"
+        else:
+            return str(self)
+
+    @property
     def discord_user(self):
         return discord.get_user(self.discord_user_id) if self.discord_user_id else None
 
@@ -405,6 +412,10 @@ class User(AbstractUser, TimestampedModel):
 
     def send_message(self, message_content: str):
         """Send a direct message to the user via Discord. If Discord is not linked or it fails, sends an email."""
+        if settings.DEBUG:
+            logger.info(f"Intercepted message to user {self} with content '{message_content}'")
+            return
+
         sent = False
         if self.discord_user_id:
             try:
@@ -1381,8 +1392,8 @@ class MentorApplication(TimestampedModel):
             user=self.user_id, semester=self.semester_id, defaults={"is_mentor": True}
         )
 
-        # TODO: figure out message
-        # self.user.send_message()
+        # Notify user
+        self.user.send_message("✅ Your RCOS Mentor application has been **accepted**. You'll be contacted shortly by the Coordinators. Welcome to the team!")
 
         # TODO: Add Mentors Discord role
 
