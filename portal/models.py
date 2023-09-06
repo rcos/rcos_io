@@ -1064,16 +1064,19 @@ class Meeting(TimestampedModel):
     WORKSHOP = "workshop"
     MENTOR = "mentor"
     COORDINATOR = "coordinator"
+    OFFICE_HOURS = "office_hours"
     TYPE_CHOICES = (
         (SMALL_GROUP, "Small Group"),
         (LARGE_GROUP, "Large Group"),
         (WORKSHOP, "Workshop"),
+        (OFFICE_HOURS, "Office Hours"),
         (MENTOR, "Mentor"),
         (COORDINATOR, "Coordinator"),
     )
     TYPE_COLORS = {
         SMALL_GROUP: "red",
         LARGE_GROUP: "blue",
+        OFFICE_HOURS: "white",
         WORKSHOP: "gold",
         MENTOR: "purple",
         COORDINATOR: "orange",
