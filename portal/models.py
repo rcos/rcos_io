@@ -1074,12 +1074,12 @@ class Meeting(TimestampedModel):
         (COORDINATOR, "Coordinator"),
     )
     TYPE_COLORS = {
-        SMALL_GROUP: "red",
-        LARGE_GROUP: "blue",
+        SMALL_GROUP: "#ffbac8",
+        LARGE_GROUP: "#bbbbff",
         OFFICE_HOURS: "white",
-        WORKSHOP: "gold",
-        MENTOR: "purple",
-        COORDINATOR: "orange",
+        WORKSHOP: "#ffedbb",
+        MENTOR: "#78b9af",
+        COORDINATOR: "#f8bb14",
     }
 
     semester = models.ForeignKey(
