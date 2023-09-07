@@ -798,6 +798,10 @@ class ProjectRepository(TimestampedModel):
     )
     url = models.URLField(help_text="URL of GitHub repository")
 
+    @property
+    def short_name(self):
+        return self.url.lower().lstrip('https://github.com/')
+
     def __str__(self) -> str:
         return self.url
 

@@ -69,6 +69,14 @@
     <div class="hero-body">
         <div class="container">
             <h1 class="title">{{ target_semester }} Team</h1>
+            {% if can_enroll %}
+            <form action="{% url 'users_enroll' request.user.pk %}" method="post" onsubmit="return confirm('Are you sure?')">
+                {% csrf_token %}
+                <input type="hidden" name="semester" value="{{ target_semester.pk }}">
+                <input type="hidden" name="project" value="{{ project.pk }}">
+                <button class="button is-primary" type="submit">Join Team</button>
+            </form>
+            {% endif %}
         </div>
     </div>
 </section>
@@ -98,8 +106,8 @@
             <div class="is-flex-grow-1">
                 {% include "portal/projects/sections/team.html" with enrollments=target_semester_enrollments %}
             </div>
-        </div>
-       
+
+        </div>       
 
         {% if target_semester_enrollments|length == 0 %}
         <p class="has-text-grey"><b>{{ project }}</b> has no team for <b>{{ target_semester }}</b>!</p>

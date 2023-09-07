@@ -26,13 +26,11 @@
         {% for enrollment in project_team_enrollments %}
         <tr>
             <td>
+                <a href="{{ enrollment.get_absolute_url }}">{{ enrollment.user }}</a>
                 {% if enrollment.is_project_lead %}
-                <span title="Project Lead">
-                    <i class="fa-solid fa-crown"></i>
-                </span>
+                <span class="tag">Lead</span>
                 {% endif %}
             </td>
-            <td><a href="{{ enrollment.get_absolute_url }}">{{ enrollment.user }}</a></td>
             <td>{{ enrollment.credits}} credits</td>
         </tr>
         {% endfor %}
