@@ -1080,7 +1080,7 @@ class Meeting(TimestampedModel):
     TYPE_COLORS = {
         SMALL_GROUP: "#ffbac8",
         LARGE_GROUP: "#bbbbff",
-        OFFICE_HOURS: "white",
+        OFFICE_HOURS: "#a7d1ff",
         WORKSHOP: "#ffedbb",
         MENTOR: "#78b9af",
         COORDINATOR: "#f8bb14",
