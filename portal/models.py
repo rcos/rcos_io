@@ -572,7 +572,7 @@ class Project(TimestampedModel):
         help_text="Optional URL to a logo for the project",
     )
 
-    tags = models.ManyToManyField(ProjectTag, blank=True, related_name="projects")
+    tags = models.ManyToManyField(ProjectTag, blank=True, related_name="projects", help_text="Use Ctrl or Cmd to select multiple tags that apply to your project.")
 
     discord_role_id = models.CharField(max_length=200, blank=True)
 
