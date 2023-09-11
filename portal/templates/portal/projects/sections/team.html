@@ -3,12 +3,10 @@
     <div class="column is-one-third">
         <div class="box">
             <p>
-                {% if enrollment.is_project_lead %}
-                    <span title="Project Lead">
-                        <i class="fa-solid fa-crown"></i>
-                    </span>
-                {% endif %}
                 <a href="{{ enrollment.get_absolute_url }}">{{ enrollment.user }}</a>
+                {% if enrollment.is_project_lead %}
+                    <span class="tag">Lead</span>
+                {% endif %}
             </p>
             <p class="has-text-grey">
                 <small>{{ enrollment.credits }} credits</small>

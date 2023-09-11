@@ -798,6 +798,10 @@ class ProjectRepository(TimestampedModel):
     )
     url = models.URLField(help_text="URL of GitHub repository")
 
+    @property
+    def short_name(self):
+        return self.url.lower().lstrip('https://github.com/')
+
     def __str__(self) -> str:
         return self.url
 
@@ -1064,19 +1068,22 @@ class Meeting(TimestampedModel):
     WORKSHOP = "workshop"
     MENTOR = "mentor"
     COORDINATOR = "coordinator"
+    OFFICE_HOURS = "office_hours"
     TYPE_CHOICES = (
         (SMALL_GROUP, "Small Group"),
         (LARGE_GROUP, "Large Group"),
         (WORKSHOP, "Workshop"),
+        (OFFICE_HOURS, "Office Hours"),
         (MENTOR, "Mentor"),
         (COORDINATOR, "Coordinator"),
     )
     TYPE_COLORS = {
-        SMALL_GROUP: "red",
-        LARGE_GROUP: "blue",
-        WORKSHOP: "gold",
-        MENTOR: "purple",
-        COORDINATOR: "orange",
+        SMALL_GROUP: "#ffbac8",
+        LARGE_GROUP: "#bbbbff",
+        OFFICE_HOURS: "#a7d1ff",
+        WORKSHOP: "#ffedbb",
+        MENTOR: "#78b9af",
+        COORDINATOR: "#f8bb14",
     }
 
     semester = models.ForeignKey(

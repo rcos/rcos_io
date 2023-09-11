@@ -23,6 +23,7 @@ from gql.transport.exceptions import TransportServerError
 
 from portal.checks import (
     CheckUserCanCreateProject,
+    CheckUserCanEnroll,
     CheckUserCanPitchProject,
     CheckUserCanSubmitProjectProposal,
     CheckUserIsProjectLeadOrOwner,
@@ -172,13 +173,18 @@ def project_detail(request: HttpRequest, slug: str) -> HttpResponse:
     )
     context: dict[str, Any] = {"project": project} | target_semester_context(request)
 
+    active_enrollment = None
     if request.user.is_authenticated:
         active_enrollment = request.user.get_active_enrollment()
-        is_owner_or_lead = (
-            (active_enrollment.project == project and active_enrollment.is_project_lead)
-            if active_enrollment
-            else False
-        )
+        context["active_enrollment"] = active_enrollment
+        
+        if active_enrollment and active_enrollment.project == project and active_enrollment.is_project_lead:
+            is_owner_or_lead = True
+        elif project.owner == request.user:
+            is_owner_or_lead = True
+        else:
+            is_owner_or_lead = False
+
         context["is_owner_or_lead"] = is_owner_or_lead
 
         # Populate all enrolled students RCS IDs for easy adding team members
@@ -192,6 +198,7 @@ def project_detail(request: HttpRequest, slug: str) -> HttpResponse:
         context["target_semester_enrollments"] = project.get_semester_team(
             context["target_semester"]
         )
+        context["can_enroll"] = CheckUserCanEnroll().passes(request.user, context["target_semester"], None) and (active_enrollment is None or active_enrollment.project is None)
     else:
         context["enrollments_by_semester"] = project.get_all_teams()
 
