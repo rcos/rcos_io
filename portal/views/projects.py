@@ -188,7 +188,7 @@ def project_detail(request: HttpRequest, slug: str) -> HttpResponse:
         context["is_owner_or_lead"] = is_owner_or_lead
 
         # Populate all enrolled students RCS IDs for easy adding team members
-        if is_owner_or_lead:
+        if is_owner_or_lead and active_enrollment:
             context[
                 "enrolled_rcs_ids"
             ] = active_enrollment.semester.students.values_list("rcs_id", flat=True)
@@ -279,9 +279,17 @@ def modify_project_team(request: HttpRequest, slug: str) -> HttpResponse:
 
     if request.method == "POST":
         action = request.GET["action"]
-        rcs_id = request.POST["rcs_id"]
+        rcs_id = request.POST.get("rcs_id", None)
+        user_id = request.POST.get("user_id", None)
 
-        user: User = get_object_or_404(User.rpi, rcs_id=rcs_id)
+        if not rcs_id and not user_id:
+            raise HttpResponseBadRequest("No RCS ID or user ID provided.")
+        
+        # Find user either by RCS ID or ID
+        if rcs_id:
+            user: User = get_object_or_404(User.rpi, rcs_id=rcs_id)
+        else:
+            user: User = get_object_or_404(User.objects.approved(), pk=user_id)
 
         if action == "add":
             Enrollment.objects.update_or_create(
@@ -289,8 +297,14 @@ def modify_project_team(request: HttpRequest, slug: str) -> HttpResponse:
                 semester=semester,
                 defaults={"project": project},
             )
+            messages.success(request, f"{user} was added to the team for {semester}.")
             # Notify user
             user.send_message(f"{request.user.discord_mention} added you to the **{project}** team on RCOS IO! {settings.PUBLIC_BASE_URL}{project.get_absolute_url()}?semester={semester_id}")
+        elif action == "remove":
+            user.enrollments.filter(semester=semester_id).update(project=None)
+            # Notify user
+            user.send_message(f"{request.user.discord_mention} removed you from the **{project}** team on RCOS IO.")
+            messages.info(request, f"{user} was removed from the team for {semester}.")
         else:
             raise HttpResponseBadRequest()
 

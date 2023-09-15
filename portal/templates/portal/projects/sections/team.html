@@ -2,6 +2,17 @@
     {% for enrollment in enrollments %}
     <div class="column is-one-third">
         <div class="box">
+            {% if is_owner_or_lead and target_semester.is_active %}
+            <form action="{% url 'modify_project_team' project.slug %}?action=remove&semester={{ target_semester.pk }}"
+                method="post" class="is-pulled-right">
+                {% csrf_token %}
+                <input type="hidden" name="user_id" value="{{ enrollment.user_id }}">
+                <button type="submit" title="Remove {{ enrollment.user }} from team" class="button is-small">
+                    <i class="fa-solid fa-user-xmark"></i>
+                </button>
+            </form>
+            {% endif %}
+
             <p>
                 <a href="{{ enrollment.get_absolute_url }}">{{ enrollment.user }}</a>
                 {% if enrollment.is_project_lead %}

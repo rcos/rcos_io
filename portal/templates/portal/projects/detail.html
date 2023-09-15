@@ -84,7 +84,7 @@
     <div class="container ">
         
         <div class="is-flex mb-4">
-            {% if is_owner_or_lead %}
+            {% if is_owner_or_lead and target_semester.is_active %}
             <form class="box mr-4" action="{% url 'modify_project_team' project.slug %}?action=add&semester={{ target_semester.pk }}" method="post">
                 {% csrf_token %}
                 <h4 class="is-size-4 mb-4">Add Team Member</h4>
@@ -117,7 +117,7 @@
         <div id="documents">
             {% if project_docs.pitch %}
             <a href="{{ project_docs.pitch.url }}" class="button is-link" target="_blank"><span class="icon">🔗</span><span>Pitch Slides</span></a>
-            {% elif is_owner_or_lead %}
+            {% elif is_owner_or_lead and target_semester.is_active %}
             <a class="button is-warning" href="{% url 'projects_add_pitch' project.slug %}">Submit Project Pitch Slides</a>
             {% endif %}
             {% if project_docs.proposal %}
