@@ -155,6 +155,10 @@ def upsert_server_member(
 
     joined_server = response.status_code == 201
 
+    # If already in server, set nickname
+    if not joined_server and nickname is not None:
+        response = set_member_nickname(user_id, nickname)
+
     # Add roles
     for role in roles if roles else []:
         response = requests.put(
