@@ -37,7 +37,7 @@ def profile(request: HttpRequest) -> HttpResponse:
     )
 
 
-def impersonate(request):
+def impersonate(request: HttpRequest) -> HttpResponse:
     """
     Force a login as the desired user. Only possible in DEBUG mode locally
     and with a logged in superuser in production.
@@ -50,13 +50,15 @@ def impersonate(request):
     return redirect("/")
 
 
-def start_discord_flow(request):
+def start_discord_flow(request: HttpRequest) -> HttpResponse:
     return redirect(discord.DISCORD_OAUTH2_URL)
 
 
 @login_required
-def unlink_discord(request):
+def unlink_discord(request: HttpRequest) -> HttpResponse:
     """Disconnects the logged in user's Discord account."""
+    response = discord.kick_user_from_server(request.user.discord_user_id)
+    response.raise_for_status()
     request.user.discord_user_id = None
 
     try:
@@ -69,7 +71,7 @@ def unlink_discord(request):
     return redirect(reverse("profile"))
 
 
-def discord_flow_callback(request):
+def discord_flow_callback(request: HttpRequest) -> HttpResponse:
     code = request.GET.get("code")
     if not code:
         raise BadRequest("Denied Discord consent.")
@@ -138,11 +140,11 @@ def discord_flow_callback(request):
     return redirect(reverse("profile"))
 
 
-def start_github_flow(request):
+def start_github_flow(request: HttpRequest) -> HttpResponse:
     return redirect(github.GITHUB_AUTH_URL)
 
 
-def github_flow_callback(request):
+def github_flow_callback(request: HttpRequest) -> HttpResponse:
     code = request.GET.get("code")
     if not code:
         raise BadRequest
@@ -194,7 +196,7 @@ def github_flow_callback(request):
 
 
 @login_required
-def unlink_github(request):
+def unlink_github(request: HttpRequest) -> HttpResponse:
     """Disconnects the logged in user's GitHub account."""
     request.user.github_username = None
 

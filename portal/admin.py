@@ -322,6 +322,14 @@ class EnrollmentAdmin(admin.ModelAdmin):
         "is_coordinator",
         "is_mentor",
     )
+    search_fields = (
+        "user__first_name",
+        "user__last_name",
+        "user__email",
+        "user__rcs_id",
+        "user__discord_user_id",
+        "user__github_username",
+    )
 
     fieldsets = (
         (
