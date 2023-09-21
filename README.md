@@ -57,19 +57,50 @@ To manually update dependencies, run `poetry update`.
 ```mermaid
 C4Context
       title System Context diagram for RCOS IO
+
       Person(userA, "RCOS Student", "RPI students participating in RCOS.")
       Person(userB, "RCOS Coordinator/Faculty Advisor", "Administrators of RCOS.")
       Person(userEx, "External User/Organization", "Non-RPI affiliated persons/organizations who pitch and lead projects externally.")
 
       System(RCOSIOSystem, "RCOS IO System", "Allows users and administrators to manage their RCOS data.")
 
-
-      SystemDb_Ext(DiscordSystem, "Discord", "Provides communication platform for RCOS users and provides an API for account linking and automation.")
-      SystemDb_Ext(GitHubSystem, "GitHub", "Stores git repositories of RCOS users' projects and provides an API for account linking and data fetching.")
+      System_Ext(DiscordSystem, "Discord", "Provides communication platform for RCOS users and provides an API for account linking and automation.")
+      System_Ext(GitHubSystem, "GitHub", "Stores git repositories of RCOS users' projects and provides an API for account linking and data fetching.")
 
       BiRel(userA, RCOSIOSystem, "Uses")
       BiRel(userB, RCOSIOSystem, "Uses")
       BiRel(userEx, RCOSIOSystem, "Uses")
       BiRel(RCOSIOSystem, DiscordSystem, "Interacts with")
       BiRel(RCOSIOSystem, GitHubSystem, "Interacts with")
+```
+
+
+```mermaid
+C4Container
+    title Container diagram for RCOS IO System
+
+    Person(userA, "RCOS Student", "RPI students participating in RCOS.")
+    Person(userB, "RCOS Coordinator/Faculty Advisor", "Administrators of RCOS.")
+    Person(userEx, "External User/Organization", "Non-RPI affiliated persons/organizations who pitch and lead projects externally.")
+
+    System_Ext(DiscordSystem, "Discord", "Provides communication platform for RCOS users and provides an API for account linking and automation.")
+    System_Ext(GitHubSystem, "GitHub", "Stores git repositories of RCOS users' projects and provides an API for account linking and data fetching.")
+
+    Container_Boundary(c1, "RCOS IO") {
+        Container(web_app, "Web Application", "Python, Django", "Delivers the static content and the Internet banking SPA")
+        ContainerDb(database, "Postgres", "SQL Database", "Stores RCOS-related data including users, projects, meetings, small groups, etc..")
+        ContainerDb(cache, "Redis", "Cache", "Caches data to speedup expensive queries.")
+        Container_Ext(email, "Mailjet", "Email API", "Delivers the static content and the Internet banking SPA")
+        Container_Ext(sentry, "Sentry", "Error Tracking", "Logs and tracks errors.")
+    }
+
+    Rel(userA, web_app, "Uses", "HTTPS")
+    Rel(userB, web_app, "Uses", "HTTPS")
+    Rel(userEx, web_app, "Uses", "HTTPS")
+    BiRel(web_app, database, "Reads from/writes to")
+    BiRel(web_app, cache, "Reads from/writes to")
+    Rel(web_app, sentry, "Logs errors to")
+    BiRel(web_app, email, "Sends emails to users via")
+    Rel(web_app, DiscordSystem, "Sends messages/links accounts/adds users to server")
+    Rel(web_app, GitHubSystem, "Fetches project repository data/links accounts")
 ```
