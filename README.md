@@ -49,3 +49,27 @@ RCOS has to handle the data of typically 150+ students each semester (even 100+ 
 We use [MEND Renovate](https://www.mend.io/renovate/) to automatically open dependency update PRs.
 
 To manually update dependencies, run `poetry update`.
+
+# Architecture Diagrams
+
+(Best viewed on GitHub)
+
+```mermaid
+C4Context
+      title System Context diagram for RCOS IO
+      Person(userA, "RCOS Student", "RPI students participating in RCOS.")
+      Person(userB, "RCOS Coordinator/Faculty Advisor", "Administrators of RCOS.")
+      Person(userEx, "External User/Organization", "Non-RPI affiliated persons/organizations who pitch and lead projects externally.")
+
+      System(RCOSIOSystem, "RCOS IO System", "Allows users and administrators to manage their RCOS data.")
+
+
+      SystemDb_Ext(DiscordSystem, "Discord", "Provides communication platform for RCOS users and provides an API for account linking and automation.")
+      SystemDb_Ext(GitHubSystem, "GitHub", "Stores git repositories of RCOS users' projects and provides an API for account linking and data fetching.")
+
+      BiRel(userA, RCOSIOSystem, "Uses")
+      BiRel(userB, RCOSIOSystem, "Uses")
+      BiRel(userEx, RCOSIOSystem, "Uses")
+      BiRel(RCOSIOSystem, DiscordSystem, "Interacts with")
+      BiRel(RCOSIOSystem, GitHubSystem, "Interacts with")
+```
