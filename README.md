@@ -4,14 +4,13 @@ RCOS IO is the latest iteration of an admin and member portal for the Rensselaer
 
 ## Motivation
 
-RCOS has to handle the data of typically 150+ students each semester (even 100+ students during summer semesters). Data includes enrolled students, external organizations and their users, projects, semester enrollments, meetings, mentors, small groups, etc. Most of the operations are straightforward CRUD operations (Create Read Update Destroy) and the data does not often change. As a result, a traditional web application using a relational database is a good choice. Django was chosen because it is batteries-included and opinionated, and Python is a very well-known and accessible language to develop and deploy.
+RCOS has to handle the data of typically 350+ students each semester. Data includes enrolled students, external organizations and their users, projects, semester enrollments, meetings, mentors, small groups, etc. Most of the operations are straightforward CRUD operations (Create Read Update Destroy) and the data does not often change. As a result, a traditional web application using a relational database is a good choice. Django was chosen because it is batteries-included and opinionated, and Python is a very well-known and accessible language to develop and deploy. Currently the site, database, and cache are hosted at the cost of a few dollars a month on [Railway](https://railway.app).
 
 ## Stack
 
 - Python [Django](https://www.djangoproject.com/) backend
 - Plain old HTML frontend using
     - [Bulma CSS library](https://bulma.io/documentation/)
-- HTMX (coming soon)
 - [PostgreSQL](https://www.postgresql.org/) database
 - [Redis](https://redis.io/) cache
 
