@@ -22,6 +22,7 @@ from portal.models import (
     SmallGroup,
     StatusUpdateSubmission,
     User,
+    BlogPost,
 )
 
 logger = logging.getLogger(__name__)
@@ -434,4 +435,8 @@ class SmallGroupAdmin(admin.ModelAdmin):
 
 @admin.register(ProjectTag)
 class ProjectTagAdmin(admin.ModelAdmin):
+    pass
+
+@admin.register(BlogPost)
+class BlogPostAdmin(admin.ModelAdmin):
     pass

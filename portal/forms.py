@@ -3,7 +3,7 @@ from crispy_forms.helper import FormHelper
 from crispy_forms.layout import Submit
 from django import forms
 
-from portal.models import Meeting, MentorApplication, Project, Semester, User
+from portal.models import Meeting, MentorApplication, Project, Semester, User, BlogPost
 
 # Inputs
 
@@ -92,3 +92,22 @@ class MentorApplicationForm(forms.ModelForm):
             "skills",
         ]
 
+class BlogPostCreateForm(forms.ModelForm):
+    class Meta:
+        model = BlogPost
+        fields = [
+            "title",
+            "description",
+            "content"
+        ]
+
+class BlogPostEditForm(forms.ModelForm):
+    class Meta:
+        model = BlogPost
+        fields = [
+            "title",
+            "description",
+            "tags",
+            "public",
+            "content"
+        ]

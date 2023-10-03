@@ -42,6 +42,7 @@ from .views.projects import (
     project_lead_index,
 )
 from .views.users import UserIndexView, enroll_user, user_detail
+from .views.blog import BlogPostListView, BlogPostView, edit_blog_post
 
 urlpatterns = [
     path("", IndexView.as_view(), name="index"),
@@ -144,4 +145,8 @@ urlpatterns = [
         import_google_form_projects,
         name="import_projects",
     ),
+    # Blog
+    path("blog/", BlogPostListView.as_view(), name="blog_index"),
+    path("blog/<int:pk>/", BlogPostView.as_view(), name="blog_post"),
+    path("blog/<int:pk>/edit/", edit_blog_post, name="edit_blog_post"),
 ]

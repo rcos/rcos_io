@@ -1,0 +1,36 @@
+{% extends "portal/base.html" %}
+{% load portal_extras %}
+{% load markdownify %}
+
+{% block ogp %}
+<meta property="og:title" content="Blog | RCOS IO" />
+<meta property="og:type" content="website" />
+<meta property="og:url" content="{{ request.build_absolute_uri }}" />
+<meta property="og:description" content="Blog | Rensselaer Center for Open Source" />
+<meta property="og:image" content="https://raw.githubusercontent.com/rcos/rcos-branding/master/img/lockup-red.png" />
+{% endblock %}
+
+{% block title %}
+Blog | RCOS IO
+{% endblock %}
+
+{% block content %}
+<section class="section">
+    <div class="container">
+        <h1 class="title">
+            {{ object.title }}
+            {% for tag in object.tags.all %}
+                <span class="tag is-light">{{ tag }}</span>
+            {% endfor %}
+        </h1>
+        <h2 class="subtitle">{{ object.description }}</h2>
+        <h2 class="subtitle is-6">{{ object.author.full_name }} · {{ object.created_at.date }}</h2>
+        <a class="button" href="{% url 'edit_blog_post' object.id %}">Edit</a>
+        <hr>
+        <div class="content">
+            {{ object.content|markdownify }}
+        </div>
+        
+    </div>
+</section>
+{% endblock %}

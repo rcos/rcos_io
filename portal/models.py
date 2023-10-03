@@ -1578,3 +1578,48 @@ class StatusUpdateSubmission(TimestampedModel):
 
     class Meta:
         ordering = ["created_at"]
+
+class Comment(TimestampedModel):
+    author = models.ForeignKey(
+        User,
+        on_delete=models.CASCADE, 
+        related_name="blog_comments"
+    )
+
+    content = models.TextField(max_length=10_000)
+
+class BlogPost(TimestampedModel):
+    author = models.ForeignKey(
+        User,
+        on_delete=models.CASCADE,
+        related_name="blog_posts",
+        help_text="The user that can edit the project",
+    )
+
+    title = models.CharField(max_length=100)
+
+    description = models.CharField(max_length=100)
+    
+    content = models.TextField(max_length=10_000)
+
+    tags = models.ManyToManyField(
+        ProjectTag, 
+        blank=True, 
+        related_name="blog_posts", 
+        help_text="Use Ctrl or Cmd to select multiple tags that apply to your blog post."
+    )
+
+    public = models.BooleanField(
+        default=False,
+        help_text="Whether blog post is visible to everyone or just yourself."
+    )
+
+    comments = models.ManyToManyField(
+        Comment, 
+        related_name="blog_comments"
+    )
+
+    def get_absolute_url(self):
+        return reverse("blog_post", args=[str(self.id)])
+    
+

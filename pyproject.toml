@@ -28,6 +28,7 @@ psycopg2-binary = "^2.9.6"
 redis = "^5.0.0"
 dnspython = "^2.3.0"
 eventlet = "^0.33.3"
+markdown = "^3.4.4"
 
 
 [tool.poetry.group.dev.dependencies]

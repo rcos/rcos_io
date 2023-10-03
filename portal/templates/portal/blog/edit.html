@@ -1,0 +1,22 @@
+{% extends "portal/base.html" %}
+{% load crispy_forms_tags %}
+
+{% block title %}
+Edit Post | RCOS IO
+{% endblock %}
+
+{% block content %}
+<section class="section">
+    <div class="container">
+        <h1 class="title">Edit Post</h1>
+    
+        <form method="post">
+            {% csrf_token %}
+    
+            {{ form|crispy }}
+    
+            <button type="submit" class="button">Save Changes</button>
+        </form>
+    </div>
+</section>
+{% endblock %}
