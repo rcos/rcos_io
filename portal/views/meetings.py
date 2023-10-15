@@ -261,6 +261,7 @@ class SubmitAttendanceFormView(LoginRequiredMixin, UserRequiresSetupMixin, FormV
             new_attendance = MeetingAttendance(
                 meeting=meeting_attendance_code.meeting,
                 user=user,
+                submitted_by=self.request.user,
                 is_verified=random.random()
                 > meeting_attendance_code.meeting.attendance_chance_verification_required,
             )
@@ -384,13 +385,14 @@ def manually_add_or_verify_attendance(request: HttpRequest) -> HttpResponse:
                         user=user,
                         is_verified=True,
                         is_added_by_admin=True,
+                        submitted_by=request.user,
                     )
                     attendance.save()
                     messages.success(request, f"Added attendance for {user}!")
 
                 # Submit attendance for submitter themselves
                 try:
-                    MeetingAttendance(user=request.user, meeting=meeting).save()
+                    MeetingAttendance(user=request.user, meeting=meeting, submitted_by=request.user).save()
 
                 except IntegrityError:
                     pass
