@@ -173,7 +173,7 @@ class SearchableListView(ListView):
                 search=SearchVector(*self.search_fields),
             ).filter(search=self.search)
 
-        return queryset.distinct(*self.search_fields)
+        return queryset.distinct()
 
     def get_context_data(self, **kwargs):
         data = super().get_context_data(**kwargs)
