@@ -9,6 +9,7 @@ from django.contrib.auth.mixins import LoginRequiredMixin
 from django.contrib.messages.views import SuccessMessageMixin
 from django.core.cache import cache
 from django.core.paginator import EmptyPage, InvalidPage, PageNotAnInteger, Paginator
+from django.db.models.functions import Lower
 from django.http import (
     HttpRequest,
     HttpResponse,
@@ -102,7 +103,7 @@ class ProjectIndexView(
             queryset = queryset.filter(pitches__semester=self.target_semester)
             self.is_seeking_members = True
 
-        return queryset.distinct("name")
+        return queryset.distinct(Lower("name"))
 
     def get_context_data(self, **kwargs):
         data = super().get_context_data(**kwargs)
