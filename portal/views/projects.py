@@ -103,7 +103,7 @@ class ProjectIndexView(
             queryset = queryset.filter(pitches__semester=self.target_semester)
             self.is_seeking_members = True
 
-        return queryset.distinct(Lower("name"))
+        return queryset.distinct()
 
     def get_context_data(self, **kwargs):
         data = super().get_context_data(**kwargs)
