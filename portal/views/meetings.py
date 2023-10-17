@@ -384,7 +384,6 @@ def manually_add_or_verify_attendance(request: HttpRequest) -> HttpResponse:
                         meeting=meeting,
                         user=user,
                         is_verified=True,
-                        is_added_by_admin=True,
                         submitted_by=request.user,
                     )
                     attendance.save()
