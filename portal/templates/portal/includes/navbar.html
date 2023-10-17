@@ -21,6 +21,7 @@
                 
                 {% if request.user.is_authenticated and request.user.is_approved %}
                 {% include "portal/includes/navbaritem.html" with view_name="small_groups_index" display="Small Groups" %}
+                {% include "portal/includes/navbaritem.html" with view_name="commits_index" display="Commits" %}
                 {% endif %}
                 {% include "portal/includes/navbaritem.html" with view_name="organizations_index" display="Organizations" %}
                 {% include "portal/includes/navbaritem.html" with view_name="handbook" display="Handbook" %}

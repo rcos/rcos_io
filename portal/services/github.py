@@ -138,3 +138,52 @@ def get_repository_details(client: Client, repo_url: str):
 
     result = client.execute(query, variable_values={"owner": owner, "name": name})
     return result
+
+def get_repository_commits(client: Client, repo_url: str, since: str):
+    owner, name = repo_url.split("/")[-2:]
+    query = gql(
+        """
+        query RepoCommits($owner: String!, $name: String!, $since: GitTimestamp!) {
+            repository(owner: $owner, name: $name) {
+                refs(refPrefix: "refs/heads/", orderBy: {direction: DESC, field: TAG_COMMIT_DATE}, first: 100) {
+                edges {
+                    node {
+                    ... on Ref {
+                        name
+                        target {
+                        ... on Commit {
+                            history(since: $since) {
+                            edges {
+                                node {
+                                ... on Commit {
+                                    commitUrl
+                                    additions
+                                    deletions
+                                    author {
+                                    user {
+                                        login
+                                    }
+                                    }
+                                }
+                                }
+                            }
+                            }
+                        }
+                        }
+                    }
+                    }
+                }
+                }
+            }
+            rateLimit {
+              limit
+              cost
+              remaining
+              resetAt
+            }
+            }
+        """
+    )
+
+    result = client.execute(query, variable_values={"owner": owner, "name": name, "since": since})
+    return result

@@ -5,10 +5,10 @@ from celery import shared_task
 from django.db.models import Manager
 from django.utils import timezone
 from requests import HTTPError
+from django.core.cache import cache
 
-from portal.models import Meeting
-from portal.services import discord
-
+from portal.models import Meeting, Semester
+from portal.services import discord, github
 
 @shared_task
 def delete_discord_channels(channel_ids: list[str]):
@@ -32,3 +32,19 @@ def meetings_alert():
             discord.send_message(os.environ["DISCORD_ALERTS_CHANNEL_ID"], {
                 "content": f"Meeting **{meeting}** does not have presentation slides added yet!"
             })
+
+@shared_task
+def get_commits():
+    semester = Semester.objects.latest("start_date")
+    for project in semester.projects.filter(is_approved=True).all():
+        for repo in project.repositories.all():
+            commits = {}
+            result = github.get_repository_commits(github.client_factory(), repo.url, semester.start_date.strftime('%Y-%m-%dT%H:%M:%S.%f%z'))
+            for branch in result["repository"]["refs"]["edges"]:
+                for commit in branch["node"]["target"]["history"]["edges"]:
+                    commits[commit["node"]["commitUrl"]] = {
+                        "author": commit["node"]["author"]["user"]["login"],
+                        "additions": commit["node"]["additions"],
+                        "deletions": commit["node"]["deletions"]
+                    }
+            cache.set(f"repo_commits_{repo.url}", commits, 60 * 60 * 24)

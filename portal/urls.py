@@ -9,6 +9,7 @@ from portal.views.discord import DiscordAdminIndex, delete_discord_channels
 from portal.views.mentors import MentorApplicationView, mentor_applications_index
 from portal.views.organizations import organizations_index
 from portal.views.small_groups import SmallGroupIndexView, small_group_detail
+from portal.views.commits import commits_index
 
 from .views.auth import (
     discord_flow_callback,
@@ -144,4 +145,10 @@ urlpatterns = [
         import_google_form_projects,
         name="import_projects",
     ),
+    # Commits
+    path(
+        "commits/",
+        commits_index,
+        name="commits_index"
+    )
 ]
