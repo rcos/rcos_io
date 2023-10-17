@@ -1144,7 +1144,7 @@ class Meeting(TimestampedModel):
 
     # Relationships
     attendances = models.ManyToManyField(
-        User, through="MeetingAttendance", related_name="meeting_attendances"
+        User, through="MeetingAttendance", related_name="meeting_attendances", through_fields=("meeting", "user")
     )
 
     objects = models.Manager()
@@ -1225,28 +1225,27 @@ class Meeting(TimestampedModel):
             expected_users = expected_users.filter(pk__in=small_group_user_ids)
             query["user__in"] = small_group_user_ids
 
-        attendances = MeetingAttendance.objects.filter(**query).select_related("user")
+        submitted_attendances = MeetingAttendance.objects.filter(**query).select_related("user", "submitted_by")
 
-        needs_verification_users = []
-        attended_users = []
-        for attendance in attendances:
+        needs_verification_attendances = []
+        attendances = []
+        for attendance in submitted_attendances:
             attendance: MeetingAttendance
             if attendance.is_verified:
-                attended_users.append(attendance.user)
+                attendances.append(attendance)
             else:
-                needs_verification_users.append(attendance.user)
+                needs_verification_attendances.append(attendance)
 
-        attendance_submitted_users = attended_users + needs_verification_users
         non_attended_users = expected_users.exclude(
-            pk__in=[u.pk for u in attendance_submitted_users]
+            pk__in=[u.pk for u in submitted_attendances]
         )
 
         return {
             "expected_users": expected_users,
-            "needs_verification_users": needs_verification_users,
-            "attended_users": attended_users,
+            "needs_verification_users": needs_verification_attendances,
+            "attendances": attendances,
             "non_attended_users": non_attended_users,
-            "attendance_ratio": len(attended_users) / expected_users.count()
+            "attendance_ratio": len(attendances) / expected_users.count()
             if expected_users.count() > 0
             else 0,
         }
@@ -1353,10 +1352,7 @@ class MeetingAttendance(TimestampedModel):
     meeting = models.ForeignKey(Meeting, on_delete=models.CASCADE)
     user = models.ForeignKey(User, on_delete=models.CASCADE)
     is_verified = models.BooleanField(default=True)
-    is_added_by_admin = models.BooleanField(
-        default=False,
-        help_text="Whether this attendance was added by an admin instead of by the user",
-    )
+    submitted_by = models.ForeignKey(User, blank=True, null=True, on_delete=models.SET_NULL, help_text="The user that submitted the attendance for user (either them or an administrator).", related_name="submitted_attendances")
 
     class Meta:
         constraints = [

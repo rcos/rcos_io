@@ -9,6 +9,7 @@ from django.contrib.auth.mixins import LoginRequiredMixin
 from django.contrib.messages.views import SuccessMessageMixin
 from django.core.cache import cache
 from django.core.paginator import EmptyPage, InvalidPage, PageNotAnInteger, Paginator
+from django.db.models.functions import Lower
 from django.http import (
     HttpRequest,
     HttpResponse,
