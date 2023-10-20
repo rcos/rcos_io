@@ -17,8 +17,9 @@ Commits | RCOS IO
 <section class="section">
     <div class="container">
         <h1 class="title">Commits</h1>
+
         {% for url, commit in commits.items %}
-            {% if commit.author == username %}
+            {% if commit.committer == username %}
                 <div>
                     <a href="{{ url }}">{{ url }}</a>
                     <span class="has-text-success-dark">+{{ commit.additions }}</span>
@@ -26,8 +27,12 @@ Commits | RCOS IO
                 </div>
             {% endif %}
         {% endfor %}
-        <br />
-        <button id="copy-commits" onclick="CopyCommits()" class="button">Copy</button>
+        {% if commits.items|length > 0 %}
+            <br />
+            <button id="copy-commits" onclick="CopyCommits()" class="button">Copy</button>
+        {% else %}
+            <div>No Commits Available.</div>
+        {% endif %}
     </div>
 </section>
 
@@ -41,7 +46,7 @@ Commits | RCOS IO
     function CopyCommits() {
         let commits_str = ""
         for (let url in commits) {
-            if (commits[url].author == username) {
+            if (commits[url].committer == username) {
                 commits_str += url + "\n"
             }
         }

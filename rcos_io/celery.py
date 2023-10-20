@@ -2,6 +2,7 @@ import os
 
 from celery import Celery
 from celery.schedules import crontab
+from celery.signals import worker_ready
 
 # Set the default Django settings module for the 'celery' program.
 os.environ.setdefault("DJANGO_SETTINGS_MODULE", "rcos_io.settings")
@@ -23,3 +24,8 @@ app.conf.beat_schedule = {
         'schedule': crontab(minute=0, hour=0)
     },
 }
+
+@worker_ready.connect
+def startup(sender, **kwargs):
+    with sender.app.connection() as conn:
+        sender.app.send_task("portal.tasks.get_commits", connection=conn)

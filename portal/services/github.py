@@ -157,9 +157,10 @@ def get_repository_commits(client: Client, repo_url: str, since: str):
                                 node {
                                 ... on Commit {
                                     commitUrl
+                                    committedDate
                                     additions
                                     deletions
-                                    author {
+                                    committer {
                                     user {
                                         login
                                     }

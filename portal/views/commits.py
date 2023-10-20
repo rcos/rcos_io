@@ -10,14 +10,16 @@ from portal.tasks import get_commits;
 
 @login_required
 def commits_index(request: HttpRequest) -> HttpResponse:
-    repos = request.user.get_active_enrollment().project.repositories.all()
-
+    active_enrollment = request.user.get_active_enrollment()
     commits = {}
-    for repo in repos:
-        repo_commits = cache.get(f"repo_commits_{repo.url}")
-        if repo_commits:
-            for url in repo_commits:
-                commits[url] = repo_commits[url]
+    
+    if active_enrollment is not None:
+        repos = active_enrollment.project.repositories.all()
+        for repo in repos:
+            repo_commits = cache.get(f"repo_commits_{repo.url}")
+            if repo_commits:
+                for url in repo_commits:
+                    commits[url] = repo_commits[url]
 
     return TemplateResponse(request, "portal/commits/index.html", {
         "commits": commits,

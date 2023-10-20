@@ -42,9 +42,10 @@ def get_commits():
             result = github.get_repository_commits(github.client_factory(), repo.url, semester.start_date.strftime('%Y-%m-%dT%H:%M:%S.%f%z'))
             for branch in result["repository"]["refs"]["edges"]:
                 for commit in branch["node"]["target"]["history"]["edges"]:
-                    commits[commit["node"]["commitUrl"]] = {
-                        "author": commit["node"]["author"]["user"]["login"],
-                        "additions": commit["node"]["additions"],
-                        "deletions": commit["node"]["deletions"]
-                    }
+                    if (commit["node"]["committer"]["user"] != None):
+                        commits[commit["node"]["commitUrl"]] = {
+                            "committer": commit["node"]["committer"]["user"]["login"],
+                            "additions": commit["node"]["additions"],
+                            "deletions": commit["node"]["deletions"]
+                        }
             cache.set(f"repo_commits_{repo.url}", commits, 60 * 60 * 24)
