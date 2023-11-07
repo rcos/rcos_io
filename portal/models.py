@@ -1229,20 +1229,22 @@ class Meeting(TimestampedModel):
 
         needs_verification_attendances = []
         attendances = []
+        attended_ids = set()
         for attendance in submitted_attendances:
             attendance: MeetingAttendance
             if attendance.is_verified:
                 attendances.append(attendance)
             else:
                 needs_verification_attendances.append(attendance)
+            attended_ids.add(attendance.user.pk)
 
         non_attended_users = expected_users.exclude(
-            pk__in=[u.pk for u in submitted_attendances]
+            pk__in=attended_ids
         )
 
         return {
             "expected_users": expected_users,
-            "needs_verification_users": needs_verification_attendances,
+            "needs_verification_attendances": needs_verification_attendances,
             "attendances": attendances,
             "non_attended_users": non_attended_users,
             "attendance_ratio": len(attendances) / expected_users.count()
