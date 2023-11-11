@@ -1,8 +1,10 @@
+import csv
 import logging
 from time import sleep
 
 from django.contrib import admin
 from django.contrib.auth.admin import UserAdmin
+from django.http import HttpResponse
 
 from portal.models import (
     Enrollment,
@@ -31,6 +33,40 @@ admin.site.site_header = "RCOS IO Administration"
 admin.site.site_title = "RCOS IO"
 
 # Actions
+
+def export_enrollments_to_csv(modeladmin, request, queryset):
+    filename = "RCOS Enrollments"
+
+    # Set the appropriate response headers so the browser expects a CSV file download
+    response = HttpResponse(
+        content_type="text/csv",
+        headers={"Content-Disposition": f'attachment; filename="{filename}.csv"'},
+    )
+
+    # Create a CSV writer that writes to the response
+    writer = csv.writer(response)
+
+    # Write the headers
+    writer.writerow(
+        ["semester", "rcsid", "email", "given name", "family name", "project"]
+    )
+
+    for enrollment in queryset.filter(user__role = User.RPI):
+        writer.writerow(
+            [
+                enrollment.semester,
+                enrollment.user.rcs_id,
+                enrollment.user.rcs_id + "@rpi.edu",
+                enrollment.user.first_name,
+                enrollment.user.last_name,
+                enrollment.project,
+            ]
+        )
+
+    return response
+
+
+export_enrollments_to_csv.short_description = "Export to CSV"  # short description
 
 
 @admin.action(description="Mark selected as approved")
@@ -360,6 +396,8 @@ class EnrollmentAdmin(admin.ModelAdmin):
             {"fields": ("credits", "is_for_pay", "final_grade", "notes_markdown")},
         ),
     )
+
+    actions = [export_enrollments_to_csv]
 
 
 @admin.register(Meeting)
