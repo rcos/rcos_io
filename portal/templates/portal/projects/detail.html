@@ -69,14 +69,14 @@
     <div class="hero-body">
         <div class="container">
             <h1 class="title">{{ target_semester }} Team</h1>
-            {% if can_enroll %}
+            <!-- {% if can_enroll %}
             <form action="{% url 'users_enroll' request.user.pk %}" method="post" onsubmit="return confirm('Are you sure?')">
                 {% csrf_token %}
                 <input type="hidden" name="semester" value="{{ target_semester.pk }}">
                 <input type="hidden" name="project" value="{{ project.pk }}">
                 <button class="button is-primary" type="submit">Join Team</button>
             </form>
-            {% endif %}
+            {% endif %} -->
         </div>
     </div>
 </section>
