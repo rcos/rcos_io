@@ -1,3 +1,4 @@
+import re
 from typing import TypedDict
 
 import requests
@@ -10,6 +11,7 @@ GITHUB_AUTH_URL = (
     f"?client_id={settings.GITHUB_OAUTH_APP_CLIENT_ID}&redirect_uri={settings.GITHUB_OAUTH_APP_REDIRECT_URL}"
 )
 
+GITHUB_REPO_REGEX = re.compile('https://github.com/.+/.+', re.IGNORECASE)
 
 class GitHubTokens(TypedDict):
     """https://docs.github.com/en/developers/apps/building-oauth-apps/authorizing-oauth-apps#response."""

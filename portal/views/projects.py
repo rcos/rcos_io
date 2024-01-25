@@ -1,5 +1,6 @@
 """Views related to projects."""
 import logging
+import re
 from typing import Any
 
 from django.conf import settings
@@ -51,7 +52,6 @@ from . import (
 )
 
 logger = logging.getLogger(__name__)
-
 
 @login_required
 def project_lead_index(request: HttpRequest) -> HttpResponse:
@@ -206,7 +206,7 @@ def project_detail(request: HttpRequest, slug: str) -> HttpResponse:
     # Fetch project repositories
     try:
         context["repositories"] = project.get_repositories(github.client_factory())
-    except TransportServerError as e:
+    except Exception as e:
         logger.error(e)
         context["repositories"] = []
 
@@ -242,10 +242,14 @@ def edit_project(request: HttpRequest, slug: str) -> HttpResponse:
         ProjectRepository.objects.filter(project=project).exclude(url__in=repository_urls).delete()
         for url in repository_urls:
             if url:
-                try:
-                    ProjectRepository.objects.get_or_create(url=url, project=project)
-                except:
-                    messages.warning(request, f"Couldn't add repository '{url}'")
+                # Check if valid GitHub repository URL
+                if github.GITHUB_REPO_REGEX.match(url):
+                    try:
+                        ProjectRepository.objects.get_or_create(url=url, project=project)
+                    except:
+                        messages.warning(request, f"Couldn't add repository '{url}'")
+                else:
+                    messages.warning(request, f"Invalid GitHub repository url, ignoring!")
 
         if form.is_valid():
             messages.success(request, f"{project.name} was updated.")
