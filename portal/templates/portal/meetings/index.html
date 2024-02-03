@@ -66,7 +66,13 @@ Meetings | RCOS IO
                                 <span class="icon">
                                     <i class="fa-solid fa-chalkboard-user"></i>
                                 </span>
-                                <a href="{{ meeting.host.get_absolute_url }}">{{ meeting.host }}</a>
+                                <a href="{{ meeting.host.get_absolute_url }}">
+                                    {% if not meeting.host.is_name_public and not request.user.is_authenticated %}
+                                    RCOS Member
+                                    {% else %}
+                                    {{ meeting.host }}
+                                    {% endif%}
+                                </a>
                             </li>
                             {% endif %}
                         </ul>

@@ -306,6 +306,9 @@ class User(AbstractUser, TimestampedModel):
         unique=True,
     )
 
+    # Damn it people
+    is_name_public = models.BooleanField(default=True, help_text="Is the user's name and RCS ID publicly visible?")
+
     @property
     def is_rpi(self):
         return self.role == User.RPI

@@ -39,7 +39,13 @@ Users | RCOS IO
                     {% for user_row in user_rows  %}
                     <tr>
                         <td>
-                            <a href="{{ user_row.user.get_absolute_url }}{% target_semester_query %}">{{ user_row.user }}</a>
+                            <a href="{{ user_row.user.get_absolute_url }}{% target_semester_query %}">
+                                {% if not user_row.user.is_name_public and not request.user.is_authenticated %}
+                                RCOS Member
+                                {% else %}
+                                {{ user_row.user }}
+                                {% endif %}
+                            </a>
                             {% if user_row.enrollment %}
                                 {% if user_row.enrollment.is_coordinator %}
                                 <span class="tag is-warning">Coordinator</span>

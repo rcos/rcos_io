@@ -28,7 +28,13 @@
         <div class="container">
             <div class="columns is-vcentered">
                 <div class="column">
-                    <h1 class="title is-1">{{ user.full_name }}</h1>
+                    <h1 class="title is-1">
+                        {% if not user.is_name_public and not request.user.is_authenticated %}
+                        RCOS Member
+                        {% else %}
+                        {{ user.full_name }}
+                        {% endif %}
+                    </h1>
 
                     {% include "portal/includes/semester_select_form.html" with semesters=user.get_active_semesters %}
                 </div>

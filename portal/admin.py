@@ -243,6 +243,7 @@ class UserAdmin(UserAdmin):
                     "role",
                     "rcs_id",
                     "graduation_year",
+                    "is_name_public"
                 )
             },
         ),
