@@ -9,7 +9,7 @@ packages = [{include = "rcos_io"}]
 
 [tool.poetry.dependencies]
 python = "^3.11"
-django = "^4.2.1"
+django = "^5.0.0"
 gunicorn = "^21.0.0"
 celery = "^5.2.7"
 python-dotenv = "^1.0.0"
