@@ -232,7 +232,7 @@ class UserAdmin(UserAdmin):
         "discord_user_id",
         "github_username",
     )
-    list_filter = ("role", "organization", "is_approved", "enrollments__semester__name")
+    list_filter = ("role", "organization", "is_approved", "enrollments__semester__name", "enrollments__credits", "enrollments__project__name")
     exclude = ("username",)
     fieldsets = (
         (

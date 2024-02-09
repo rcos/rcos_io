@@ -532,7 +532,7 @@ class Project(TimestampedModel):
 
     slug = models.SlugField()
     name = models.CharField(
-        max_length=100, unique=True, help_text="The project's unique name"
+        max_length=100, unique=True, help_text="The project's unique name",verbose_name="project name"
     )
     owner = models.ForeignKey(
         User,
