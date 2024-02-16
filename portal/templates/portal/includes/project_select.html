@@ -1,0 +1,8 @@
+<span class="select">
+    <select name="project">
+        <option value="">Any project</option>
+        {% for proj in projects %}
+        <option value="{{ proj.pk }}" {% if project and project.pk == proj.pk %}selected{% endif %}>{{ proj }}</option>
+        {% endfor %}
+    </select>
+</span>

@@ -14,10 +14,11 @@ from . import (
     SearchableListView,
     SemesterFilteredListView,
     target_semester_context,
+    ProjectFilteredListView,
 )
 
 
-class UserIndexView(SearchableListView, OrganizationFilteredListView, SemesterFilteredListView):
+class UserIndexView(SearchableListView, OrganizationFilteredListView, SemesterFilteredListView, ProjectFilteredListView):
     template_name = "portal/users/index.html"
     context_object_name = "users"
     paginate_by = 50
@@ -37,6 +38,7 @@ class UserIndexView(SearchableListView, OrganizationFilteredListView, SemesterFi
     def get_context_data(self, **kwargs):
         data = super().get_context_data(**kwargs)
 
+        data["projects"] = Project.objects.all();
         data["organizations"] = Organization.objects.all()
         data["total_count"] = self.get_queryset().count()
 

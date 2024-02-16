@@ -8,7 +8,7 @@ from django.shortcuts import get_object_or_404, redirect
 from django.urls import reverse
 from django.views.generic import DetailView, ListView
 
-from ..models import Organization, Semester
+from ..models import Organization, Semester, Project
 
 
 def load_semesters(request):
@@ -138,6 +138,29 @@ class OrganizationFilteredListView(ListView):
         """Expose `organization` to the template if present."""
         data = super().get_context_data(**kwargs)
         data["organization"] = self.organization
+        return data
+
+class ProjectFilteredListView(ListView):
+    project = None
+
+    def get_queryset(self):
+        queryset = super().get_queryset()
+        
+        proj_id = self.request.GET.get("project")
+
+        if proj_id and not self.project:
+            self.project = get_object_or_404(Project, pk=proj_id)    
+
+        if self.project:
+            queryset = queryset.filter(
+                owned_projects=proj_id
+            )
+        
+        return queryset
+    
+    def get_context_data(self, **kwargs):
+        data = super().get_context_data(**kwargs)
+        data["project"] = self.project
         return data
 
 

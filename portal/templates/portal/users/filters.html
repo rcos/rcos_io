@@ -9,6 +9,10 @@
                 {% include "portal/includes/organization_select.html" %}
             </p>
 
+            <p class="control">
+                {% include "portal/includes/project_select.html" %}
+            </p>
+
             <p class="control is-expanded">
                 <input type="search" id="search" name="search" class="input"
                     placeholder="By name, GitHub, Discord, etc." value="{{ search|default:'' }}" />
