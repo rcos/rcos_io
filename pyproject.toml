@@ -9,7 +9,7 @@ packages = [{include = "rcos_io"}]
 
 [tool.poetry.dependencies]
 python = "^3.11"
-django = "^4.2.1"
+django = "^5.0.2"
 gunicorn = "^21.0.0"
 celery = "^5.2.7"
 python-dotenv = "^1.0.0"
@@ -27,11 +27,11 @@ requests-toolbelt = "^1.0.0"
 psycopg2-binary = "^2.9.6"
 redis = "^5.0.0"
 dnspython = "^2.3.0"
-eventlet = "^0.33.3"
+eventlet = "^0.35.1"
 
 
 [tool.poetry.group.dev.dependencies]
-ruff = "^0.1.0"
+ruff = "^0.2.2"
 
 [build-system]
 requires = ["poetry-core"]
