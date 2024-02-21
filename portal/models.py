@@ -1150,6 +1150,10 @@ class Meeting(TimestampedModel):
         User, through="MeetingAttendance", related_name="meeting_attendances", through_fields=("meeting", "user")
     )
 
+    starting_attendances = models.ManyToManyField(
+        User, through="MeetingStartingAttendance", related_name="meeting_starting_attendances", through_fields=("meeting", "user")
+    )
+
     objects = models.Manager()
 
     public = PublicManager()
@@ -1228,6 +1232,7 @@ class Meeting(TimestampedModel):
             expected_users = expected_users.filter(pk__in=small_group_user_ids)
             query["user__in"] = small_group_user_ids
 
+        submitted_starting_attendances = MeetingStartingAttendance.objects.filter(**query).select_related("user", "submitted_by")
         submitted_attendances = MeetingAttendance.objects.filter(**query).select_related("user", "submitted_by")
 
         needs_verification_attendances = []
@@ -1245,12 +1250,33 @@ class Meeting(TimestampedModel):
             pk__in=attended_ids
         )
 
+        needs_verification_starting_attendances = []
+        starting_attendances = []
+        starting_attended_ids = set()
+        for attendance in submitted_starting_attendances:
+            attendance: MeetingStartingAttendance
+            if attendance.is_verified:
+                starting_attendances.append(attendance)
+            else:
+                needs_verification_starting_attendances.append(attendance)
+            starting_attended_ids.add(attendance.user.pk)
+
+        non_starting_attended_users = expected_users.exclude(
+            pk__in=starting_attended_ids
+        )
+
         return {
             "expected_users": expected_users,
             "needs_verification_attendances": needs_verification_attendances,
             "attendances": attendances,
             "non_attended_users": non_attended_users,
             "attendance_ratio": len(attendances) / expected_users.count()
+            if expected_users.count() > 0
+            else 0,
+            "needs_verficiation_starting_attendances": needs_verficiation_starting_attendances,
+            "starting_attendances": starting_attendances,
+            "non_starting_attended_users": non_starting_attended_users,
+            "starting_attendance_ratio": len(starting_attendances) / expected_users.count()
             if expected_users.count() > 0
             else 0,
         }
@@ -1266,6 +1292,10 @@ class Meeting(TimestampedModel):
     @property
     def attended_users(self):
         return self.attendances.filter(meetingattendance__is_verified=True)
+
+    @property
+    def starting_attended_users(self):
+        return self.starting_attendances.filter(meetingstartingattendance__is_verified=True)
 
     @classmethod
     def get_ongoing(cls, user):
@@ -1363,6 +1393,20 @@ class MeetingAttendance(TimestampedModel):
         constraints = [
             models.UniqueConstraint(
                 fields=["meeting", "user"], name="unique_meeting_attendance"
+            )
+        ]
+
+
+class MeetingStartingAttendance(TimestampedModel):
+    meeting = models.ForeignKey(Meeting, on_delete=models.CASCADE)
+    user = models.ForeignKey(User, on_delete=models.CASCADE)
+    is_verified = models.BooleanField(default=True)
+    submitted_by = models.ForeignKey(User, blank=True, null=True, on_delete=models.SET_NULL, help_text="The user that submitted the attendance for user (either them or an administrator).", related_name="submitted_starting_attendances")
+
+    class Meta:
+        constraints = [
+            models.UniqueConstraint(
+                fields=["meeting", "user"], name="unique_meeting_starting_attendance"
             )
         ]
 
