@@ -1232,8 +1232,8 @@ class Meeting(TimestampedModel):
             expected_users = expected_users.filter(pk__in=small_group_user_ids)
             query["user__in"] = small_group_user_ids
 
-        # submitted_starting_attendances = MeetingStartingAttendance.objects.filter(**query).select_related("user", "submitted_by")
-        submitted_starting_attendances = []
+        submitted_starting_attendances = MeetingStartingAttendance.objects.filter(**query).select_related("user", "submitted_by")
+        # submitted_starting_attendances = []
         submitted_attendances = MeetingAttendance.objects.filter(**query).select_related("user", "submitted_by")
 
         needs_verification_attendances = []
