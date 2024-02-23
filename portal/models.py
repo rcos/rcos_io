@@ -1232,7 +1232,8 @@ class Meeting(TimestampedModel):
             expected_users = expected_users.filter(pk__in=small_group_user_ids)
             query["user__in"] = small_group_user_ids
 
-        submitted_starting_attendances = MeetingStartingAttendance.objects.filter(**query).select_related("user", "submitted_by")
+        # submitted_starting_attendances = MeetingStartingAttendance.objects.filter(**query).select_related("user", "submitted_by")
+        submitted_starting_attendances = []
         submitted_attendances = MeetingAttendance.objects.filter(**query).select_related("user", "submitted_by")
 
         needs_verification_attendances = []
@@ -1273,7 +1274,7 @@ class Meeting(TimestampedModel):
             "attendance_ratio": len(attendances) / expected_users.count()
             if expected_users.count() > 0
             else 0,
-            "needs_verficiation_starting_attendances": needs_verficiation_starting_attendances,
+            "needs_verficiation_starting_attendances": needs_verification_starting_attendances,
             "starting_attendances": starting_attendances,
             "non_starting_attended_users": non_starting_attended_users,
             "starting_attendance_ratio": len(starting_attendances) / expected_users.count()
