@@ -10,7 +10,9 @@ from portal.models import (
     Enrollment,
     Meeting,
     MeetingAttendance,
+    MeetingStartingAttendance,
     MeetingAttendanceCode,
+    MeetingStartingAttendanceCode,
     MentorApplication,
     Organization,
     Project,
@@ -118,10 +120,20 @@ class MeetingAttendanceInline(admin.TabularInline):
     model = MeetingAttendance
     extra = 1
 
+class MeetingStartingAttendanceInline(admin.TabularInline):
+    classes = ["collapse"]
+    model = MeetingStartingAttendance
+    extra = 1
+
 
 class MeetingAttendanceCodeInline(admin.TabularInline):
     classes = ["collapse"]
     model = MeetingAttendanceCode
+    extra = 1
+
+class MeetingStartingAttendanceCodeInline(admin.TabularInline):
+    classes = ["collapse"]
+    model = MeetingStartingAttendanceCode
     extra = 1
 
 
@@ -406,7 +418,7 @@ class MeetingAdmin(admin.ModelAdmin):
     list_display = ("display_name", "type", "starts_at", "is_published")
     search_fields = ("name", "type")
     list_filter = ("starts_at", "type", "is_published")
-    inlines = (MeetingAttendanceCodeInline, MeetingAttendanceInline)
+    inlines = (MeetingAttendanceCodeInline, MeetingStartingAttendanceCodeInline, MeetingAttendanceInline, MeetingStartingAttendanceInline)
     actions = (make_published,)
 
     fieldsets = (

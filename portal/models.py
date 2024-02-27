@@ -1554,6 +1554,42 @@ class MeetingAttendanceCode(TimestampedModel):
             )
         ]
 
+class MeetingStartingAttendanceCode(TimestampedModel):
+    code = models.CharField(max_length=20, primary_key=True)
+    meeting = models.ForeignKey(
+        Meeting, on_delete=models.CASCADE, related_name="starting_attendance_codes"
+    )
+    small_group = models.ForeignKey(
+        SmallGroup,
+        on_delete=models.CASCADE,
+        blank=True,
+        null=True,
+        related_name="starting_attendance_codes",
+    )
+
+    @property
+    def is_valid(self):
+        return self.meeting.is_ongoing
+
+    def __str__(self) -> str:
+        return self.code or "Unknown Starting Attendance Code"
+
+    class Meta:
+        indexes = [
+            models.Index(fields=["code"]),
+            models.Index(fields=["meeting"]),
+            models.Index(fields=["meeting", "small_group"]),
+        ]
+        constraints = [
+            # Don't allow multiple attendance codes for the same meeting and small group
+            # Unfortunately, this doesn't prevent duplicate attendance codes for null small group and same meeting
+            models.UniqueConstraint(
+                fields=["meeting", "small_group"],
+                name="unique_meeting_starting_attendance_small_group_code",
+            )
+        ]
+
+
 
 class StatusUpdate(TimestampedModel):
     semester = models.ForeignKey(
