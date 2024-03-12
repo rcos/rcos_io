@@ -1,0 +1,58 @@
+{% extends "portal/base.html" %}
+{% load portal_extras %}
+
+{% block ogp %}
+<meta property="og:title" content="Commits | RCOS IO" />
+<meta property="og:type" content="website" />
+<meta property="og:url" content="{{ request.build_absolute_uri }}" />
+<meta property="og:description" content="Commits | Rensselaer Center for Open Source" />
+<meta property="og:image" content="https://raw.githubusercontent.com/rcos/rcos-branding/master/img/lockup-red.png" />
+{% endblock %}
+
+{% block title %}
+Commits | RCOS IO
+{% endblock %}
+
+{% block content %}
+<section class="section">
+    <div class="container">
+        <h1 class="title">Commits</h1>
+
+        {% for url, commit in commits.items %}
+            {% if commit.committer == username %}
+                <div>
+                    <a href="{{ url }}">{{ url }}</a>
+                    <span class="has-text-success-dark">+{{ commit.additions }}</span>
+                    <span class="has-text-danger">-{{ commit.deletions }}</span>
+                </div>
+            {% endif %}
+        {% endfor %}
+        {% if commits.items|length > 0 %}
+            <br />
+            <button id="copy-commits" onclick="CopyCommits()" class="button">Copy</button>
+        {% else %}
+            <div>No Commits Available.</div>
+        {% endif %}
+    </div>
+</section>
+
+{{ commits|json_script:"commits" }}
+<script data-username="{{ username }}">
+    const data = document.currentScript.dataset;
+    const username = data.username;
+    const commits = JSON.parse(
+        document.getElementById('commits').textContent
+    );
+    function CopyCommits() {
+        let commits_str = ""
+        for (let url in commits) {
+            if (commits[url].committer == username) {
+                commits_str += url + "\n"
+            }
+        }
+        console.log(commits_str)
+        navigator.clipboard.writeText(commits_str)
+    }
+</script>
+
+{% endblock %}
