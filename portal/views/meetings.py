@@ -37,6 +37,8 @@ from ..models import (
     Meeting,
     MeetingAttendance,
     MeetingAttendanceCode,
+    MeetingStartingAttendance,
+    MeetingStartingAttendanceCode,
     Semester,
     SmallGroup,
     User,
@@ -53,6 +55,15 @@ def generate_code(code_length: int = 5):
         code += random.choice(string.ascii_uppercase)
 
     return code
+
+def generate_starting_code(code_length: int = 5):
+    """Generates & returns a new starting attendance code."""
+    starting_code = ""
+
+    for _ in range(code_length):
+        starting_code += random.choice(string.ascii_uppercase)
+    
+    return starting_code
 
 
 def meeting_to_event(meeting: Meeting) -> dict[str, Any]:
@@ -180,6 +191,25 @@ class MeetingDetailView(DetailView):
                         .first()
                     )
                 return code
+            
+            def get_or_create_starting_attendance_code():
+                try:
+                    starting_code, is_starting_code_new = self.object.starting_attendance_codes.get_or_create(
+                        **query,
+                        defaults={"code": generate_starting_code(), "small_group": small_group},
+                    )
+                except MeetingStartingAttendanceCode.MultipleObjectsReturned as err:
+                    logger.warning(
+                        f"Two or more global starting attendance codes found for meeting {self.object.pk}"
+                    )
+                    capture_exception(err)
+
+                    starting_code = (
+                        self.object.starting_attendance_codes.filter(**query)
+                        .order_by("code")
+                        .first()
+                    )
+                return starting_code
 
             if self.object.is_ongoing:
                 code = cache.get_or_set(
@@ -187,10 +217,17 @@ class MeetingDetailView(DetailView):
                     default=get_or_create_attendance_code,
                     timeout=60 * 30,
                 )
+                starting_code = cache.get_or_set(
+                    f"starting_attendance_codes:{self.object.pk}:{small_group.pk if small_group else 'none'}",
+                    default=get_or_create_starting_attendance_code,
+                    timeout=60 * 30,
+                )
             else:
                 code = None
+                starting_code = None
 
             data["code"] = code
+            data["starting_code"] = starting_code
 
             if self.request.user.is_superuser:
                 data["small_group_attendance_ratios"] = cache.get_or_set(

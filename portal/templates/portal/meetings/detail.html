@@ -177,6 +177,14 @@
                     {% if not target_small_group and meeting.type == "small_group" %}
                     <p class="has-text-grey">Do not show this during Small Group meetings. Use your Small Group's.</p>
                     {% endif %}
+                {% elif starting_code %}
+                    <details>
+                        <summary>Starting Attendance Code</summary>
+                        <h1 class="title">{{ starting_code }}</h1>
+                    </details>
+                    {% if not target_small_group and meeting.type == "small_group" %}
+                    <p class="has-text-grey">Do not show this during Small Group meetings. Use your Small Group's.</p>
+                    {% endif %}
                 {% else %}
                     <p class="has-text-grey">
                         {% if meeting.is_upcoming %}
@@ -195,7 +203,18 @@
                 <details>
                     <summary>Attendance Code</summary>
                     <h1 class="title">{{ code }}</h1>
-                    <h1 class="title">{{ code }}</h1>
+                </details>
+                {% if not target_small_group and meeting.type == "small_group" %}
+                <p class="has-text-grey">Do not show this during Small Group meetings. Use your Small Group's.</p>
+                {% endif %}
+            </div>
+            {% endif %}
+
+            {% if starting_code %}
+            <div class="notification is-dark attendance-box block" id="pinned-starting-attendance-box">
+                <details>
+                    <summary>Starting Attendance Code</summary>
+                    <h1 class="title">{{ starting_code }}</h1>
                 </details>
                 {% if not target_small_group and meeting.type == "small_group" %}
                 <p class="has-text-grey">Do not show this during Small Group meetings. Use your Small Group's.</p>
@@ -392,8 +411,10 @@
     document.addEventListener("DOMContentLoaded", function () {
         const mainAttendanceBox = document.getElementById("main-attendance-box")
         const pinnedAttendanceBox = document.getElementById("pinned-attendance-box")
+        const pinnedStartingAttendanceBox = document.getElementById("pinned-starting-attendance-box")
         
         const attendanceBoxDetails = document.querySelectorAll(".attendance-box details")
+        const startingAttendanceBoxDetails = document.querySelectorAll(".starting-attendance-box details")
         
         if (mainAttendanceBox && pinnedAttendanceBox) {
             function showAttendanceCode() {
@@ -445,6 +466,58 @@
             })
     
             observer.observe(mainAttendanceBox)
+        }
+
+        if (mainStartingAttendanceBox && pinnedStartingAttendanceBox) {
+            function showStartingAttendanceCode() {
+                startingAttendanceBoxDetails.forEach(details => details.open = true)
+            }
+    
+            function hideStartingAttendanceCode() {
+                startingAttendanceBoxDetails.forEach(details => details.open = false)
+            }
+
+            // On page load, determine whether to start with the attendance code is
+            // displayed or hidden by looking at the browser cookie we set
+            if (getCookie("isStartingAttendanceCodeShown") === "true") {
+                showStartingAttendanceCode()
+            } else {
+                hideStartingAttendanceCode()
+            }
+
+            // Keep the two attendance code displays in sync by listening for
+            // the toggle event which fires when the user toggles whether the code
+            // is shown or not. Sets a browser cookie that stores the status and
+            // shows/hides the other attendance code
+            startingAttendanceBoxDetails.forEach(details => {
+                details.addEventListener("toggle", function() {
+                    setCookie("isStartingAttendanceCodeShown", details.open, 1)
+                    if (details.open) {
+                        showStartingAttendanceCode()
+                    } else {
+                        hideStartingAttendanceCode()
+                    }
+                })
+            })
+
+            // Detect when the main attendance code is visible and not visible on the page
+            // after scrolling, so we can show the pinned attendance code when the main
+            // one has been scrolled off the page
+            const observer = new IntersectionObserver((entries) => {
+                entries.forEach((entry) => {
+                    // If less than 75% of the main attendance code is visible on the screen,
+                    // show the pinned one
+                    if (entry.intersectionRatio < 0.50) {
+                        pinnedStartingAttendanceBox.classList.add("is-shown")
+                    } else {
+                        pinnedStartingAttendanceBox.classList.remove("is-shown")
+                    }
+                })
+            }, {
+                threshold: [0, .25, .5, .75, 1],
+            })
+    
+            observer.observe(mainStartingAttendanceBox)
         }
     })
 </script>
