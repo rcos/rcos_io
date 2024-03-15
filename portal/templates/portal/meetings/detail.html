@@ -177,7 +177,21 @@
                     {% if not target_small_group and meeting.type == "small_group" %}
                     <p class="has-text-grey">Do not show this during Small Group meetings. Use your Small Group's.</p>
                     {% endif %}
-                {% elif starting_code %}
+                {% else %}
+                    <p class="has-text-grey">
+                        {% if meeting.is_upcoming %}
+                        The attendance code will be displayed here when the meeting starts.
+                        <a href="#" onclick="window.location.reload()">Refresh</a> the page when the meeting starts.
+                        {% elif meeting.is_over %}
+                        The meeting has ended and the attendance code can no longer be displayed. You can still add
+                        students manually below.
+                        {% endif %}
+                    </p>
+                {% endif %}
+            </div>
+
+            <div class="box has-text-centered starting-attendance-box" id="main-starting-attendance-box">
+                {% if starting_code %}
                     <details>
                         <summary>Starting Attendance Code</summary>
                         <h1 class="title">{{ starting_code }}</h1>
@@ -188,7 +202,7 @@
                 {% else %}
                     <p class="has-text-grey">
                         {% if meeting.is_upcoming %}
-                        The attendance code will be displayed here when the meeting starts.
+                        The starting attendance code will be displayed here when the meeting starts.
                         <a href="#" onclick="window.location.reload()">Refresh</a> the page when the meeting starts.
                         {% elif meeting.is_over %}
                         The meeting has ended and the attendance code can no longer be displayed. You can still add
@@ -208,20 +222,7 @@
                 <p class="has-text-grey">Do not show this during Small Group meetings. Use your Small Group's.</p>
                 {% endif %}
             </div>
-            {% endif %}
-
-            {% if starting_code %}
-            <div class="notification is-dark attendance-box block" id="pinned-starting-attendance-box">
-                <details>
-                    <summary>Starting Attendance Code</summary>
-                    <h1 class="title">{{ starting_code }}</h1>
-                </details>
-                {% if not target_small_group and meeting.type == "small_group" %}
-                <p class="has-text-grey">Do not show this during Small Group meetings. Use your Small Group's.</p>
-                {% endif %}
-            </div>
-            {% endif %}
-            
+            {% endif %}            
 
             <div class="columns mt-6 block is-vcentered" id="attendance">
                 <div class="column is-narrow">
