@@ -80,6 +80,17 @@ class SubmitAttendanceForm(forms.Form):
     helper.form_method = "POST"
     helper.form_action = "submit_attendance"
 
+class SubmitStartingAttendanceForm(forms.Form):
+    code = forms.CharField(
+        label="Starting Attendance Code",
+        help_text="The starting attendance code your Mentor or meeting host displayed at the beginning of the meeting"
+    )
+
+    helper = FormHelper()
+    helper.add_input(Submit("submit", "Submit", css_class="button"))
+    helper.form_method = "POST"
+    helper.form_action = "submit_starting_attendance"
+
 
 class SemesterCSVUploadForm(SemesterForm):
     csv = forms.FileField()

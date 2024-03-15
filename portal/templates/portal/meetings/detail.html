@@ -98,6 +98,7 @@
 
                 {% if request.user.is_authenticated and request.user.is_rpi and not user_attendance %}
                     {% if meeting.is_ongoing %}
+                    {% crispy submit_starting_attendance_form %}
                     {% crispy submit_attendance_form %}
                     {% elif meeting.is_upcoming %}
                     <small class="has-text-grey">Attendance can be submitted here during the meeting. <a href="#" onclick="window.location.reload()">Refresh</a> the page when the meeting starts.</small>

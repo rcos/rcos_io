@@ -28,7 +28,7 @@ from django.views.generic.edit import FormView
 from sentry_sdk import capture_exception, capture_message
 
 from portal.checks import CheckUserCanScheduleWorkshop
-from portal.forms import SubmitAttendanceForm, WorkshopCreateForm
+from portal.forms import SubmitAttendanceForm, SubmitStartingAttendanceForm, WorkshopCreateForm
 from portal.views import UserRequiresSetupMixin
 from portal.views.admin import is_admin
 
@@ -138,10 +138,19 @@ class MeetingDetailView(DetailView):
                 )
             except MeetingAttendance.DoesNotExist:
                 data["user_attendance"] = None
+            
+            try:
+                data["user_starting_attendance"] = MeetingStartingAttendance.objects.get(
+                    meeting=self.object, user=self.request.user
+                )
+            except MeetingStartingAttendance.DoesNotExist:
+                data["user_starting_attendance"] = None
 
             data["submit_attendance_form"] = SubmitAttendanceForm()
+            data["submit_starting_attendance_form"] = SubmitStartingAttendanceForm()
         else:
             data["submit_attendance_form"] = None
+            data["submit_starting_attendance_form"] = None
 
         data["can_manage_attendance"] = False
 
@@ -335,6 +344,88 @@ class SubmitAttendanceFormView(LoginRequiredMixin, UserRequiresSetupMixin, FormV
             )
 
         return redirect(meeting_attendance_code.meeting.get_absolute_url())
+
+
+class SubmitStartingAttendanceFormView(LoginRequiredMixin, UserRequiresSetupMixin, FormView):
+    template_name = "portal/meetings/attendance/submit.html"
+    form_class = SubmitStartingAttendanceForm
+    success_url = "/meetings"
+
+    def form_valid(self, form: SubmitStartingAttendanceForm):
+        code = form.cleaned_data["code"]
+        user = self.request.user
+
+        # Search for attendance code
+        try:
+            meeting_starting_attendance_code = MeetingStartingAttendanceCode.objects.select_related(
+                "meeting", "small_group"
+            ).get(pk__iexact=code)
+        except MeetingStartingAttendanceCode.DoesNotExist:
+            messages.error(
+                self.request,
+                "Attendance code not recognized. Your attendance was not recorded.",
+            )
+            return super().form_valid(form)
+
+        user.enrollments.get_or_create(
+            semester_id=meeting_starting_attendance_code.meeting.semester_id
+        )
+
+        if meeting_starting_attendance_code.is_valid:
+            # Confirm user is in small group if it is for a small group
+            if (
+                meeting_starting_attendance_code.small_group
+                and not meeting_starting_attendance_code.small_group.has_user(user)
+            ):
+                messages.warning(
+                    self.request,
+                    "That is not your Small Group's attendance code... Nice try. If we're wrong about this, let your Mentor know immediately!",
+                )
+                capture_message(
+                    f"User {self.request.user} submitted attendance code {meeting_attendance_code} for meeting {meeting_attendance_code.meeting} from wrong Small Group"
+                )
+                return redirect(reverse("submit_attendance"))
+
+            new_attendance = MeetingStartingAttendance(
+                meeting=meeting_starting_attendance_code.meeting,
+                user=user,
+                submitted_by=self.request.user,
+                is_verified=random.random()
+                > meeting_starting_attendance_code.meeting.attendance_chance_verification_required,
+            )
+
+            # If the user has previously failed verification, require verification
+            # until they get explicitly verified.
+            # This cache key is cleared when a Mentor verifies them.
+            if cache.has_key(f"failed-verification:{user.pk}"):
+                new_attendance.is_verified = False
+
+            try:
+                new_attendance.save()
+            except IntegrityError:
+                messages.warning(
+                    self.request,
+                    "You've already submitted attendance for this meeting!",
+                )
+                return redirect(reverse("submit_starting_attendance"))
+
+            if new_attendance.is_verified:
+                messages.success(
+                    self.request,
+                    f"Your attendance at {meeting_starting_attendance_code.meeting} has been recorded!",
+                )
+            else:
+                messages.warning(
+                    self.request,
+                    f"VERIFICATION REQUIRED! Contact your Small Group Mentor to verify your attendance at {meeting_starting_attendance_code.meeting}.",
+                )
+        else:
+            messages.error(
+                self.request,
+                "That attendance code is not currently valid. Your attendance was not recorded.",
+            )
+
+        return redirect(meeting_starting_attendance_code.meeting.get_absolute_url())
 
 
 @login_required
