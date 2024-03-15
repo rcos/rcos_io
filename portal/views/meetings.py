@@ -138,15 +138,17 @@ class MeetingDetailView(DetailView):
                 )
             except MeetingAttendance.DoesNotExist:
                 data["user_attendance"] = None
-            
+
+            data["submit_attendance_form"] = SubmitAttendanceForm()
+
             try:
+                # TODO: Error being thrown here.
                 data["user_starting_attendance"] = MeetingStartingAttendance.objects.get(
                     meeting=self.object, user=self.request.user
                 )
             except MeetingStartingAttendance.DoesNotExist:
                 data["user_starting_attendance"] = None
 
-            data["submit_attendance_form"] = SubmitAttendanceForm()
             data["submit_starting_attendance_form"] = SubmitStartingAttendanceForm()
         else:
             data["submit_attendance_form"] = None
@@ -384,7 +386,7 @@ class SubmitStartingAttendanceFormView(LoginRequiredMixin, UserRequiresSetupMixi
                 capture_message(
                     f"User {self.request.user} submitted attendance code {meeting_attendance_code} for meeting {meeting_attendance_code.meeting} from wrong Small Group"
                 )
-                return redirect(reverse("submit_attendance"))
+                return redirect(reverse("submit_starting_attendance"))
 
             new_attendance = MeetingStartingAttendance(
                 meeting=meeting_starting_attendance_code.meeting,
