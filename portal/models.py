@@ -4,6 +4,7 @@ from collections import defaultdict
 from decimal import Decimal
 from time import sleep
 from typing import Optional
+from datetime import datetime, date, time
 
 from django.conf import settings
 from django.contrib.auth.models import AbstractUser, BaseUserManager
@@ -1569,7 +1570,11 @@ class MeetingStartingAttendanceCode(TimestampedModel):
 
     @property
     def is_valid(self):
-        return self.meeting.is_ongoing
+        time_passed = datetime.now(timezone.utc) - self.meeting.starts_at
+        minutes_passed = time_passed.total_seconds() / 60
+        prints(minutes_passed)
+        print(minutes_passed <= 15)
+        return self.meeting.is_ongoing and minutes_passed <= 15
 
     def __str__(self) -> str:
         return self.code or "Unknown Starting Attendance Code"
