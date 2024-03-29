@@ -1201,6 +1201,13 @@ class Meeting(TimestampedModel):
         return self.starts_at < now < self.ends_at
 
     @property
+    def is_starting_valid(self):
+        now = timezone.now();
+        time_passed = now - self.starts_at
+        minutes_passed = time_passed.total_seconds() / 60
+        return self.is_ongoing and minutes_passed <= 15
+
+    @property
     def expected_attendance_users(self):
         # Get expected users based on meeting type and desired small group
         if self.type == Meeting.COORDINATOR:
@@ -1570,11 +1577,10 @@ class MeetingStartingAttendanceCode(TimestampedModel):
 
     @property
     def is_valid(self):
-        time_passed = datetime.now(timezone.utc) - self.meeting.starts_at
+        now = timezone.now();
+        time_passed = now - self.starts_at
         minutes_passed = time_passed.total_seconds() / 60
-        prints(minutes_passed)
-        print(minutes_passed <= 15)
-        return self.meeting.is_ongoing and minutes_passed <= 15
+        return self.is_ongoing and minutes_passed <= 15
 
     def __str__(self) -> str:
         return self.code or "Unknown Starting Attendance Code"
