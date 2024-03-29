@@ -274,6 +274,108 @@
             </form>
 
             <div class="columns">
+                {% if meeting.is_starting_valid %}
+                <div class="column">
+                    <h2 class="subtitle">Starting Attended</h2>
+                    <small>{{ starting_attendances|length }} total</small>
+                    <div style="max-height: 400px; overflow-y: auto;">
+                        <table class="table is-fullwidth">
+                            <tbody>
+                            {% for attendance in starting_attendances %}
+                            <tr>
+                                <td>
+                                    <form method="post" action="{% url 'verify_starting_attendance' %}" method="post">
+                                        {% csrf_token %}
+                                        <input type="hidden" name="user" value="{{ attendance.user.pk }}">
+                                        <input type="hidden" name="meeting" value="{{ meeting.pk }}">
+                                        <input type="hidden" name="action" value="delete">
+                                        <button class="button is-small is-danger is-inverted" type="submit">❌</button>
+                                    </form>
+                                </td>
+                                <td>
+                                    <a class="is-block" href="{{ attendance.user.get_absolute_url }}?semester={{ meeting.semester.pk }}">{{ attendance.user }}</a>
+                                    {% if attendance.submitted_by and attendance.submitted_by != attendance.user %}<small class="is-block has-text-grey">Submitted by <a href="{{ attendance.submitted_by.get_absolute_url }}"">{{ attendance.submitted_by }}</a></small>{% endif %}
+                                </td>
+                                <td>
+                                    <small class="has-text-grey">{{ attendance.created_at|date:"n/j g:i a" }}</small>
+                                </td>
+                            </tr>
+                            {% endfor %}
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+
+                <div class="column">
+                    <h2 class="subtitle">Requires Verification</h2>
+                    <small>{{ needs_verification_starting_attendances|length }} total</small>
+                    <table class="table is-fullwidth">
+                        <tbody>
+                            {% for attendance in needs_verification_starting_attendances %}
+                            <tr>
+                                <td>
+                                    <a class="is-inline-block mr-2" href="{{ attendance.user.get_absolute_url }}?semester={{ meeting.semester.pk }}">{{ attendance.user }}</a>
+                                </td>
+                                <td>
+                                    <form action="{% url 'verify_starting_attendance' %}" method="post" class="is-inline-block">
+                                        {% csrf_token %}
+                                        <input type="hidden" name="user" value="{{ attendance.user.pk }}">
+                                        {% if target_small_group %}
+                                        <input type="hidden" name="small_group" value="{{ target_small_group.pk }}">
+                                        {% endif %}
+                                        <input type="hidden" name="meeting" value="{{ meeting.pk }}">
+                                        <input type="hidden" name="action" value="accept">
+                                        <button class="button is-small is-success is-light">Present</button>
+                                    </form>
+        
+                                    <form action="{% url 'verify_attendance' %}" method="post" class="is-inline-block" onsubmit="return confirm('Double check that {{ attendance.user }} is not present before continuing.')">
+                                        {% csrf_token %}
+                                        <input type="hidden" name="user" value="{{ attendance.user.pk }}">
+                                        {% if target_small_group %}
+                                        <input type="hidden" name="small_group" value="{{ target_small_group.pk }}">
+                                        {% endif %}
+                                        <input type="hidden" name="meeting" value="{{ meeting.pk }}">
+                                        <input type="hidden" name="action" value="deny">
+                                        <button class="button is-small is-danger is-light">Not Present</button>
+                                    </form>
+                                </td>
+                                <td>
+                                    <small class="has-text-grey">{{ attendance.created_at|date:"n/j g:i a" }}</small>
+                                </td>
+                            </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+
+                <div class="column">
+                    <h2 class="subtitle">Not Starting Attended</h2>
+                    <small>{{ non_starting_attended_users|length }} total</small>
+
+                    <div style="max-height: 400px; overflow-y: auto;">
+                        <table class="table is-fullwidth">
+                            <tbody>
+                                {% for user in non_starting_attended_users %}
+                                <tr>
+                                    <td>
+                                        <form method="post" action="{% url 'verify_starting_attendance' %}">
+                                            {% csrf_token %}
+                                            <input type="hidden" name="user" value="{{ user.pk }}">
+                                            <input type="hidden" name="meeting" value="{{ meeting.pk }}">
+                                            <button class="button is-small is-success is-inverted" type="submit">➕</button>
+                                        </form>
+                                    </td>
+                                    <td>
+                                        <a href="{{ user.get_absolute_url }}?semester={{ meeting.semester.pk }}">{{ user }}</a>
+                                    </td>
+                                </tr>
+                                {% endfor %}
+
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+                {% else %}
                 <div class="column">
                     <h2 class="subtitle">Attended</h2>
                     <small>{{ attendances|length }} total</small>
@@ -374,6 +476,7 @@
                         </table>
                     </div>
                 </div>
+                {% endif %}
             </div>
 
             {% if meeting.is_over %}

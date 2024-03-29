@@ -429,7 +429,7 @@ class SubmitStartingAttendanceFormView(LoginRequiredMixin, UserRequiresSetupMixi
 
         return redirect(meeting_starting_attendance_code.meeting.get_absolute_url())
 
-
+#TODO: Add this for starting attendance
 @login_required
 def manually_add_or_verify_attendance(request: HttpRequest) -> HttpResponse:
     if request.method == "POST":

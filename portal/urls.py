@@ -95,7 +95,7 @@ urlpatterns = [
         "meetings/attendance/verify/",
         manually_add_or_verify_attendance,
         name="verify_attendance",
-    ),
+    ), #TODO: Add verify for starting attendance
     path("meetings/<int:pk>/", MeetingDetailView.as_view(), name="meetings_detail"),
     path(
         "meetings/<int:pk>/export/",
