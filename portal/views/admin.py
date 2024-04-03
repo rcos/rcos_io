@@ -1,3 +1,4 @@
+import csv
 import logging
 from csv import DictReader
 from io import TextIOWrapper
@@ -5,10 +6,11 @@ from typing import Any, TypedDict
 
 from django.contrib import messages
 from django.contrib.auth.decorators import login_required, user_passes_test
-from django.db.models import Q
+from django.db.models import Q, Count
+from django.http import HttpResponse
 from django.shortcuts import render
 
-from portal.forms import SemesterCSVUploadForm
+from portal.forms import SemesterCSVUploadForm, SemesterForm
 from portal.models import Enrollment, Project, ProjectPitch, Semester, SmallGroup, User
 
 logger = logging.getLogger(__name__)
@@ -284,5 +286,53 @@ def import_google_form_projects(request):
             "source": "Google Forms",
             "form": form,
             "expected_columns": GoogleFormProjectPitchRow.__required_keys__,
+        },
+    )
+
+
+@login_required
+@user_passes_test(is_admin)
+def export_semester_projects(request):
+    if request.method == "POST":
+        form = SemesterForm(request.POST, request.FILES)
+        if form.is_valid():
+            semester = Semester.objects.get(pk=request.POST["semester"])
+
+            # Create CSV
+            filename = "RCOS Projects"
+
+            # Set the appropriate response headers so the browser expects a CSV file download
+            response = HttpResponse(
+                content_type="text/csv",
+                headers={"Content-Disposition": f'attachment; filename="{filename}.csv"'},
+            )
+
+            # Create a CSV writer that writes to the response
+            writer = csv.writer(response)
+
+            # Write the headers
+            writer.writerow(
+                ["semester", "project name", "enrollments"]
+            )
+
+            for result in semester.projects.annotate(enrollment_count=Count("enrollments")):
+                writer.writerow(
+                    [
+                        semester,
+                        result.name,
+                        result.enrollment_count,
+                    ]
+                )
+
+            return response
+    else:
+        form = SemesterForm()
+
+    return render(
+        request,
+        "portal/admin/export/export.html",
+        {
+            "title": "Export Semester Projects",
+            "form": form,
         },
     )

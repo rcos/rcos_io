@@ -1,6 +1,7 @@
 from django.urls import path
 
 from portal.views.admin import (
+    export_semester_projects,
     import_google_form_projects,
     import_submitty_enrollments,
     import_submitty_teams,
@@ -143,5 +144,10 @@ urlpatterns = [
         "admin/import/projects/",
         import_google_form_projects,
         name="import_projects",
+    ),
+    path(
+        "admin/export/projects/",
+        export_semester_projects,
+        name="export_projects",
     ),
 ]

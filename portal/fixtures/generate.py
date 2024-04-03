@@ -38,7 +38,21 @@ tags = [
     for index, tag in enumerate(tags_raw)
 ]
 
-print(json.dumps(tags))
+semester_ids = ["202201", "202208", "202301"]
+semesters = [
+    {
+        "model": "portal.Semester",
+        "pk": semester_id,
+        "fields": {
+            "name": semester_id,
+            "start_date": "2023-12-29",
+            "end_date": "2024-12-29",
+            "updated_at": "2022-12-29",
+            "created_at": "2022-12-29",
+        },
+    }
+    for semester_id in semester_ids
+]
 
 users = []
 for i in range(2, 50):
@@ -72,7 +86,7 @@ for i in range(30):
                 "name": f.unique.word("adjective").capitalize() + " Project",
                 "owner": choice(users)["pk"],
                 "is_approved": random() > 0.2,
-                "summary": f.sentence(),
+                "description": f.sentence(),
                 "updated_at": "2022-12-29T02:30:00+0000",
                 "created_at": "2022-12-29T02:30:00+0000",
             },
@@ -132,4 +146,4 @@ for user in users:
     pk += 1
 
 
-print(json.dumps(users + projects + enrollments))
+print(json.dumps([*semesters, *tags, *users, *projects, *enrollments], indent=4))

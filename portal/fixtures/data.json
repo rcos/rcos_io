@@ -1,0 +1,3140 @@
+[
+    {
+        "model": "portal.Semester",
+        "pk": "202201",
+        "fields": {
+            "name": "202201",
+            "start_date": "2023-12-29",
+            "end_date": "2024-12-29",
+            "updated_at": "2022-12-29",
+            "created_at": "2022-12-29"
+        }
+    },
+    {
+        "model": "portal.Semester",
+        "pk": "202208",
+        "fields": {
+            "name": "202208",
+            "start_date": "2023-12-29",
+            "end_date": "2024-12-29",
+            "updated_at": "2022-12-29",
+            "created_at": "2022-12-29"
+        }
+    },
+    {
+        "model": "portal.Semester",
+        "pk": "202301",
+        "fields": {
+            "name": "202301",
+            "start_date": "2023-12-29",
+            "end_date": "2024-12-29",
+            "updated_at": "2022-12-29",
+            "created_at": "2022-12-29"
+        }
+    },
+    {
+        "model": "portal.ProjectTag",
+        "pk": 0,
+        "fields": {
+            "name": "javascript",
+            "updated_at": "2022-12-29T02:30:00+0000",
+            "created_at": "2022-12-29T02:30:00+0000"
+        }
+    },
+    {
+        "model": "portal.ProjectTag",
+        "pk": 1,
+        "fields": {
+            "name": "typescript",
+            "updated_at": "2022-12-29T02:30:00+0000",
+            "created_at": "2022-12-29T02:30:00+0000"
+        }
+    },
+    {
+        "model": "portal.ProjectTag",
+        "pk": 2,
+        "fields": {
+            "name": "python",
+            "updated_at": "2022-12-29T02:30:00+0000",
+            "created_at": "2022-12-29T02:30:00+0000"
+        }
+    },
+    {
+        "model": "portal.ProjectTag",
+        "pk": 3,
+        "fields": {
+            "name": "html",
+            "updated_at": "2022-12-29T02:30:00+0000",
+            "created_at": "2022-12-29T02:30:00+0000"
+        }
+    },
+    {
+        "model": "portal.ProjectTag",
+        "pk": 4,
+        "fields": {
+            "name": "css",
+            "updated_at": "2022-12-29T02:30:00+0000",
+            "created_at": "2022-12-29T02:30:00+0000"
+        }
+    },
+    {
+        "model": "portal.ProjectTag",
+        "pk": 5,
+        "fields": {
+            "name": "c",
+            "updated_at": "2022-12-29T02:30:00+0000",
+            "created_at": "2022-12-29T02:30:00+0000"
+        }
+    },
+    {
+        "model": "portal.ProjectTag",
+        "pk": 6,
+        "fields": {
+            "name": "c++",
+            "updated_at": "2022-12-29T02:30:00+0000",
+            "created_at": "2022-12-29T02:30:00+0000"
+        }
+    },
+    {
+        "model": "portal.ProjectTag",
+        "pk": 7,
+        "fields": {
+            "name": "rust",
+            "updated_at": "2022-12-29T02:30:00+0000",
+            "created_at": "2022-12-29T02:30:00+0000"
+        }
+    },
+    {
+        "model": "portal.ProjectTag",
+        "pk": 8,
+        "fields": {
+            "name": "c#",
+            "updated_at": "2022-12-29T02:30:00+0000",
+            "created_at": "2022-12-29T02:30:00+0000"
+        }
+    },
+    {
+        "model": "portal.ProjectTag",
+        "pk": 9,
+        "fields": {
+            "name": "php",
+            "updated_at": "2022-12-29T02:30:00+0000",
+            "created_at": "2022-12-29T02:30:00+0000"
+        }
+    },
+    {
+        "model": "portal.ProjectTag",
+        "pk": 10,
+        "fields": {
+            "name": "swift",
+            "updated_at": "2022-12-29T02:30:00+0000",
+            "created_at": "2022-12-29T02:30:00+0000"
+        }
+    },
+    {
+        "model": "portal.ProjectTag",
+        "pk": 11,
+        "fields": {
+            "name": "r",
+            "updated_at": "2022-12-29T02:30:00+0000",
+            "created_at": "2022-12-29T02:30:00+0000"
+        }
+    },
+    {
+        "model": "portal.ProjectTag",
+        "pk": 12,
+        "fields": {
+            "name": "golang",
+            "updated_at": "2022-12-29T02:30:00+0000",
+            "created_at": "2022-12-29T02:30:00+0000"
+        }
+    },
+    {
+        "model": "portal.ProjectTag",
+        "pk": 13,
+        "fields": {
+            "name": "ruby",
+            "updated_at": "2022-12-29T02:30:00+0000",
+            "created_at": "2022-12-29T02:30:00+0000"
+        }
+    },
+    {
+        "model": "portal.ProjectTag",
+        "pk": 14,
+        "fields": {
+            "name": "sql",
+            "updated_at": "2022-12-29T02:30:00+0000",
+            "created_at": "2022-12-29T02:30:00+0000"
+        }
+    },
+    {
+        "model": "portal.ProjectTag",
+        "pk": 15,
+        "fields": {
+            "name": "kotlin",
+            "updated_at": "2022-12-29T02:30:00+0000",
+            "created_at": "2022-12-29T02:30:00+0000"
+        }
+    },
+    {
+        "model": "portal.ProjectTag",
+        "pk": 16,
+        "fields": {
+            "name": "hardware",
+            "updated_at": "2022-12-29T02:30:00+0000",
+            "created_at": "2022-12-29T02:30:00+0000"
+        }
+    },
+    {
+        "model": "portal.User",
+        "pk": 2,
+        "fields": {
+            "email": "student2@rpi.edu",
+            "first_name": "Amy",
+            "last_name": "Bryant",
+            "is_approved": true,
+            "role": "rpi",
+            "rcs_id": "student2",
+            "graduation_year": 2024,
+            "updated_at": "2022-12-29T02:30:00+0000",
+            "created_at": "2022-12-29T02:30:00+0000"
+        }
+    },
+    {
+        "model": "portal.User",
+        "pk": 3,
+        "fields": {
+            "email": "student3@rpi.edu",
+            "first_name": "Gregory",
+            "last_name": "Dixon",
+            "is_approved": true,
+            "role": "rpi",
+            "rcs_id": "student3",
+            "graduation_year": 2025,
+            "updated_at": "2022-12-29T02:30:00+0000",
+            "created_at": "2022-12-29T02:30:00+0000"
+        }
+    },
+    {
+        "model": "portal.User",
+        "pk": 4,
+        "fields": {
+            "email": "student4@rpi.edu",
+            "first_name": "Ryan",
+            "last_name": "Mccarthy",
+            "is_approved": true,
+            "role": "rpi",
+            "rcs_id": "student4",
+            "graduation_year": 2023,
+            "updated_at": "2022-12-29T02:30:00+0000",
+            "created_at": "2022-12-29T02:30:00+0000"
+        }
+    },
+    {
+        "model": "portal.User",
+        "pk": 5,
+        "fields": {
+            "email": "student5@rpi.edu",
+            "first_name": "Ronald",
+            "last_name": "Anderson",
+            "is_approved": true,
+            "role": "rpi",
+            "rcs_id": "student5",
+            "graduation_year": 2023,
+            "updated_at": "2022-12-29T02:30:00+0000",
+            "created_at": "2022-12-29T02:30:00+0000"
+        }
+    },
+    {
+        "model": "portal.User",
+        "pk": 6,
+        "fields": {
+            "email": "student6@rpi.edu",
+            "first_name": "Tammy",
+            "last_name": "Jackson",
+            "is_approved": true,
+            "role": "rpi",
+            "rcs_id": "student6",
+            "graduation_year": 2024,
+            "updated_at": "2022-12-29T02:30:00+0000",
+            "created_at": "2022-12-29T02:30:00+0000"
+        }
+    },
+    {
+        "model": "portal.User",
+        "pk": 7,
+        "fields": {
+            "email": "student7@rpi.edu",
+            "first_name": "Alexis",
+            "last_name": "Moreno",
+            "is_approved": false,
+            "role": "rpi",
+            "rcs_id": "student7",
+            "graduation_year": 2023,
+            "updated_at": "2022-12-29T02:30:00+0000",
+            "created_at": "2022-12-29T02:30:00+0000"
+        }
+    },
+    {
+        "model": "portal.User",
+        "pk": 8,
+        "fields": {
+            "email": "student8@rpi.edu",
+            "first_name": "Dean",
+            "last_name": "Schmidt",
+            "is_approved": true,
+            "role": "rpi",
+            "rcs_id": "student8",
+            "graduation_year": 2024,
+            "updated_at": "2022-12-29T02:30:00+0000",
+            "created_at": "2022-12-29T02:30:00+0000"
+        }
+    },
+    {
+        "model": "portal.User",
+        "pk": 9,
+        "fields": {
+            "email": "student9@rpi.edu",
+            "first_name": "Kathy",
+            "last_name": "Lane",
+            "is_approved": true,
+            "role": "rpi",
+            "rcs_id": "student9",
+            "graduation_year": 2023,
+            "updated_at": "2022-12-29T02:30:00+0000",
+            "created_at": "2022-12-29T02:30:00+0000"
+        }
+    },
+    {
+        "model": "portal.User",
+        "pk": 10,
+        "fields": {
+            "email": "student10@rpi.edu",
+            "first_name": "Nicholas",
+            "last_name": "Shaw",
+            "is_approved": true,
+            "role": "rpi",
+            "rcs_id": "student10",
+            "graduation_year": 2024,
+            "updated_at": "2022-12-29T02:30:00+0000",
+            "created_at": "2022-12-29T02:30:00+0000"
+        }
+    },
+    {
+        "model": "portal.User",
+        "pk": 11,
+        "fields": {
+            "email": "student11@rpi.edu",
+            "first_name": "George",
+            "last_name": "Walton",
+            "is_approved": true,
+            "role": "rpi",
+            "rcs_id": "student11",
+            "graduation_year": 2025,
+            "updated_at": "2022-12-29T02:30:00+0000",
+            "created_at": "2022-12-29T02:30:00+0000"
+        }
+    },
+    {
+        "model": "portal.User",
+        "pk": 12,
+        "fields": {
+            "email": "student12@rpi.edu",
+            "first_name": "Brianna",
+            "last_name": "Dawson",
+            "is_approved": true,
+            "role": "rpi",
+            "rcs_id": "student12",
+            "graduation_year": 2023,
+            "updated_at": "2022-12-29T02:30:00+0000",
+            "created_at": "2022-12-29T02:30:00+0000"
+        }
+    },
+    {
+        "model": "portal.User",
+        "pk": 13,
+        "fields": {
+            "email": "student13@rpi.edu",
+            "first_name": "Lisa",
+            "last_name": "Morton",
+            "is_approved": true,
+            "role": "rpi",
+            "rcs_id": "student13",
+            "graduation_year": 2023,
+            "updated_at": "2022-12-29T02:30:00+0000",
+            "created_at": "2022-12-29T02:30:00+0000"
+        }
+    },
+    {
+        "model": "portal.User",
+        "pk": 14,
+        "fields": {
+            "email": "student14@rpi.edu",
+            "first_name": "Katherine",
+            "last_name": "Parker",
+            "is_approved": true,
+            "role": "rpi",
+            "rcs_id": "student14",
+            "graduation_year": 2023,
+            "updated_at": "2022-12-29T02:30:00+0000",
+            "created_at": "2022-12-29T02:30:00+0000"
+        }
+    },
+    {
+        "model": "portal.User",
+        "pk": 15,
+        "fields": {
+            "email": "student15@rpi.edu",
+            "first_name": "Edward",
+            "last_name": "Woodard",
+            "is_approved": true,
+            "role": "rpi",
+            "rcs_id": "student15",
+            "graduation_year": 2024,
+            "updated_at": "2022-12-29T02:30:00+0000",
+            "created_at": "2022-12-29T02:30:00+0000"
+        }
+    },
+    {
+        "model": "portal.User",
+        "pk": 16,
+        "fields": {
+            "email": "student16@rpi.edu",
+            "first_name": "Vanessa",
+            "last_name": "Elliott",
+            "is_approved": true,
+            "role": "rpi",
+            "rcs_id": "student16",
+            "graduation_year": 2023,
+            "updated_at": "2022-12-29T02:30:00+0000",
+            "created_at": "2022-12-29T02:30:00+0000"
+        }
+    },
+    {
+        "model": "portal.User",
+        "pk": 17,
+        "fields": {
+            "email": "student17@rpi.edu",
+            "first_name": "Laura",
+            "last_name": "Johnson",
+            "is_approved": true,
+            "role": "rpi",
+            "rcs_id": "student17",
+            "graduation_year": 2025,
+            "updated_at": "2022-12-29T02:30:00+0000",
+            "created_at": "2022-12-29T02:30:00+0000"
+        }
+    },
+    {
+        "model": "portal.User",
+        "pk": 18,
+        "fields": {
+            "email": "student18@rpi.edu",
+            "first_name": "Scott",
+            "last_name": "Fernandez",
+            "is_approved": false,
+            "role": "rpi",
+            "rcs_id": "student18",
+            "graduation_year": 2025,
+            "updated_at": "2022-12-29T02:30:00+0000",
+            "created_at": "2022-12-29T02:30:00+0000"
+        }
+    },
+    {
+        "model": "portal.User",
+        "pk": 19,
+        "fields": {
+            "email": "student19@rpi.edu",
+            "first_name": "David",
+            "last_name": "Shah",
+            "is_approved": true,
+            "role": "rpi",
+            "rcs_id": "student19",
+            "graduation_year": 2023,
+            "updated_at": "2022-12-29T02:30:00+0000",
+            "created_at": "2022-12-29T02:30:00+0000"
+        }
+    },
+    {
+        "model": "portal.User",
+        "pk": 20,
+        "fields": {
+            "email": "student20@rpi.edu",
+            "first_name": "Sara",
+            "last_name": "Li",
+            "is_approved": true,
+            "role": "rpi",
+            "rcs_id": "student20",
+            "graduation_year": 2025,
+            "updated_at": "2022-12-29T02:30:00+0000",
+            "created_at": "2022-12-29T02:30:00+0000"
+        }
+    },
+    {
+        "model": "portal.User",
+        "pk": 21,
+        "fields": {
+            "email": "student21@rpi.edu",
+            "first_name": "Gwendolyn",
+            "last_name": "Jenkins",
+            "is_approved": true,
+            "role": "rpi",
+            "rcs_id": "student21",
+            "graduation_year": 2023,
+            "updated_at": "2022-12-29T02:30:00+0000",
+            "created_at": "2022-12-29T02:30:00+0000"
+        }
+    },
+    {
+        "model": "portal.User",
+        "pk": 22,
+        "fields": {
+            "email": "student22@rpi.edu",
+            "first_name": "Tiffany",
+            "last_name": "Joseph",
+            "is_approved": true,
+            "role": "rpi",
+            "rcs_id": "student22",
+            "graduation_year": 2024,
+            "updated_at": "2022-12-29T02:30:00+0000",
+            "created_at": "2022-12-29T02:30:00+0000"
+        }
+    },
+    {
+        "model": "portal.User",
+        "pk": 23,
+        "fields": {
+            "email": "student23@rpi.edu",
+            "first_name": "Scott",
+            "last_name": "Miller",
+            "is_approved": true,
+            "role": "rpi",
+            "rcs_id": "student23",
+            "graduation_year": 2022,
+            "updated_at": "2022-12-29T02:30:00+0000",
+            "created_at": "2022-12-29T02:30:00+0000"
+        }
+    },
+    {
+        "model": "portal.User",
+        "pk": 24,
+        "fields": {
+            "email": "student24@rpi.edu",
+            "first_name": "Holly",
+            "last_name": "Suarez",
+            "is_approved": false,
+            "role": "rpi",
+            "rcs_id": "student24",
+            "graduation_year": 2023,
+            "updated_at": "2022-12-29T02:30:00+0000",
+            "created_at": "2022-12-29T02:30:00+0000"
+        }
+    },
+    {
+        "model": "portal.User",
+        "pk": 25,
+        "fields": {
+            "email": "student25@rpi.edu",
+            "first_name": "Jordan",
+            "last_name": "Hughes",
+            "is_approved": true,
+            "role": "rpi",
+            "rcs_id": "student25",
+            "graduation_year": 2023,
+            "updated_at": "2022-12-29T02:30:00+0000",
+            "created_at": "2022-12-29T02:30:00+0000"
+        }
+    },
+    {
+        "model": "portal.User",
+        "pk": 26,
+        "fields": {
+            "email": "student26@rpi.edu",
+            "first_name": "Madeline",
+            "last_name": "Williams",
+            "is_approved": true,
+            "role": "rpi",
+            "rcs_id": "student26",
+            "graduation_year": 2023,
+            "updated_at": "2022-12-29T02:30:00+0000",
+            "created_at": "2022-12-29T02:30:00+0000"
+        }
+    },
+    {
+        "model": "portal.User",
+        "pk": 27,
+        "fields": {
+            "email": "student27@rpi.edu",
+            "first_name": "Kimberly",
+            "last_name": "Brown",
+            "is_approved": true,
+            "role": "rpi",
+            "rcs_id": "student27",
+            "graduation_year": 2023,
+            "updated_at": "2022-12-29T02:30:00+0000",
+            "created_at": "2022-12-29T02:30:00+0000"
+        }
+    },
+    {
+        "model": "portal.User",
+        "pk": 28,
+        "fields": {
+            "email": "student28@rpi.edu",
+            "first_name": "Matthew",
+            "last_name": "Reed",
+            "is_approved": true,
+            "role": "rpi",
+            "rcs_id": "student28",
+            "graduation_year": 2023,
+            "updated_at": "2022-12-29T02:30:00+0000",
+            "created_at": "2022-12-29T02:30:00+0000"
+        }
+    },
+    {
+        "model": "portal.User",
+        "pk": 29,
+        "fields": {
+            "email": "student29@rpi.edu",
+            "first_name": "Jamie",
+            "last_name": "Edwards",
+            "is_approved": true,
+            "role": "rpi",
+            "rcs_id": "student29",
+            "graduation_year": 2022,
+            "updated_at": "2022-12-29T02:30:00+0000",
+            "created_at": "2022-12-29T02:30:00+0000"
+        }
+    },
+    {
+        "model": "portal.User",
+        "pk": 30,
+        "fields": {
+            "email": "student30@rpi.edu",
+            "first_name": "Julie",
+            "last_name": "Brown",
+            "is_approved": true,
+            "role": "rpi",
+            "rcs_id": "student30",
+            "graduation_year": 2022,
+            "updated_at": "2022-12-29T02:30:00+0000",
+            "created_at": "2022-12-29T02:30:00+0000"
+        }
+    },
+    {
+        "model": "portal.User",
+        "pk": 31,
+        "fields": {
+            "email": "student31@rpi.edu",
+            "first_name": "Rebecca",
+            "last_name": "Hunt",
+            "is_approved": true,
+            "role": "rpi",
+            "rcs_id": "student31",
+            "graduation_year": 2023,
+            "updated_at": "2022-12-29T02:30:00+0000",
+            "created_at": "2022-12-29T02:30:00+0000"
+        }
+    },
+    {
+        "model": "portal.User",
+        "pk": 32,
+        "fields": {
+            "email": "student32@rpi.edu",
+            "first_name": "Jesse",
+            "last_name": "Trevino",
+            "is_approved": true,
+            "role": "rpi",
+            "rcs_id": "student32",
+            "graduation_year": 2025,
+            "updated_at": "2022-12-29T02:30:00+0000",
+            "created_at": "2022-12-29T02:30:00+0000"
+        }
+    },
+    {
+        "model": "portal.User",
+        "pk": 33,
+        "fields": {
+            "email": "student33@rpi.edu",
+            "first_name": "Catherine",
+            "last_name": "Brooks",
+            "is_approved": true,
+            "role": "rpi",
+            "rcs_id": "student33",
+            "graduation_year": 2025,
+            "updated_at": "2022-12-29T02:30:00+0000",
+            "created_at": "2022-12-29T02:30:00+0000"
+        }
+    },
+    {
+        "model": "portal.User",
+        "pk": 34,
+        "fields": {
+            "email": "student34@rpi.edu",
+            "first_name": "Ronald",
+            "last_name": "Ross",
+            "is_approved": true,
+            "role": "rpi",
+            "rcs_id": "student34",
+            "graduation_year": 2022,
+            "updated_at": "2022-12-29T02:30:00+0000",
+            "created_at": "2022-12-29T02:30:00+0000"
+        }
+    },
+    {
+        "model": "portal.User",
+        "pk": 35,
+        "fields": {
+            "email": "student35@rpi.edu",
+            "first_name": "Benjamin",
+            "last_name": "Savage",
+            "is_approved": true,
+            "role": "rpi",
+            "rcs_id": "student35",
+            "graduation_year": 2024,
+            "updated_at": "2022-12-29T02:30:00+0000",
+            "created_at": "2022-12-29T02:30:00+0000"
+        }
+    },
+    {
+        "model": "portal.User",
+        "pk": 36,
+        "fields": {
+            "email": "student36@rpi.edu",
+            "first_name": "Cindy",
+            "last_name": "Downs",
+            "is_approved": true,
+            "role": "rpi",
+            "rcs_id": "student36",
+            "graduation_year": 2025,
+            "updated_at": "2022-12-29T02:30:00+0000",
+            "created_at": "2022-12-29T02:30:00+0000"
+        }
+    },
+    {
+        "model": "portal.User",
+        "pk": 37,
+        "fields": {
+            "email": "student37@rpi.edu",
+            "first_name": "Paul",
+            "last_name": "Brown",
+            "is_approved": true,
+            "role": "rpi",
+            "rcs_id": "student37",
+            "graduation_year": 2025,
+            "updated_at": "2022-12-29T02:30:00+0000",
+            "created_at": "2022-12-29T02:30:00+0000"
+        }
+    },
+    {
+        "model": "portal.User",
+        "pk": 38,
+        "fields": {
+            "email": "student38@rpi.edu",
+            "first_name": "Fernando",
+            "last_name": "Vincent",
+            "is_approved": true,
+            "role": "rpi",
+            "rcs_id": "student38",
+            "graduation_year": 2024,
+            "updated_at": "2022-12-29T02:30:00+0000",
+            "created_at": "2022-12-29T02:30:00+0000"
+        }
+    },
+    {
+        "model": "portal.User",
+        "pk": 39,
+        "fields": {
+            "email": "student39@rpi.edu",
+            "first_name": "Daniel",
+            "last_name": "Potts",
+            "is_approved": true,
+            "role": "rpi",
+            "rcs_id": "student39",
+            "graduation_year": 2022,
+            "updated_at": "2022-12-29T02:30:00+0000",
+            "created_at": "2022-12-29T02:30:00+0000"
+        }
+    },
+    {
+        "model": "portal.User",
+        "pk": 40,
+        "fields": {
+            "email": "student40@rpi.edu",
+            "first_name": "Wendy",
+            "last_name": "Johnson",
+            "is_approved": true,
+            "role": "rpi",
+            "rcs_id": "student40",
+            "graduation_year": 2022,
+            "updated_at": "2022-12-29T02:30:00+0000",
+            "created_at": "2022-12-29T02:30:00+0000"
+        }
+    },
+    {
+        "model": "portal.User",
+        "pk": 41,
+        "fields": {
+            "email": "student41@rpi.edu",
+            "first_name": "Micheal",
+            "last_name": "Jackson",
+            "is_approved": true,
+            "role": "rpi",
+            "rcs_id": "student41",
+            "graduation_year": 2025,
+            "updated_at": "2022-12-29T02:30:00+0000",
+            "created_at": "2022-12-29T02:30:00+0000"
+        }
+    },
+    {
+        "model": "portal.User",
+        "pk": 42,
+        "fields": {
+            "email": "student42@rpi.edu",
+            "first_name": "Lauren",
+            "last_name": "Moore",
+            "is_approved": true,
+            "role": "rpi",
+            "rcs_id": "student42",
+            "graduation_year": 2025,
+            "updated_at": "2022-12-29T02:30:00+0000",
+            "created_at": "2022-12-29T02:30:00+0000"
+        }
+    },
+    {
+        "model": "portal.User",
+        "pk": 43,
+        "fields": {
+            "email": "student43@rpi.edu",
+            "first_name": "Edwin",
+            "last_name": "Mclean",
+            "is_approved": true,
+            "role": "rpi",
+            "rcs_id": "student43",
+            "graduation_year": 2023,
+            "updated_at": "2022-12-29T02:30:00+0000",
+            "created_at": "2022-12-29T02:30:00+0000"
+        }
+    },
+    {
+        "model": "portal.User",
+        "pk": 44,
+        "fields": {
+            "email": "student44@rpi.edu",
+            "first_name": "Patricia",
+            "last_name": "Smith",
+            "is_approved": true,
+            "role": "rpi",
+            "rcs_id": "student44",
+            "graduation_year": 2025,
+            "updated_at": "2022-12-29T02:30:00+0000",
+            "created_at": "2022-12-29T02:30:00+0000"
+        }
+    },
+    {
+        "model": "portal.User",
+        "pk": 45,
+        "fields": {
+            "email": "student45@rpi.edu",
+            "first_name": "Anthony",
+            "last_name": "Jackson",
+            "is_approved": true,
+            "role": "rpi",
+            "rcs_id": "student45",
+            "graduation_year": 2023,
+            "updated_at": "2022-12-29T02:30:00+0000",
+            "created_at": "2022-12-29T02:30:00+0000"
+        }
+    },
+    {
+        "model": "portal.User",
+        "pk": 46,
+        "fields": {
+            "email": "student46@rpi.edu",
+            "first_name": "Justin",
+            "last_name": "Perez",
+            "is_approved": true,
+            "role": "rpi",
+            "rcs_id": "student46",
+            "graduation_year": 2024,
+            "updated_at": "2022-12-29T02:30:00+0000",
+            "created_at": "2022-12-29T02:30:00+0000"
+        }
+    },
+    {
+        "model": "portal.User",
+        "pk": 47,
+        "fields": {
+            "email": "student47@rpi.edu",
+            "first_name": "Ann",
+            "last_name": "Saunders",
+            "is_approved": true,
+            "role": "rpi",
+            "rcs_id": "student47",
+            "graduation_year": 2024,
+            "updated_at": "2022-12-29T02:30:00+0000",
+            "created_at": "2022-12-29T02:30:00+0000"
+        }
+    },
+    {
+        "model": "portal.User",
+        "pk": 48,
+        "fields": {
+            "email": "student48@rpi.edu",
+            "first_name": "Henry",
+            "last_name": "Mcdonald",
+            "is_approved": true,
+            "role": "rpi",
+            "rcs_id": "student48",
+            "graduation_year": 2025,
+            "updated_at": "2022-12-29T02:30:00+0000",
+            "created_at": "2022-12-29T02:30:00+0000"
+        }
+    },
+    {
+        "model": "portal.User",
+        "pk": 49,
+        "fields": {
+            "email": "student49@rpi.edu",
+            "first_name": "Jeremy",
+            "last_name": "Mcclure",
+            "is_approved": true,
+            "role": "rpi",
+            "rcs_id": "student49",
+            "graduation_year": 2023,
+            "updated_at": "2022-12-29T02:30:00+0000",
+            "created_at": "2022-12-29T02:30:00+0000"
+        }
+    },
+    {
+        "model": "portal.Project",
+        "pk": 0,
+        "fields": {
+            "name": "Nearby Project",
+            "owner": 39,
+            "is_approved": false,
+            "description": "Million like travel decision early three door.",
+            "updated_at": "2022-12-29T02:30:00+0000",
+            "created_at": "2022-12-29T02:30:00+0000"
+        }
+    },
+    {
+        "model": "portal.Project",
+        "pk": 1,
+        "fields": {
+            "name": "Dead Project",
+            "owner": 32,
+            "is_approved": true,
+            "description": "Middle different window deal.",
+            "updated_at": "2022-12-29T02:30:00+0000",
+            "created_at": "2022-12-29T02:30:00+0000"
+        }
+    },
+    {
+        "model": "portal.Project",
+        "pk": 2,
+        "fields": {
+            "name": "Perfect Project",
+            "owner": 22,
+            "is_approved": true,
+            "description": "Whose example woman surface so choose financial.",
+            "updated_at": "2022-12-29T02:30:00+0000",
+            "created_at": "2022-12-29T02:30:00+0000"
+        }
+    },
+    {
+        "model": "portal.Project",
+        "pk": 3,
+        "fields": {
+            "name": "Asleep Project",
+            "owner": 8,
+            "is_approved": true,
+            "description": "Attention girl bar charge full sort.",
+            "updated_at": "2022-12-29T02:30:00+0000",
+            "created_at": "2022-12-29T02:30:00+0000"
+        }
+    },
+    {
+        "model": "portal.Project",
+        "pk": 4,
+        "fields": {
+            "name": "Round Project",
+            "owner": 18,
+            "is_approved": true,
+            "description": "Owner sort then side could similar man.",
+            "updated_at": "2022-12-29T02:30:00+0000",
+            "created_at": "2022-12-29T02:30:00+0000"
+        }
+    },
+    {
+        "model": "portal.Project",
+        "pk": 5,
+        "fields": {
+            "name": "High Project",
+            "owner": 9,
+            "is_approved": true,
+            "description": "Name travel will easy heart certain.",
+            "updated_at": "2022-12-29T02:30:00+0000",
+            "created_at": "2022-12-29T02:30:00+0000"
+        }
+    },
+    {
+        "model": "portal.Project",
+        "pk": 6,
+        "fields": {
+            "name": "Low Project",
+            "owner": 21,
+            "is_approved": true,
+            "description": "Politics evidence local statement.",
+            "updated_at": "2022-12-29T02:30:00+0000",
+            "created_at": "2022-12-29T02:30:00+0000"
+        }
+    },
+    {
+        "model": "portal.Project",
+        "pk": 7,
+        "fields": {
+            "name": "Strong Project",
+            "owner": 26,
+            "is_approved": true,
+            "description": "Remember foreign election own camera wall these.",
+            "updated_at": "2022-12-29T02:30:00+0000",
+            "created_at": "2022-12-29T02:30:00+0000"
+        }
+    },
+    {
+        "model": "portal.Project",
+        "pk": 8,
+        "fields": {
+            "name": "Narrow Project",
+            "owner": 46,
+            "is_approved": false,
+            "description": "Medical many such professor to.",
+            "updated_at": "2022-12-29T02:30:00+0000",
+            "created_at": "2022-12-29T02:30:00+0000"
+        }
+    },
+    {
+        "model": "portal.Project",
+        "pk": 9,
+        "fields": {
+            "name": "Anxious Project",
+            "owner": 5,
+            "is_approved": true,
+            "description": "So good even more.",
+            "updated_at": "2022-12-29T02:30:00+0000",
+            "created_at": "2022-12-29T02:30:00+0000"
+        }
+    },
+    {
+        "model": "portal.Project",
+        "pk": 10,
+        "fields": {
+            "name": "Direct Project",
+            "owner": 16,
+            "is_approved": true,
+            "description": "Hospital black crime indicate spend.",
+            "updated_at": "2022-12-29T02:30:00+0000",
+            "created_at": "2022-12-29T02:30:00+0000"
+        }
+    },
+    {
+        "model": "portal.Project",
+        "pk": 11,
+        "fields": {
+            "name": "Certain Project",
+            "owner": 28,
+            "is_approved": true,
+            "description": "Special ok network maybe.",
+            "updated_at": "2022-12-29T02:30:00+0000",
+            "created_at": "2022-12-29T02:30:00+0000"
+        }
+    },
+    {
+        "model": "portal.Project",
+        "pk": 12,
+        "fields": {
+            "name": "Solid Project",
+            "owner": 27,
+            "is_approved": false,
+            "description": "Book traditional contain myself professional history seat.",
+            "updated_at": "2022-12-29T02:30:00+0000",
+            "created_at": "2022-12-29T02:30:00+0000"
+        }
+    },
+    {
+        "model": "portal.Project",
+        "pk": 13,
+        "fields": {
+            "name": "Potential Project",
+            "owner": 37,
+            "is_approved": false,
+            "description": "This nor response consumer far.",
+            "updated_at": "2022-12-29T02:30:00+0000",
+            "created_at": "2022-12-29T02:30:00+0000"
+        }
+    },
+    {
+        "model": "portal.Project",
+        "pk": 14,
+        "fields": {
+            "name": "Aggressive Project",
+            "owner": 19,
+            "is_approved": true,
+            "description": "Behavior accept table return.",
+            "updated_at": "2022-12-29T02:30:00+0000",
+            "created_at": "2022-12-29T02:30:00+0000"
+        }
+    },
+    {
+        "model": "portal.Project",
+        "pk": 15,
+        "fields": {
+            "name": "Dear Project",
+            "owner": 10,
+            "is_approved": true,
+            "description": "Last alone father level.",
+            "updated_at": "2022-12-29T02:30:00+0000",
+            "created_at": "2022-12-29T02:30:00+0000"
+        }
+    },
+    {
+        "model": "portal.Project",
+        "pk": 16,
+        "fields": {
+            "name": "Basic Project",
+            "owner": 20,
+            "is_approved": true,
+            "description": "Amount summer star find where.",
+            "updated_at": "2022-12-29T02:30:00+0000",
+            "created_at": "2022-12-29T02:30:00+0000"
+        }
+    },
+    {
+        "model": "portal.Project",
+        "pk": 17,
+        "fields": {
+            "name": "Every Project",
+            "owner": 31,
+            "is_approved": false,
+            "description": "Rather visit quickly us.",
+            "updated_at": "2022-12-29T02:30:00+0000",
+            "created_at": "2022-12-29T02:30:00+0000"
+        }
+    },
+    {
+        "model": "portal.Project",
+        "pk": 18,
+        "fields": {
+            "name": "Ordinary Project",
+            "owner": 8,
+            "is_approved": true,
+            "description": "Economy door risk arrive.",
+            "updated_at": "2022-12-29T02:30:00+0000",
+            "created_at": "2022-12-29T02:30:00+0000"
+        }
+    },
+    {
+        "model": "portal.Project",
+        "pk": 19,
+        "fields": {
+            "name": "Regular Project",
+            "owner": 24,
+            "is_approved": true,
+            "description": "Lawyer question party three.",
+            "updated_at": "2022-12-29T02:30:00+0000",
+            "created_at": "2022-12-29T02:30:00+0000"
+        }
+    },
+    {
+        "model": "portal.Project",
+        "pk": 20,
+        "fields": {
+            "name": "Clean Project",
+            "owner": 37,
+            "is_approved": false,
+            "description": "Politics everybody themselves level baby mouth along.",
+            "updated_at": "2022-12-29T02:30:00+0000",
+            "created_at": "2022-12-29T02:30:00+0000"
+        }
+    },
+    {
+        "model": "portal.Project",
+        "pk": 21,
+        "fields": {
+            "name": "Lucky Project",
+            "owner": 34,
+            "is_approved": true,
+            "description": "Mouth speech assume upon blue.",
+            "updated_at": "2022-12-29T02:30:00+0000",
+            "created_at": "2022-12-29T02:30:00+0000"
+        }
+    },
+    {
+        "model": "portal.Project",
+        "pk": 22,
+        "fields": {
+            "name": "Technical Project",
+            "owner": 32,
+            "is_approved": false,
+            "description": "Difficult matter local thing.",
+            "updated_at": "2022-12-29T02:30:00+0000",
+            "created_at": "2022-12-29T02:30:00+0000"
+        }
+    },
+    {
+        "model": "portal.Project",
+        "pk": 23,
+        "fields": {
+            "name": "Simple Project",
+            "owner": 20,
+            "is_approved": true,
+            "description": "Any practice American mission see.",
+            "updated_at": "2022-12-29T02:30:00+0000",
+            "created_at": "2022-12-29T02:30:00+0000"
+        }
+    },
+    {
+        "model": "portal.Project",
+        "pk": 24,
+        "fields": {
+            "name": "Practical Project",
+            "owner": 48,
+            "is_approved": true,
+            "description": "Let really see baby enjoy present and.",
+            "updated_at": "2022-12-29T02:30:00+0000",
+            "created_at": "2022-12-29T02:30:00+0000"
+        }
+    },
+    {
+        "model": "portal.Project",
+        "pk": 25,
+        "fields": {
+            "name": "Straight Project",
+            "owner": 45,
+            "is_approved": false,
+            "description": "Day agreement shoulder collection partner spring.",
+            "updated_at": "2022-12-29T02:30:00+0000",
+            "created_at": "2022-12-29T02:30:00+0000"
+        }
+    },
+    {
+        "model": "portal.Project",
+        "pk": 26,
+        "fields": {
+            "name": "Dependent Project",
+            "owner": 4,
+            "is_approved": true,
+            "description": "Season keep task local final.",
+            "updated_at": "2022-12-29T02:30:00+0000",
+            "created_at": "2022-12-29T02:30:00+0000"
+        }
+    },
+    {
+        "model": "portal.Project",
+        "pk": 27,
+        "fields": {
+            "name": "Reasonable Project",
+            "owner": 48,
+            "is_approved": false,
+            "description": "Cultural prove event environmental PM out computer.",
+            "updated_at": "2022-12-29T02:30:00+0000",
+            "created_at": "2022-12-29T02:30:00+0000"
+        }
+    },
+    {
+        "model": "portal.Project",
+        "pk": 28,
+        "fields": {
+            "name": "Due Project",
+            "owner": 29,
+            "is_approved": true,
+            "description": "Exist improve final husband authority.",
+            "updated_at": "2022-12-29T02:30:00+0000",
+            "created_at": "2022-12-29T02:30:00+0000"
+        }
+    },
+    {
+        "model": "portal.Project",
+        "pk": 29,
+        "fields": {
+            "name": "Annual Project",
+            "owner": 19,
+            "is_approved": false,
+            "description": "Often official staff know.",
+            "updated_at": "2022-12-29T02:30:00+0000",
+            "created_at": "2022-12-29T02:30:00+0000"
+        }
+    },
+    {
+        "model": "portal.Enrollment",
+        "pk": 1,
+        "fields": {
+            "semester": "202301",
+            "user": 2,
+            "project": 16,
+            "credits": 1,
+            "is_project_lead": false,
+            "updated_at": "2022-12-29T02:30:00+0000",
+            "created_at": "2022-12-29T02:30:00+0000"
+        }
+    },
+    {
+        "model": "portal.Enrollment",
+        "pk": 2,
+        "fields": {
+            "semester": "202208",
+            "user": 2,
+            "project": 21,
+            "credits": 3,
+            "is_project_lead": true,
+            "updated_at": "2022-12-29T02:30:00+0000",
+            "created_at": "2022-12-29T02:30:00+0000"
+        }
+    },
+    {
+        "model": "portal.Enrollment",
+        "pk": 3,
+        "fields": {
+            "semester": "202201",
+            "user": 2,
+            "project": 13,
+            "credits": 0,
+            "is_project_lead": false,
+            "updated_at": "2022-12-29T02:30:00+0000",
+            "created_at": "2022-12-29T02:30:00+0000"
+        }
+    },
+    {
+        "model": "portal.Enrollment",
+        "pk": 4,
+        "fields": {
+            "semester": "202301",
+            "user": 3,
+            "project": 18,
+            "credits": 3,
+            "is_project_lead": false,
+            "updated_at": "2022-12-29T02:30:00+0000",
+            "created_at": "2022-12-29T02:30:00+0000"
+        }
+    },
+    {
+        "model": "portal.Enrollment",
+        "pk": 5,
+        "fields": {
+            "semester": "202208",
+            "user": 3,
+            "project": 20,
+            "credits": 3,
+            "is_project_lead": false,
+            "updated_at": "2022-12-29T02:30:00+0000",
+            "created_at": "2022-12-29T02:30:00+0000"
+        }
+    },
+    {
+        "model": "portal.Enrollment",
+        "pk": 6,
+        "fields": {
+            "semester": "202201",
+            "user": 3,
+            "project": 7,
+            "credits": 4,
+            "is_project_lead": false,
+            "updated_at": "2022-12-29T02:30:00+0000",
+            "created_at": "2022-12-29T02:30:00+0000"
+        }
+    },
+    {
+        "model": "portal.Enrollment",
+        "pk": 7,
+        "fields": {
+            "semester": "202301",
+            "user": 4,
+            "project": 17,
+            "credits": 1,
+            "is_project_lead": true,
+            "updated_at": "2022-12-29T02:30:00+0000",
+            "created_at": "2022-12-29T02:30:00+0000"
+        }
+    },
+    {
+        "model": "portal.Enrollment",
+        "pk": 8,
+        "fields": {
+            "semester": "202208",
+            "user": 4,
+            "project": 20,
+            "credits": 4,
+            "is_project_lead": true,
+            "updated_at": "2022-12-29T02:30:00+0000",
+            "created_at": "2022-12-29T02:30:00+0000"
+        }
+    },
+    {
+        "model": "portal.Enrollment",
+        "pk": 9,
+        "fields": {
+            "semester": "202201",
+            "user": 4,
+            "project": 7,
+            "credits": 2,
+            "is_project_lead": true,
+            "updated_at": "2022-12-29T02:30:00+0000",
+            "created_at": "2022-12-29T02:30:00+0000"
+        }
+    },
+    {
+        "model": "portal.Enrollment",
+        "pk": 10,
+        "fields": {
+            "semester": "202301",
+            "user": 5,
+            "project": 22,
+            "credits": 2,
+            "is_project_lead": false,
+            "updated_at": "2022-12-29T02:30:00+0000",
+            "created_at": "2022-12-29T02:30:00+0000"
+        }
+    },
+    {
+        "model": "portal.Enrollment",
+        "pk": 11,
+        "fields": {
+            "semester": "202208",
+            "user": 5,
+            "project": 15,
+            "credits": 3,
+            "is_project_lead": true,
+            "updated_at": "2022-12-29T02:30:00+0000",
+            "created_at": "2022-12-29T02:30:00+0000"
+        }
+    },
+    {
+        "model": "portal.Enrollment",
+        "pk": 12,
+        "fields": {
+            "semester": "202201",
+            "user": 5,
+            "project": 11,
+            "credits": 0,
+            "is_project_lead": false,
+            "updated_at": "2022-12-29T02:30:00+0000",
+            "created_at": "2022-12-29T02:30:00+0000"
+        }
+    },
+    {
+        "model": "portal.Enrollment",
+        "pk": 13,
+        "fields": {
+            "semester": "202301",
+            "user": 6,
+            "project": 17,
+            "credits": 4,
+            "is_project_lead": false,
+            "updated_at": "2022-12-29T02:30:00+0000",
+            "created_at": "2022-12-29T02:30:00+0000"
+        }
+    },
+    {
+        "model": "portal.Enrollment",
+        "pk": 14,
+        "fields": {
+            "semester": "202208",
+            "user": 6,
+            "project": 0,
+            "credits": 4,
+            "is_project_lead": false,
+            "updated_at": "2022-12-29T02:30:00+0000",
+            "created_at": "2022-12-29T02:30:00+0000"
+        }
+    },
+    {
+        "model": "portal.Enrollment",
+        "pk": 15,
+        "fields": {
+            "semester": "202201",
+            "user": 6,
+            "project": 2,
+            "credits": 1,
+            "is_project_lead": false,
+            "updated_at": "2022-12-29T02:30:00+0000",
+            "created_at": "2022-12-29T02:30:00+0000"
+        }
+    },
+    {
+        "model": "portal.Enrollment",
+        "pk": 16,
+        "fields": {
+            "semester": "202301",
+            "user": 7,
+            "project": 20,
+            "credits": 4,
+            "is_project_lead": true,
+            "updated_at": "2022-12-29T02:30:00+0000",
+            "created_at": "2022-12-29T02:30:00+0000"
+        }
+    },
+    {
+        "model": "portal.Enrollment",
+        "pk": 17,
+        "fields": {
+            "semester": "202208",
+            "user": 7,
+            "project": 9,
+            "credits": 1,
+            "is_project_lead": true,
+            "updated_at": "2022-12-29T02:30:00+0000",
+            "created_at": "2022-12-29T02:30:00+0000"
+        }
+    },
+    {
+        "model": "portal.Enrollment",
+        "pk": 18,
+        "fields": {
+            "semester": "202201",
+            "user": 7,
+            "project": 2,
+            "credits": 2,
+            "is_project_lead": false,
+            "updated_at": "2022-12-29T02:30:00+0000",
+            "created_at": "2022-12-29T02:30:00+0000"
+        }
+    },
+    {
+        "model": "portal.Enrollment",
+        "pk": 19,
+        "fields": {
+            "semester": "202301",
+            "user": 8,
+            "project": 21,
+            "credits": 2,
+            "is_project_lead": false,
+            "updated_at": "2022-12-29T02:30:00+0000",
+            "created_at": "2022-12-29T02:30:00+0000"
+        }
+    },
+    {
+        "model": "portal.Enrollment",
+        "pk": 20,
+        "fields": {
+            "semester": "202208",
+            "user": 8,
+            "project": 24,
+            "credits": 3,
+            "is_project_lead": false,
+            "updated_at": "2022-12-29T02:30:00+0000",
+            "created_at": "2022-12-29T02:30:00+0000"
+        }
+    },
+    {
+        "model": "portal.Enrollment",
+        "pk": 21,
+        "fields": {
+            "semester": "202201",
+            "user": 8,
+            "project": 0,
+            "credits": 4,
+            "is_project_lead": true,
+            "updated_at": "2022-12-29T02:30:00+0000",
+            "created_at": "2022-12-29T02:30:00+0000"
+        }
+    },
+    {
+        "model": "portal.Enrollment",
+        "pk": 22,
+        "fields": {
+            "semester": "202301",
+            "user": 9,
+            "project": 4,
+            "credits": 1,
+            "is_project_lead": false,
+            "updated_at": "2022-12-29T02:30:00+0000",
+            "created_at": "2022-12-29T02:30:00+0000"
+        }
+    },
+    {
+        "model": "portal.Enrollment",
+        "pk": 23,
+        "fields": {
+            "semester": "202208",
+            "user": 9,
+            "project": 2,
+            "credits": 3,
+            "is_project_lead": false,
+            "updated_at": "2022-12-29T02:30:00+0000",
+            "created_at": "2022-12-29T02:30:00+0000"
+        }
+    },
+    {
+        "model": "portal.Enrollment",
+        "pk": 24,
+        "fields": {
+            "semester": "202201",
+            "user": 9,
+            "project": 2,
+            "credits": 1,
+            "is_project_lead": false,
+            "updated_at": "2022-12-29T02:30:00+0000",
+            "created_at": "2022-12-29T02:30:00+0000"
+        }
+    },
+    {
+        "model": "portal.Enrollment",
+        "pk": 25,
+        "fields": {
+            "semester": "202301",
+            "user": 10,
+            "project": 2,
+            "credits": 4,
+            "is_project_lead": true,
+            "updated_at": "2022-12-29T02:30:00+0000",
+            "created_at": "2022-12-29T02:30:00+0000"
+        }
+    },
+    {
+        "model": "portal.Enrollment",
+        "pk": 26,
+        "fields": {
+            "semester": "202208",
+            "user": 10,
+            "project": 27,
+            "credits": 2,
+            "is_project_lead": false,
+            "updated_at": "2022-12-29T02:30:00+0000",
+            "created_at": "2022-12-29T02:30:00+0000"
+        }
+    },
+    {
+        "model": "portal.Enrollment",
+        "pk": 27,
+        "fields": {
+            "semester": "202201",
+            "user": 10,
+            "project": 2,
+            "credits": 1,
+            "is_project_lead": false,
+            "updated_at": "2022-12-29T02:30:00+0000",
+            "created_at": "2022-12-29T02:30:00+0000"
+        }
+    },
+    {
+        "model": "portal.Enrollment",
+        "pk": 28,
+        "fields": {
+            "semester": "202301",
+            "user": 11,
+            "project": 21,
+            "credits": 1,
+            "is_project_lead": false,
+            "updated_at": "2022-12-29T02:30:00+0000",
+            "created_at": "2022-12-29T02:30:00+0000"
+        }
+    },
+    {
+        "model": "portal.Enrollment",
+        "pk": 29,
+        "fields": {
+            "semester": "202208",
+            "user": 11,
+            "project": 25,
+            "credits": 4,
+            "is_project_lead": true,
+            "updated_at": "2022-12-29T02:30:00+0000",
+            "created_at": "2022-12-29T02:30:00+0000"
+        }
+    },
+    {
+        "model": "portal.Enrollment",
+        "pk": 30,
+        "fields": {
+            "semester": "202201",
+            "user": 11,
+            "project": 20,
+            "credits": 1,
+            "is_project_lead": false,
+            "updated_at": "2022-12-29T02:30:00+0000",
+            "created_at": "2022-12-29T02:30:00+0000"
+        }
+    },
+    {
+        "model": "portal.Enrollment",
+        "pk": 31,
+        "fields": {
+            "semester": "202301",
+            "user": 12,
+            "project": 25,
+            "credits": 2,
+            "is_project_lead": false,
+            "updated_at": "2022-12-29T02:30:00+0000",
+            "created_at": "2022-12-29T02:30:00+0000"
+        }
+    },
+    {
+        "model": "portal.Enrollment",
+        "pk": 32,
+        "fields": {
+            "semester": "202208",
+            "user": 12,
+            "project": 29,
+            "credits": 0,
+            "is_project_lead": false,
+            "updated_at": "2022-12-29T02:30:00+0000",
+            "created_at": "2022-12-29T02:30:00+0000"
+        }
+    },
+    {
+        "model": "portal.Enrollment",
+        "pk": 33,
+        "fields": {
+            "semester": "202201",
+            "user": 12,
+            "project": 27,
+            "credits": 2,
+            "is_project_lead": true,
+            "updated_at": "2022-12-29T02:30:00+0000",
+            "created_at": "2022-12-29T02:30:00+0000"
+        }
+    },
+    {
+        "model": "portal.Enrollment",
+        "pk": 34,
+        "fields": {
+            "semester": "202301",
+            "user": 13,
+            "project": 12,
+            "credits": 0,
+            "is_project_lead": false,
+            "updated_at": "2022-12-29T02:30:00+0000",
+            "created_at": "2022-12-29T02:30:00+0000"
+        }
+    },
+    {
+        "model": "portal.Enrollment",
+        "pk": 35,
+        "fields": {
+            "semester": "202208",
+            "user": 13,
+            "project": 24,
+            "credits": 1,
+            "is_project_lead": false,
+            "updated_at": "2022-12-29T02:30:00+0000",
+            "created_at": "2022-12-29T02:30:00+0000"
+        }
+    },
+    {
+        "model": "portal.Enrollment",
+        "pk": 36,
+        "fields": {
+            "semester": "202201",
+            "user": 13,
+            "project": 5,
+            "credits": 2,
+            "is_project_lead": false,
+            "updated_at": "2022-12-29T02:30:00+0000",
+            "created_at": "2022-12-29T02:30:00+0000"
+        }
+    },
+    {
+        "model": "portal.Enrollment",
+        "pk": 37,
+        "fields": {
+            "semester": "202301",
+            "user": 14,
+            "project": 9,
+            "credits": 2,
+            "is_project_lead": false,
+            "updated_at": "2022-12-29T02:30:00+0000",
+            "created_at": "2022-12-29T02:30:00+0000"
+        }
+    },
+    {
+        "model": "portal.Enrollment",
+        "pk": 38,
+        "fields": {
+            "semester": "202208",
+            "user": 14,
+            "project": 19,
+            "credits": 0,
+            "is_project_lead": false,
+            "updated_at": "2022-12-29T02:30:00+0000",
+            "created_at": "2022-12-29T02:30:00+0000"
+        }
+    },
+    {
+        "model": "portal.Enrollment",
+        "pk": 39,
+        "fields": {
+            "semester": "202201",
+            "user": 14,
+            "project": 0,
+            "credits": 4,
+            "is_project_lead": true,
+            "updated_at": "2022-12-29T02:30:00+0000",
+            "created_at": "2022-12-29T02:30:00+0000"
+        }
+    },
+    {
+        "model": "portal.Enrollment",
+        "pk": 40,
+        "fields": {
+            "semester": "202301",
+            "user": 15,
+            "project": 15,
+            "credits": 3,
+            "is_project_lead": false,
+            "updated_at": "2022-12-29T02:30:00+0000",
+            "created_at": "2022-12-29T02:30:00+0000"
+        }
+    },
+    {
+        "model": "portal.Enrollment",
+        "pk": 41,
+        "fields": {
+            "semester": "202208",
+            "user": 15,
+            "project": 20,
+            "credits": 0,
+            "is_project_lead": true,
+            "updated_at": "2022-12-29T02:30:00+0000",
+            "created_at": "2022-12-29T02:30:00+0000"
+        }
+    },
+    {
+        "model": "portal.Enrollment",
+        "pk": 42,
+        "fields": {
+            "semester": "202201",
+            "user": 15,
+            "project": 13,
+            "credits": 0,
+            "is_project_lead": false,
+            "updated_at": "2022-12-29T02:30:00+0000",
+            "created_at": "2022-12-29T02:30:00+0000"
+        }
+    },
+    {
+        "model": "portal.Enrollment",
+        "pk": 43,
+        "fields": {
+            "semester": "202301",
+            "user": 16,
+            "project": 9,
+            "credits": 0,
+            "is_project_lead": true,
+            "updated_at": "2022-12-29T02:30:00+0000",
+            "created_at": "2022-12-29T02:30:00+0000"
+        }
+    },
+    {
+        "model": "portal.Enrollment",
+        "pk": 44,
+        "fields": {
+            "semester": "202208",
+            "user": 16,
+            "project": 20,
+            "credits": 4,
+            "is_project_lead": false,
+            "updated_at": "2022-12-29T02:30:00+0000",
+            "created_at": "2022-12-29T02:30:00+0000"
+        }
+    },
+    {
+        "model": "portal.Enrollment",
+        "pk": 45,
+        "fields": {
+            "semester": "202201",
+            "user": 16,
+            "project": 10,
+            "credits": 0,
+            "is_project_lead": false,
+            "updated_at": "2022-12-29T02:30:00+0000",
+            "created_at": "2022-12-29T02:30:00+0000"
+        }
+    },
+    {
+        "model": "portal.Enrollment",
+        "pk": 46,
+        "fields": {
+            "semester": "202301",
+            "user": 17,
+            "project": 12,
+            "credits": 4,
+            "is_project_lead": false,
+            "updated_at": "2022-12-29T02:30:00+0000",
+            "created_at": "2022-12-29T02:30:00+0000"
+        }
+    },
+    {
+        "model": "portal.Enrollment",
+        "pk": 47,
+        "fields": {
+            "semester": "202208",
+            "user": 17,
+            "project": 22,
+            "credits": 1,
+            "is_project_lead": true,
+            "updated_at": "2022-12-29T02:30:00+0000",
+            "created_at": "2022-12-29T02:30:00+0000"
+        }
+    },
+    {
+        "model": "portal.Enrollment",
+        "pk": 48,
+        "fields": {
+            "semester": "202201",
+            "user": 17,
+            "project": 12,
+            "credits": 1,
+            "is_project_lead": false,
+            "updated_at": "2022-12-29T02:30:00+0000",
+            "created_at": "2022-12-29T02:30:00+0000"
+        }
+    },
+    {
+        "model": "portal.Enrollment",
+        "pk": 49,
+        "fields": {
+            "semester": "202301",
+            "user": 18,
+            "project": 4,
+            "credits": 0,
+            "is_project_lead": false,
+            "updated_at": "2022-12-29T02:30:00+0000",
+            "created_at": "2022-12-29T02:30:00+0000"
+        }
+    },
+    {
+        "model": "portal.Enrollment",
+        "pk": 50,
+        "fields": {
+            "semester": "202208",
+            "user": 18,
+            "project": 28,
+            "credits": 0,
+            "is_project_lead": true,
+            "updated_at": "2022-12-29T02:30:00+0000",
+            "created_at": "2022-12-29T02:30:00+0000"
+        }
+    },
+    {
+        "model": "portal.Enrollment",
+        "pk": 51,
+        "fields": {
+            "semester": "202201",
+            "user": 18,
+            "project": 10,
+            "credits": 4,
+            "is_project_lead": false,
+            "updated_at": "2022-12-29T02:30:00+0000",
+            "created_at": "2022-12-29T02:30:00+0000"
+        }
+    },
+    {
+        "model": "portal.Enrollment",
+        "pk": 52,
+        "fields": {
+            "semester": "202301",
+            "user": 19,
+            "project": 29,
+            "credits": 2,
+            "is_project_lead": false,
+            "updated_at": "2022-12-29T02:30:00+0000",
+            "created_at": "2022-12-29T02:30:00+0000"
+        }
+    },
+    {
+        "model": "portal.Enrollment",
+        "pk": 53,
+        "fields": {
+            "semester": "202208",
+            "user": 19,
+            "project": 15,
+            "credits": 4,
+            "is_project_lead": false,
+            "updated_at": "2022-12-29T02:30:00+0000",
+            "created_at": "2022-12-29T02:30:00+0000"
+        }
+    },
+    {
+        "model": "portal.Enrollment",
+        "pk": 54,
+        "fields": {
+            "semester": "202201",
+            "user": 19,
+            "project": 11,
+            "credits": 3,
+            "is_project_lead": false,
+            "updated_at": "2022-12-29T02:30:00+0000",
+            "created_at": "2022-12-29T02:30:00+0000"
+        }
+    },
+    {
+        "model": "portal.Enrollment",
+        "pk": 55,
+        "fields": {
+            "semester": "202301",
+            "user": 20,
+            "project": 10,
+            "credits": 0,
+            "is_project_lead": false,
+            "updated_at": "2022-12-29T02:30:00+0000",
+            "created_at": "2022-12-29T02:30:00+0000"
+        }
+    },
+    {
+        "model": "portal.Enrollment",
+        "pk": 56,
+        "fields": {
+            "semester": "202208",
+            "user": 20,
+            "project": 7,
+            "credits": 3,
+            "is_project_lead": false,
+            "updated_at": "2022-12-29T02:30:00+0000",
+            "created_at": "2022-12-29T02:30:00+0000"
+        }
+    },
+    {
+        "model": "portal.Enrollment",
+        "pk": 57,
+        "fields": {
+            "semester": "202201",
+            "user": 20,
+            "project": 12,
+            "credits": 0,
+            "is_project_lead": false,
+            "updated_at": "2022-12-29T02:30:00+0000",
+            "created_at": "2022-12-29T02:30:00+0000"
+        }
+    },
+    {
+        "model": "portal.Enrollment",
+        "pk": 58,
+        "fields": {
+            "semester": "202301",
+            "user": 21,
+            "project": 10,
+            "credits": 2,
+            "is_project_lead": false,
+            "updated_at": "2022-12-29T02:30:00+0000",
+            "created_at": "2022-12-29T02:30:00+0000"
+        }
+    },
+    {
+        "model": "portal.Enrollment",
+        "pk": 59,
+        "fields": {
+            "semester": "202208",
+            "user": 21,
+            "project": 27,
+            "credits": 0,
+            "is_project_lead": false,
+            "updated_at": "2022-12-29T02:30:00+0000",
+            "created_at": "2022-12-29T02:30:00+0000"
+        }
+    },
+    {
+        "model": "portal.Enrollment",
+        "pk": 60,
+        "fields": {
+            "semester": "202201",
+            "user": 21,
+            "project": 3,
+            "credits": 1,
+            "is_project_lead": false,
+            "updated_at": "2022-12-29T02:30:00+0000",
+            "created_at": "2022-12-29T02:30:00+0000"
+        }
+    },
+    {
+        "model": "portal.Enrollment",
+        "pk": 61,
+        "fields": {
+            "semester": "202301",
+            "user": 22,
+            "project": 1,
+            "credits": 3,
+            "is_project_lead": true,
+            "updated_at": "2022-12-29T02:30:00+0000",
+            "created_at": "2022-12-29T02:30:00+0000"
+        }
+    },
+    {
+        "model": "portal.Enrollment",
+        "pk": 62,
+        "fields": {
+            "semester": "202208",
+            "user": 22,
+            "project": 12,
+            "credits": 0,
+            "is_project_lead": false,
+            "updated_at": "2022-12-29T02:30:00+0000",
+            "created_at": "2022-12-29T02:30:00+0000"
+        }
+    },
+    {
+        "model": "portal.Enrollment",
+        "pk": 63,
+        "fields": {
+            "semester": "202201",
+            "user": 22,
+            "project": 13,
+            "credits": 4,
+            "is_project_lead": false,
+            "updated_at": "2022-12-29T02:30:00+0000",
+            "created_at": "2022-12-29T02:30:00+0000"
+        }
+    },
+    {
+        "model": "portal.Enrollment",
+        "pk": 64,
+        "fields": {
+            "semester": "202301",
+            "user": 23,
+            "project": 2,
+            "credits": 3,
+            "is_project_lead": false,
+            "updated_at": "2022-12-29T02:30:00+0000",
+            "created_at": "2022-12-29T02:30:00+0000"
+        }
+    },
+    {
+        "model": "portal.Enrollment",
+        "pk": 65,
+        "fields": {
+            "semester": "202208",
+            "user": 23,
+            "project": 3,
+            "credits": 0,
+            "is_project_lead": false,
+            "updated_at": "2022-12-29T02:30:00+0000",
+            "created_at": "2022-12-29T02:30:00+0000"
+        }
+    },
+    {
+        "model": "portal.Enrollment",
+        "pk": 66,
+        "fields": {
+            "semester": "202201",
+            "user": 23,
+            "project": 19,
+            "credits": 2,
+            "is_project_lead": false,
+            "updated_at": "2022-12-29T02:30:00+0000",
+            "created_at": "2022-12-29T02:30:00+0000"
+        }
+    },
+    {
+        "model": "portal.Enrollment",
+        "pk": 67,
+        "fields": {
+            "semester": "202301",
+            "user": 24,
+            "project": 18,
+            "credits": 3,
+            "is_project_lead": false,
+            "updated_at": "2022-12-29T02:30:00+0000",
+            "created_at": "2022-12-29T02:30:00+0000"
+        }
+    },
+    {
+        "model": "portal.Enrollment",
+        "pk": 68,
+        "fields": {
+            "semester": "202208",
+            "user": 24,
+            "project": 15,
+            "credits": 2,
+            "is_project_lead": true,
+            "updated_at": "2022-12-29T02:30:00+0000",
+            "created_at": "2022-12-29T02:30:00+0000"
+        }
+    },
+    {
+        "model": "portal.Enrollment",
+        "pk": 69,
+        "fields": {
+            "semester": "202201",
+            "user": 24,
+            "project": 14,
+            "credits": 3,
+            "is_project_lead": true,
+            "updated_at": "2022-12-29T02:30:00+0000",
+            "created_at": "2022-12-29T02:30:00+0000"
+        }
+    },
+    {
+        "model": "portal.Enrollment",
+        "pk": 70,
+        "fields": {
+            "semester": "202301",
+            "user": 25,
+            "project": 13,
+            "credits": 3,
+            "is_project_lead": false,
+            "updated_at": "2022-12-29T02:30:00+0000",
+            "created_at": "2022-12-29T02:30:00+0000"
+        }
+    },
+    {
+        "model": "portal.Enrollment",
+        "pk": 71,
+        "fields": {
+            "semester": "202208",
+            "user": 25,
+            "project": 12,
+            "credits": 3,
+            "is_project_lead": false,
+            "updated_at": "2022-12-29T02:30:00+0000",
+            "created_at": "2022-12-29T02:30:00+0000"
+        }
+    },
+    {
+        "model": "portal.Enrollment",
+        "pk": 72,
+        "fields": {
+            "semester": "202201",
+            "user": 25,
+            "project": 1,
+            "credits": 3,
+            "is_project_lead": false,
+            "updated_at": "2022-12-29T02:30:00+0000",
+            "created_at": "2022-12-29T02:30:00+0000"
+        }
+    },
+    {
+        "model": "portal.Enrollment",
+        "pk": 73,
+        "fields": {
+            "semester": "202301",
+            "user": 26,
+            "project": 22,
+            "credits": 4,
+            "is_project_lead": true,
+            "updated_at": "2022-12-29T02:30:00+0000",
+            "created_at": "2022-12-29T02:30:00+0000"
+        }
+    },
+    {
+        "model": "portal.Enrollment",
+        "pk": 74,
+        "fields": {
+            "semester": "202208",
+            "user": 26,
+            "project": 0,
+            "credits": 1,
+            "is_project_lead": false,
+            "updated_at": "2022-12-29T02:30:00+0000",
+            "created_at": "2022-12-29T02:30:00+0000"
+        }
+    },
+    {
+        "model": "portal.Enrollment",
+        "pk": 75,
+        "fields": {
+            "semester": "202201",
+            "user": 26,
+            "project": 16,
+            "credits": 2,
+            "is_project_lead": false,
+            "updated_at": "2022-12-29T02:30:00+0000",
+            "created_at": "2022-12-29T02:30:00+0000"
+        }
+    },
+    {
+        "model": "portal.Enrollment",
+        "pk": 76,
+        "fields": {
+            "semester": "202301",
+            "user": 27,
+            "project": 15,
+            "credits": 1,
+            "is_project_lead": true,
+            "updated_at": "2022-12-29T02:30:00+0000",
+            "created_at": "2022-12-29T02:30:00+0000"
+        }
+    },
+    {
+        "model": "portal.Enrollment",
+        "pk": 77,
+        "fields": {
+            "semester": "202208",
+            "user": 27,
+            "project": 8,
+            "credits": 0,
+            "is_project_lead": false,
+            "updated_at": "2022-12-29T02:30:00+0000",
+            "created_at": "2022-12-29T02:30:00+0000"
+        }
+    },
+    {
+        "model": "portal.Enrollment",
+        "pk": 78,
+        "fields": {
+            "semester": "202201",
+            "user": 27,
+            "project": 24,
+            "credits": 0,
+            "is_project_lead": false,
+            "updated_at": "2022-12-29T02:30:00+0000",
+            "created_at": "2022-12-29T02:30:00+0000"
+        }
+    },
+    {
+        "model": "portal.Enrollment",
+        "pk": 79,
+        "fields": {
+            "semester": "202301",
+            "user": 28,
+            "project": 12,
+            "credits": 2,
+            "is_project_lead": false,
+            "updated_at": "2022-12-29T02:30:00+0000",
+            "created_at": "2022-12-29T02:30:00+0000"
+        }
+    },
+    {
+        "model": "portal.Enrollment",
+        "pk": 80,
+        "fields": {
+            "semester": "202208",
+            "user": 28,
+            "project": 27,
+            "credits": 1,
+            "is_project_lead": false,
+            "updated_at": "2022-12-29T02:30:00+0000",
+            "created_at": "2022-12-29T02:30:00+0000"
+        }
+    },
+    {
+        "model": "portal.Enrollment",
+        "pk": 81,
+        "fields": {
+            "semester": "202201",
+            "user": 28,
+            "project": 9,
+            "credits": 4,
+            "is_project_lead": false,
+            "updated_at": "2022-12-29T02:30:00+0000",
+            "created_at": "2022-12-29T02:30:00+0000"
+        }
+    },
+    {
+        "model": "portal.Enrollment",
+        "pk": 82,
+        "fields": {
+            "semester": "202301",
+            "user": 29,
+            "project": 17,
+            "credits": 2,
+            "is_project_lead": false,
+            "updated_at": "2022-12-29T02:30:00+0000",
+            "created_at": "2022-12-29T02:30:00+0000"
+        }
+    },
+    {
+        "model": "portal.Enrollment",
+        "pk": 83,
+        "fields": {
+            "semester": "202208",
+            "user": 29,
+            "project": 29,
+            "credits": 3,
+            "is_project_lead": false,
+            "updated_at": "2022-12-29T02:30:00+0000",
+            "created_at": "2022-12-29T02:30:00+0000"
+        }
+    },
+    {
+        "model": "portal.Enrollment",
+        "pk": 84,
+        "fields": {
+            "semester": "202201",
+            "user": 29,
+            "project": 10,
+            "credits": 4,
+            "is_project_lead": false,
+            "updated_at": "2022-12-29T02:30:00+0000",
+            "created_at": "2022-12-29T02:30:00+0000"
+        }
+    },
+    {
+        "model": "portal.Enrollment",
+        "pk": 85,
+        "fields": {
+            "semester": "202301",
+            "user": 30,
+            "project": 25,
+            "credits": 3,
+            "is_project_lead": false,
+            "updated_at": "2022-12-29T02:30:00+0000",
+            "created_at": "2022-12-29T02:30:00+0000"
+        }
+    },
+    {
+        "model": "portal.Enrollment",
+        "pk": 86,
+        "fields": {
+            "semester": "202208",
+            "user": 30,
+            "project": 26,
+            "credits": 2,
+            "is_project_lead": false,
+            "updated_at": "2022-12-29T02:30:00+0000",
+            "created_at": "2022-12-29T02:30:00+0000"
+        }
+    },
+    {
+        "model": "portal.Enrollment",
+        "pk": 87,
+        "fields": {
+            "semester": "202201",
+            "user": 30,
+            "project": 22,
+            "credits": 4,
+            "is_project_lead": false,
+            "updated_at": "2022-12-29T02:30:00+0000",
+            "created_at": "2022-12-29T02:30:00+0000"
+        }
+    },
+    {
+        "model": "portal.Enrollment",
+        "pk": 88,
+        "fields": {
+            "semester": "202301",
+            "user": 31,
+            "project": 14,
+            "credits": 4,
+            "is_project_lead": true,
+            "updated_at": "2022-12-29T02:30:00+0000",
+            "created_at": "2022-12-29T02:30:00+0000"
+        }
+    },
+    {
+        "model": "portal.Enrollment",
+        "pk": 89,
+        "fields": {
+            "semester": "202208",
+            "user": 31,
+            "project": 22,
+            "credits": 0,
+            "is_project_lead": false,
+            "updated_at": "2022-12-29T02:30:00+0000",
+            "created_at": "2022-12-29T02:30:00+0000"
+        }
+    },
+    {
+        "model": "portal.Enrollment",
+        "pk": 90,
+        "fields": {
+            "semester": "202201",
+            "user": 31,
+            "project": 21,
+            "credits": 4,
+            "is_project_lead": false,
+            "updated_at": "2022-12-29T02:30:00+0000",
+            "created_at": "2022-12-29T02:30:00+0000"
+        }
+    },
+    {
+        "model": "portal.Enrollment",
+        "pk": 91,
+        "fields": {
+            "semester": "202301",
+            "user": 32,
+            "project": 2,
+            "credits": 1,
+            "is_project_lead": true,
+            "updated_at": "2022-12-29T02:30:00+0000",
+            "created_at": "2022-12-29T02:30:00+0000"
+        }
+    },
+    {
+        "model": "portal.Enrollment",
+        "pk": 92,
+        "fields": {
+            "semester": "202208",
+            "user": 32,
+            "project": 27,
+            "credits": 0,
+            "is_project_lead": false,
+            "updated_at": "2022-12-29T02:30:00+0000",
+            "created_at": "2022-12-29T02:30:00+0000"
+        }
+    },
+    {
+        "model": "portal.Enrollment",
+        "pk": 93,
+        "fields": {
+            "semester": "202201",
+            "user": 32,
+            "project": 16,
+            "credits": 0,
+            "is_project_lead": true,
+            "updated_at": "2022-12-29T02:30:00+0000",
+            "created_at": "2022-12-29T02:30:00+0000"
+        }
+    },
+    {
+        "model": "portal.Enrollment",
+        "pk": 94,
+        "fields": {
+            "semester": "202301",
+            "user": 33,
+            "project": 1,
+            "credits": 2,
+            "is_project_lead": false,
+            "updated_at": "2022-12-29T02:30:00+0000",
+            "created_at": "2022-12-29T02:30:00+0000"
+        }
+    },
+    {
+        "model": "portal.Enrollment",
+        "pk": 95,
+        "fields": {
+            "semester": "202208",
+            "user": 33,
+            "project": 8,
+            "credits": 2,
+            "is_project_lead": false,
+            "updated_at": "2022-12-29T02:30:00+0000",
+            "created_at": "2022-12-29T02:30:00+0000"
+        }
+    },
+    {
+        "model": "portal.Enrollment",
+        "pk": 96,
+        "fields": {
+            "semester": "202201",
+            "user": 33,
+            "project": 25,
+            "credits": 3,
+            "is_project_lead": false,
+            "updated_at": "2022-12-29T02:30:00+0000",
+            "created_at": "2022-12-29T02:30:00+0000"
+        }
+    },
+    {
+        "model": "portal.Enrollment",
+        "pk": 97,
+        "fields": {
+            "semester": "202301",
+            "user": 34,
+            "project": 2,
+            "credits": 0,
+            "is_project_lead": false,
+            "updated_at": "2022-12-29T02:30:00+0000",
+            "created_at": "2022-12-29T02:30:00+0000"
+        }
+    },
+    {
+        "model": "portal.Enrollment",
+        "pk": 98,
+        "fields": {
+            "semester": "202208",
+            "user": 34,
+            "project": 6,
+            "credits": 0,
+            "is_project_lead": true,
+            "updated_at": "2022-12-29T02:30:00+0000",
+            "created_at": "2022-12-29T02:30:00+0000"
+        }
+    },
+    {
+        "model": "portal.Enrollment",
+        "pk": 99,
+        "fields": {
+            "semester": "202201",
+            "user": 34,
+            "project": 26,
+            "credits": 3,
+            "is_project_lead": false,
+            "updated_at": "2022-12-29T02:30:00+0000",
+            "created_at": "2022-12-29T02:30:00+0000"
+        }
+    },
+    {
+        "model": "portal.Enrollment",
+        "pk": 100,
+        "fields": {
+            "semester": "202301",
+            "user": 35,
+            "project": 0,
+            "credits": 2,
+            "is_project_lead": false,
+            "updated_at": "2022-12-29T02:30:00+0000",
+            "created_at": "2022-12-29T02:30:00+0000"
+        }
+    },
+    {
+        "model": "portal.Enrollment",
+        "pk": 101,
+        "fields": {
+            "semester": "202208",
+            "user": 35,
+            "project": 2,
+            "credits": 0,
+            "is_project_lead": false,
+            "updated_at": "2022-12-29T02:30:00+0000",
+            "created_at": "2022-12-29T02:30:00+0000"
+        }
+    },
+    {
+        "model": "portal.Enrollment",
+        "pk": 102,
+        "fields": {
+            "semester": "202201",
+            "user": 35,
+            "project": 8,
+            "credits": 2,
+            "is_project_lead": false,
+            "updated_at": "2022-12-29T02:30:00+0000",
+            "created_at": "2022-12-29T02:30:00+0000"
+        }
+    },
+    {
+        "model": "portal.Enrollment",
+        "pk": 103,
+        "fields": {
+            "semester": "202301",
+            "user": 36,
+            "project": 11,
+            "credits": 2,
+            "is_project_lead": false,
+            "updated_at": "2022-12-29T02:30:00+0000",
+            "created_at": "2022-12-29T02:30:00+0000"
+        }
+    },
+    {
+        "model": "portal.Enrollment",
+        "pk": 104,
+        "fields": {
+            "semester": "202208",
+            "user": 36,
+            "project": 12,
+            "credits": 3,
+            "is_project_lead": false,
+            "updated_at": "2022-12-29T02:30:00+0000",
+            "created_at": "2022-12-29T02:30:00+0000"
+        }
+    },
+    {
+        "model": "portal.Enrollment",
+        "pk": 105,
+        "fields": {
+            "semester": "202201",
+            "user": 36,
+            "project": 19,
+            "credits": 4,
+            "is_project_lead": true,
+            "updated_at": "2022-12-29T02:30:00+0000",
+            "created_at": "2022-12-29T02:30:00+0000"
+        }
+    },
+    {
+        "model": "portal.Enrollment",
+        "pk": 106,
+        "fields": {
+            "semester": "202301",
+            "user": 37,
+            "project": 3,
+            "credits": 0,
+            "is_project_lead": false,
+            "updated_at": "2022-12-29T02:30:00+0000",
+            "created_at": "2022-12-29T02:30:00+0000"
+        }
+    },
+    {
+        "model": "portal.Enrollment",
+        "pk": 107,
+        "fields": {
+            "semester": "202208",
+            "user": 37,
+            "project": 0,
+            "credits": 1,
+            "is_project_lead": true,
+            "updated_at": "2022-12-29T02:30:00+0000",
+            "created_at": "2022-12-29T02:30:00+0000"
+        }
+    },
+    {
+        "model": "portal.Enrollment",
+        "pk": 108,
+        "fields": {
+            "semester": "202201",
+            "user": 37,
+            "project": 18,
+            "credits": 3,
+            "is_project_lead": false,
+            "updated_at": "2022-12-29T02:30:00+0000",
+            "created_at": "2022-12-29T02:30:00+0000"
+        }
+    },
+    {
+        "model": "portal.Enrollment",
+        "pk": 109,
+        "fields": {
+            "semester": "202301",
+            "user": 38,
+            "project": 4,
+            "credits": 2,
+            "is_project_lead": false,
+            "updated_at": "2022-12-29T02:30:00+0000",
+            "created_at": "2022-12-29T02:30:00+0000"
+        }
+    },
+    {
+        "model": "portal.Enrollment",
+        "pk": 110,
+        "fields": {
+            "semester": "202208",
+            "user": 38,
+            "project": 12,
+            "credits": 0,
+            "is_project_lead": false,
+            "updated_at": "2022-12-29T02:30:00+0000",
+            "created_at": "2022-12-29T02:30:00+0000"
+        }
+    },
+    {
+        "model": "portal.Enrollment",
+        "pk": 111,
+        "fields": {
+            "semester": "202201",
+            "user": 38,
+            "project": 28,
+            "credits": 0,
+            "is_project_lead": true,
+            "updated_at": "2022-12-29T02:30:00+0000",
+            "created_at": "2022-12-29T02:30:00+0000"
+        }
+    },
+    {
+        "model": "portal.Enrollment",
+        "pk": 112,
+        "fields": {
+            "semester": "202301",
+            "user": 39,
+            "project": 8,
+            "credits": 1,
+            "is_project_lead": false,
+            "updated_at": "2022-12-29T02:30:00+0000",
+            "created_at": "2022-12-29T02:30:00+0000"
+        }
+    },
+    {
+        "model": "portal.Enrollment",
+        "pk": 113,
+        "fields": {
+            "semester": "202208",
+            "user": 39,
+            "project": 8,
+            "credits": 0,
+            "is_project_lead": false,
+            "updated_at": "2022-12-29T02:30:00+0000",
+            "created_at": "2022-12-29T02:30:00+0000"
+        }
+    },
+    {
+        "model": "portal.Enrollment",
+        "pk": 114,
+        "fields": {
+            "semester": "202201",
+            "user": 39,
+            "project": 15,
+            "credits": 0,
+            "is_project_lead": false,
+            "updated_at": "2022-12-29T02:30:00+0000",
+            "created_at": "2022-12-29T02:30:00+0000"
+        }
+    },
+    {
+        "model": "portal.Enrollment",
+        "pk": 115,
+        "fields": {
+            "semester": "202301",
+            "user": 40,
+            "project": 17,
+            "credits": 3,
+            "is_project_lead": false,
+            "updated_at": "2022-12-29T02:30:00+0000",
+            "created_at": "2022-12-29T02:30:00+0000"
+        }
+    },
+    {
+        "model": "portal.Enrollment",
+        "pk": 116,
+        "fields": {
+            "semester": "202208",
+            "user": 40,
+            "project": 25,
+            "credits": 0,
+            "is_project_lead": false,
+            "updated_at": "2022-12-29T02:30:00+0000",
+            "created_at": "2022-12-29T02:30:00+0000"
+        }
+    },
+    {
+        "model": "portal.Enrollment",
+        "pk": 117,
+        "fields": {
+            "semester": "202201",
+            "user": 40,
+            "project": 27,
+            "credits": 0,
+            "is_project_lead": false,
+            "updated_at": "2022-12-29T02:30:00+0000",
+            "created_at": "2022-12-29T02:30:00+0000"
+        }
+    },
+    {
+        "model": "portal.Enrollment",
+        "pk": 118,
+        "fields": {
+            "semester": "202301",
+            "user": 41,
+            "project": 20,
+            "credits": 0,
+            "is_project_lead": false,
+            "updated_at": "2022-12-29T02:30:00+0000",
+            "created_at": "2022-12-29T02:30:00+0000"
+        }
+    },
+    {
+        "model": "portal.Enrollment",
+        "pk": 119,
+        "fields": {
+            "semester": "202208",
+            "user": 41,
+            "project": 13,
+            "credits": 4,
+            "is_project_lead": true,
+            "updated_at": "2022-12-29T02:30:00+0000",
+            "created_at": "2022-12-29T02:30:00+0000"
+        }
+    },
+    {
+        "model": "portal.Enrollment",
+        "pk": 120,
+        "fields": {
+            "semester": "202201",
+            "user": 41,
+            "project": 11,
+            "credits": 2,
+            "is_project_lead": false,
+            "updated_at": "2022-12-29T02:30:00+0000",
+            "created_at": "2022-12-29T02:30:00+0000"
+        }
+    },
+    {
+        "model": "portal.Enrollment",
+        "pk": 121,
+        "fields": {
+            "semester": "202301",
+            "user": 42,
+            "project": 28,
+            "credits": 1,
+            "is_project_lead": false,
+            "updated_at": "2022-12-29T02:30:00+0000",
+            "created_at": "2022-12-29T02:30:00+0000"
+        }
+    },
+    {
+        "model": "portal.Enrollment",
+        "pk": 122,
+        "fields": {
+            "semester": "202208",
+            "user": 42,
+            "project": 7,
+            "credits": 3,
+            "is_project_lead": false,
+            "updated_at": "2022-12-29T02:30:00+0000",
+            "created_at": "2022-12-29T02:30:00+0000"
+        }
+    },
+    {
+        "model": "portal.Enrollment",
+        "pk": 123,
+        "fields": {
+            "semester": "202201",
+            "user": 42,
+            "project": 25,
+            "credits": 4,
+            "is_project_lead": true,
+            "updated_at": "2022-12-29T02:30:00+0000",
+            "created_at": "2022-12-29T02:30:00+0000"
+        }
+    },
+    {
+        "model": "portal.Enrollment",
+        "pk": 124,
+        "fields": {
+            "semester": "202301",
+            "user": 43,
+            "project": 23,
+            "credits": 4,
+            "is_project_lead": false,
+            "updated_at": "2022-12-29T02:30:00+0000",
+            "created_at": "2022-12-29T02:30:00+0000"
+        }
+    },
+    {
+        "model": "portal.Enrollment",
+        "pk": 125,
+        "fields": {
+            "semester": "202208",
+            "user": 43,
+            "project": 7,
+            "credits": 4,
+            "is_project_lead": false,
+            "updated_at": "2022-12-29T02:30:00+0000",
+            "created_at": "2022-12-29T02:30:00+0000"
+        }
+    },
+    {
+        "model": "portal.Enrollment",
+        "pk": 126,
+        "fields": {
+            "semester": "202201",
+            "user": 43,
+            "project": 25,
+            "credits": 0,
+            "is_project_lead": true,
+            "updated_at": "2022-12-29T02:30:00+0000",
+            "created_at": "2022-12-29T02:30:00+0000"
+        }
+    },
+    {
+        "model": "portal.Enrollment",
+        "pk": 127,
+        "fields": {
+            "semester": "202301",
+            "user": 44,
+            "project": 7,
+            "credits": 1,
+            "is_project_lead": false,
+            "updated_at": "2022-12-29T02:30:00+0000",
+            "created_at": "2022-12-29T02:30:00+0000"
+        }
+    },
+    {
+        "model": "portal.Enrollment",
+        "pk": 128,
+        "fields": {
+            "semester": "202208",
+            "user": 44,
+            "project": 25,
+            "credits": 3,
+            "is_project_lead": false,
+            "updated_at": "2022-12-29T02:30:00+0000",
+            "created_at": "2022-12-29T02:30:00+0000"
+        }
+    },
+    {
+        "model": "portal.Enrollment",
+        "pk": 129,
+        "fields": {
+            "semester": "202201",
+            "user": 44,
+            "project": 6,
+            "credits": 1,
+            "is_project_lead": false,
+            "updated_at": "2022-12-29T02:30:00+0000",
+            "created_at": "2022-12-29T02:30:00+0000"
+        }
+    },
+    {
+        "model": "portal.Enrollment",
+        "pk": 130,
+        "fields": {
+            "semester": "202301",
+            "user": 45,
+            "project": 2,
+            "credits": 0,
+            "is_project_lead": false,
+            "updated_at": "2022-12-29T02:30:00+0000",
+            "created_at": "2022-12-29T02:30:00+0000"
+        }
+    },
+    {
+        "model": "portal.Enrollment",
+        "pk": 131,
+        "fields": {
+            "semester": "202208",
+            "user": 45,
+            "project": 3,
+            "credits": 0,
+            "is_project_lead": true,
+            "updated_at": "2022-12-29T02:30:00+0000",
+            "created_at": "2022-12-29T02:30:00+0000"
+        }
+    },
+    {
+        "model": "portal.Enrollment",
+        "pk": 132,
+        "fields": {
+            "semester": "202201",
+            "user": 45,
+            "project": 24,
+            "credits": 2,
+            "is_project_lead": false,
+            "updated_at": "2022-12-29T02:30:00+0000",
+            "created_at": "2022-12-29T02:30:00+0000"
+        }
+    },
+    {
+        "model": "portal.Enrollment",
+        "pk": 133,
+        "fields": {
+            "semester": "202301",
+            "user": 46,
+            "project": 4,
+            "credits": 3,
+            "is_project_lead": true,
+            "updated_at": "2022-12-29T02:30:00+0000",
+            "created_at": "2022-12-29T02:30:00+0000"
+        }
+    },
+    {
+        "model": "portal.Enrollment",
+        "pk": 134,
+        "fields": {
+            "semester": "202208",
+            "user": 46,
+            "project": 11,
+            "credits": 1,
+            "is_project_lead": false,
+            "updated_at": "2022-12-29T02:30:00+0000",
+            "created_at": "2022-12-29T02:30:00+0000"
+        }
+    },
+    {
+        "model": "portal.Enrollment",
+        "pk": 135,
+        "fields": {
+            "semester": "202201",
+            "user": 46,
+            "project": 16,
+            "credits": 0,
+            "is_project_lead": false,
+            "updated_at": "2022-12-29T02:30:00+0000",
+            "created_at": "2022-12-29T02:30:00+0000"
+        }
+    },
+    {
+        "model": "portal.Enrollment",
+        "pk": 136,
+        "fields": {
+            "semester": "202301",
+            "user": 47,
+            "project": 26,
+            "credits": 4,
+            "is_project_lead": true,
+            "updated_at": "2022-12-29T02:30:00+0000",
+            "created_at": "2022-12-29T02:30:00+0000"
+        }
+    },
+    {
+        "model": "portal.Enrollment",
+        "pk": 137,
+        "fields": {
+            "semester": "202208",
+            "user": 47,
+            "project": 27,
+            "credits": 3,
+            "is_project_lead": false,
+            "updated_at": "2022-12-29T02:30:00+0000",
+            "created_at": "2022-12-29T02:30:00+0000"
+        }
+    },
+    {
+        "model": "portal.Enrollment",
+        "pk": 138,
+        "fields": {
+            "semester": "202201",
+            "user": 47,
+            "project": 18,
+            "credits": 0,
+            "is_project_lead": false,
+            "updated_at": "2022-12-29T02:30:00+0000",
+            "created_at": "2022-12-29T02:30:00+0000"
+        }
+    },
+    {
+        "model": "portal.Enrollment",
+        "pk": 139,
+        "fields": {
+            "semester": "202301",
+            "user": 48,
+            "project": 8,
+            "credits": 4,
+            "is_project_lead": true,
+            "updated_at": "2022-12-29T02:30:00+0000",
+            "created_at": "2022-12-29T02:30:00+0000"
+        }
+    },
+    {
+        "model": "portal.Enrollment",
+        "pk": 140,
+        "fields": {
+            "semester": "202208",
+            "user": 48,
+            "project": 9,
+            "credits": 0,
+            "is_project_lead": false,
+            "updated_at": "2022-12-29T02:30:00+0000",
+            "created_at": "2022-12-29T02:30:00+0000"
+        }
+    },
+    {
+        "model": "portal.Enrollment",
+        "pk": 141,
+        "fields": {
+            "semester": "202201",
+            "user": 48,
+            "project": 6,
+            "credits": 1,
+            "is_project_lead": false,
+            "updated_at": "2022-12-29T02:30:00+0000",
+            "created_at": "2022-12-29T02:30:00+0000"
+        }
+    },
+    {
+        "model": "portal.Enrollment",
+        "pk": 142,
+        "fields": {
+            "semester": "202301",
+            "user": 49,
+            "project": 6,
+            "credits": 0,
+            "is_project_lead": true,
+            "updated_at": "2022-12-29T02:30:00+0000",
+            "created_at": "2022-12-29T02:30:00+0000"
+        }
+    },
+    {
+        "model": "portal.Enrollment",
+        "pk": 143,
+        "fields": {
+            "semester": "202208",
+            "user": 49,
+            "project": 6,
+            "credits": 0,
+            "is_project_lead": false,
+            "updated_at": "2022-12-29T02:30:00+0000",
+            "created_at": "2022-12-29T02:30:00+0000"
+        }
+    },
+    {
+        "model": "portal.Enrollment",
+        "pk": 144,
+        "fields": {
+            "semester": "202201",
+            "user": 49,
+            "project": 28,
+            "credits": 0,
+            "is_project_lead": false,
+            "updated_at": "2022-12-29T02:30:00+0000",
+            "created_at": "2022-12-29T02:30:00+0000"
+        }
+    }
+]

@@ -32,6 +32,7 @@ eventlet = "^0.35.1"
 
 [tool.poetry.group.dev.dependencies]
 ruff = "^0.2.2"
+faker = "^24.4.0"
 
 [build-system]
 requires = ["poetry-core"]

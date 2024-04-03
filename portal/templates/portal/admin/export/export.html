@@ -13,7 +13,13 @@
                 <h1 class="title">{{ title }}</h1>
 
                 <hr>
-                {% crispy form %}
+                <form method="post" enctype="multipart/form-data" class="box">
+                    {% include "portal/includes/formerrors.html" %}
+                    {% csrf_token %}
+                    {{ form.as_div }}
+                    <br>
+                    <button type="submit" class="button">Export</button>
+                </form>
             </div>
         </div>
         

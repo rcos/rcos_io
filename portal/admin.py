@@ -71,7 +71,6 @@ def export_enrollments_to_csv(modeladmin, request, queryset):
 
 export_enrollments_to_csv.short_description = "Export to CSV"  # short description
 
-
 @admin.action(description="Mark selected as approved")
 def make_approved(modeladmin, request, queryset):
     queryset.update(is_approved=True)
