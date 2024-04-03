@@ -1,10 +1,13 @@
 import csv
 import logging
 from time import sleep
+from typing import Any
 
 from django.contrib import admin
 from django.contrib.auth.admin import UserAdmin
+from django.db.models.query import QuerySet
 from django.http import HttpResponse
+from django.http.request import HttpRequest
 
 from portal.models import (
     Enrollment,
@@ -117,6 +120,10 @@ class MeetingAttendanceInline(admin.TabularInline):
     classes = ["collapse"]
     model = MeetingAttendance
     extra = 1
+    
+    # def get_queryset(self, request: HttpRequest) -> QuerySet[Any]:
+    #     print(super().get_queryset(request).explain())
+    #     return super().get_queryset(request).select_related()
 
 
 class MeetingAttendanceCodeInline(admin.TabularInline):
@@ -210,6 +217,7 @@ class SemesterAdmin(admin.ModelAdmin):
         ProjectPresentationInline,
         SmallGroupInline,
     )
+    list_select_related = True
 
 
 @admin.register(Organization)
@@ -219,6 +227,7 @@ class OrganizationAdmin(admin.ModelAdmin):
         ("Emails", {"fields": (("email_domain", "email_domain_secondary"),)}),
         ("Discord", {"classes": ("collapse",), "fields": ("discord_role_id",)}),
     )
+    list_select_related = True
 
 
 @admin.register(User)
@@ -270,6 +279,7 @@ class UserAdmin(UserAdmin):
     ordering = ("first_name",)
     inlines = (EnrollmentInline,)
     actions = (make_approved,)
+    list_select_related = True
 
 
 @admin.register(Project)
@@ -294,6 +304,7 @@ class ProjectAdmin(admin.ModelAdmin):
         make_approved,
         sync_discord,
     )
+    list_select_related = True
 
     fieldsets = (
         (
@@ -399,6 +410,7 @@ class EnrollmentAdmin(admin.ModelAdmin):
     )
 
     actions = [export_enrollments_to_csv]
+    list_select_related = True
 
 
 @admin.register(Meeting)
@@ -408,6 +420,7 @@ class MeetingAdmin(admin.ModelAdmin):
     list_filter = ("starts_at", "type", "is_published")
     inlines = (MeetingAttendanceCodeInline, MeetingAttendanceInline)
     actions = (make_published,)
+    list_select_related = True
 
     fieldsets = (
         (
@@ -439,6 +452,9 @@ class MeetingAdmin(admin.ModelAdmin):
         ),
     )
 
+    def get_queryset(self, request: HttpRequest) -> QuerySet[Any]:
+        return super().get_queryset(request).prefetch_related("attendances")
+
 
 @admin.register(SmallGroup)
 class SmallGroupAdmin(admin.ModelAdmin):
@@ -469,6 +485,7 @@ class SmallGroupAdmin(admin.ModelAdmin):
             },
         ),
     )
+    list_select_related = True
 
 
 # @admin.register(StatusUpdate)

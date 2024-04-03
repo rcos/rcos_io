@@ -1352,6 +1352,9 @@ class Meeting(TimestampedModel):
 # post_save.connect(sync_discord, sender=Meeting)
 # post_delete.connect(sync_discord_on_delete, sender=Meeting)
 
+class MeetingAttendanceManager(models.Manager):
+    def get_queryset(self) -> models.QuerySet:
+        return super().get_queryset().select_related("user")
 
 class MeetingAttendance(TimestampedModel):
     meeting = models.ForeignKey(Meeting, on_delete=models.CASCADE)
@@ -1359,12 +1362,19 @@ class MeetingAttendance(TimestampedModel):
     is_verified = models.BooleanField(default=True)
     submitted_by = models.ForeignKey(User, blank=True, null=True, on_delete=models.SET_NULL, help_text="The user that submitted the attendance for user (either them or an administrator).", related_name="submitted_attendances")
 
+
     class Meta:
         constraints = [
             models.UniqueConstraint(
                 fields=["meeting", "user"], name="unique_meeting_attendance"
             )
         ]
+        indexes = [
+            models.Index(fields=["meeting"]),
+            models.Index(fields=["user"]),
+        ]
+
+    objects = MeetingAttendanceManager()
 
 
 class MentorApplication(TimestampedModel):
