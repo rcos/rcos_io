@@ -545,6 +545,120 @@ def manually_add_or_verify_attendance(request: HttpRequest) -> HttpResponse:
 
 
 @login_required
+def manually_add_or_verify_starting_attendance(request: HttpRequest) -> HttpResponse:
+    if request.method == "POST":
+        meeting: Meeting = Meeting.objects.get(pk=request.POST["meeting"])
+        small_group_id = request.POST.get("small_group", None)
+
+        action = request.POST.get("action", "accept")
+
+        if action not in ["accept", "deny", "delete"]:
+            messages.error(request, "Action not understood.")
+            return redirect(reverse("meetings_detail", args=(meeting.pk,)))
+
+        user_ids = [
+            s.strip()
+            for s in re.split(r",|;|\s", request.POST.get("user", ""))
+            if s.strip()
+        ]
+
+        # Split RCS IDs on whitespaces, commands, semicolons, and remove parentheses
+        rcs_ids = [
+            re.sub(r"\(|\)", "", s.strip()).removesuffix("@rpi.edu")
+            for s in re.split(r",|;|\s", request.POST.get("rcs_id", ""))
+            if s.strip()
+        ]
+
+        if not user_ids and not rcs_ids:
+            messages.warning(request, "You did not enter a user ID or RCS ID!")
+            return redirect(reverse("meetings_detail", args=(meeting.pk,)))
+
+        if user_ids:
+            users = User.objects.filter(pk__in=user_ids)
+        else:
+            users = User.objects.filter(rcs_id__in=rcs_ids)
+
+        for user in users:
+            try:
+                submitter_enrollment = request.user.enrollments.get(
+                    semester=meeting.semester
+                )
+                if (
+                    not request.user.is_superuser
+                    and not submitter_enrollment.is_faculty_advisor
+                    and not submitter_enrollment.is_coordinator
+                    and not submitter_enrollment.is_mentor
+                ):
+                    return redirect(reverse("meetings_index"))
+
+                if (
+                    not request.user.is_superuser
+                    and not submitter_enrollment.is_coordinator
+                    and submitter_enrollment.is_mentor
+                    and meeting.type == Meeting.MENTOR
+                ):
+                    messages.warning(
+                        request,
+                        "You cannot manually submit starting attendance for a Mentor meeting!",
+                    )
+                    return redirect(reverse("meetings_detail", args=(meeting.pk,)))
+            except Enrollment.DoesNotExist:
+                if not request.user.is_superuser:
+                    messages.error(
+                        request,
+                        "You must be an enrolled Faculty Advisor/Coordinator/Mentor to perform this action.",
+                    )
+                    return redirect(reverse("meetings_detail", args=(meeting.pk,)))
+
+            user.enrollments.get_or_create(semester_id=meeting.semester_id)
+
+            if action == "accept":
+                try:
+                    attendance = MeetingStartingAttendance.objects.get(
+                        user=user, meeting=meeting
+                    )
+                    if not attendance.is_verified:
+                        attendance.is_verified = True
+                        attendance.save()
+
+                        # Clear the cache of any record of this person previously failing verification
+                        cache.delete(f"failed-verification:{user.pk}")
+                except MeetingStartingAttendance.DoesNotExist:
+                    attendance = MeetingStartingAttendance(
+                        meeting=meeting,
+                        user=user,
+                        is_verified=True,
+                        submitted_by=request.user,
+                    )
+                    attendance.save()
+                    messages.success(request, f"Added starting attendance for {user}!")
+
+                # Submit attendance for submitter themselves
+                try:
+                    MeetingAttendance(user=request.user, meeting=meeting, submitted_by=request.user).save()
+
+                except IntegrityError:
+                    pass
+            elif action == "deny":
+                cache.set(
+                    f"failed-verification:{user.pk}", 1, 60 * 60 * 24 * 30 * 3
+                )  # 3 months
+                MeetingAttendance.objects.filter(user=user, meeting=meeting).delete()
+                messages.success(request, f"Denied attendance verification for {user}!")
+            elif action == "delete":
+                MeetingAttendance.objects.filter(user=user, meeting=meeting).delete()
+                messages.success(request, f"Removed attendance for {user}!")
+
+        return redirect(
+            reverse("meetings_detail", args=(meeting.pk,))
+            + ("?small_group=" + small_group_id if small_group_id else "")
+            + "#attendance"
+        )
+
+    return redirect(reverse("meetings_index"))
+
+
+@login_required
 def user_attendance(request: HttpRequest, pk: Any) -> HttpResponse:
     target_user = cast(User, User.objects.get(pk=pk))
 

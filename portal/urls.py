@@ -27,6 +27,7 @@ from .views.meetings import (
     SubmitStartingAttendanceFormView,
     export_meeting_attendance,
     manually_add_or_verify_attendance,
+    manually_add_or_verify_starting_attendance,
     meetings_api,
     meetings_index,
     schedule_workshop,
@@ -95,7 +96,12 @@ urlpatterns = [
         "meetings/attendance/verify/",
         manually_add_or_verify_attendance,
         name="verify_attendance",
-    ), #TODO: Add verify for starting attendance
+    ),
+    path(
+        "meetings/starting-attendance/verify/",
+        manually_add_or_verify_starting_attendance,
+        name="verify_starting_attendance"
+    ),
     path("meetings/<int:pk>/", MeetingDetailView.as_view(), name="meetings_detail"),
     path(
         "meetings/<int:pk>/export/",

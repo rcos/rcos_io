@@ -1578,9 +1578,9 @@ class MeetingStartingAttendanceCode(TimestampedModel):
     @property
     def is_valid(self):
         now = timezone.now();
-        time_passed = now - self.starts_at
+        time_passed = now - self.meeting.starts_at
         minutes_passed = time_passed.total_seconds() / 60
-        return self.is_ongoing and minutes_passed <= 15
+        return self.meeting.is_ongoing and minutes_passed <= 15
 
     def __str__(self) -> str:
         return self.code or "Unknown Starting Attendance Code"
