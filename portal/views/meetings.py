@@ -634,11 +634,11 @@ def manually_add_or_verify_starting_attendance(request: HttpRequest) -> HttpResp
                     messages.success(request, f"Added starting attendance for {user}!")
 
                 # Submit attendance for submitter themselves
-                try:
-                    MeetingStartingAttendance(user=request.user, meeting=meeting, submitted_by=request.user).save()
+                # try:
+                #     MeetingStartingAttendance(user=request.user, meeting=meeting, submitted_by=request.user).save()
 
-                except IntegrityError:
-                    pass
+                # except IntegrityError:
+                #     pass
             elif action == "deny":
                 cache.set(
                     f"failed-verification:{user.pk}", 1, 60 * 60 * 24 * 30 * 3
