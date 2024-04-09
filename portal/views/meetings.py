@@ -635,7 +635,7 @@ def manually_add_or_verify_starting_attendance(request: HttpRequest) -> HttpResp
 
                 # Submit attendance for submitter themselves
                 try:
-                    MeetingAttendance(user=request.user, meeting=meeting, submitted_by=request.user).save()
+                    MeetingStartingAttendance(user=request.user, meeting=meeting, submitted_by=request.user).save()
 
                 except IntegrityError:
                     pass
@@ -643,11 +643,11 @@ def manually_add_or_verify_starting_attendance(request: HttpRequest) -> HttpResp
                 cache.set(
                     f"failed-verification:{user.pk}", 1, 60 * 60 * 24 * 30 * 3
                 )  # 3 months
-                MeetingAttendance.objects.filter(user=user, meeting=meeting).delete()
-                messages.success(request, f"Denied attendance verification for {user}!")
+                MeetingStartingAttendance.objects.filter(user=user, meeting=meeting).delete()
+                messages.success(request, f"Denied starting attendance verification for {user}!")
             elif action == "delete":
-                MeetingAttendance.objects.filter(user=user, meeting=meeting).delete()
-                messages.success(request, f"Removed attendance for {user}!")
+                MeetingStartingAttendance.objects.filter(user=user, meeting=meeting).delete()
+                messages.success(request, f"Removed starting attendance for {user}!")
 
         return redirect(
             reverse("meetings_detail", args=(meeting.pk,))

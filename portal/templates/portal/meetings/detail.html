@@ -328,7 +328,7 @@
                                         <button class="button is-small is-success is-light">Present</button>
                                     </form>
         
-                                    <form action="{% url 'verify_attendance' %}" method="post" class="is-inline-block" onsubmit="return confirm('Double check that {{ attendance.user }} is not present before continuing.')">
+                                    <form action="{% url 'verify_starting_attendance' %}" method="post" class="is-inline-block" onsubmit="return confirm('Double check that {{ attendance.user }} is not present before continuing.')">
                                         {% csrf_token %}
                                         <input type="hidden" name="user" value="{{ attendance.user.pk }}">
                                         {% if target_small_group %}

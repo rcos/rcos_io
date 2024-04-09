@@ -1282,7 +1282,7 @@ class Meeting(TimestampedModel):
             "attendance_ratio": len(attendances) / expected_users.count()
             if expected_users.count() > 0
             else 0,
-            "needs_verficiation_starting_attendances": needs_verification_starting_attendances,
+            "needs_verification_starting_attendances": needs_verification_starting_attendances,
             "starting_attendances": starting_attendances,
             "non_starting_attended_users": non_starting_attended_users,
             "starting_attendance_ratio": len(starting_attendances) / expected_users.count()
