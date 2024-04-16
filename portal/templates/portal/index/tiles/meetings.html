@@ -2,21 +2,37 @@
 <h2 class="title is-4 mb-2">Meetings</h2>
 
 {% if ongoing_meeting %}
-<form action="{% url 'submit_attendance' %}" method="post">
-    {% csrf_token %}
-
-    <label for="attendance-code" class="label">Meeting Attendance</label>
-    <div class="field has-addons">
-        <div class="control is-flex-grow-1">
-          <input type="text" id="attendance-code" name="code" type="text" required placeholder="Attendance code" class="input">
+    {% if ongoing_meeting.is_starting_valid %}
+    <form action="{% url 'submit_starting_attendance' %}" method="post">
+        {% csrf_token %}
+        <label for="attendance-code" class="label">Starting Meeting Attendance</label>
+        <div class="field has-addons">
+            <div class="control is-flex-grow-1">
+            <input type="text" id="starting-attendance-code" name="code" type="text" required placeholder="Starting attendance code" class="input">
+            </div>
+            <div class="control">
+            <button type="submit" class="button">
+                Submit
+            </button>
+            </div>
         </div>
-        <div class="control">
-          <button type="submit" class="button">
-            Submit
-          </button>
+    </form>
+    {% else %}
+    <form action="{% url 'submit_attendance' %}" method="post">
+        {% csrf_token %}
+        <label for="attendance-code" class="label">Meeting Attendance</label>
+        <div class="field has-addons">
+            <div class="control is-flex-grow-1">
+            <input type="text" id="attendance-code" name="code" type="text" required placeholder="Attendance code" class="input">
+            </div>
+            <div class="control">
+            <button type="submit" class="button">
+                Submit
+            </button>
+            </div>
         </div>
-      </div>
-</form>
+    </form>
+    {% endif %}
 <hr>
 <small class="has-text-grey is-block">Ongoing Meeting
     {% if ongoing_meeting.room %}
