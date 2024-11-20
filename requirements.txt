@@ -152,9 +152,9 @@ colorama==0.4.6 ; python_version >= "3.11" and python_version < "4.0" and platfo
 crispy-bulma==0.11.0 ; python_version >= "3.11" and python_version < "4.0" \
     --hash=sha256:27eccd09a5a77754d64462f61ff585c00feb8c15f65d0d8f9676ab26f6bc3562 \
     --hash=sha256:bc5406d64649a3da9c61d1aa969cb2c39bb3a1802ba8ee4bccebe94a84ca94e1
-django-anymail==10.3 ; python_version >= "3.11" and python_version < "4.0" \
-    --hash=sha256:1e72f059e96930d3675d35fe4c61f82b138ae4a7fcb0337be39dcb4823f94a4f \
-    --hash=sha256:35d8ec20b06000af3c1638492e32f416fd1a584f0a572cded03f1bc570169ed0
+django-anymail==12.0; python_version >= "3.11" and python_version < "4.0" \
+    --hash=sha256:65789c1b0f42915aa0450a4f173f77572d4c552979b748ddd8125af41972ad30 \
+    --hash=sha256:de8458d713d0f9776da9ed04dcd3a0161be23e9ecbcb49dcf149219700ecd274
 django-crispy-forms==2.3 ; python_version >= "3.11" and python_version < "4.0" \
     --hash=sha256:2db17ae08527201be1273f0df789e5f92819e23dd28fec69cffba7f3762e1a38 \
     --hash=sha256:efc4c31e5202bbec6af70d383a35e12fc80ea769d464fb0e7fe21768bb138a20
