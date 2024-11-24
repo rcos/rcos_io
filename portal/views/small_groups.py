@@ -22,7 +22,7 @@ class SmallGroupIndexView(SearchableListView, SemesterFilteredListView):
         "mentors__last_name",
     )
 
-@method_decorator(login_required, name="dispatch")
+@login_required
 def small_group_detail(request: HttpRequest, pk: int) -> HttpResponse:
     """Fetches and displays an overview for a particular small group."""
     return TemplateResponse(request, "portal/small_groups/detail.html", {
