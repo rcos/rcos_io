@@ -41,7 +41,6 @@ Projects | RCOS IO
                 </thead>
                 <tbody>
                     {% with querystring=request.GET.urlencode %}
-                    {% with notator=querystring|length_is:0|yesno:',&' %}
                     {% for project_data in projects_rows %}
                     <tr>
                         <td>
@@ -62,7 +61,7 @@ Projects | RCOS IO
                         </td>
                         <td>
                             {% for project_tag in project_data.project.tags.all %}
-                                <a href="{{ request.path }}?{{ querystring }}{{ notator }}search={{ project_tag|urlencode }}">
+                                <a href="{{ request.path }}?{{ querystring }}&search={{ project_tag|urlencode }}">
                                     <span class="tag">{{ project_tag }}</span>
                                 </a>
                             {% endfor %}
@@ -98,7 +97,6 @@ Projects | RCOS IO
                         {% endif%}
                     </tr>
                     {% endfor %}
-                    {% endwith %}
                     {% endwith %}
                 </tbody>
             </table>
