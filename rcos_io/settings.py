@@ -132,24 +132,24 @@ WSGI_APPLICATION = "rcos_io.wsgi.application"
 # Database
 # https://docs.djangoproject.com/en/4.1/ref/settings/#databases
 
-if os.environ["ENV"] == "development":
-    DATABASES = {
-        "default": {
-            "ENGINE": "django.db.backends.sqlite3",
-            "NAME": os.path.join(BASE_DIR, "db.sqlite3"),
-        }
+# if os.environ["ENV"] == "development":
+#     DATABASES = {
+#         "default": {
+#             "ENGINE": "django.db.backends.sqlite3",
+#             "NAME": os.path.join(BASE_DIR, "db.sqlite3"),
+#         }
+#     }
+# else:
+DATABASES = {
+    "default": {
+        "ENGINE": "django.db.backends.postgresql",
+        "NAME": os.environ["PGDATABASE"],
+        "USER": os.environ["PGUSER"],
+        "PASSWORD": os.environ["PGPASSWORD"],
+        "HOST": os.environ["PGHOST"],
+        "PORT": os.environ["PGPORT"],
     }
-else:
-    DATABASES = {
-        "default": {
-            "ENGINE": "django.db.backends.postgresql",
-            "NAME": os.environ["PGDATABASE"],
-            "USER": os.environ["PGUSER"],
-            "PASSWORD": os.environ["PGPASSWORD"],
-            "HOST": os.environ["PGHOST"],
-            "PORT": os.environ["PGPORT"],
-        }
-    }
+}
 
 AUTH_USER_MODEL = "portal.User"
 
@@ -315,20 +315,20 @@ MESSAGE_TAGS = {
     messages.WARNING: "is-warning",
 }
 
-if os.environ["ENV"] == "development":
-    CACHES = {
-        "default": {
-            "BACKEND": "django.core.cache.backends.db.DatabaseCache",
-            "LOCATION": "cache",
-        }
+# if os.environ["ENV"] == "development":
+#     CACHES = {
+#         "default": {
+#             "BACKEND": "django.core.cache.backends.db.DatabaseCache",
+#             "LOCATION": "cache",
+#         }
+#     }
+# else:
+CACHES = {
+    "default": {
+        "BACKEND": "django.core.cache.backends.redis.RedisCache",
+        "LOCATION": os.environ["REDIS_URL"],
     }
-else:
-    CACHES = {
-        "default": {
-            "BACKEND": "django.core.cache.backends.redis.RedisCache",
-            "LOCATION": os.environ["REDIS_URL"],
-        }
-    }
+}
 
 LOGGING = {
     "version": 1,

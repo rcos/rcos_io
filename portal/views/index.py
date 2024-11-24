@@ -66,7 +66,7 @@ class IndexView(TemplateView):
                 Enrollment.objects.filter(
                     Q(is_faculty_advisor=True) | Q(is_coordinator=True),
                     semester=active_semester,
-                ),
+                ).select_related("user"),
                 60 * 60 * 24,
             )
 

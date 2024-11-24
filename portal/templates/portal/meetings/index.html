@@ -6,7 +6,7 @@
 <meta property="og:title" content="Meetings | RCOS IO" />
 <meta property="og:type" content="website" />
 <meta property="og:url" content="{{ request.build_absolute_uri }}" />
-<meta property="og:description" content="Meetings {% if ongoing_meetings|length > 0 %}{% with curr_meeting=ongoing_meetings|first %}| Ongoing meeting: {{ curr_meeting.display_name }} @ {{ curr_meeting.starts_at }} {% endwith %}{% elif upcoming_meetings|length > 0 %}{% with next_meeting=upcoming_meetings|first %}| Next meeting: {{ next_meeting.display_name }} @ {{ next_meeting.starts_at }} {% endwith %}{% endif %}| Rensselaer Center for Open Source" />
+<meta property="og:description" content="Meetings {% if ongoing_meeting %}| Ongoing meeting: {{ ongoing_meeting.display_name }} @ {{ ongoing_meeting.starts_at }}{% elif upcoming_meeting %}| Next meeting: {{ upcoming_meeting.display_name }} @ {{ upcoming_meeting.starts_at }}{% endif %}| Rensselaer Center for Open Source" />
 <meta property="og:image" content="https://raw.githubusercontent.com/rcos/rcos-branding/master/img/lockup-red.png" />
 {% endblock %}
 

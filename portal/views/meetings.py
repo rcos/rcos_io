@@ -70,16 +70,32 @@ def meetings_index(request: HttpRequest) -> HttpResponse:
     now = timezone.now()
     active_semester = Semester.get_active()
 
+    ongoing_meetings = Meeting.get_user_queryset(request.user) \
+            .filter(starts_at__lte=now) \
+            .filter(ends_at__gte=now) \
+            .order_by("starts_at") \
+            .select_related("room", "host")[:3]
+
+    ongoing_meeting = None
+    if len(ongoing_meetings) > 0:
+        ongoing_meeting = ongoing_meetings[0]
+
+    upcoming_meetings = Meeting.get_user_queryset(request.user) \
+            .filter(starts_at__gte=now) \
+            .order_by("starts_at") \
+            .prefetch_related() \
+            .select_related("room", "host")[:3]
+
+    next_meeting = None
+    if len(upcoming_meetings) > 0:
+        next_meeting = upcoming_meetings[0]
+    
+
     return TemplateResponse(request, "portal/meetings/index.html", {
-        "ongoing_meetings":  Meeting.get_user_queryset(request.user)
-            .filter(starts_at__lte=now)
-            .filter(ends_at__gte=now)
-            .order_by("starts_at")
-            .select_related()[:3],
-        "upcoming_meetings": Meeting.get_user_queryset(request.user)
-            .filter(starts_at__gte=now)
-            .order_by("starts_at")
-            .select_related()[:3],
+        "ongoing_meetings":  ongoing_meetings,
+        "ongoing_meeting": ongoing_meeting,
+        "upcoming_meetings": upcoming_meetings,
+        "next_meeting": next_meeting,
         "is_enrolled": bool(request.user.enrollments.filter(semester=active_semester).first()) if request.user.is_authenticated else False,
         "can_schedule_workshops_check": CheckUserCanScheduleWorkshop().check(request.user, active_semester)
     })
@@ -134,11 +150,14 @@ class MeetingDetailView(DetailView):
 
         data["can_manage_attendance"] = False
 
-        can_manage_attendance = cache.get_or_set(
-            f"can_manage_attendance:{self.object.pk}:{self.request.user.pk}",
-            default=self.can_manage_attendance,
-            timeout=60 * 60 * 24,
-        )
+        if self.request.user.is_authenticated:
+            can_manage_attendance = cache.get_or_set(
+                f"can_manage_attendance:{self.object.pk}:{self.request.user.pk}",
+                default=self.can_manage_attendance(),
+                timeout=60 * 60 * 24,
+            )
+        else:
+            can_manage_attendance = False
 
         if can_manage_attendance:
             data["can_manage_attendance"] = True

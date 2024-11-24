@@ -12,13 +12,9 @@ from ..models import Organization, Semester
 
 
 def load_semesters(request):
-    semesters = cache.get_or_set("semesters", Semester.objects.all(), 60 * 60 * 24)
+    semesters = Semester.objects.all()
     active_semester = (
-        cache.get_or_set(
-            "active_semester",
-            next((semester for semester in semesters if semester.is_active), None),
-            60 * 60 * 24,
-        )
+        next((semester for semester in semesters if semester.is_active), None)
         if semesters
         else None
     )

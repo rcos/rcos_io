@@ -109,10 +109,14 @@ class ProjectIndexView(
         data = super().get_context_data(**kwargs)
         data["organizations"] = Organization.objects.all()
         data["is_seeking_members"] = self.is_seeking_members
-        data["total_count"] = self.get_queryset().count()
-        paginator = Paginator(self.get_queryset(), self.paginate_by)
+
+        queryset = self.get_queryset()
+        data["total_count"] = queryset.count()
+        paginator = Paginator(queryset, self.paginate_by)
 
         page = self.request.GET.get("page")
+        if page is None:
+            page = 1
 
         try:
             projects = paginator.page(page)

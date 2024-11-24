@@ -145,7 +145,7 @@ class Semester(TimestampedModel):
     def get_admins(self):
         return self.enrollments.filter(
             Q(is_coordinator=True) | Q(is_faculty_advisor=True)
-        ).order_by("is_faculty_advisor")
+        ).order_by("is_faculty_advisor").select_related("user")
 
     def __str__(self) -> str:
         return self.name
