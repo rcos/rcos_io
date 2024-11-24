@@ -1,5 +1,6 @@
 import json
 from random import choice, randint, random
+from django.utils.text import slugify
 
 from faker import Faker
 
@@ -78,12 +79,14 @@ for i in range(2, 50):
 
 projects = []
 for i in range(30):
+    name = f.unique.word("adjective").capitalize() + " Project"
     projects.append(
         {
             "model": "portal.Project",
             "pk": i,
             "fields": {
-                "name": f.unique.word("adjective").capitalize() + " Project",
+                "name": name,
+                "slug": slugify(name),
                 "owner": choice(users)["pk"],
                 "is_approved": random() > 0.2,
                 "description": f.sentence(),

@@ -334,19 +334,22 @@ def manually_add_or_verify_attendance(request: HttpRequest) -> HttpResponse:
         else:
             users = User.objects.filter(rcs_id__in=rcs_ids)
 
+        submitter_enrollment = request.user.enrollments.get(
+            semester=meeting.semester
+        )
         for user in users:
             try:
-                submitter_enrollment = request.user.enrollments.get(
-                    semester=meeting.semester
-                )
+                # Only allow Mentors or above AND meeting hosts to add/verify attendances
                 if (
                     not request.user.is_superuser
                     and not submitter_enrollment.is_faculty_advisor
                     and not submitter_enrollment.is_coordinator
                     and not submitter_enrollment.is_mentor
+                    and not request.user.pk == meeting.host.pk
                 ):
                     return redirect(reverse("meetings_index"))
 
+                # Don't let Mentors add attendances for Mentor meetings 
                 if (
                     not request.user.is_superuser
                     and not submitter_enrollment.is_coordinator
@@ -362,7 +365,7 @@ def manually_add_or_verify_attendance(request: HttpRequest) -> HttpResponse:
                 if not request.user.is_superuser:
                     messages.error(
                         request,
-                        "You must be an enrolled Faculty Advisor/Coordinator/Mentor to perform this action.",
+                        "You must be an enrolled Faculty Advisor/Coordinator/Mentor or the meeting host to perform this action.",
                     )
                     return redirect(reverse("meetings_detail", args=(meeting.pk,)))
 

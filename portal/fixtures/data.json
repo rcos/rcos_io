@@ -190,12 +190,12 @@
         "pk": 2,
         "fields": {
             "email": "student2@rpi.edu",
-            "first_name": "Amy",
-            "last_name": "Bryant",
+            "first_name": "Alicia",
+            "last_name": "Olson",
             "is_approved": true,
             "role": "rpi",
             "rcs_id": "student2",
-            "graduation_year": 2024,
+            "graduation_year": 2025,
             "updated_at": "2022-12-29T02:30:00+0000",
             "created_at": "2022-12-29T02:30:00+0000"
         }
@@ -205,12 +205,12 @@
         "pk": 3,
         "fields": {
             "email": "student3@rpi.edu",
-            "first_name": "Gregory",
-            "last_name": "Dixon",
+            "first_name": "Phillip",
+            "last_name": "Sanchez",
             "is_approved": true,
             "role": "rpi",
             "rcs_id": "student3",
-            "graduation_year": 2025,
+            "graduation_year": 2022,
             "updated_at": "2022-12-29T02:30:00+0000",
             "created_at": "2022-12-29T02:30:00+0000"
         }
@@ -220,12 +220,12 @@
         "pk": 4,
         "fields": {
             "email": "student4@rpi.edu",
-            "first_name": "Ryan",
-            "last_name": "Mccarthy",
+            "first_name": "Isaac",
+            "last_name": "Walters",
             "is_approved": true,
             "role": "rpi",
             "rcs_id": "student4",
-            "graduation_year": 2023,
+            "graduation_year": 2022,
             "updated_at": "2022-12-29T02:30:00+0000",
             "created_at": "2022-12-29T02:30:00+0000"
         }
@@ -235,12 +235,12 @@
         "pk": 5,
         "fields": {
             "email": "student5@rpi.edu",
-            "first_name": "Ronald",
-            "last_name": "Anderson",
+            "first_name": "Catherine",
+            "last_name": "Jensen",
             "is_approved": true,
             "role": "rpi",
             "rcs_id": "student5",
-            "graduation_year": 2023,
+            "graduation_year": 2022,
             "updated_at": "2022-12-29T02:30:00+0000",
             "created_at": "2022-12-29T02:30:00+0000"
         }
@@ -250,8 +250,8 @@
         "pk": 6,
         "fields": {
             "email": "student6@rpi.edu",
-            "first_name": "Tammy",
-            "last_name": "Jackson",
+            "first_name": "Brian",
+            "last_name": "Gonzalez",
             "is_approved": true,
             "role": "rpi",
             "rcs_id": "student6",
@@ -265,12 +265,12 @@
         "pk": 7,
         "fields": {
             "email": "student7@rpi.edu",
-            "first_name": "Alexis",
-            "last_name": "Moreno",
-            "is_approved": false,
+            "first_name": "Cody",
+            "last_name": "Torres",
+            "is_approved": true,
             "role": "rpi",
             "rcs_id": "student7",
-            "graduation_year": 2023,
+            "graduation_year": 2025,
             "updated_at": "2022-12-29T02:30:00+0000",
             "created_at": "2022-12-29T02:30:00+0000"
         }
@@ -280,12 +280,12 @@
         "pk": 8,
         "fields": {
             "email": "student8@rpi.edu",
-            "first_name": "Dean",
-            "last_name": "Schmidt",
+            "first_name": "Maria",
+            "last_name": "Carr",
             "is_approved": true,
             "role": "rpi",
             "rcs_id": "student8",
-            "graduation_year": 2024,
+            "graduation_year": 2025,
             "updated_at": "2022-12-29T02:30:00+0000",
             "created_at": "2022-12-29T02:30:00+0000"
         }
@@ -295,12 +295,12 @@
         "pk": 9,
         "fields": {
             "email": "student9@rpi.edu",
-            "first_name": "Kathy",
-            "last_name": "Lane",
+            "first_name": "Michael",
+            "last_name": "Davis",
             "is_approved": true,
             "role": "rpi",
             "rcs_id": "student9",
-            "graduation_year": 2023,
+            "graduation_year": 2025,
             "updated_at": "2022-12-29T02:30:00+0000",
             "created_at": "2022-12-29T02:30:00+0000"
         }
@@ -310,12 +310,12 @@
         "pk": 10,
         "fields": {
             "email": "student10@rpi.edu",
-            "first_name": "Nicholas",
-            "last_name": "Shaw",
+            "first_name": "Christopher",
+            "last_name": "Weaver",
             "is_approved": true,
             "role": "rpi",
             "rcs_id": "student10",
-            "graduation_year": 2024,
+            "graduation_year": 2025,
             "updated_at": "2022-12-29T02:30:00+0000",
             "created_at": "2022-12-29T02:30:00+0000"
         }
@@ -325,12 +325,12 @@
         "pk": 11,
         "fields": {
             "email": "student11@rpi.edu",
-            "first_name": "George",
-            "last_name": "Walton",
+            "first_name": "Jon",
+            "last_name": "Greene",
             "is_approved": true,
             "role": "rpi",
             "rcs_id": "student11",
-            "graduation_year": 2025,
+            "graduation_year": 2024,
             "updated_at": "2022-12-29T02:30:00+0000",
             "created_at": "2022-12-29T02:30:00+0000"
         }
@@ -340,12 +340,12 @@
         "pk": 12,
         "fields": {
             "email": "student12@rpi.edu",
-            "first_name": "Brianna",
-            "last_name": "Dawson",
+            "first_name": "Brian",
+            "last_name": "Ingram",
             "is_approved": true,
             "role": "rpi",
             "rcs_id": "student12",
-            "graduation_year": 2023,
+            "graduation_year": 2025,
             "updated_at": "2022-12-29T02:30:00+0000",
             "created_at": "2022-12-29T02:30:00+0000"
         }
@@ -355,12 +355,12 @@
         "pk": 13,
         "fields": {
             "email": "student13@rpi.edu",
-            "first_name": "Lisa",
-            "last_name": "Morton",
-            "is_approved": true,
+            "first_name": "Cody",
+            "last_name": "Martinez",
+            "is_approved": false,
             "role": "rpi",
             "rcs_id": "student13",
-            "graduation_year": 2023,
+            "graduation_year": 2022,
             "updated_at": "2022-12-29T02:30:00+0000",
             "created_at": "2022-12-29T02:30:00+0000"
         }
@@ -370,8 +370,8 @@
         "pk": 14,
         "fields": {
             "email": "student14@rpi.edu",
-            "first_name": "Katherine",
-            "last_name": "Parker",
+            "first_name": "Helen",
+            "last_name": "Hernandez",
             "is_approved": true,
             "role": "rpi",
             "rcs_id": "student14",
@@ -385,12 +385,12 @@
         "pk": 15,
         "fields": {
             "email": "student15@rpi.edu",
-            "first_name": "Edward",
-            "last_name": "Woodard",
+            "first_name": "Clinton",
+            "last_name": "Medina",
             "is_approved": true,
             "role": "rpi",
             "rcs_id": "student15",
-            "graduation_year": 2024,
+            "graduation_year": 2022,
             "updated_at": "2022-12-29T02:30:00+0000",
             "created_at": "2022-12-29T02:30:00+0000"
         }
@@ -400,12 +400,12 @@
         "pk": 16,
         "fields": {
             "email": "student16@rpi.edu",
-            "first_name": "Vanessa",
-            "last_name": "Elliott",
+            "first_name": "Angela",
+            "last_name": "Villarreal",
             "is_approved": true,
             "role": "rpi",
             "rcs_id": "student16",
-            "graduation_year": 2023,
+            "graduation_year": 2024,
             "updated_at": "2022-12-29T02:30:00+0000",
             "created_at": "2022-12-29T02:30:00+0000"
         }
@@ -415,12 +415,12 @@
         "pk": 17,
         "fields": {
             "email": "student17@rpi.edu",
-            "first_name": "Laura",
-            "last_name": "Johnson",
+            "first_name": "Ronald",
+            "last_name": "Cruz",
             "is_approved": true,
             "role": "rpi",
             "rcs_id": "student17",
-            "graduation_year": 2025,
+            "graduation_year": 2022,
             "updated_at": "2022-12-29T02:30:00+0000",
             "created_at": "2022-12-29T02:30:00+0000"
         }
@@ -430,12 +430,12 @@
         "pk": 18,
         "fields": {
             "email": "student18@rpi.edu",
-            "first_name": "Scott",
-            "last_name": "Fernandez",
-            "is_approved": false,
+            "first_name": "Richard",
+            "last_name": "Garcia",
+            "is_approved": true,
             "role": "rpi",
             "rcs_id": "student18",
-            "graduation_year": 2025,
+            "graduation_year": 2024,
             "updated_at": "2022-12-29T02:30:00+0000",
             "created_at": "2022-12-29T02:30:00+0000"
         }
@@ -445,12 +445,12 @@
         "pk": 19,
         "fields": {
             "email": "student19@rpi.edu",
-            "first_name": "David",
-            "last_name": "Shah",
+            "first_name": "Richard",
+            "last_name": "Stephenson",
             "is_approved": true,
             "role": "rpi",
             "rcs_id": "student19",
-            "graduation_year": 2023,
+            "graduation_year": 2022,
             "updated_at": "2022-12-29T02:30:00+0000",
             "created_at": "2022-12-29T02:30:00+0000"
         }
@@ -460,8 +460,8 @@
         "pk": 20,
         "fields": {
             "email": "student20@rpi.edu",
-            "first_name": "Sara",
-            "last_name": "Li",
+            "first_name": "Joseph",
+            "last_name": "Mcintyre",
             "is_approved": true,
             "role": "rpi",
             "rcs_id": "student20",
@@ -475,8 +475,8 @@
         "pk": 21,
         "fields": {
             "email": "student21@rpi.edu",
-            "first_name": "Gwendolyn",
-            "last_name": "Jenkins",
+            "first_name": "Sheryl",
+            "last_name": "Andrade",
             "is_approved": true,
             "role": "rpi",
             "rcs_id": "student21",
@@ -490,12 +490,12 @@
         "pk": 22,
         "fields": {
             "email": "student22@rpi.edu",
-            "first_name": "Tiffany",
-            "last_name": "Joseph",
+            "first_name": "Matthew",
+            "last_name": "Thomas",
             "is_approved": true,
             "role": "rpi",
             "rcs_id": "student22",
-            "graduation_year": 2024,
+            "graduation_year": 2023,
             "updated_at": "2022-12-29T02:30:00+0000",
             "created_at": "2022-12-29T02:30:00+0000"
         }
@@ -505,12 +505,12 @@
         "pk": 23,
         "fields": {
             "email": "student23@rpi.edu",
-            "first_name": "Scott",
-            "last_name": "Miller",
+            "first_name": "Rebecca",
+            "last_name": "Sweeney",
             "is_approved": true,
             "role": "rpi",
             "rcs_id": "student23",
-            "graduation_year": 2022,
+            "graduation_year": 2024,
             "updated_at": "2022-12-29T02:30:00+0000",
             "created_at": "2022-12-29T02:30:00+0000"
         }
@@ -520,9 +520,9 @@
         "pk": 24,
         "fields": {
             "email": "student24@rpi.edu",
-            "first_name": "Holly",
-            "last_name": "Suarez",
-            "is_approved": false,
+            "first_name": "Melissa",
+            "last_name": "Johnson",
+            "is_approved": true,
             "role": "rpi",
             "rcs_id": "student24",
             "graduation_year": 2023,
@@ -535,12 +535,12 @@
         "pk": 25,
         "fields": {
             "email": "student25@rpi.edu",
-            "first_name": "Jordan",
-            "last_name": "Hughes",
-            "is_approved": true,
+            "first_name": "Melissa",
+            "last_name": "Perkins",
+            "is_approved": false,
             "role": "rpi",
             "rcs_id": "student25",
-            "graduation_year": 2023,
+            "graduation_year": 2025,
             "updated_at": "2022-12-29T02:30:00+0000",
             "created_at": "2022-12-29T02:30:00+0000"
         }
@@ -550,12 +550,12 @@
         "pk": 26,
         "fields": {
             "email": "student26@rpi.edu",
-            "first_name": "Madeline",
-            "last_name": "Williams",
+            "first_name": "Katherine",
+            "last_name": "Alvarez",
             "is_approved": true,
             "role": "rpi",
             "rcs_id": "student26",
-            "graduation_year": 2023,
+            "graduation_year": 2022,
             "updated_at": "2022-12-29T02:30:00+0000",
             "created_at": "2022-12-29T02:30:00+0000"
         }
@@ -565,12 +565,12 @@
         "pk": 27,
         "fields": {
             "email": "student27@rpi.edu",
-            "first_name": "Kimberly",
-            "last_name": "Brown",
+            "first_name": "Debra",
+            "last_name": "Thomas",
             "is_approved": true,
             "role": "rpi",
             "rcs_id": "student27",
-            "graduation_year": 2023,
+            "graduation_year": 2024,
             "updated_at": "2022-12-29T02:30:00+0000",
             "created_at": "2022-12-29T02:30:00+0000"
         }
@@ -580,12 +580,12 @@
         "pk": 28,
         "fields": {
             "email": "student28@rpi.edu",
-            "first_name": "Matthew",
-            "last_name": "Reed",
+            "first_name": "Melissa",
+            "last_name": "Molina",
             "is_approved": true,
             "role": "rpi",
             "rcs_id": "student28",
-            "graduation_year": 2023,
+            "graduation_year": 2025,
             "updated_at": "2022-12-29T02:30:00+0000",
             "created_at": "2022-12-29T02:30:00+0000"
         }
@@ -595,8 +595,8 @@
         "pk": 29,
         "fields": {
             "email": "student29@rpi.edu",
-            "first_name": "Jamie",
-            "last_name": "Edwards",
+            "first_name": "Chase",
+            "last_name": "Ford",
             "is_approved": true,
             "role": "rpi",
             "rcs_id": "student29",
@@ -610,12 +610,12 @@
         "pk": 30,
         "fields": {
             "email": "student30@rpi.edu",
-            "first_name": "Julie",
-            "last_name": "Brown",
+            "first_name": "Amber",
+            "last_name": "Gonzalez",
             "is_approved": true,
             "role": "rpi",
             "rcs_id": "student30",
-            "graduation_year": 2022,
+            "graduation_year": 2025,
             "updated_at": "2022-12-29T02:30:00+0000",
             "created_at": "2022-12-29T02:30:00+0000"
         }
@@ -625,8 +625,8 @@
         "pk": 31,
         "fields": {
             "email": "student31@rpi.edu",
-            "first_name": "Rebecca",
-            "last_name": "Hunt",
+            "first_name": "David",
+            "last_name": "Howell",
             "is_approved": true,
             "role": "rpi",
             "rcs_id": "student31",
@@ -640,8 +640,8 @@
         "pk": 32,
         "fields": {
             "email": "student32@rpi.edu",
-            "first_name": "Jesse",
-            "last_name": "Trevino",
+            "first_name": "Christine",
+            "last_name": "Olsen",
             "is_approved": true,
             "role": "rpi",
             "rcs_id": "student32",
@@ -655,12 +655,12 @@
         "pk": 33,
         "fields": {
             "email": "student33@rpi.edu",
-            "first_name": "Catherine",
-            "last_name": "Brooks",
+            "first_name": "Laura",
+            "last_name": "Hernandez",
             "is_approved": true,
             "role": "rpi",
             "rcs_id": "student33",
-            "graduation_year": 2025,
+            "graduation_year": 2022,
             "updated_at": "2022-12-29T02:30:00+0000",
             "created_at": "2022-12-29T02:30:00+0000"
         }
@@ -670,8 +670,8 @@
         "pk": 34,
         "fields": {
             "email": "student34@rpi.edu",
-            "first_name": "Ronald",
-            "last_name": "Ross",
+            "first_name": "Mark",
+            "last_name": "Boyle",
             "is_approved": true,
             "role": "rpi",
             "rcs_id": "student34",
@@ -685,12 +685,12 @@
         "pk": 35,
         "fields": {
             "email": "student35@rpi.edu",
-            "first_name": "Benjamin",
-            "last_name": "Savage",
+            "first_name": "Jackie",
+            "last_name": "Wright",
             "is_approved": true,
             "role": "rpi",
             "rcs_id": "student35",
-            "graduation_year": 2024,
+            "graduation_year": 2023,
             "updated_at": "2022-12-29T02:30:00+0000",
             "created_at": "2022-12-29T02:30:00+0000"
         }
@@ -700,12 +700,12 @@
         "pk": 36,
         "fields": {
             "email": "student36@rpi.edu",
-            "first_name": "Cindy",
-            "last_name": "Downs",
+            "first_name": "Kristen",
+            "last_name": "Hernandez",
             "is_approved": true,
             "role": "rpi",
             "rcs_id": "student36",
-            "graduation_year": 2025,
+            "graduation_year": 2023,
             "updated_at": "2022-12-29T02:30:00+0000",
             "created_at": "2022-12-29T02:30:00+0000"
         }
@@ -715,12 +715,12 @@
         "pk": 37,
         "fields": {
             "email": "student37@rpi.edu",
-            "first_name": "Paul",
-            "last_name": "Brown",
+            "first_name": "Travis",
+            "last_name": "Mccarthy",
             "is_approved": true,
             "role": "rpi",
             "rcs_id": "student37",
-            "graduation_year": 2025,
+            "graduation_year": 2024,
             "updated_at": "2022-12-29T02:30:00+0000",
             "created_at": "2022-12-29T02:30:00+0000"
         }
@@ -730,12 +730,12 @@
         "pk": 38,
         "fields": {
             "email": "student38@rpi.edu",
-            "first_name": "Fernando",
-            "last_name": "Vincent",
-            "is_approved": true,
+            "first_name": "Tracy",
+            "last_name": "Johnston",
+            "is_approved": false,
             "role": "rpi",
             "rcs_id": "student38",
-            "graduation_year": 2024,
+            "graduation_year": 2023,
             "updated_at": "2022-12-29T02:30:00+0000",
             "created_at": "2022-12-29T02:30:00+0000"
         }
@@ -745,12 +745,12 @@
         "pk": 39,
         "fields": {
             "email": "student39@rpi.edu",
-            "first_name": "Daniel",
-            "last_name": "Potts",
+            "first_name": "Jeff",
+            "last_name": "Kane",
             "is_approved": true,
             "role": "rpi",
             "rcs_id": "student39",
-            "graduation_year": 2022,
+            "graduation_year": 2025,
             "updated_at": "2022-12-29T02:30:00+0000",
             "created_at": "2022-12-29T02:30:00+0000"
         }
@@ -760,12 +760,12 @@
         "pk": 40,
         "fields": {
             "email": "student40@rpi.edu",
-            "first_name": "Wendy",
-            "last_name": "Johnson",
+            "first_name": "Hector",
+            "last_name": "Webb",
             "is_approved": true,
             "role": "rpi",
             "rcs_id": "student40",
-            "graduation_year": 2022,
+            "graduation_year": 2023,
             "updated_at": "2022-12-29T02:30:00+0000",
             "created_at": "2022-12-29T02:30:00+0000"
         }
@@ -775,12 +775,12 @@
         "pk": 41,
         "fields": {
             "email": "student41@rpi.edu",
-            "first_name": "Micheal",
-            "last_name": "Jackson",
+            "first_name": "Michael",
+            "last_name": "Bailey",
             "is_approved": true,
             "role": "rpi",
             "rcs_id": "student41",
-            "graduation_year": 2025,
+            "graduation_year": 2024,
             "updated_at": "2022-12-29T02:30:00+0000",
             "created_at": "2022-12-29T02:30:00+0000"
         }
@@ -790,12 +790,12 @@
         "pk": 42,
         "fields": {
             "email": "student42@rpi.edu",
-            "first_name": "Lauren",
-            "last_name": "Moore",
+            "first_name": "Matthew",
+            "last_name": "Evans",
             "is_approved": true,
             "role": "rpi",
             "rcs_id": "student42",
-            "graduation_year": 2025,
+            "graduation_year": 2024,
             "updated_at": "2022-12-29T02:30:00+0000",
             "created_at": "2022-12-29T02:30:00+0000"
         }
@@ -805,8 +805,8 @@
         "pk": 43,
         "fields": {
             "email": "student43@rpi.edu",
-            "first_name": "Edwin",
-            "last_name": "Mclean",
+            "first_name": "James",
+            "last_name": "Jackson",
             "is_approved": true,
             "role": "rpi",
             "rcs_id": "student43",
@@ -820,12 +820,12 @@
         "pk": 44,
         "fields": {
             "email": "student44@rpi.edu",
-            "first_name": "Patricia",
-            "last_name": "Smith",
+            "first_name": "William",
+            "last_name": "Mclaughlin",
             "is_approved": true,
             "role": "rpi",
             "rcs_id": "student44",
-            "graduation_year": 2025,
+            "graduation_year": 2024,
             "updated_at": "2022-12-29T02:30:00+0000",
             "created_at": "2022-12-29T02:30:00+0000"
         }
@@ -835,12 +835,12 @@
         "pk": 45,
         "fields": {
             "email": "student45@rpi.edu",
-            "first_name": "Anthony",
-            "last_name": "Jackson",
+            "first_name": "Jason",
+            "last_name": "Davis",
             "is_approved": true,
             "role": "rpi",
             "rcs_id": "student45",
-            "graduation_year": 2023,
+            "graduation_year": 2024,
             "updated_at": "2022-12-29T02:30:00+0000",
             "created_at": "2022-12-29T02:30:00+0000"
         }
@@ -850,8 +850,8 @@
         "pk": 46,
         "fields": {
             "email": "student46@rpi.edu",
-            "first_name": "Justin",
-            "last_name": "Perez",
+            "first_name": "Brittany",
+            "last_name": "Young",
             "is_approved": true,
             "role": "rpi",
             "rcs_id": "student46",
@@ -865,12 +865,12 @@
         "pk": 47,
         "fields": {
             "email": "student47@rpi.edu",
-            "first_name": "Ann",
-            "last_name": "Saunders",
+            "first_name": "Jonathan",
+            "last_name": "Johnson",
             "is_approved": true,
             "role": "rpi",
             "rcs_id": "student47",
-            "graduation_year": 2024,
+            "graduation_year": 2023,
             "updated_at": "2022-12-29T02:30:00+0000",
             "created_at": "2022-12-29T02:30:00+0000"
         }
@@ -880,12 +880,12 @@
         "pk": 48,
         "fields": {
             "email": "student48@rpi.edu",
-            "first_name": "Henry",
-            "last_name": "Mcdonald",
+            "first_name": "Jennifer",
+            "last_name": "Phillips",
             "is_approved": true,
             "role": "rpi",
             "rcs_id": "student48",
-            "graduation_year": 2025,
+            "graduation_year": 2023,
             "updated_at": "2022-12-29T02:30:00+0000",
             "created_at": "2022-12-29T02:30:00+0000"
         }
@@ -895,12 +895,12 @@
         "pk": 49,
         "fields": {
             "email": "student49@rpi.edu",
-            "first_name": "Jeremy",
-            "last_name": "Mcclure",
+            "first_name": "Sarah",
+            "last_name": "Harris",
             "is_approved": true,
             "role": "rpi",
             "rcs_id": "student49",
-            "graduation_year": 2023,
+            "graduation_year": 2025,
             "updated_at": "2022-12-29T02:30:00+0000",
             "created_at": "2022-12-29T02:30:00+0000"
         }
@@ -909,10 +909,11 @@
         "model": "portal.Project",
         "pk": 0,
         "fields": {
-            "name": "Nearby Project",
-            "owner": 39,
-            "is_approved": false,
-            "description": "Million like travel decision early three door.",
+            "name": "Dark Project",
+            "slug": "dark-project",
+            "owner": 41,
+            "is_approved": true,
+            "description": "Protect feel yard prevent need be.",
             "updated_at": "2022-12-29T02:30:00+0000",
             "created_at": "2022-12-29T02:30:00+0000"
         }
@@ -921,10 +922,11 @@
         "model": "portal.Project",
         "pk": 1,
         "fields": {
-            "name": "Dead Project",
-            "owner": 32,
+            "name": "Most Project",
+            "slug": "most-project",
+            "owner": 27,
             "is_approved": true,
-            "description": "Middle different window deal.",
+            "description": "Early policy perform she.",
             "updated_at": "2022-12-29T02:30:00+0000",
             "created_at": "2022-12-29T02:30:00+0000"
         }
@@ -933,10 +935,11 @@
         "model": "portal.Project",
         "pk": 2,
         "fields": {
-            "name": "Perfect Project",
-            "owner": 22,
+            "name": "Cultural Project",
+            "slug": "cultural-project",
+            "owner": 11,
             "is_approved": true,
-            "description": "Whose example woman surface so choose financial.",
+            "description": "Quite would sea later structure show sign.",
             "updated_at": "2022-12-29T02:30:00+0000",
             "created_at": "2022-12-29T02:30:00+0000"
         }
@@ -945,10 +948,11 @@
         "model": "portal.Project",
         "pk": 3,
         "fields": {
-            "name": "Asleep Project",
-            "owner": 8,
+            "name": "Regular Project",
+            "slug": "regular-project",
+            "owner": 37,
             "is_approved": true,
-            "description": "Attention girl bar charge full sort.",
+            "description": "List hear race event somebody.",
             "updated_at": "2022-12-29T02:30:00+0000",
             "created_at": "2022-12-29T02:30:00+0000"
         }
@@ -957,10 +961,11 @@
         "model": "portal.Project",
         "pk": 4,
         "fields": {
-            "name": "Round Project",
-            "owner": 18,
+            "name": "Fit Project",
+            "slug": "fit-project",
+            "owner": 12,
             "is_approved": true,
-            "description": "Owner sort then side could similar man.",
+            "description": "Prevent draw there maybe question have.",
             "updated_at": "2022-12-29T02:30:00+0000",
             "created_at": "2022-12-29T02:30:00+0000"
         }
@@ -969,10 +974,11 @@
         "model": "portal.Project",
         "pk": 5,
         "fields": {
-            "name": "High Project",
-            "owner": 9,
-            "is_approved": true,
-            "description": "Name travel will easy heart certain.",
+            "name": "Straight Project",
+            "slug": "straight-project",
+            "owner": 35,
+            "is_approved": false,
+            "description": "Drive president require huge hotel.",
             "updated_at": "2022-12-29T02:30:00+0000",
             "created_at": "2022-12-29T02:30:00+0000"
         }
@@ -981,10 +987,11 @@
         "model": "portal.Project",
         "pk": 6,
         "fields": {
-            "name": "Low Project",
-            "owner": 21,
+            "name": "Available Project",
+            "slug": "available-project",
+            "owner": 11,
             "is_approved": true,
-            "description": "Politics evidence local statement.",
+            "description": "Already concern entire likely quite big poor.",
             "updated_at": "2022-12-29T02:30:00+0000",
             "created_at": "2022-12-29T02:30:00+0000"
         }
@@ -993,10 +1000,11 @@
         "model": "portal.Project",
         "pk": 7,
         "fields": {
-            "name": "Strong Project",
-            "owner": 26,
+            "name": "Civil Project",
+            "slug": "civil-project",
+            "owner": 9,
             "is_approved": true,
-            "description": "Remember foreign election own camera wall these.",
+            "description": "Return if record note discover simply base.",
             "updated_at": "2022-12-29T02:30:00+0000",
             "created_at": "2022-12-29T02:30:00+0000"
         }
@@ -1005,10 +1013,11 @@
         "model": "portal.Project",
         "pk": 8,
         "fields": {
-            "name": "Narrow Project",
-            "owner": 46,
-            "is_approved": false,
-            "description": "Medical many such professor to.",
+            "name": "Leading Project",
+            "slug": "leading-project",
+            "owner": 47,
+            "is_approved": true,
+            "description": "Moment story with call Democrat compare all.",
             "updated_at": "2022-12-29T02:30:00+0000",
             "created_at": "2022-12-29T02:30:00+0000"
         }
@@ -1017,10 +1026,11 @@
         "model": "portal.Project",
         "pk": 9,
         "fields": {
-            "name": "Anxious Project",
-            "owner": 5,
-            "is_approved": true,
-            "description": "So good even more.",
+            "name": "Junior Project",
+            "slug": "junior-project",
+            "owner": 42,
+            "is_approved": false,
+            "description": "Indeed war hear money guy tough official.",
             "updated_at": "2022-12-29T02:30:00+0000",
             "created_at": "2022-12-29T02:30:00+0000"
         }
@@ -1029,10 +1039,11 @@
         "model": "portal.Project",
         "pk": 10,
         "fields": {
-            "name": "Direct Project",
-            "owner": 16,
+            "name": "Accurate Project",
+            "slug": "accurate-project",
+            "owner": 28,
             "is_approved": true,
-            "description": "Hospital black crime indicate spend.",
+            "description": "Draw short none most.",
             "updated_at": "2022-12-29T02:30:00+0000",
             "created_at": "2022-12-29T02:30:00+0000"
         }
@@ -1041,10 +1052,11 @@
         "model": "portal.Project",
         "pk": 11,
         "fields": {
-            "name": "Certain Project",
-            "owner": 28,
-            "is_approved": true,
-            "description": "Special ok network maybe.",
+            "name": "Chemical Project",
+            "slug": "chemical-project",
+            "owner": 4,
+            "is_approved": false,
+            "description": "Power himself space view dark.",
             "updated_at": "2022-12-29T02:30:00+0000",
             "created_at": "2022-12-29T02:30:00+0000"
         }
@@ -1053,10 +1065,11 @@
         "model": "portal.Project",
         "pk": 12,
         "fields": {
-            "name": "Solid Project",
-            "owner": 27,
-            "is_approved": false,
-            "description": "Book traditional contain myself professional history seat.",
+            "name": "Best Project",
+            "slug": "best-project",
+            "owner": 38,
+            "is_approved": true,
+            "description": "Begin need course side.",
             "updated_at": "2022-12-29T02:30:00+0000",
             "created_at": "2022-12-29T02:30:00+0000"
         }
@@ -1065,10 +1078,11 @@
         "model": "portal.Project",
         "pk": 13,
         "fields": {
-            "name": "Potential Project",
-            "owner": 37,
-            "is_approved": false,
-            "description": "This nor response consumer far.",
+            "name": "Additional Project",
+            "slug": "additional-project",
+            "owner": 28,
+            "is_approved": true,
+            "description": "Reflect rate budget five economic collection.",
             "updated_at": "2022-12-29T02:30:00+0000",
             "created_at": "2022-12-29T02:30:00+0000"
         }
@@ -1077,10 +1091,11 @@
         "model": "portal.Project",
         "pk": 14,
         "fields": {
-            "name": "Aggressive Project",
-            "owner": 19,
+            "name": "Loose Project",
+            "slug": "loose-project",
+            "owner": 44,
             "is_approved": true,
-            "description": "Behavior accept table return.",
+            "description": "Yard face guy most may me.",
             "updated_at": "2022-12-29T02:30:00+0000",
             "created_at": "2022-12-29T02:30:00+0000"
         }
@@ -1089,10 +1104,11 @@
         "model": "portal.Project",
         "pk": 15,
         "fields": {
-            "name": "Dear Project",
-            "owner": 10,
-            "is_approved": true,
-            "description": "Last alone father level.",
+            "name": "Pretty Project",
+            "slug": "pretty-project",
+            "owner": 38,
+            "is_approved": false,
+            "description": "Someone peace brother station.",
             "updated_at": "2022-12-29T02:30:00+0000",
             "created_at": "2022-12-29T02:30:00+0000"
         }
@@ -1101,10 +1117,11 @@
         "model": "portal.Project",
         "pk": 16,
         "fields": {
-            "name": "Basic Project",
-            "owner": 20,
-            "is_approved": true,
-            "description": "Amount summer star find where.",
+            "name": "Representative Project",
+            "slug": "representative-project",
+            "owner": 6,
+            "is_approved": false,
+            "description": "Collection he tell Mr.",
             "updated_at": "2022-12-29T02:30:00+0000",
             "created_at": "2022-12-29T02:30:00+0000"
         }
@@ -1113,10 +1130,11 @@
         "model": "portal.Project",
         "pk": 17,
         "fields": {
-            "name": "Every Project",
-            "owner": 31,
+            "name": "Angry Project",
+            "slug": "angry-project",
+            "owner": 8,
             "is_approved": false,
-            "description": "Rather visit quickly us.",
+            "description": "Could kind partner member least than.",
             "updated_at": "2022-12-29T02:30:00+0000",
             "created_at": "2022-12-29T02:30:00+0000"
         }
@@ -1125,10 +1143,11 @@
         "model": "portal.Project",
         "pk": 18,
         "fields": {
-            "name": "Ordinary Project",
-            "owner": 8,
+            "name": "Unable Project",
+            "slug": "unable-project",
+            "owner": 18,
             "is_approved": true,
-            "description": "Economy door risk arrive.",
+            "description": "Two pattern may allow claim.",
             "updated_at": "2022-12-29T02:30:00+0000",
             "created_at": "2022-12-29T02:30:00+0000"
         }
@@ -1137,10 +1156,11 @@
         "model": "portal.Project",
         "pk": 19,
         "fields": {
-            "name": "Regular Project",
-            "owner": 24,
+            "name": "Clean Project",
+            "slug": "clean-project",
+            "owner": 28,
             "is_approved": true,
-            "description": "Lawyer question party three.",
+            "description": "Majority push reach ago commercial mind be difficult.",
             "updated_at": "2022-12-29T02:30:00+0000",
             "created_at": "2022-12-29T02:30:00+0000"
         }
@@ -1149,10 +1169,11 @@
         "model": "portal.Project",
         "pk": 20,
         "fields": {
-            "name": "Clean Project",
-            "owner": 37,
-            "is_approved": false,
-            "description": "Politics everybody themselves level baby mouth along.",
+            "name": "Right Project",
+            "slug": "right-project",
+            "owner": 11,
+            "is_approved": true,
+            "description": "Animal number media.",
             "updated_at": "2022-12-29T02:30:00+0000",
             "created_at": "2022-12-29T02:30:00+0000"
         }
@@ -1161,10 +1182,11 @@
         "model": "portal.Project",
         "pk": 21,
         "fields": {
-            "name": "Lucky Project",
-            "owner": 34,
+            "name": "False Project",
+            "slug": "false-project",
+            "owner": 9,
             "is_approved": true,
-            "description": "Mouth speech assume upon blue.",
+            "description": "Plant as range mention paper north.",
             "updated_at": "2022-12-29T02:30:00+0000",
             "created_at": "2022-12-29T02:30:00+0000"
         }
@@ -1173,10 +1195,11 @@
         "model": "portal.Project",
         "pk": 22,
         "fields": {
-            "name": "Technical Project",
-            "owner": 32,
-            "is_approved": false,
-            "description": "Difficult matter local thing.",
+            "name": "Broad Project",
+            "slug": "broad-project",
+            "owner": 27,
+            "is_approved": true,
+            "description": "Act north national happen.",
             "updated_at": "2022-12-29T02:30:00+0000",
             "created_at": "2022-12-29T02:30:00+0000"
         }
@@ -1185,10 +1208,11 @@
         "model": "portal.Project",
         "pk": 23,
         "fields": {
-            "name": "Simple Project",
-            "owner": 20,
+            "name": "Usual Project",
+            "slug": "usual-project",
+            "owner": 7,
             "is_approved": true,
-            "description": "Any practice American mission see.",
+            "description": "Nor size door can interview effect.",
             "updated_at": "2022-12-29T02:30:00+0000",
             "created_at": "2022-12-29T02:30:00+0000"
         }
@@ -1197,10 +1221,11 @@
         "model": "portal.Project",
         "pk": 24,
         "fields": {
-            "name": "Practical Project",
-            "owner": 48,
+            "name": "Unfair Project",
+            "slug": "unfair-project",
+            "owner": 49,
             "is_approved": true,
-            "description": "Let really see baby enjoy present and.",
+            "description": "Challenge story they.",
             "updated_at": "2022-12-29T02:30:00+0000",
             "created_at": "2022-12-29T02:30:00+0000"
         }
@@ -1209,10 +1234,11 @@
         "model": "portal.Project",
         "pk": 25,
         "fields": {
-            "name": "Straight Project",
-            "owner": 45,
-            "is_approved": false,
-            "description": "Day agreement shoulder collection partner spring.",
+            "name": "Calm Project",
+            "slug": "calm-project",
+            "owner": 17,
+            "is_approved": true,
+            "description": "Face article statement son maybe foreign morning.",
             "updated_at": "2022-12-29T02:30:00+0000",
             "created_at": "2022-12-29T02:30:00+0000"
         }
@@ -1221,10 +1247,11 @@
         "model": "portal.Project",
         "pk": 26,
         "fields": {
-            "name": "Dependent Project",
-            "owner": 4,
+            "name": "Tough Project",
+            "slug": "tough-project",
+            "owner": 36,
             "is_approved": true,
-            "description": "Season keep task local final.",
+            "description": "Share relationship ready young wish evidence very.",
             "updated_at": "2022-12-29T02:30:00+0000",
             "created_at": "2022-12-29T02:30:00+0000"
         }
@@ -1233,10 +1260,11 @@
         "model": "portal.Project",
         "pk": 27,
         "fields": {
-            "name": "Reasonable Project",
-            "owner": 48,
-            "is_approved": false,
-            "description": "Cultural prove event environmental PM out computer.",
+            "name": "Internal Project",
+            "slug": "internal-project",
+            "owner": 30,
+            "is_approved": true,
+            "description": "Send scene property present federal.",
             "updated_at": "2022-12-29T02:30:00+0000",
             "created_at": "2022-12-29T02:30:00+0000"
         }
@@ -1245,10 +1273,11 @@
         "model": "portal.Project",
         "pk": 28,
         "fields": {
-            "name": "Due Project",
-            "owner": 29,
+            "name": "Federal Project",
+            "slug": "federal-project",
+            "owner": 35,
             "is_approved": true,
-            "description": "Exist improve final husband authority.",
+            "description": "Probably ability lose prevent your how.",
             "updated_at": "2022-12-29T02:30:00+0000",
             "created_at": "2022-12-29T02:30:00+0000"
         }
@@ -1257,10 +1286,11 @@
         "model": "portal.Project",
         "pk": 29,
         "fields": {
-            "name": "Annual Project",
-            "owner": 19,
-            "is_approved": false,
-            "description": "Often official staff know.",
+            "name": "Administrative Project",
+            "slug": "administrative-project",
+            "owner": 49,
+            "is_approved": true,
+            "description": "Wonder crime position fall official woman.",
             "updated_at": "2022-12-29T02:30:00+0000",
             "created_at": "2022-12-29T02:30:00+0000"
         }
@@ -1271,8 +1301,8 @@
         "fields": {
             "semester": "202301",
             "user": 2,
-            "project": 16,
-            "credits": 1,
+            "project": 13,
+            "credits": 3,
             "is_project_lead": false,
             "updated_at": "2022-12-29T02:30:00+0000",
             "created_at": "2022-12-29T02:30:00+0000"
@@ -1284,9 +1314,9 @@
         "fields": {
             "semester": "202208",
             "user": 2,
-            "project": 21,
-            "credits": 3,
-            "is_project_lead": true,
+            "project": 28,
+            "credits": 0,
+            "is_project_lead": false,
             "updated_at": "2022-12-29T02:30:00+0000",
             "created_at": "2022-12-29T02:30:00+0000"
         }
@@ -1297,8 +1327,8 @@
         "fields": {
             "semester": "202201",
             "user": 2,
-            "project": 13,
-            "credits": 0,
+            "project": 6,
+            "credits": 3,
             "is_project_lead": false,
             "updated_at": "2022-12-29T02:30:00+0000",
             "created_at": "2022-12-29T02:30:00+0000"
@@ -1310,7 +1340,7 @@
         "fields": {
             "semester": "202301",
             "user": 3,
-            "project": 18,
+            "project": 0,
             "credits": 3,
             "is_project_lead": false,
             "updated_at": "2022-12-29T02:30:00+0000",
@@ -1323,8 +1353,8 @@
         "fields": {
             "semester": "202208",
             "user": 3,
-            "project": 20,
-            "credits": 3,
+            "project": 9,
+            "credits": 4,
             "is_project_lead": false,
             "updated_at": "2022-12-29T02:30:00+0000",
             "created_at": "2022-12-29T02:30:00+0000"
@@ -1336,8 +1366,8 @@
         "fields": {
             "semester": "202201",
             "user": 3,
-            "project": 7,
-            "credits": 4,
+            "project": 24,
+            "credits": 3,
             "is_project_lead": false,
             "updated_at": "2022-12-29T02:30:00+0000",
             "created_at": "2022-12-29T02:30:00+0000"
@@ -1349,9 +1379,9 @@
         "fields": {
             "semester": "202301",
             "user": 4,
-            "project": 17,
-            "credits": 1,
-            "is_project_lead": true,
+            "project": 6,
+            "credits": 0,
+            "is_project_lead": false,
             "updated_at": "2022-12-29T02:30:00+0000",
             "created_at": "2022-12-29T02:30:00+0000"
         }
@@ -1362,9 +1392,9 @@
         "fields": {
             "semester": "202208",
             "user": 4,
-            "project": 20,
-            "credits": 4,
-            "is_project_lead": true,
+            "project": 12,
+            "credits": 2,
+            "is_project_lead": false,
             "updated_at": "2022-12-29T02:30:00+0000",
             "created_at": "2022-12-29T02:30:00+0000"
         }
@@ -1375,9 +1405,9 @@
         "fields": {
             "semester": "202201",
             "user": 4,
-            "project": 7,
-            "credits": 2,
-            "is_project_lead": true,
+            "project": 14,
+            "credits": 0,
+            "is_project_lead": false,
             "updated_at": "2022-12-29T02:30:00+0000",
             "created_at": "2022-12-29T02:30:00+0000"
         }
@@ -1388,9 +1418,9 @@
         "fields": {
             "semester": "202301",
             "user": 5,
-            "project": 22,
-            "credits": 2,
-            "is_project_lead": false,
+            "project": 6,
+            "credits": 1,
+            "is_project_lead": true,
             "updated_at": "2022-12-29T02:30:00+0000",
             "created_at": "2022-12-29T02:30:00+0000"
         }
@@ -1401,9 +1431,9 @@
         "fields": {
             "semester": "202208",
             "user": 5,
-            "project": 15,
-            "credits": 3,
-            "is_project_lead": true,
+            "project": 18,
+            "credits": 1,
+            "is_project_lead": false,
             "updated_at": "2022-12-29T02:30:00+0000",
             "created_at": "2022-12-29T02:30:00+0000"
         }
@@ -1427,9 +1457,9 @@
         "fields": {
             "semester": "202301",
             "user": 6,
-            "project": 17,
-            "credits": 4,
-            "is_project_lead": false,
+            "project": 8,
+            "credits": 2,
+            "is_project_lead": true,
             "updated_at": "2022-12-29T02:30:00+0000",
             "created_at": "2022-12-29T02:30:00+0000"
         }
@@ -1440,7 +1470,7 @@
         "fields": {
             "semester": "202208",
             "user": 6,
-            "project": 0,
+            "project": 9,
             "credits": 4,
             "is_project_lead": false,
             "updated_at": "2022-12-29T02:30:00+0000",
@@ -1453,9 +1483,9 @@
         "fields": {
             "semester": "202201",
             "user": 6,
-            "project": 2,
-            "credits": 1,
-            "is_project_lead": false,
+            "project": 24,
+            "credits": 4,
+            "is_project_lead": true,
             "updated_at": "2022-12-29T02:30:00+0000",
             "created_at": "2022-12-29T02:30:00+0000"
         }
@@ -1466,9 +1496,9 @@
         "fields": {
             "semester": "202301",
             "user": 7,
-            "project": 20,
-            "credits": 4,
-            "is_project_lead": true,
+            "project": 4,
+            "credits": 1,
+            "is_project_lead": false,
             "updated_at": "2022-12-29T02:30:00+0000",
             "created_at": "2022-12-29T02:30:00+0000"
         }
@@ -1479,9 +1509,9 @@
         "fields": {
             "semester": "202208",
             "user": 7,
-            "project": 9,
-            "credits": 1,
-            "is_project_lead": true,
+            "project": 5,
+            "credits": 4,
+            "is_project_lead": false,
             "updated_at": "2022-12-29T02:30:00+0000",
             "created_at": "2022-12-29T02:30:00+0000"
         }
@@ -1492,9 +1522,9 @@
         "fields": {
             "semester": "202201",
             "user": 7,
-            "project": 2,
-            "credits": 2,
-            "is_project_lead": false,
+            "project": 27,
+            "credits": 0,
+            "is_project_lead": true,
             "updated_at": "2022-12-29T02:30:00+0000",
             "created_at": "2022-12-29T02:30:00+0000"
         }
@@ -1505,9 +1535,9 @@
         "fields": {
             "semester": "202301",
             "user": 8,
-            "project": 21,
-            "credits": 2,
-            "is_project_lead": false,
+            "project": 8,
+            "credits": 0,
+            "is_project_lead": true,
             "updated_at": "2022-12-29T02:30:00+0000",
             "created_at": "2022-12-29T02:30:00+0000"
         }
@@ -1518,8 +1548,8 @@
         "fields": {
             "semester": "202208",
             "user": 8,
-            "project": 24,
-            "credits": 3,
+            "project": 1,
+            "credits": 1,
             "is_project_lead": false,
             "updated_at": "2022-12-29T02:30:00+0000",
             "created_at": "2022-12-29T02:30:00+0000"
@@ -1531,8 +1561,8 @@
         "fields": {
             "semester": "202201",
             "user": 8,
-            "project": 0,
-            "credits": 4,
+            "project": 6,
+            "credits": 0,
             "is_project_lead": true,
             "updated_at": "2022-12-29T02:30:00+0000",
             "created_at": "2022-12-29T02:30:00+0000"
@@ -1544,8 +1574,8 @@
         "fields": {
             "semester": "202301",
             "user": 9,
-            "project": 4,
-            "credits": 1,
+            "project": 17,
+            "credits": 0,
             "is_project_lead": false,
             "updated_at": "2022-12-29T02:30:00+0000",
             "created_at": "2022-12-29T02:30:00+0000"
@@ -1557,7 +1587,7 @@
         "fields": {
             "semester": "202208",
             "user": 9,
-            "project": 2,
+            "project": 15,
             "credits": 3,
             "is_project_lead": false,
             "updated_at": "2022-12-29T02:30:00+0000",
@@ -1570,8 +1600,8 @@
         "fields": {
             "semester": "202201",
             "user": 9,
-            "project": 2,
-            "credits": 1,
+            "project": 3,
+            "credits": 4,
             "is_project_lead": false,
             "updated_at": "2022-12-29T02:30:00+0000",
             "created_at": "2022-12-29T02:30:00+0000"
@@ -1583,9 +1613,9 @@
         "fields": {
             "semester": "202301",
             "user": 10,
-            "project": 2,
+            "project": 1,
             "credits": 4,
-            "is_project_lead": true,
+            "is_project_lead": false,
             "updated_at": "2022-12-29T02:30:00+0000",
             "created_at": "2022-12-29T02:30:00+0000"
         }
@@ -1596,7 +1626,7 @@
         "fields": {
             "semester": "202208",
             "user": 10,
-            "project": 27,
+            "project": 21,
             "credits": 2,
             "is_project_lead": false,
             "updated_at": "2022-12-29T02:30:00+0000",
@@ -1609,8 +1639,8 @@
         "fields": {
             "semester": "202201",
             "user": 10,
-            "project": 2,
-            "credits": 1,
+            "project": 9,
+            "credits": 2,
             "is_project_lead": false,
             "updated_at": "2022-12-29T02:30:00+0000",
             "created_at": "2022-12-29T02:30:00+0000"
@@ -1622,8 +1652,8 @@
         "fields": {
             "semester": "202301",
             "user": 11,
-            "project": 21,
-            "credits": 1,
+            "project": 28,
+            "credits": 0,
             "is_project_lead": false,
             "updated_at": "2022-12-29T02:30:00+0000",
             "created_at": "2022-12-29T02:30:00+0000"
@@ -1635,9 +1665,9 @@
         "fields": {
             "semester": "202208",
             "user": 11,
-            "project": 25,
-            "credits": 4,
-            "is_project_lead": true,
+            "project": 8,
+            "credits": 2,
+            "is_project_lead": false,
             "updated_at": "2022-12-29T02:30:00+0000",
             "created_at": "2022-12-29T02:30:00+0000"
         }
@@ -1648,7 +1678,7 @@
         "fields": {
             "semester": "202201",
             "user": 11,
-            "project": 20,
+            "project": 12,
             "credits": 1,
             "is_project_lead": false,
             "updated_at": "2022-12-29T02:30:00+0000",
@@ -1661,9 +1691,9 @@
         "fields": {
             "semester": "202301",
             "user": 12,
-            "project": 25,
-            "credits": 2,
-            "is_project_lead": false,
+            "project": 24,
+            "credits": 3,
+            "is_project_lead": true,
             "updated_at": "2022-12-29T02:30:00+0000",
             "created_at": "2022-12-29T02:30:00+0000"
         }
@@ -1674,9 +1704,9 @@
         "fields": {
             "semester": "202208",
             "user": 12,
-            "project": 29,
-            "credits": 0,
-            "is_project_lead": false,
+            "project": 5,
+            "credits": 3,
+            "is_project_lead": true,
             "updated_at": "2022-12-29T02:30:00+0000",
             "created_at": "2022-12-29T02:30:00+0000"
         }
@@ -1687,9 +1717,9 @@
         "fields": {
             "semester": "202201",
             "user": 12,
-            "project": 27,
+            "project": 4,
             "credits": 2,
-            "is_project_lead": true,
+            "is_project_lead": false,
             "updated_at": "2022-12-29T02:30:00+0000",
             "created_at": "2022-12-29T02:30:00+0000"
         }
@@ -1700,8 +1730,8 @@
         "fields": {
             "semester": "202301",
             "user": 13,
-            "project": 12,
-            "credits": 0,
+            "project": 24,
+            "credits": 2,
             "is_project_lead": false,
             "updated_at": "2022-12-29T02:30:00+0000",
             "created_at": "2022-12-29T02:30:00+0000"
@@ -1713,8 +1743,8 @@
         "fields": {
             "semester": "202208",
             "user": 13,
-            "project": 24,
-            "credits": 1,
+            "project": 12,
+            "credits": 3,
             "is_project_lead": false,
             "updated_at": "2022-12-29T02:30:00+0000",
             "created_at": "2022-12-29T02:30:00+0000"
@@ -1726,8 +1756,8 @@
         "fields": {
             "semester": "202201",
             "user": 13,
-            "project": 5,
-            "credits": 2,
+            "project": 18,
+            "credits": 4,
             "is_project_lead": false,
             "updated_at": "2022-12-29T02:30:00+0000",
             "created_at": "2022-12-29T02:30:00+0000"
@@ -1739,8 +1769,8 @@
         "fields": {
             "semester": "202301",
             "user": 14,
-            "project": 9,
-            "credits": 2,
+            "project": 27,
+            "credits": 3,
             "is_project_lead": false,
             "updated_at": "2022-12-29T02:30:00+0000",
             "created_at": "2022-12-29T02:30:00+0000"
@@ -1752,8 +1782,8 @@
         "fields": {
             "semester": "202208",
             "user": 14,
-            "project": 19,
-            "credits": 0,
+            "project": 5,
+            "credits": 1,
             "is_project_lead": false,
             "updated_at": "2022-12-29T02:30:00+0000",
             "created_at": "2022-12-29T02:30:00+0000"
@@ -1765,9 +1795,9 @@
         "fields": {
             "semester": "202201",
             "user": 14,
-            "project": 0,
-            "credits": 4,
-            "is_project_lead": true,
+            "project": 29,
+            "credits": 3,
+            "is_project_lead": false,
             "updated_at": "2022-12-29T02:30:00+0000",
             "created_at": "2022-12-29T02:30:00+0000"
         }
@@ -1778,7 +1808,7 @@
         "fields": {
             "semester": "202301",
             "user": 15,
-            "project": 15,
+            "project": 5,
             "credits": 3,
             "is_project_lead": false,
             "updated_at": "2022-12-29T02:30:00+0000",
@@ -1791,9 +1821,9 @@
         "fields": {
             "semester": "202208",
             "user": 15,
-            "project": 20,
-            "credits": 0,
-            "is_project_lead": true,
+            "project": 9,
+            "credits": 3,
+            "is_project_lead": false,
             "updated_at": "2022-12-29T02:30:00+0000",
             "created_at": "2022-12-29T02:30:00+0000"
         }
@@ -1804,9 +1834,9 @@
         "fields": {
             "semester": "202201",
             "user": 15,
-            "project": 13,
-            "credits": 0,
-            "is_project_lead": false,
+            "project": 8,
+            "credits": 2,
+            "is_project_lead": true,
             "updated_at": "2022-12-29T02:30:00+0000",
             "created_at": "2022-12-29T02:30:00+0000"
         }
@@ -1817,8 +1847,8 @@
         "fields": {
             "semester": "202301",
             "user": 16,
-            "project": 9,
-            "credits": 0,
+            "project": 12,
+            "credits": 3,
             "is_project_lead": true,
             "updated_at": "2022-12-29T02:30:00+0000",
             "created_at": "2022-12-29T02:30:00+0000"
@@ -1830,8 +1860,8 @@
         "fields": {
             "semester": "202208",
             "user": 16,
-            "project": 20,
-            "credits": 4,
+            "project": 12,
+            "credits": 1,
             "is_project_lead": false,
             "updated_at": "2022-12-29T02:30:00+0000",
             "created_at": "2022-12-29T02:30:00+0000"
@@ -1843,9 +1873,9 @@
         "fields": {
             "semester": "202201",
             "user": 16,
-            "project": 10,
-            "credits": 0,
-            "is_project_lead": false,
+            "project": 8,
+            "credits": 2,
+            "is_project_lead": true,
             "updated_at": "2022-12-29T02:30:00+0000",
             "created_at": "2022-12-29T02:30:00+0000"
         }
@@ -1856,8 +1886,8 @@
         "fields": {
             "semester": "202301",
             "user": 17,
-            "project": 12,
-            "credits": 4,
+            "project": 11,
+            "credits": 0,
             "is_project_lead": false,
             "updated_at": "2022-12-29T02:30:00+0000",
             "created_at": "2022-12-29T02:30:00+0000"
@@ -1869,9 +1899,9 @@
         "fields": {
             "semester": "202208",
             "user": 17,
-            "project": 22,
-            "credits": 1,
-            "is_project_lead": true,
+            "project": 3,
+            "credits": 3,
+            "is_project_lead": false,
             "updated_at": "2022-12-29T02:30:00+0000",
             "created_at": "2022-12-29T02:30:00+0000"
         }
@@ -1882,9 +1912,9 @@
         "fields": {
             "semester": "202201",
             "user": 17,
-            "project": 12,
-            "credits": 1,
-            "is_project_lead": false,
+            "project": 14,
+            "credits": 2,
+            "is_project_lead": true,
             "updated_at": "2022-12-29T02:30:00+0000",
             "created_at": "2022-12-29T02:30:00+0000"
         }
@@ -1895,9 +1925,9 @@
         "fields": {
             "semester": "202301",
             "user": 18,
-            "project": 4,
-            "credits": 0,
-            "is_project_lead": false,
+            "project": 1,
+            "credits": 3,
+            "is_project_lead": true,
             "updated_at": "2022-12-29T02:30:00+0000",
             "created_at": "2022-12-29T02:30:00+0000"
         }
@@ -1908,9 +1938,9 @@
         "fields": {
             "semester": "202208",
             "user": 18,
-            "project": 28,
-            "credits": 0,
-            "is_project_lead": true,
+            "project": 24,
+            "credits": 3,
+            "is_project_lead": false,
             "updated_at": "2022-12-29T02:30:00+0000",
             "created_at": "2022-12-29T02:30:00+0000"
         }
@@ -1921,9 +1951,9 @@
         "fields": {
             "semester": "202201",
             "user": 18,
-            "project": 10,
+            "project": 22,
             "credits": 4,
-            "is_project_lead": false,
+            "is_project_lead": true,
             "updated_at": "2022-12-29T02:30:00+0000",
             "created_at": "2022-12-29T02:30:00+0000"
         }
@@ -1934,7 +1964,7 @@
         "fields": {
             "semester": "202301",
             "user": 19,
-            "project": 29,
+            "project": 24,
             "credits": 2,
             "is_project_lead": false,
             "updated_at": "2022-12-29T02:30:00+0000",
@@ -1947,7 +1977,7 @@
         "fields": {
             "semester": "202208",
             "user": 19,
-            "project": 15,
+            "project": 29,
             "credits": 4,
             "is_project_lead": false,
             "updated_at": "2022-12-29T02:30:00+0000",
@@ -1960,8 +1990,8 @@
         "fields": {
             "semester": "202201",
             "user": 19,
-            "project": 11,
-            "credits": 3,
+            "project": 8,
+            "credits": 1,
             "is_project_lead": false,
             "updated_at": "2022-12-29T02:30:00+0000",
             "created_at": "2022-12-29T02:30:00+0000"
@@ -1973,8 +2003,8 @@
         "fields": {
             "semester": "202301",
             "user": 20,
-            "project": 10,
-            "credits": 0,
+            "project": 26,
+            "credits": 4,
             "is_project_lead": false,
             "updated_at": "2022-12-29T02:30:00+0000",
             "created_at": "2022-12-29T02:30:00+0000"
@@ -1986,9 +2016,9 @@
         "fields": {
             "semester": "202208",
             "user": 20,
-            "project": 7,
-            "credits": 3,
-            "is_project_lead": false,
+            "project": 11,
+            "credits": 1,
+            "is_project_lead": true,
             "updated_at": "2022-12-29T02:30:00+0000",
             "created_at": "2022-12-29T02:30:00+0000"
         }
@@ -1999,8 +2029,8 @@
         "fields": {
             "semester": "202201",
             "user": 20,
-            "project": 12,
-            "credits": 0,
+            "project": 29,
+            "credits": 3,
             "is_project_lead": false,
             "updated_at": "2022-12-29T02:30:00+0000",
             "created_at": "2022-12-29T02:30:00+0000"
@@ -2025,8 +2055,8 @@
         "fields": {
             "semester": "202208",
             "user": 21,
-            "project": 27,
-            "credits": 0,
+            "project": 0,
+            "credits": 3,
             "is_project_lead": false,
             "updated_at": "2022-12-29T02:30:00+0000",
             "created_at": "2022-12-29T02:30:00+0000"
@@ -2038,7 +2068,7 @@
         "fields": {
             "semester": "202201",
             "user": 21,
-            "project": 3,
+            "project": 26,
             "credits": 1,
             "is_project_lead": false,
             "updated_at": "2022-12-29T02:30:00+0000",
@@ -2051,9 +2081,9 @@
         "fields": {
             "semester": "202301",
             "user": 22,
-            "project": 1,
-            "credits": 3,
-            "is_project_lead": true,
+            "project": 13,
+            "credits": 2,
+            "is_project_lead": false,
             "updated_at": "2022-12-29T02:30:00+0000",
             "created_at": "2022-12-29T02:30:00+0000"
         }
@@ -2064,9 +2094,9 @@
         "fields": {
             "semester": "202208",
             "user": 22,
-            "project": 12,
-            "credits": 0,
-            "is_project_lead": false,
+            "project": 1,
+            "credits": 2,
+            "is_project_lead": true,
             "updated_at": "2022-12-29T02:30:00+0000",
             "created_at": "2022-12-29T02:30:00+0000"
         }
@@ -2077,8 +2107,8 @@
         "fields": {
             "semester": "202201",
             "user": 22,
-            "project": 13,
-            "credits": 4,
+            "project": 21,
+            "credits": 3,
             "is_project_lead": false,
             "updated_at": "2022-12-29T02:30:00+0000",
             "created_at": "2022-12-29T02:30:00+0000"
@@ -2090,9 +2120,9 @@
         "fields": {
             "semester": "202301",
             "user": 23,
-            "project": 2,
+            "project": 0,
             "credits": 3,
-            "is_project_lead": false,
+            "is_project_lead": true,
             "updated_at": "2022-12-29T02:30:00+0000",
             "created_at": "2022-12-29T02:30:00+0000"
         }
@@ -2103,9 +2133,9 @@
         "fields": {
             "semester": "202208",
             "user": 23,
-            "project": 3,
-            "credits": 0,
-            "is_project_lead": false,
+            "project": 22,
+            "credits": 2,
+            "is_project_lead": true,
             "updated_at": "2022-12-29T02:30:00+0000",
             "created_at": "2022-12-29T02:30:00+0000"
         }
@@ -2116,8 +2146,8 @@
         "fields": {
             "semester": "202201",
             "user": 23,
-            "project": 19,
-            "credits": 2,
+            "project": 29,
+            "credits": 0,
             "is_project_lead": false,
             "updated_at": "2022-12-29T02:30:00+0000",
             "created_at": "2022-12-29T02:30:00+0000"
@@ -2129,9 +2159,9 @@
         "fields": {
             "semester": "202301",
             "user": 24,
-            "project": 18,
-            "credits": 3,
-            "is_project_lead": false,
+            "project": 28,
+            "credits": 0,
+            "is_project_lead": true,
             "updated_at": "2022-12-29T02:30:00+0000",
             "created_at": "2022-12-29T02:30:00+0000"
         }
@@ -2142,9 +2172,9 @@
         "fields": {
             "semester": "202208",
             "user": 24,
-            "project": 15,
-            "credits": 2,
-            "is_project_lead": true,
+            "project": 21,
+            "credits": 0,
+            "is_project_lead": false,
             "updated_at": "2022-12-29T02:30:00+0000",
             "created_at": "2022-12-29T02:30:00+0000"
         }
@@ -2155,9 +2185,9 @@
         "fields": {
             "semester": "202201",
             "user": 24,
-            "project": 14,
+            "project": 6,
             "credits": 3,
-            "is_project_lead": true,
+            "is_project_lead": false,
             "updated_at": "2022-12-29T02:30:00+0000",
             "created_at": "2022-12-29T02:30:00+0000"
         }
@@ -2168,9 +2198,9 @@
         "fields": {
             "semester": "202301",
             "user": 25,
-            "project": 13,
-            "credits": 3,
-            "is_project_lead": false,
+            "project": 12,
+            "credits": 4,
+            "is_project_lead": true,
             "updated_at": "2022-12-29T02:30:00+0000",
             "created_at": "2022-12-29T02:30:00+0000"
         }
@@ -2181,8 +2211,8 @@
         "fields": {
             "semester": "202208",
             "user": 25,
-            "project": 12,
-            "credits": 3,
+            "project": 8,
+            "credits": 4,
             "is_project_lead": false,
             "updated_at": "2022-12-29T02:30:00+0000",
             "created_at": "2022-12-29T02:30:00+0000"
@@ -2194,8 +2224,8 @@
         "fields": {
             "semester": "202201",
             "user": 25,
-            "project": 1,
-            "credits": 3,
+            "project": 9,
+            "credits": 1,
             "is_project_lead": false,
             "updated_at": "2022-12-29T02:30:00+0000",
             "created_at": "2022-12-29T02:30:00+0000"
@@ -2207,7 +2237,7 @@
         "fields": {
             "semester": "202301",
             "user": 26,
-            "project": 22,
+            "project": 29,
             "credits": 4,
             "is_project_lead": true,
             "updated_at": "2022-12-29T02:30:00+0000",
@@ -2220,7 +2250,7 @@
         "fields": {
             "semester": "202208",
             "user": 26,
-            "project": 0,
+            "project": 19,
             "credits": 1,
             "is_project_lead": false,
             "updated_at": "2022-12-29T02:30:00+0000",
@@ -2233,9 +2263,9 @@
         "fields": {
             "semester": "202201",
             "user": 26,
-            "project": 16,
-            "credits": 2,
-            "is_project_lead": false,
+            "project": 20,
+            "credits": 4,
+            "is_project_lead": true,
             "updated_at": "2022-12-29T02:30:00+0000",
             "created_at": "2022-12-29T02:30:00+0000"
         }
@@ -2246,8 +2276,8 @@
         "fields": {
             "semester": "202301",
             "user": 27,
-            "project": 15,
-            "credits": 1,
+            "project": 28,
+            "credits": 3,
             "is_project_lead": true,
             "updated_at": "2022-12-29T02:30:00+0000",
             "created_at": "2022-12-29T02:30:00+0000"
@@ -2259,8 +2289,8 @@
         "fields": {
             "semester": "202208",
             "user": 27,
-            "project": 8,
-            "credits": 0,
+            "project": 20,
+            "credits": 1,
             "is_project_lead": false,
             "updated_at": "2022-12-29T02:30:00+0000",
             "created_at": "2022-12-29T02:30:00+0000"
@@ -2272,8 +2302,8 @@
         "fields": {
             "semester": "202201",
             "user": 27,
-            "project": 24,
-            "credits": 0,
+            "project": 11,
+            "credits": 2,
             "is_project_lead": false,
             "updated_at": "2022-12-29T02:30:00+0000",
             "created_at": "2022-12-29T02:30:00+0000"
@@ -2285,9 +2315,9 @@
         "fields": {
             "semester": "202301",
             "user": 28,
-            "project": 12,
-            "credits": 2,
-            "is_project_lead": false,
+            "project": 28,
+            "credits": 4,
+            "is_project_lead": true,
             "updated_at": "2022-12-29T02:30:00+0000",
             "created_at": "2022-12-29T02:30:00+0000"
         }
@@ -2298,8 +2328,8 @@
         "fields": {
             "semester": "202208",
             "user": 28,
-            "project": 27,
-            "credits": 1,
+            "project": 13,
+            "credits": 3,
             "is_project_lead": false,
             "updated_at": "2022-12-29T02:30:00+0000",
             "created_at": "2022-12-29T02:30:00+0000"
@@ -2311,9 +2341,9 @@
         "fields": {
             "semester": "202201",
             "user": 28,
-            "project": 9,
-            "credits": 4,
-            "is_project_lead": false,
+            "project": 1,
+            "credits": 2,
+            "is_project_lead": true,
             "updated_at": "2022-12-29T02:30:00+0000",
             "created_at": "2022-12-29T02:30:00+0000"
         }
@@ -2324,7 +2354,7 @@
         "fields": {
             "semester": "202301",
             "user": 29,
-            "project": 17,
+            "project": 10,
             "credits": 2,
             "is_project_lead": false,
             "updated_at": "2022-12-29T02:30:00+0000",
@@ -2337,8 +2367,8 @@
         "fields": {
             "semester": "202208",
             "user": 29,
-            "project": 29,
-            "credits": 3,
+            "project": 23,
+            "credits": 2,
             "is_project_lead": false,
             "updated_at": "2022-12-29T02:30:00+0000",
             "created_at": "2022-12-29T02:30:00+0000"
@@ -2350,8 +2380,8 @@
         "fields": {
             "semester": "202201",
             "user": 29,
-            "project": 10,
-            "credits": 4,
+            "project": 21,
+            "credits": 2,
             "is_project_lead": false,
             "updated_at": "2022-12-29T02:30:00+0000",
             "created_at": "2022-12-29T02:30:00+0000"
@@ -2363,8 +2393,8 @@
         "fields": {
             "semester": "202301",
             "user": 30,
-            "project": 25,
-            "credits": 3,
+            "project": 7,
+            "credits": 1,
             "is_project_lead": false,
             "updated_at": "2022-12-29T02:30:00+0000",
             "created_at": "2022-12-29T02:30:00+0000"
@@ -2376,9 +2406,9 @@
         "fields": {
             "semester": "202208",
             "user": 30,
-            "project": 26,
-            "credits": 2,
-            "is_project_lead": false,
+            "project": 28,
+            "credits": 3,
+            "is_project_lead": true,
             "updated_at": "2022-12-29T02:30:00+0000",
             "created_at": "2022-12-29T02:30:00+0000"
         }
@@ -2389,7 +2419,7 @@
         "fields": {
             "semester": "202201",
             "user": 30,
-            "project": 22,
+            "project": 27,
             "credits": 4,
             "is_project_lead": false,
             "updated_at": "2022-12-29T02:30:00+0000",
@@ -2402,9 +2432,9 @@
         "fields": {
             "semester": "202301",
             "user": 31,
-            "project": 14,
-            "credits": 4,
-            "is_project_lead": true,
+            "project": 23,
+            "credits": 3,
+            "is_project_lead": false,
             "updated_at": "2022-12-29T02:30:00+0000",
             "created_at": "2022-12-29T02:30:00+0000"
         }
@@ -2415,8 +2445,8 @@
         "fields": {
             "semester": "202208",
             "user": 31,
-            "project": 22,
-            "credits": 0,
+            "project": 19,
+            "credits": 3,
             "is_project_lead": false,
             "updated_at": "2022-12-29T02:30:00+0000",
             "created_at": "2022-12-29T02:30:00+0000"
@@ -2428,9 +2458,9 @@
         "fields": {
             "semester": "202201",
             "user": 31,
-            "project": 21,
+            "project": 16,
             "credits": 4,
-            "is_project_lead": false,
+            "is_project_lead": true,
             "updated_at": "2022-12-29T02:30:00+0000",
             "created_at": "2022-12-29T02:30:00+0000"
         }
@@ -2441,9 +2471,9 @@
         "fields": {
             "semester": "202301",
             "user": 32,
-            "project": 2,
+            "project": 27,
             "credits": 1,
-            "is_project_lead": true,
+            "is_project_lead": false,
             "updated_at": "2022-12-29T02:30:00+0000",
             "created_at": "2022-12-29T02:30:00+0000"
         }
@@ -2454,8 +2484,8 @@
         "fields": {
             "semester": "202208",
             "user": 32,
-            "project": 27,
-            "credits": 0,
+            "project": 7,
+            "credits": 3,
             "is_project_lead": false,
             "updated_at": "2022-12-29T02:30:00+0000",
             "created_at": "2022-12-29T02:30:00+0000"
@@ -2467,7 +2497,7 @@
         "fields": {
             "semester": "202201",
             "user": 32,
-            "project": 16,
+            "project": 7,
             "credits": 0,
             "is_project_lead": true,
             "updated_at": "2022-12-29T02:30:00+0000",
@@ -2480,8 +2510,8 @@
         "fields": {
             "semester": "202301",
             "user": 33,
-            "project": 1,
-            "credits": 2,
+            "project": 5,
+            "credits": 3,
             "is_project_lead": false,
             "updated_at": "2022-12-29T02:30:00+0000",
             "created_at": "2022-12-29T02:30:00+0000"
@@ -2493,8 +2523,8 @@
         "fields": {
             "semester": "202208",
             "user": 33,
-            "project": 8,
-            "credits": 2,
+            "project": 3,
+            "credits": 0,
             "is_project_lead": false,
             "updated_at": "2022-12-29T02:30:00+0000",
             "created_at": "2022-12-29T02:30:00+0000"
@@ -2507,8 +2537,8 @@
             "semester": "202201",
             "user": 33,
             "project": 25,
-            "credits": 3,
-            "is_project_lead": false,
+            "credits": 0,
+            "is_project_lead": true,
             "updated_at": "2022-12-29T02:30:00+0000",
             "created_at": "2022-12-29T02:30:00+0000"
         }
@@ -2519,9 +2549,9 @@
         "fields": {
             "semester": "202301",
             "user": 34,
-            "project": 2,
-            "credits": 0,
-            "is_project_lead": false,
+            "project": 22,
+            "credits": 2,
+            "is_project_lead": true,
             "updated_at": "2022-12-29T02:30:00+0000",
             "created_at": "2022-12-29T02:30:00+0000"
         }
@@ -2532,9 +2562,9 @@
         "fields": {
             "semester": "202208",
             "user": 34,
-            "project": 6,
-            "credits": 0,
-            "is_project_lead": true,
+            "project": 15,
+            "credits": 1,
+            "is_project_lead": false,
             "updated_at": "2022-12-29T02:30:00+0000",
             "created_at": "2022-12-29T02:30:00+0000"
         }
@@ -2545,8 +2575,8 @@
         "fields": {
             "semester": "202201",
             "user": 34,
-            "project": 26,
-            "credits": 3,
+            "project": 4,
+            "credits": 2,
             "is_project_lead": false,
             "updated_at": "2022-12-29T02:30:00+0000",
             "created_at": "2022-12-29T02:30:00+0000"
@@ -2558,9 +2588,9 @@
         "fields": {
             "semester": "202301",
             "user": 35,
-            "project": 0,
-            "credits": 2,
-            "is_project_lead": false,
+            "project": 8,
+            "credits": 4,
+            "is_project_lead": true,
             "updated_at": "2022-12-29T02:30:00+0000",
             "created_at": "2022-12-29T02:30:00+0000"
         }
@@ -2571,9 +2601,9 @@
         "fields": {
             "semester": "202208",
             "user": 35,
-            "project": 2,
-            "credits": 0,
-            "is_project_lead": false,
+            "project": 28,
+            "credits": 2,
+            "is_project_lead": true,
             "updated_at": "2022-12-29T02:30:00+0000",
             "created_at": "2022-12-29T02:30:00+0000"
         }
@@ -2584,8 +2614,8 @@
         "fields": {
             "semester": "202201",
             "user": 35,
-            "project": 8,
-            "credits": 2,
+            "project": 14,
+            "credits": 1,
             "is_project_lead": false,
             "updated_at": "2022-12-29T02:30:00+0000",
             "created_at": "2022-12-29T02:30:00+0000"
@@ -2598,7 +2628,7 @@
             "semester": "202301",
             "user": 36,
             "project": 11,
-            "credits": 2,
+            "credits": 4,
             "is_project_lead": false,
             "updated_at": "2022-12-29T02:30:00+0000",
             "created_at": "2022-12-29T02:30:00+0000"
@@ -2610,7 +2640,7 @@
         "fields": {
             "semester": "202208",
             "user": 36,
-            "project": 12,
+            "project": 25,
             "credits": 3,
             "is_project_lead": false,
             "updated_at": "2022-12-29T02:30:00+0000",
@@ -2623,7 +2653,7 @@
         "fields": {
             "semester": "202201",
             "user": 36,
-            "project": 19,
+            "project": 10,
             "credits": 4,
             "is_project_lead": true,
             "updated_at": "2022-12-29T02:30:00+0000",
@@ -2636,9 +2666,9 @@
         "fields": {
             "semester": "202301",
             "user": 37,
-            "project": 3,
-            "credits": 0,
-            "is_project_lead": false,
+            "project": 0,
+            "credits": 3,
+            "is_project_lead": true,
             "updated_at": "2022-12-29T02:30:00+0000",
             "created_at": "2022-12-29T02:30:00+0000"
         }
@@ -2649,8 +2679,8 @@
         "fields": {
             "semester": "202208",
             "user": 37,
-            "project": 0,
-            "credits": 1,
+            "project": 25,
+            "credits": 4,
             "is_project_lead": true,
             "updated_at": "2022-12-29T02:30:00+0000",
             "created_at": "2022-12-29T02:30:00+0000"
@@ -2662,7 +2692,7 @@
         "fields": {
             "semester": "202201",
             "user": 37,
-            "project": 18,
+            "project": 13,
             "credits": 3,
             "is_project_lead": false,
             "updated_at": "2022-12-29T02:30:00+0000",
@@ -2675,8 +2705,8 @@
         "fields": {
             "semester": "202301",
             "user": 38,
-            "project": 4,
-            "credits": 2,
+            "project": 14,
+            "credits": 0,
             "is_project_lead": false,
             "updated_at": "2022-12-29T02:30:00+0000",
             "created_at": "2022-12-29T02:30:00+0000"
@@ -2688,9 +2718,9 @@
         "fields": {
             "semester": "202208",
             "user": 38,
-            "project": 12,
-            "credits": 0,
-            "is_project_lead": false,
+            "project": 10,
+            "credits": 1,
+            "is_project_lead": true,
             "updated_at": "2022-12-29T02:30:00+0000",
             "created_at": "2022-12-29T02:30:00+0000"
         }
@@ -2701,9 +2731,9 @@
         "fields": {
             "semester": "202201",
             "user": 38,
-            "project": 28,
+            "project": 0,
             "credits": 0,
-            "is_project_lead": true,
+            "is_project_lead": false,
             "updated_at": "2022-12-29T02:30:00+0000",
             "created_at": "2022-12-29T02:30:00+0000"
         }
@@ -2714,9 +2744,9 @@
         "fields": {
             "semester": "202301",
             "user": 39,
-            "project": 8,
+            "project": 15,
             "credits": 1,
-            "is_project_lead": false,
+            "is_project_lead": true,
             "updated_at": "2022-12-29T02:30:00+0000",
             "created_at": "2022-12-29T02:30:00+0000"
         }
@@ -2727,9 +2757,9 @@
         "fields": {
             "semester": "202208",
             "user": 39,
-            "project": 8,
-            "credits": 0,
-            "is_project_lead": false,
+            "project": 15,
+            "credits": 2,
+            "is_project_lead": true,
             "updated_at": "2022-12-29T02:30:00+0000",
             "created_at": "2022-12-29T02:30:00+0000"
         }
@@ -2740,9 +2770,9 @@
         "fields": {
             "semester": "202201",
             "user": 39,
-            "project": 15,
-            "credits": 0,
-            "is_project_lead": false,
+            "project": 13,
+            "credits": 1,
+            "is_project_lead": true,
             "updated_at": "2022-12-29T02:30:00+0000",
             "created_at": "2022-12-29T02:30:00+0000"
         }
@@ -2753,8 +2783,8 @@
         "fields": {
             "semester": "202301",
             "user": 40,
-            "project": 17,
-            "credits": 3,
+            "project": 4,
+            "credits": 4,
             "is_project_lead": false,
             "updated_at": "2022-12-29T02:30:00+0000",
             "created_at": "2022-12-29T02:30:00+0000"
@@ -2766,8 +2796,8 @@
         "fields": {
             "semester": "202208",
             "user": 40,
-            "project": 25,
-            "credits": 0,
+            "project": 20,
+            "credits": 1,
             "is_project_lead": false,
             "updated_at": "2022-12-29T02:30:00+0000",
             "created_at": "2022-12-29T02:30:00+0000"
@@ -2779,8 +2809,8 @@
         "fields": {
             "semester": "202201",
             "user": 40,
-            "project": 27,
-            "credits": 0,
+            "project": 22,
+            "credits": 4,
             "is_project_lead": false,
             "updated_at": "2022-12-29T02:30:00+0000",
             "created_at": "2022-12-29T02:30:00+0000"
@@ -2792,8 +2822,8 @@
         "fields": {
             "semester": "202301",
             "user": 41,
-            "project": 20,
-            "credits": 0,
+            "project": 3,
+            "credits": 2,
             "is_project_lead": false,
             "updated_at": "2022-12-29T02:30:00+0000",
             "created_at": "2022-12-29T02:30:00+0000"
@@ -2805,9 +2835,9 @@
         "fields": {
             "semester": "202208",
             "user": 41,
-            "project": 13,
+            "project": 26,
             "credits": 4,
-            "is_project_lead": true,
+            "is_project_lead": false,
             "updated_at": "2022-12-29T02:30:00+0000",
             "created_at": "2022-12-29T02:30:00+0000"
         }
@@ -2818,8 +2848,8 @@
         "fields": {
             "semester": "202201",
             "user": 41,
-            "project": 11,
-            "credits": 2,
+            "project": 12,
+            "credits": 1,
             "is_project_lead": false,
             "updated_at": "2022-12-29T02:30:00+0000",
             "created_at": "2022-12-29T02:30:00+0000"
@@ -2831,9 +2861,9 @@
         "fields": {
             "semester": "202301",
             "user": 42,
-            "project": 28,
-            "credits": 1,
-            "is_project_lead": false,
+            "project": 5,
+            "credits": 3,
+            "is_project_lead": true,
             "updated_at": "2022-12-29T02:30:00+0000",
             "created_at": "2022-12-29T02:30:00+0000"
         }
@@ -2844,8 +2874,8 @@
         "fields": {
             "semester": "202208",
             "user": 42,
-            "project": 7,
-            "credits": 3,
+            "project": 21,
+            "credits": 1,
             "is_project_lead": false,
             "updated_at": "2022-12-29T02:30:00+0000",
             "created_at": "2022-12-29T02:30:00+0000"
@@ -2857,9 +2887,9 @@
         "fields": {
             "semester": "202201",
             "user": 42,
-            "project": 25,
-            "credits": 4,
-            "is_project_lead": true,
+            "project": 19,
+            "credits": 3,
+            "is_project_lead": false,
             "updated_at": "2022-12-29T02:30:00+0000",
             "created_at": "2022-12-29T02:30:00+0000"
         }
@@ -2870,9 +2900,9 @@
         "fields": {
             "semester": "202301",
             "user": 43,
-            "project": 23,
+            "project": 5,
             "credits": 4,
-            "is_project_lead": false,
+            "is_project_lead": true,
             "updated_at": "2022-12-29T02:30:00+0000",
             "created_at": "2022-12-29T02:30:00+0000"
         }
@@ -2883,9 +2913,9 @@
         "fields": {
             "semester": "202208",
             "user": 43,
-            "project": 7,
-            "credits": 4,
-            "is_project_lead": false,
+            "project": 10,
+            "credits": 0,
+            "is_project_lead": true,
             "updated_at": "2022-12-29T02:30:00+0000",
             "created_at": "2022-12-29T02:30:00+0000"
         }
@@ -2896,9 +2926,9 @@
         "fields": {
             "semester": "202201",
             "user": 43,
-            "project": 25,
+            "project": 20,
             "credits": 0,
-            "is_project_lead": true,
+            "is_project_lead": false,
             "updated_at": "2022-12-29T02:30:00+0000",
             "created_at": "2022-12-29T02:30:00+0000"
         }
@@ -2909,9 +2939,9 @@
         "fields": {
             "semester": "202301",
             "user": 44,
-            "project": 7,
-            "credits": 1,
-            "is_project_lead": false,
+            "project": 8,
+            "credits": 3,
+            "is_project_lead": true,
             "updated_at": "2022-12-29T02:30:00+0000",
             "created_at": "2022-12-29T02:30:00+0000"
         }
@@ -2922,8 +2952,8 @@
         "fields": {
             "semester": "202208",
             "user": 44,
-            "project": 25,
-            "credits": 3,
+            "project": 3,
+            "credits": 0,
             "is_project_lead": false,
             "updated_at": "2022-12-29T02:30:00+0000",
             "created_at": "2022-12-29T02:30:00+0000"
@@ -2935,7 +2965,7 @@
         "fields": {
             "semester": "202201",
             "user": 44,
-            "project": 6,
+            "project": 4,
             "credits": 1,
             "is_project_lead": false,
             "updated_at": "2022-12-29T02:30:00+0000",
@@ -2948,8 +2978,8 @@
         "fields": {
             "semester": "202301",
             "user": 45,
-            "project": 2,
-            "credits": 0,
+            "project": 11,
+            "credits": 3,
             "is_project_lead": false,
             "updated_at": "2022-12-29T02:30:00+0000",
             "created_at": "2022-12-29T02:30:00+0000"
@@ -2961,9 +2991,9 @@
         "fields": {
             "semester": "202208",
             "user": 45,
-            "project": 3,
-            "credits": 0,
-            "is_project_lead": true,
+            "project": 29,
+            "credits": 2,
+            "is_project_lead": false,
             "updated_at": "2022-12-29T02:30:00+0000",
             "created_at": "2022-12-29T02:30:00+0000"
         }
@@ -2974,8 +3004,8 @@
         "fields": {
             "semester": "202201",
             "user": 45,
-            "project": 24,
-            "credits": 2,
+            "project": 0,
+            "credits": 1,
             "is_project_lead": false,
             "updated_at": "2022-12-29T02:30:00+0000",
             "created_at": "2022-12-29T02:30:00+0000"
@@ -2987,9 +3017,9 @@
         "fields": {
             "semester": "202301",
             "user": 46,
-            "project": 4,
-            "credits": 3,
-            "is_project_lead": true,
+            "project": 28,
+            "credits": 2,
+            "is_project_lead": false,
             "updated_at": "2022-12-29T02:30:00+0000",
             "created_at": "2022-12-29T02:30:00+0000"
         }
@@ -3000,8 +3030,8 @@
         "fields": {
             "semester": "202208",
             "user": 46,
-            "project": 11,
-            "credits": 1,
+            "project": 6,
+            "credits": 3,
             "is_project_lead": false,
             "updated_at": "2022-12-29T02:30:00+0000",
             "created_at": "2022-12-29T02:30:00+0000"
@@ -3013,8 +3043,8 @@
         "fields": {
             "semester": "202201",
             "user": 46,
-            "project": 16,
-            "credits": 0,
+            "project": 3,
+            "credits": 3,
             "is_project_lead": false,
             "updated_at": "2022-12-29T02:30:00+0000",
             "created_at": "2022-12-29T02:30:00+0000"
@@ -3026,8 +3056,8 @@
         "fields": {
             "semester": "202301",
             "user": 47,
-            "project": 26,
-            "credits": 4,
+            "project": 22,
+            "credits": 0,
             "is_project_lead": true,
             "updated_at": "2022-12-29T02:30:00+0000",
             "created_at": "2022-12-29T02:30:00+0000"
@@ -3039,8 +3069,8 @@
         "fields": {
             "semester": "202208",
             "user": 47,
-            "project": 27,
-            "credits": 3,
+            "project": 26,
+            "credits": 2,
             "is_project_lead": false,
             "updated_at": "2022-12-29T02:30:00+0000",
             "created_at": "2022-12-29T02:30:00+0000"
@@ -3052,8 +3082,8 @@
         "fields": {
             "semester": "202201",
             "user": 47,
-            "project": 18,
-            "credits": 0,
+            "project": 8,
+            "credits": 2,
             "is_project_lead": false,
             "updated_at": "2022-12-29T02:30:00+0000",
             "created_at": "2022-12-29T02:30:00+0000"
@@ -3065,9 +3095,9 @@
         "fields": {
             "semester": "202301",
             "user": 48,
-            "project": 8,
-            "credits": 4,
-            "is_project_lead": true,
+            "project": 24,
+            "credits": 0,
+            "is_project_lead": false,
             "updated_at": "2022-12-29T02:30:00+0000",
             "created_at": "2022-12-29T02:30:00+0000"
         }
@@ -3078,9 +3108,9 @@
         "fields": {
             "semester": "202208",
             "user": 48,
-            "project": 9,
-            "credits": 0,
-            "is_project_lead": false,
+            "project": 19,
+            "credits": 2,
+            "is_project_lead": true,
             "updated_at": "2022-12-29T02:30:00+0000",
             "created_at": "2022-12-29T02:30:00+0000"
         }
@@ -3091,8 +3121,8 @@
         "fields": {
             "semester": "202201",
             "user": 48,
-            "project": 6,
-            "credits": 1,
+            "project": 2,
+            "credits": 2,
             "is_project_lead": false,
             "updated_at": "2022-12-29T02:30:00+0000",
             "created_at": "2022-12-29T02:30:00+0000"
@@ -3104,9 +3134,9 @@
         "fields": {
             "semester": "202301",
             "user": 49,
-            "project": 6,
-            "credits": 0,
-            "is_project_lead": true,
+            "project": 9,
+            "credits": 2,
+            "is_project_lead": false,
             "updated_at": "2022-12-29T02:30:00+0000",
             "created_at": "2022-12-29T02:30:00+0000"
         }
@@ -3117,8 +3147,8 @@
         "fields": {
             "semester": "202208",
             "user": 49,
-            "project": 6,
-            "credits": 0,
+            "project": 29,
+            "credits": 4,
             "is_project_lead": false,
             "updated_at": "2022-12-29T02:30:00+0000",
             "created_at": "2022-12-29T02:30:00+0000"
@@ -3130,9 +3160,9 @@
         "fields": {
             "semester": "202201",
             "user": 49,
-            "project": 28,
-            "credits": 0,
-            "is_project_lead": false,
+            "project": 11,
+            "credits": 2,
+            "is_project_lead": true,
             "updated_at": "2022-12-29T02:30:00+0000",
             "created_at": "2022-12-29T02:30:00+0000"
         }
