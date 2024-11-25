@@ -18,6 +18,7 @@ def load_semesters(request):
         if semesters
         else None
     )
+    cache.set("active_semester", active_semester, 60 * 60 * 24)
 
     return {"semesters": semesters, "active_semester": active_semester}
 
