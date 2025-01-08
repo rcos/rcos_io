@@ -3,9 +3,8 @@
 {% if can_enroll_check %}
     {% if is_user_rpi_check %}
         <div class="content block">
-            <p class="block">To participate in RCOS, you must enroll by clicking the button below OR by registering for RCOS on SIS. Note that if you recently registered on SIS, there is a delay before it gets into our system. You can click below to get enrolled quicker.</p>
             <p class="block">
-                If you <strong>register for the course on SIS</strong>, you can receive course credit for the semester. You will be graded on the follow aspects:
+                To participate in RCOS this semester for credit, <strong>register for the course on SIS AND click the button below</strong> You will be graded on the follow aspects:
                 <ul>
                     <li>attendance</li>
                     <li>open source contributions</li>
@@ -15,9 +14,9 @@
                 </ul>
             </p>
             <p class="block">
-                If you do <strong class="has-text-danger">not register</strong> for the course on SIS, you can still participate fully in RCOS for just experience
-                and will not be held to any attendance or grading policies, though we heavily encourage you to attend all meetings
-                and contribute as much as you can. <span class="has-text-grey">This is a good option for those new to RCOS who want to try it out.</span>
+                If you <strong class="has-text-danger">do not want to take the course for credit</strong>, you can still participate fully in RCOS for just experience
+                and will not be held to any attendance or grading policies. We  encourage you to still attend all meetings and contribute as much as you can. 
+                You should still click the button below. <span class="has-text-grey">This is a good option for those new to RCOS who want to try it out.</span>
             </p>
             <form action="{% url 'users_enroll' request.user.pk %}" method="post" onsubmit="return confirm('Are you sure?')">
                 {% csrf_token %}
