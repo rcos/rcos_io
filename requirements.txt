@@ -268,9 +268,9 @@ kombu==5.4.2 ; python_version >= "3.11" and python_version < "4.0" \
 markdown==3.7 ; python_version >= "3.11" and python_version < "4.0" \
     --hash=sha256:2ae2471477cfd02dbbf038d5d9bc226d40def84b4fe2986e49b59b6b472bbed2 \
     --hash=sha256:7eb6df5690b81a1d7942992c97fad2938e956e79df20cbc6186e9c3a77b1c803
-markdownify==0.13.1 ; python_version >= "3.11" and python_version < "4.0" \
-    --hash=sha256:1d181d43d20902bcc69d7be85b5316ed174d0dda72ff56e14ae4c95a4a407d22 \
-    --hash=sha256:ab257f9e6bd4075118828a28c9d02f8a4bfeb7421f558834aa79b2dfeb32a098
+markdownify==0.14.1; python_version >= "3.11" and python_version < "4.0" \
+    --hash=sha256:4c46a6c0c12c6005ddcd49b45a5a890398b002ef51380cd319db62df5e09bc2a \
+    --hash=sha256:a62a7a216947ed0b8dafb95b99b2ef4a0edd1e18d5653c656f68f03db2bfb2f1
 multidict==6.1.0 ; python_version >= "3.11" and python_version < "4.0" \
     --hash=sha256:052e10d2d37810b99cc170b785945421141bf7bb7d2f8799d431e7db229c385f \
     --hash=sha256:06809f4f0f7ab7ea2cabf9caca7d79c22c0758b58a71f9d32943ae13c7ace056 \
