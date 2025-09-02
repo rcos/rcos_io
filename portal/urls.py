@@ -151,5 +151,6 @@ urlpatterns = [
         export_semester_projects,
         name="export_projects",
     ),
-    path("<str:code>/", shortlink_redirect, name="shortlink_redirect"),
+    # ShortLink redirect route (move to end, make more specific)
+    path("r/<str:code>/", shortlink_redirect, name="shortlink_redirect"),
 ]
