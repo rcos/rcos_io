@@ -10,6 +10,7 @@ from portal.views.discord import DiscordAdminIndex, delete_discord_channels
 from portal.views.mentors import MentorApplicationView, mentor_applications_index
 from portal.views.organizations import organizations_index
 from portal.views.small_groups import SmallGroupIndexView, small_group_detail
+from portal.views.shortlink import shortlink_redirect
 
 from .views.auth import (
     discord_flow_callback,
@@ -150,4 +151,5 @@ urlpatterns = [
         export_semester_projects,
         name="export_projects",
     ),
+    path("<str:code>/", shortlink_redirect, name="shortlink_redirect"),
 ]

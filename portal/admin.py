@@ -27,7 +27,14 @@ from portal.models import (
     SmallGroup,
     StatusUpdateSubmission,
     User,
+    ShortLink,
 )
+
+@admin.register(ShortLink)
+class ShortLinkAdmin(admin.ModelAdmin):
+    list_display = ("code", "url", "created_at")
+    search_fields = ("code", "url")
+    list_filter = ("created_at",)
 
 logger = logging.getLogger(__name__)
 

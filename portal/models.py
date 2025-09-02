@@ -1589,3 +1589,15 @@ class StatusUpdateSubmission(TimestampedModel):
 
     class Meta:
         ordering = ["created_at"]
+
+class ShortLink(TimestampedModel):
+    code = models.CharField(max_length=20, primary_key=True)
+    url = models.URLField()
+
+    def __str__(self) -> str:
+        return f'{settings.PUBLIC_BASE_URL}/{self.code}'
+
+    class Meta:
+        indexes = [
+            models.Index(fields=["code"]),
+        ]
