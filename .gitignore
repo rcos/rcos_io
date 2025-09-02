@@ -142,3 +142,5 @@ fake.py
 *.rdb
 db.json
 portal/.DS_Store
+
+docker-compose.yml

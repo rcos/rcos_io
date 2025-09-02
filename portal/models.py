@@ -287,7 +287,7 @@ class User(AbstractUser, TimestampedModel):
         null=True,
         blank=True,
         help_text="If you are a student, your graduation year.",
-        validators=[MaxValueValidator(2028), MinValueValidator(1950)],
+        validators=[MaxValueValidator(2038), MinValueValidator(1950)],
     )
 
     # Account integrations
