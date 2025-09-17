@@ -18,26 +18,24 @@ RCOS has to handle the data of typically 350+ students each semester. Data inclu
 
 ### Requirements
 
-- Python 3.11+
-- [Poetry](https://python-poetry.org/docs/#installation)
+- >= Python 3.11
+- [uv](https://docs.astral.sh/uv/getting-started/installation/)
 
 ### Setup
 
 1. Clone repository
-2. Install dependencies `poetry install`
+2. Install dependencies `uv sync`
 3. Create a `.env` file (not the placement of the `.`) and add environment values
     - see `.env.example` for the expected variables
-4. Activate Poetry shell `poetry shell`
-5. Setup database `./manage.py migrate` OR ask maintainers for test data DB file
-6. Setup cache table in database `./manage.py createcachetable`
-7. Create a superuser for testing `./manage.py createsuperuser`
+4. Setup database `uv run ./manage.py migrate` OR ask maintainers for test data DB file
+5. Setup cache table in database `uv run ./manage.py createcachetable`
+6. Create a superuser for testing `uv run ./manage.py createsuperuser`
 
 
 ### Running
 
-1. `poetry shell`
-2. `./manage.py runserver`
-3. Navigate to http://127.0.0.1:8000/auth/login/ and enter the email of your superuser and choose "Login (admin)"
+1. `uv run ./manage.py runserver`
+2. Navigate to http://127.0.0.1:8000/auth/login/ and enter the email of your superuser and choose "Login (admin)"
 
 ## Deploying to Production
 
@@ -46,8 +44,6 @@ RCOS has to handle the data of typically 350+ students each semester. Data inclu
 ## Updating Dependencies
 
 We use [MEND Renovate](https://www.mend.io/renovate/) to automatically open dependency update PRs.
-
-To manually update dependencies, run `poetry update`.
 
 # Architecture Diagrams
 
