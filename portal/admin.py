@@ -224,6 +224,73 @@ class SemesterAdmin(admin.ModelAdmin):
         SmallGroupInline,
     )
     list_select_related = True
+    actions = ("export_projects_to_csv",)
+
+    @admin.action(description="Export projects to CSV (title, leads, member count)")
+    def export_projects_to_csv(self, request: HttpRequest, queryset: QuerySet[Semester]):
+        semesters = list(queryset.order_by("-start_date"))
+
+        if not semesters:
+            return None
+
+        response = HttpResponse(
+            content_type="text/csv",
+            headers={"Content-Disposition": 'attachment; filename="semester-projects.csv"'},
+        )
+        writer = csv.writer(response)
+        writer.writerow(
+            ["semester title", "project title", "project lead(s)", "project team size"]
+        )
+
+        enrollments = (
+            Enrollment.objects.filter(semester__in=semesters, project__isnull=False)
+            .select_related("semester", "project", "user")
+        )
+
+        data_by_semester: dict[str, dict[int, dict[str, Any]]] = {}
+
+        for enrollment in enrollments:
+            semester_id = enrollment.semester_id
+            semester_bucket = data_by_semester.setdefault(semester_id, {})
+            project_id = enrollment.project_id
+            project_bucket = semester_bucket.setdefault(
+                project_id,
+                {
+                    "semester": enrollment.semester,
+                    "project": enrollment.project,
+                    "leads": [],
+                    "lead_names": set(),
+                    "count": 0,
+                },
+            )
+
+            project_bucket["count"] += 1
+
+            if enrollment.is_project_lead and enrollment.user:
+                lead_name = enrollment.user.display_name
+                if lead_name and lead_name not in project_bucket["lead_names"]:
+                    project_bucket["leads"].append(lead_name)
+                    project_bucket["lead_names"].add(lead_name)
+
+        for semester in semesters:
+            project_entries = sorted(
+                data_by_semester.get(semester.pk, {}).values(),
+                key=lambda entry: entry["count"],
+                reverse=True,
+            )
+
+            for entry in project_entries:
+                leads_display = " & ".join(sorted(entry["leads"])) if entry["leads"] else ""
+                writer.writerow(
+                    [
+                        entry["semester"].name,
+                        entry["project"].name,
+                        leads_display,
+                        entry["count"],
+                    ]
+                )
+
+        return response
 
 
 @admin.register(Organization)
