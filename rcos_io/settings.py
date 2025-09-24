@@ -62,6 +62,7 @@ CSRF_TRUSTED_ORIGINS = [
     "https://rcos.up.railway.app",
     "https://rcos-staging.up.railway.app",
     "https://new.rcos.io",
+    "https://rcos.io"
 ]
 
 PUBLIC_BASE_URL = os.environ["PUBLIC_BASE_URL"]
