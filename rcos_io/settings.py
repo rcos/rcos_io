@@ -55,6 +55,7 @@ ALLOWED_HOSTS = [
     "rcos.up.railway.app",
     "rcos-staging.up.railway.app",
     "new.rcos.io",
+    "rcos.io"
 ]
 
 CSRF_TRUSTED_ORIGINS = [
