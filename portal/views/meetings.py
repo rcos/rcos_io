@@ -246,6 +246,16 @@ class SubmitAttendanceFormView(LoginRequiredMixin, UserRequiresSetupMixin, FormV
         code = form.cleaned_data["code"]
         user = self.request.user
 
+        # Among Us Mode
+        if code.upper() == "AMONG US":
+            # Re-render page to special "Among Us" theme
+            return render(
+                self.request,
+                "portal/meetings/attendance/among_us.html",
+                {"code": code},
+            )
+
+
         # Search for attendance code
         try:
             meeting_attendance_code = MeetingAttendanceCode.objects.select_related(
