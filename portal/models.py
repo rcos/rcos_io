@@ -471,6 +471,9 @@ class User(AbstractUser, TimestampedModel):
             models.Index(fields=["email"]),
             models.Index(fields=["rcs_id"]),
             models.Index(fields=["first_name", "last_name"]),
+            # NEW: For approved user listings
+            models.Index(fields=["is_approved", "is_active"]),
+            models.Index(fields=["role", "is_approved"]),
         ]
 
 
@@ -1042,6 +1045,12 @@ class Enrollment(TimestampedModel):
             models.Index(fields=["user"]),
             models.Index(fields=["semester"]),
             models.Index(fields=["semester", "project"]),
+            # NEW: For role-based filtering (mentor/coordinator queries)
+            models.Index(fields=["semester", "is_mentor"]),
+            models.Index(fields=["semester", "is_coordinator"]),
+            models.Index(fields=["semester", "is_project_lead"]),
+            # NEW: For project team queries
+            models.Index(fields=["project", "semester"]),
         ]
         constraints = [
             models.UniqueConstraint(
@@ -1395,6 +1404,11 @@ class Meeting(TimestampedModel):
         return queryset
 
     class Meta:
+        indexes = [
+            models.Index(fields=["semester", "starts_at"]),
+            models.Index(fields=["starts_at", "ends_at"]),  # For ongoing/upcoming queries
+            models.Index(fields=["is_published", "type"]),
+        ]
         ordering = ["starts_at"]
         get_latest_by = ["starts_at"]
 
@@ -1422,6 +1436,9 @@ class MeetingAttendance(TimestampedModel):
         indexes = [
             models.Index(fields=["meeting"]),
             models.Index(fields=["user"]),
+            # NEW: For attendance verification queries
+            models.Index(fields=["meeting", "is_verified"]),
+            models.Index(fields=["meeting", "user"]),  # Speeds up unique constraint checks
         ]
 
     objects = MeetingAttendanceManager()
