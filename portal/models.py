@@ -352,47 +352,41 @@ class User(AbstractUser, TimestampedModel):
 
     def get_active_enrollment(self) -> Optional["Enrollment"]:
         active_semester = cache.get("active_semester")
-        queryset = self.enrollments.filter(semester=active_semester)
-        return queryset.first()
+        if not active_semester:
+            return None
+        return self.enrollments.filter(
+            semester=active_semester
+        ).select_related("project", "semester").first()
 
     def is_mentor(self, semester=None):
         if semester is None:
             active_enrollment = self.get_active_enrollment()
             return active_enrollment and active_enrollment.is_mentor
 
-        return (
-            self.enrollments.filter(
-                is_mentor=True,
-                semester=semester,
-            ).count()
-            > 0
-        )
+        return self.enrollments.filter(
+            is_mentor=True,
+            semester=semester,
+        ).exists()
 
     def is_coordinator(self, semester=None):
         if semester is None:
             active_enrollment = self.get_active_enrollment()
             return active_enrollment and active_enrollment.is_coordinator
 
-        return (
-            self.enrollments.filter(
-                is_coordinator=True,
-                semester=semester,
-            ).count()
-            > 0
-        )
+        return self.enrollments.filter(
+            is_coordinator=True,
+            semester=semester,
+        ).exists()
 
     def is_faculty_advisor(self, semester=None):
         if semester is None:
             active_enrollment = self.get_active_enrollment()
             return active_enrollment and active_enrollment.is_faculty_advisor
 
-        return (
-            self.enrollments.filter(
-                is_faculty_advisor=True,
-                semester=semester,
-            ).count()
-            > 0
-        )
+        return self.enrollments.filter(
+            is_faculty_advisor=True,
+            semester=semester,
+        ).exists()
 
     @property
     def discord_mention(self):
@@ -764,12 +758,16 @@ class Project(TimestampedModel):
         """Fetches enrollments for a given semester."""
         return Enrollment.objects.filter(
             semester=semester, project=self
-        ).order_by("-is_project_lead")
+        ).select_related("user").order_by("-is_project_lead", "user__first_name")
 
     def get_all_teams(self):
         """Fetches teams for each semester."""
         enrollments_by_semester = defaultdict(list)
-        for enrollment in self.enrollments.order_by("-is_project_lead").all():
+        enrollments = self.enrollments.select_related(
+            "semester", "user"
+        ).order_by("-semester__start_date", "-is_project_lead", "user__first_name")
+        
+        for enrollment in enrollments:
             enrollments_by_semester[enrollment.semester].append(enrollment)
         return dict(enrollments_by_semester)
 
@@ -1033,7 +1031,10 @@ class Enrollment(TimestampedModel):
         )
 
     def __str__(self) -> str:
-        return f"{self.semester.name} - {self.user} - {self.project or 'No project'}"
+        semester_name = self.semester.name if self.semester_id else "No semester"
+        user_display = self.user.display_name if self.user_id else "No user"
+        project_display = self.project.name if self.project_id else "No project"
+        return f"{semester_name} - {user_display} - {project_display}"
 
     class Meta:
         indexes = [
@@ -1256,12 +1257,61 @@ class Meeting(TimestampedModel):
         }
 
     def get_small_group_attendance_ratios(self):
-        small_groups = {}
-        for small_group in SmallGroup.objects.filter(semester_id=self.semester_id):
-            attendance_data = self.get_attendance_data(small_group)
-            small_groups[small_group.name] = attendance_data["attendance_ratio"]
-
-        return small_groups
+        """
+        Efficiently calculate attendance ratios for all small groups in one pass.
+        """
+        from django.db.models import Count, Q, Subquery, OuterRef
+        
+        # Get all small groups for this semester
+        small_groups_qs = SmallGroup.objects.filter(
+            semester_id=self.semester_id
+        ).prefetch_related('projects')
+        
+        # Build a mapping of project_id -> small_group_id
+        project_to_small_group = {}
+        small_group_names = {}
+        for sg in small_groups_qs:
+            small_group_names[sg.pk] = sg.name or sg.display_name
+            for project in sg.projects.all():
+                project_to_small_group[project.pk] = sg.pk
+        
+        # Get all enrollments for this semester with their project
+        enrollments = Enrollment.objects.filter(
+            semester_id=self.semester_id,
+            project_id__in=project_to_small_group.keys()
+        ).values('user_id', 'project_id')
+        
+        # Build user -> small_group mapping
+        user_to_small_group = {}
+        small_group_expected_counts = defaultdict(int)
+        for enrollment in enrollments:
+            sg_id = project_to_small_group.get(enrollment['project_id'])
+            if sg_id:
+                user_to_small_group[enrollment['user_id']] = sg_id
+                small_group_expected_counts[sg_id] += 1
+        
+        # Get all verified attendances for this meeting
+        verified_attendances = MeetingAttendance.objects.filter(
+            meeting=self,
+            is_verified=True,
+            user_id__in=user_to_small_group.keys()
+        ).values_list('user_id', flat=True)
+        
+        # Count verified attendances per small group
+        small_group_attended_counts = defaultdict(int)
+        for user_id in verified_attendances:
+            sg_id = user_to_small_group.get(user_id)
+            if sg_id:
+                small_group_attended_counts[sg_id] += 1
+        
+        # Calculate ratios
+        result = {}
+        for sg_id, name in small_group_names.items():
+            expected = small_group_expected_counts.get(sg_id, 0)
+            attended = small_group_attended_counts.get(sg_id, 0)
+            result[name] = attended / expected if expected > 0 else 0
+        
+        return result
 
     @property
     def attended_users(self):
@@ -1462,20 +1512,22 @@ class SmallGroup(TimestampedModel):
 
     def get_enrollments(self):
         return Enrollment.objects.filter(
-            semester=self.semester,
-            project__in=self.projects.values_list("pk", flat=True),
-        )
+            semester_id=self.semester_id,
+            project__in=self.projects.all()
+        ).select_related("user", "project")
 
     def get_users(self):
-        return User.objects.filter(enrollments__in=self.get_enrollments())
+        return User.objects.filter(
+            enrollments__semester_id=self.semester_id,
+            enrollments__project__in=self.projects.all()
+        ).distinct()
 
     def has_user(self, user):
-        return (
-            self.projects.filter(
-                enrollments__user=user, enrollments__semester=self.semester
-            ).count()
-            > 0
-        )
+        return Enrollment.objects.filter(
+            user_id=user.pk if hasattr(user, 'pk') else user,
+            semester_id=self.semester_id,
+            project__in=self.projects.all()
+        ).exists()
 
     def __str__(self) -> str:
         return self.display_name
