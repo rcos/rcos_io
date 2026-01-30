@@ -125,41 +125,48 @@ class ProjectIndexView(
         except (EmptyPage, InvalidPage):
             projects = paginator.page(paginator.num_pages)
 
-        projects_rows = []
-        enrollments = Enrollment.objects.filter(project__in=projects).select_related(
-            "user"
+        # Get project IDs for efficient filtering
+        project_ids = [p.pk for p in projects]
+        
+        # Build enrollment query
+        enrollments_query = Enrollment.objects.filter(project_id__in=project_ids).select_related(
+            "user", "semester"
         )
         if self.target_semester:
-            enrollments = enrollments.filter(
-                semester=self.target_semester
-            ).select_related("semester")
+            enrollments_query = enrollments_query.filter(semester=self.target_semester)
 
             if self.request.user.is_authenticated:
                 data["can_create_project_check"] = CheckUserCanCreateProject().check(
                     self.request.user, self.target_semester
                 )
 
+        # Convert to list once and build lookup dictionaries
+        enrollments_list = list(enrollments_query)
+        enrollments_by_project = {}
+        leads_by_project = {}
+        for e in enrollments_list:
+            enrollments_by_project.setdefault(e.project_id, []).append(e)
+            if e.is_project_lead:
+                leads_by_project.setdefault(e.project_id, []).append(e)
+
+        # Build pitch lookup if we have a target semester (pitches already prefetched)
+        pitches_by_project = {}
+        if self.target_semester:
+            for project in projects:
+                for pitch in project.pitches.all():  # Uses prefetched data
+                    if pitch.semester_id == self.target_semester.pk:
+                        pitches_by_project[project.pk] = pitch
+                        break
+
+        projects_rows = []
         for project in projects:
             projects_row = {
                 "project": project,
-                "enrollments": len(
-                    [e for e in enrollments if e.project_id == project.pk]
-                ),
+                "enrollments": len(enrollments_by_project.get(project.pk, [])),
             }
             if self.target_semester:
-                projects_row["leads"] = [
-                    e
-                    for e in enrollments
-                    if e.project_id == project.pk and e.is_project_lead is True
-                ]
-                projects_row["pitch"] = next(
-                    (
-                        pitch
-                        for pitch in project.pitches.all()
-                        if pitch.semester_id == self.target_semester.pk
-                    ),
-                    None,
-                )
+                projects_row["leads"] = leads_by_project.get(project.pk, [])
+                projects_row["pitch"] = pitches_by_project.get(project.pk)
             projects_rows.append(projects_row)
 
         data["projects_rows"] = projects_rows
@@ -180,12 +187,15 @@ def project_detail(request: HttpRequest, slug: str) -> HttpResponse:
 
     active_enrollment = None
     if request.user.is_authenticated:
-        active_enrollment = request.user.get_active_enrollment()
+        # Use select_related to avoid extra query when checking project
+        active_enrollment = request.user.enrollments.filter(
+            semester=cache.get("active_semester")
+        ).select_related("project", "semester").first()
         context["active_enrollment"] = active_enrollment
         
-        if active_enrollment and active_enrollment.project == project and active_enrollment.is_project_lead:
+        if active_enrollment and active_enrollment.project_id == project.pk and active_enrollment.is_project_lead:
             is_owner_or_lead = True
-        elif project.owner == request.user:
+        elif project.owner_id == request.user.pk:
             is_owner_or_lead = True
         else:
             is_owner_or_lead = False
@@ -194,15 +204,19 @@ def project_detail(request: HttpRequest, slug: str) -> HttpResponse:
 
         # Populate all enrolled students RCS IDs for easy adding team members
         if is_owner_or_lead and active_enrollment:
-            context[
-                "enrolled_rcs_ids"
-            ] = active_enrollment.semester.students.values_list("rcs_id", flat=True)
+            # Use only() to limit fields fetched
+            context["enrolled_rcs_ids"] = list(
+                User.objects.filter(
+                    enrollments__semester_id=active_enrollment.semester_id
+                ).values_list("rcs_id", flat=True)
+            )
 
     # Fetch enrollments for either target semester or teams across semesters
     if "target_semester" in context:
-        context["target_semester_enrollments"] = project.get_semester_team(
-            context["target_semester"]
-        )
+        # Add select_related to the get_semester_team call
+        context["target_semester_enrollments"] = Enrollment.objects.filter(
+            semester=context["target_semester"], project=project
+        ).select_related("user").order_by("-is_project_lead")
         context["can_enroll"] = CheckUserCanEnroll().passes(request.user, context["target_semester"], None) and (active_enrollment is None or active_enrollment.project is None)
     else:
         context["enrollments_by_semester"] = project.get_all_teams()

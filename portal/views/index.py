@@ -19,9 +19,12 @@ class IndexView(TemplateView):
         data = super().get_context_data(**kwargs)
 
         active_semester = cache.get("active_semester")
+        
+        # Add select_related to avoid extra query when accessing room/host in template
         data["next_meeting"] = (
             Meeting.get_user_queryset(self.request.user)
             .filter(ends_at__gte=timezone.now())
+            .select_related("room", "host")
             .first()
         )
 
@@ -36,19 +39,26 @@ class IndexView(TemplateView):
                 self.request.user, active_semester
             )
 
+            # Fetch enrollment with project in single query
             data["enrollment"] = (
-                self.request.user.enrollments.filter(semester=active_semester).first()
+                self.request.user.enrollments
+                .filter(semester=active_semester)
+                .select_related("project", "semester")
+                .first()
                 if active_semester is not None
                 else None
             )
-            data["project_team_enrollments"] = (
-                data["enrollment"]
-                .project.enrollments.filter(semester=active_semester)
-                .select_related("user")
-                .order_by('-is_project_lead', '-credits', '-user__first_name')
-                if data["enrollment"] and data["enrollment"].project
-                else []
-            )
+            
+            # Fetch team enrollments only if user has a project
+            if data["enrollment"] and data["enrollment"].project_id:
+                data["project_team_enrollments"] = (
+                    Enrollment.objects
+                    .filter(semester=active_semester, project_id=data["enrollment"].project_id)
+                    .select_related("user")
+                    .order_by('-is_project_lead', '-credits', 'user__first_name')
+                )
+            else:
+                data["project_team_enrollments"] = []
         else:
             data["submit_attendance_form"] = SubmitAttendanceForm()
 

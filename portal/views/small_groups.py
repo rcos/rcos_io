@@ -3,6 +3,7 @@ from django.http import HttpRequest, HttpResponse
 from django.shortcuts import get_object_or_404
 from django.template.response import TemplateResponse
 from django.contrib.auth.decorators import login_required
+from django.db.models import Prefetch, OuterRef
 from django.utils.decorators import method_decorator
 
 from ..models import SmallGroup
@@ -13,7 +14,7 @@ class SmallGroupIndexView(SearchableListView, SemesterFilteredListView):
     require_semester = True
     template_name = "portal/small_groups/index.html"
     context_object_name = "small_groups"
-    queryset = SmallGroup.objects.select_related()
+    queryset = SmallGroup.objects.select_related("semester", "room").prefetch_related("projects", "mentors")
     search_fields = (
         "name",
         "projects__name",
@@ -25,6 +26,20 @@ class SmallGroupIndexView(SearchableListView, SemesterFilteredListView):
 @login_required
 def small_group_detail(request: HttpRequest, pk: int) -> HttpResponse:
     """Fetches and displays an overview for a particular small group."""
+    small_group = get_object_or_404(
+        SmallGroup.objects.select_related("semester", "room")
+        .prefetch_related(
+            "projects",
+            "mentors",
+            Prefetch(
+                "projects__enrollments",
+                queryset=Enrollment.objects.filter(
+                    semester_id=OuterRef("semester_id")  # Only enrollments for this semester
+                ).select_related("user")
+            )
+        ),
+        pk=pk
+    )
     return TemplateResponse(request, "portal/small_groups/detail.html", {
-        "small_group": get_object_or_404(SmallGroup, pk=pk)
+        "small_group": small_group
     })

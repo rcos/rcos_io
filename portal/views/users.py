@@ -38,9 +38,12 @@ class UserIndexView(SearchableListView, OrganizationFilteredListView, SemesterFi
         data = super().get_context_data(**kwargs)
 
         data["organizations"] = Organization.objects.all()
-        data["total_count"] = self.get_queryset().count()
+        
+        # Cache the queryset to avoid multiple evaluations
+        queryset = self.get_queryset()
+        data["total_count"] = queryset.count()
 
-        paginator = Paginator(self.get_queryset(), self.paginate_by)
+        paginator = Paginator(queryset, self.paginate_by)  # Reuse same queryset
 
         page = self.request.GET.get("page")
 
@@ -51,30 +54,36 @@ class UserIndexView(SearchableListView, OrganizationFilteredListView, SemesterFi
         except (EmptyPage, InvalidPage):
             users = paginator.page(paginator.num_pages)
 
-        enrollments = Enrollment.objects.filter(user__in=users).select_related(
+        # Get user IDs for the current page to filter enrollments
+        user_ids = [u.pk for u in users]
+        
+        # Build enrollment query with all needed relations
+        enrollments_query = Enrollment.objects.filter(user_id__in=user_ids).select_related(
             "semester", "project"
         )
 
         if self.target_semester:
-            enrollments = enrollments.filter(semester=self.target_semester)
+            enrollments_query = enrollments_query.filter(semester=self.target_semester)
+        
+        enrollments_list = list(enrollments_query)
+        enrollments_by_user = {}
+        for e in enrollments_list:
+            enrollments_by_user.setdefault(e.user_id, []).append(e)
 
         user_rows = []
         for user in users:
             user_row = {
                 "user": user,
             }
+            user_enrollments = enrollments_by_user.get(user.pk, [])
 
             if self.target_semester:
-                user_row["enrollment"] = next(
-                    (e for e in enrollments if e.user_id == user.pk), None
-                )
+                user_row["enrollment"] = user_enrollments[0] if user_enrollments else None
                 user_row["project"] = (
                     user_row["enrollment"].project if user_row["enrollment"] else None
                 )
             else:
-                user_row["enrollments"] = [
-                    e for e in enrollments if e.user_id == user.pk
-                ]
+                user_row["enrollments"] = user_enrollments
 
             user_rows.append(user_row)
 
@@ -91,7 +100,11 @@ def user_detail(request: HttpRequest, pk: int) -> HttpResponse:
     } | target_semester_context(request)
 
     if "target_semester" in context:
-        context["enrollment"] = Enrollment.objects.filter(semester_id=context["target_semester"].pk, user_id=user.pk).first()
+        # Add select_related to avoid N+1 when accessing project in template
+        context["enrollment"] = Enrollment.objects.filter(
+            semester_id=context["target_semester"].pk, 
+            user_id=user.pk
+        ).select_related("semester", "project").first()
     else:
         context["enrollments"] = user.enrollments.select_related("semester", "project")
 

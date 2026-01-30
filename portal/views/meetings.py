@@ -70,33 +70,36 @@ def meetings_index(request: HttpRequest) -> HttpResponse:
     now = timezone.now()
     active_semester = Semester.get_active()
 
-    ongoing_meetings = Meeting.get_user_queryset(request.user) \
-            .filter(starts_at__lte=now) \
-            .filter(ends_at__gte=now) \
-            .order_by("starts_at") \
-            .select_related("room", "host")[:3]
+    # Get base queryset once
+    base_queryset = Meeting.get_user_queryset(request.user).select_related("room", "host")
 
-    ongoing_meeting = None
-    if len(ongoing_meetings) > 0:
-        ongoing_meeting = ongoing_meetings[0]
+    ongoing_meetings = list(
+        base_queryset
+        .filter(starts_at__lte=now, ends_at__gte=now)
+        .order_by("starts_at")[:3]
+    )
 
-    upcoming_meetings = Meeting.get_user_queryset(request.user) \
-            .filter(starts_at__gte=now) \
-            .order_by("starts_at") \
-            .prefetch_related() \
-            .select_related("room", "host")[:3]
+    ongoing_meeting = ongoing_meetings[0] if ongoing_meetings else None
 
-    next_meeting = None
-    if len(upcoming_meetings) > 0:
-        next_meeting = upcoming_meetings[0]
+    upcoming_meetings = list(
+        base_queryset
+        .filter(starts_at__gt=now)  # Use gt instead of gte to exclude ongoing
+        .order_by("starts_at")[:3]
+    )
+
+    next_meeting = upcoming_meetings[0] if upcoming_meetings else None
     
+    # Optimize enrollment check - use exists() instead of fetching object
+    is_enrolled = False
+    if request.user.is_authenticated and active_semester:
+        is_enrolled = request.user.enrollments.filter(semester=active_semester).exists()
 
     return TemplateResponse(request, "portal/meetings/index.html", {
-        "ongoing_meetings":  ongoing_meetings,
+        "ongoing_meetings": ongoing_meetings,
         "ongoing_meeting": ongoing_meeting,
         "upcoming_meetings": upcoming_meetings,
         "next_meeting": next_meeting,
-        "is_enrolled": bool(request.user.enrollments.filter(semester=active_semester).first()) if request.user.is_authenticated else False,
+        "is_enrolled": is_enrolled,
         "can_schedule_workshops_check": CheckUserCanScheduleWorkshop().check(request.user, active_semester)
     })
 
@@ -137,12 +140,10 @@ class MeetingDetailView(DetailView):
 
         # Check attendance status
         if self.request.user.is_authenticated and self.request.user.is_rpi:
-            try:
-                data["user_attendance"] = MeetingAttendance.objects.get(
-                    meeting=self.object, user=self.request.user
-                )
-            except MeetingAttendance.DoesNotExist:
-                data["user_attendance"] = None
+            # Use filter().first() instead of get() with try/except - cleaner and same performance
+            data["user_attendance"] = MeetingAttendance.objects.filter(
+                meeting=self.object, user=self.request.user
+            ).select_related("meeting", "submitted_by").first()
 
             data["submit_attendance_form"] = SubmitAttendanceForm()
         else:
@@ -322,7 +323,7 @@ class SubmitAttendanceFormView(LoginRequiredMixin, UserRequiresSetupMixin, FormV
 @login_required
 def manually_add_or_verify_attendance(request: HttpRequest) -> HttpResponse:
     if request.method == "POST":
-        meeting: Meeting = Meeting.objects.get(pk=request.POST["meeting"])
+        meeting: Meeting = Meeting.objects.select_related("host").get(pk=request.POST["meeting"])
         small_group_id = request.POST.get("small_group", None)
 
         action = request.POST.get("action", "accept")
@@ -349,83 +350,135 @@ def manually_add_or_verify_attendance(request: HttpRequest) -> HttpResponse:
             return redirect(reverse("meetings_detail", args=(meeting.pk,)))
 
         if user_ids:
-            users = User.objects.filter(pk__in=user_ids)
+            users = list(User.objects.filter(pk__in=user_ids))
         else:
-            users = User.objects.filter(rcs_id__in=rcs_ids)
+            users = list(User.objects.filter(rcs_id__in=rcs_ids))
 
-        submitter_enrollment = request.user.enrollments.get(
+        if not users:
+            messages.warning(request, "No matching users found!")
+            return redirect(reverse("meetings_detail", args=(meeting.pk,)))
+
+        # === PERMISSION CHECK (moved outside the loop - same check for all users) ===
+        submitter_enrollment = request.user.enrollments.filter(
             semester=meeting.semester
+        ).first()
+
+        # Check if user can manage attendance
+        can_manage = request.user.is_superuser
+        if not can_manage and submitter_enrollment:
+            can_manage = (
+                submitter_enrollment.is_faculty_advisor
+                or submitter_enrollment.is_coordinator
+                or submitter_enrollment.is_mentor
+            )
+        if not can_manage and meeting.host_id:
+            can_manage = request.user.pk == meeting.host_id
+
+        if not can_manage:
+            messages.error(
+                request,
+                "You must be an enrolled Faculty Advisor/Coordinator/Mentor or the meeting host to perform this action.",
+            )
+            return redirect(reverse("meetings_detail", args=(meeting.pk,)))
+
+        # Don't let Mentors add attendances for Mentor meetings
+        if (
+            not request.user.is_superuser
+            and submitter_enrollment
+            and not submitter_enrollment.is_coordinator
+            and submitter_enrollment.is_mentor
+            and meeting.type == Meeting.MENTOR
+        ):
+            messages.warning(
+                request,
+                "You cannot manually submit attendance for a Mentor meeting!",
+            )
+            return redirect(reverse("meetings_detail", args=(meeting.pk,)))
+
+        # === BULK ENROLLMENT CREATION (instead of per-user get_or_create) ===
+        target_user_ids = [u.pk for u in users]
+        
+        # Get existing enrollments for these users this semester
+        existing_enrollment_user_ids = set(
+            Enrollment.objects.filter(
+                user_id__in=target_user_ids,
+                semester_id=meeting.semester_id
+            ).values_list('user_id', flat=True)
         )
-        for user in users:
-            try:
-                # Only allow Mentors or above AND meeting hosts to add/verify attendances
-                if (
-                    not request.user.is_superuser
-                    and not submitter_enrollment.is_faculty_advisor
-                    and not submitter_enrollment.is_coordinator
-                    and not submitter_enrollment.is_mentor
-                    and not request.user.pk == meeting.host.pk
-                ):
-                    return redirect(reverse("meetings_index"))
+        
+        # Bulk create missing enrollments
+        new_enrollments = [
+            Enrollment(user_id=uid, semester_id=meeting.semester_id)
+            for uid in target_user_ids
+            if uid not in existing_enrollment_user_ids
+        ]
+        if new_enrollments:
+            Enrollment.objects.bulk_create(new_enrollments, ignore_conflicts=True)
 
-                # Don't let Mentors add attendances for Mentor meetings 
-                if (
-                    not request.user.is_superuser
-                    and not submitter_enrollment.is_coordinator
-                    and submitter_enrollment.is_mentor
-                    and meeting.type == Meeting.MENTOR
-                ):
-                    messages.warning(
-                        request,
-                        "You cannot manually submit attendance for a Mentor meeting!",
-                    )
-                    return redirect(reverse("meetings_detail", args=(meeting.pk,)))
-            except Enrollment.DoesNotExist:
-                if not request.user.is_superuser:
-                    messages.error(
-                        request,
-                        "You must be an enrolled Faculty Advisor/Coordinator/Mentor or the meeting host to perform this action.",
-                    )
-                    return redirect(reverse("meetings_detail", args=(meeting.pk,)))
-
-            user.enrollments.get_or_create(semester_id=meeting.semester_id)
-
-            if action == "accept":
-                try:
-                    attendance = MeetingAttendance.objects.get(
-                        user=user, meeting=meeting
-                    )
+        # === HANDLE ACTIONS ===
+        if action == "accept":
+            # Get existing attendances for these users at this meeting
+            existing_attendances = {
+                a.user_id: a
+                for a in MeetingAttendance.objects.filter(
+                    meeting=meeting,
+                    user_id__in=target_user_ids
+                )
+            }
+            
+            new_attendances = []
+            users_to_clear_cache = []
+            
+            for user in users:
+                if user.pk in existing_attendances:
+                    attendance = existing_attendances[user.pk]
                     if not attendance.is_verified:
                         attendance.is_verified = True
                         attendance.save()
-
-                        # Clear the cache of any record of this person previously failing verification
-                        cache.delete(f"failed-verification:{user.pk}")
-                except MeetingAttendance.DoesNotExist:
-                    attendance = MeetingAttendance(
-                        meeting=meeting,
-                        user=user,
-                        is_verified=True,
-                        submitted_by=request.user,
+                        users_to_clear_cache.append(user.pk)
+                else:
+                    new_attendances.append(
+                        MeetingAttendance(
+                            meeting=meeting,
+                            user=user,
+                            is_verified=True,
+                            submitted_by=request.user,
+                        )
                     )
-                    attendance.save()
                     messages.success(request, f"Added attendance for {user}!")
+            
+            # Bulk create new attendances
+            if new_attendances:
+                MeetingAttendance.objects.bulk_create(new_attendances, ignore_conflicts=True)
+            
+            # Clear cache for verified users
+            for user_pk in users_to_clear_cache:
+                cache.delete(f"failed-verification:{user_pk}")
 
-                # Submit attendance for submitter themselves
-                try:
-                    MeetingAttendance(user=request.user, meeting=meeting, submitted_by=request.user).save()
+            # Submit attendance for submitter themselves (single operation, not in loop)
+            try:
+                MeetingAttendance.objects.get_or_create(
+                    user=request.user,
+                    meeting=meeting,
+                    defaults={"submitted_by": request.user}
+                )
+            except IntegrityError:
+                pass
 
-                except IntegrityError:
-                    pass
-            elif action == "deny":
-                cache.set(
-                    f"failed-verification:{user.pk}", 1, 60 * 60 * 24 * 30 * 3
-                )  # 3 months
-                MeetingAttendance.objects.filter(user=user, meeting=meeting).delete()
+        elif action == "deny":
+            # Bulk delete and set cache
+            MeetingAttendance.objects.filter(user_id__in=target_user_ids, meeting=meeting).delete()
+            for user in users:
+                cache.set(f"failed-verification:{user.pk}", 1, 60 * 60 * 24 * 30 * 3)  # 3 months
                 messages.success(request, f"Denied attendance verification for {user}!")
-            elif action == "delete":
-                MeetingAttendance.objects.filter(user=user, meeting=meeting).delete()
-                messages.success(request, f"Removed attendance for {user}!")
+
+        elif action == "delete":
+            # Bulk delete
+            deleted_count, _ = MeetingAttendance.objects.filter(
+                user_id__in=target_user_ids,
+                meeting=meeting
+            ).delete()
+            messages.success(request, f"Removed attendance for {deleted_count} user(s)!")
 
         return redirect(
             reverse("meetings_detail", args=(meeting.pk,))

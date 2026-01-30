@@ -24,9 +24,17 @@ def mentor_applications_index(request: HttpRequest) -> HttpResponse:
     context: dict[str, Any] = target_semester_context(request)
 
     if "target_semester" in context:
-        context["pending_applications"] = context["target_semester"].mentor_applications.filter(is_accepted__isnull=True)
-        context["accepted_applications"] = context["target_semester"].mentor_applications.filter(is_accepted=True)
-        context["denied_applications"] = context["target_semester"].mentor_applications.filter(is_accepted=False)
+        # Fetch all applications once with select_related
+        all_applications = list(
+            context["target_semester"].mentor_applications
+            .select_related("user")
+            .prefetch_related("skills")
+        )
+        
+        # Partition in Python - much faster than 3 DB queries
+        context["pending_applications"] = [a for a in all_applications if a.is_accepted is None]
+        context["accepted_applications"] = [a for a in all_applications if a.is_accepted is True]
+        context["denied_applications"] = [a for a in all_applications if a.is_accepted is False]
 
         context["tags_with_counts"] = ProjectTag.objects.annotate(
             pending_application_count=Count("mentor_applications", filter=Q(mentor_applications__is_accepted__isnull=True, mentor_applications__semester=context["target_semester"])),
