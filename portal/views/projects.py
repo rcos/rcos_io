@@ -94,6 +94,7 @@ class ProjectIndexView(
         "description",
         "tags__name",
     )
+    search_vector_field = "search_vector"
 
     def get_queryset(self):
         """Apply filters (semester is already handled)."""

@@ -34,6 +34,7 @@ class UserIndexView(SearchableListView, OrganizationFilteredListView, SemesterFi
         "graduation_year",
         "enrollments__project__name",
     )
+    search_vector_field = "search_vector"
 
     def get_context_data(self, **kwargs):
         data = super().get_context_data(**kwargs)

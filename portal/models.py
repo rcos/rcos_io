@@ -8,7 +8,7 @@ from typing import Optional
 from django.conf import settings
 from django.contrib.auth.models import AbstractUser, BaseUserManager
 from django.contrib.postgres.indexes import GinIndex
-from django.contrib.postgres.search import SearchVector
+from django.contrib.postgres.search import SearchVector, SearchVectorField
 from django.core.cache import cache
 from django.core.exceptions import ValidationError
 from django.core.validators import MaxValueValidator, MinValueValidator
@@ -311,6 +311,8 @@ class User(AbstractUser, TimestampedModel):
     # Damn it people
     is_name_public = models.BooleanField(default=True, help_text="Is the user's name and RCS ID publicly visible?")
 
+    search_vector = SearchVectorField(null=True, editable=False)
+
     @property
     def is_rpi(self):
         return self.role == User.RPI
@@ -472,6 +474,13 @@ class User(AbstractUser, TimestampedModel):
         if self.role != User.RPI and self.graduation_year is not None:
             raise ValidationError("Only RPI users can have a graduation year set.")
 
+    def save(self, *args, **kwargs):
+        saved = super().save(*args, **kwargs)
+        User.objects.filter(pk=self.pk).update(
+            search_vector=SearchVector("first_name", "last_name", "rcs_id", "email")
+        )
+        return saved
+
     class Meta:
         ordering = [Lower("first_name"), Lower("last_name")]
         indexes = [
@@ -479,10 +488,7 @@ class User(AbstractUser, TimestampedModel):
             models.Index(fields=["email"]),
             models.Index(fields=["rcs_id"]),
             models.Index(fields=["first_name", "last_name"]),
-            GinIndex(
-                SearchVector("first_name", "last_name", "rcs_id", "email"),
-                name="user_search_gin",
-            ),
+            GinIndex(fields=["search_vector"], name="user_search_gin"),
         ]
 
 
@@ -588,6 +594,8 @@ class Project(TimestampedModel):
     discord_text_channel_id = models.CharField(max_length=200, blank=True)
 
     discord_voice_channel_id = models.CharField(max_length=200, blank=True)
+
+    search_vector = SearchVectorField(null=True, editable=False)
 
     @property
     def discord_text_channel_url(self):
@@ -791,7 +799,11 @@ class Project(TimestampedModel):
     def save(self, *args, **kwargs):
         if not self.slug or self.slug != slugify(self.name):
             self.slug = slugify(self.name)
-        return super().save(*args, **kwargs)
+        saved = super().save(*args, **kwargs)
+        Project.objects.filter(pk=self.pk).update(
+            search_vector=SearchVector("name", "description")
+        )
+        return saved
 
     def __str__(self) -> str:
         return self.name
@@ -803,10 +815,7 @@ class Project(TimestampedModel):
         get_latest_by = "created_at"
         indexes = [
             models.Index(fields=["name", "description"]),
-            GinIndex(
-                SearchVector("name", "description"),
-                name="project_search_gin",
-            ),
+            GinIndex(fields=["search_vector"], name="project_search_gin"),
         ]
 
 

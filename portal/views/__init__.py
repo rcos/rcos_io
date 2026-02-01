@@ -1,7 +1,7 @@
 from django.conf import settings
 from django.contrib import messages
 from django.contrib.auth.mixins import UserPassesTestMixin
-from django.contrib.postgres.search import SearchVector
+from django.contrib.postgres.search import SearchQuery, SearchRank, SearchVector
 from django.core.cache import cache
 from django.http import Http404, HttpRequest
 from django.shortcuts import get_object_or_404, redirect
@@ -164,6 +164,7 @@ class SearchableListView(ListView):
     """
 
     search_fields = tuple()
+    search_vector_field: str | None = None
 
     def get_queryset(self):
         """Apply search."""
@@ -171,9 +172,17 @@ class SearchableListView(ListView):
 
         self.search = self.request.GET.get("search")
         if self.search:
-            queryset = queryset.annotate(
-                search=SearchVector(*self.search_fields),
-            ).filter(search=self.search)
+            if self.search_vector_field:
+                query = SearchQuery(self.search)
+                queryset = queryset.annotate(
+                    rank=SearchRank(self.search_vector_field, query)
+                ).filter(**{f"{self.search_vector_field}__search": query}).order_by(
+                    "-rank"
+                )
+            else:
+                queryset = queryset.annotate(
+                    search=SearchVector(*self.search_fields),
+                ).filter(search=self.search)
 
         return queryset.distinct()
 
