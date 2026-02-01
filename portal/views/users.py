@@ -1,3 +1,4 @@
+from collections import defaultdict
 from typing import Any
 
 from django.contrib import messages
@@ -58,6 +59,10 @@ class UserIndexView(SearchableListView, OrganizationFilteredListView, SemesterFi
         if self.target_semester:
             enrollments = enrollments.filter(semester=self.target_semester)
 
+        enrollments_by_user: dict[int, list[Enrollment]] = defaultdict(list)
+        for enrollment in enrollments:
+            enrollments_by_user[enrollment.user_id].append(enrollment)
+
         user_rows = []
         for user in users:
             user_row = {
@@ -66,15 +71,13 @@ class UserIndexView(SearchableListView, OrganizationFilteredListView, SemesterFi
 
             if self.target_semester:
                 user_row["enrollment"] = next(
-                    (e for e in enrollments if e.user_id == user.pk), None
+                    (e for e in enrollments_by_user.get(user.pk, [])), None
                 )
                 user_row["project"] = (
                     user_row["enrollment"].project if user_row["enrollment"] else None
                 )
             else:
-                user_row["enrollments"] = [
-                    e for e in enrollments if e.user_id == user.pk
-                ]
+                user_row["enrollments"] = enrollments_by_user.get(user.pk, [])
 
             user_rows.append(user_row)
 

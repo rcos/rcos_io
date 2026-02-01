@@ -7,6 +7,8 @@ from typing import Optional
 
 from django.conf import settings
 from django.contrib.auth.models import AbstractUser, BaseUserManager
+from django.contrib.postgres.indexes import GinIndex
+from django.contrib.postgres.search import SearchVector
 from django.core.cache import cache
 from django.core.exceptions import ValidationError
 from django.core.validators import MaxValueValidator, MinValueValidator
@@ -477,6 +479,10 @@ class User(AbstractUser, TimestampedModel):
             models.Index(fields=["email"]),
             models.Index(fields=["rcs_id"]),
             models.Index(fields=["first_name", "last_name"]),
+            GinIndex(
+                SearchVector("first_name", "last_name", "rcs_id", "email"),
+                name="user_search_gin",
+            ),
         ]
 
 
@@ -755,10 +761,16 @@ class Project(TimestampedModel):
         return reverse("projects_detail", kwargs={"slug": self.slug})
 
     def get_repositories(self, client: Client):
-        return [
-            github.get_repository_details(client, repo.url)["repository"]
-            for repo in self.repositories.all()
-        ]
+        repositories = []
+        for repo in self.repositories.all():
+            cache_key = f"github_repo:{repo.pk}"
+
+            def fetch_repo():
+                return github.get_repository_details(client, repo.url)["repository"]
+
+            repositories.append(cache.get_or_set(cache_key, fetch_repo, 60 * 60))
+
+        return repositories
 
     def get_semester_team(self, semester: Semester):
         """Fetches enrollments for a given semester."""
@@ -789,7 +801,13 @@ class Project(TimestampedModel):
     class Meta:
         ordering = [Lower("name")]
         get_latest_by = "created_at"
-        indexes = [models.Index(fields=["name", "description"])]
+        indexes = [
+            models.Index(fields=["name", "description"]),
+            GinIndex(
+                SearchVector("name", "description"),
+                name="project_search_gin",
+            ),
+        ]
 
 
 # post_save.connect(sync_discord, sender=Project)
@@ -1241,17 +1259,17 @@ class Meeting(TimestampedModel):
                 needs_verification_attendances.append(attendance)
             attended_ids.add(attendance.user.pk)
 
-        non_attended_users = expected_users.exclude(
-            pk__in=attended_ids
-        )
+        non_attended_users = expected_users.exclude(pk__in=attended_ids)
+
+        expected_users_count = expected_users.count()
 
         return {
             "expected_users": expected_users,
             "needs_verification_attendances": needs_verification_attendances,
             "attendances": attendances,
             "non_attended_users": non_attended_users,
-            "attendance_ratio": len(attendances) / expected_users.count()
-            if expected_users.count() > 0
+            "attendance_ratio": len(attendances) / expected_users_count
+            if expected_users_count > 0
             else 0,
         }
 

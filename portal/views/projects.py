@@ -1,6 +1,7 @@
 """Views related to projects."""
 import logging
 import re
+from collections import defaultdict
 from typing import Any
 
 from django.conf import settings
@@ -127,31 +128,30 @@ class ProjectIndexView(
 
         projects_rows = []
         enrollments = Enrollment.objects.filter(project__in=projects).select_related(
-            "user"
+            "user", "semester"
         )
         if self.target_semester:
-            enrollments = enrollments.filter(
-                semester=self.target_semester
-            ).select_related("semester")
+            enrollments = enrollments.filter(semester=self.target_semester)
 
             if self.request.user.is_authenticated:
                 data["can_create_project_check"] = CheckUserCanCreateProject().check(
                     self.request.user, self.target_semester
                 )
 
+        enrollments_by_project: dict[int, list[Enrollment]] = defaultdict(list)
+        leads_by_project: dict[int, list[Enrollment]] = defaultdict(list)
+        for enrollment in enrollments:
+            enrollments_by_project[enrollment.project_id].append(enrollment)
+            if self.target_semester and enrollment.is_project_lead:
+                leads_by_project[enrollment.project_id].append(enrollment)
+
         for project in projects:
             projects_row = {
                 "project": project,
-                "enrollments": len(
-                    [e for e in enrollments if e.project_id == project.pk]
-                ),
+                "enrollments": len(enrollments_by_project.get(project.pk, [])),
             }
             if self.target_semester:
-                projects_row["leads"] = [
-                    e
-                    for e in enrollments
-                    if e.project_id == project.pk and e.is_project_lead is True
-                ]
+                projects_row["leads"] = leads_by_project.get(project.pk, [])
                 projects_row["pitch"] = next(
                     (
                         pitch

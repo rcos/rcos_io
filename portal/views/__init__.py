@@ -12,13 +12,18 @@ from ..models import Organization, Semester
 
 
 def load_semesters(request):
-    semesters = Semester.objects.all()
-    active_semester = (
-        next((semester for semester in semesters if semester.is_active), None)
-        if semesters
-        else None
+    semesters = cache.get_or_set(
+        "semesters",
+        lambda: list(Semester.objects.all()),
+        60 * 60 * 24,
+    ) or []
+    active_semester = cache.get_or_set(
+        "active_semester",
+        lambda: next(
+            (semester for semester in (semesters or []) if semester.is_active), None
+        ),
+        60 * 60 * 24,
     )
-    cache.set("active_semester", active_semester, 60 * 60 * 24)
 
     return {"semesters": semesters, "active_semester": active_semester}
 

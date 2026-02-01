@@ -24,6 +24,7 @@ RCOS has to handle the data of typically 350+ students each semester. Data inclu
 ### Setup
 
 1. Clone repository
+2. `sudo apt install libpq-dev`
 2. Install dependencies `uv sync`
 3. Create a `.env` file (not the placement of the `.`) and add environment values
     - see `.env.example` for the expected variables

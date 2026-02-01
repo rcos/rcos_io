@@ -84,9 +84,11 @@ INSTALLED_APPS = [
     "anymail",
     "crispy_forms",
     "crispy_bulma",
-    "debug_toolbar",
     # "django_celery_beat"
 ]
+
+if DEBUG:
+    INSTALLED_APPS += ["debug_toolbar"]
 
 CRISPY_ALLOWED_TEMPLATE_PACKS = ("bulma",)
 
@@ -99,7 +101,6 @@ CRISPY_CLASS_CONVERTERS = {"datetime": "input"}
 MIDDLEWARE = [
     "django.middleware.security.SecurityMiddleware",
     "django.middleware.gzip.GZipMiddleware",
-    "debug_toolbar.middleware.DebugToolbarMiddleware",
     "whitenoise.middleware.WhiteNoiseMiddleware",
     "django.contrib.sessions.middleware.SessionMiddleware",
     "django.middleware.common.CommonMiddleware",
@@ -108,6 +109,9 @@ MIDDLEWARE = [
     "django.contrib.messages.middleware.MessageMiddleware",
     "django.middleware.clickjacking.XFrameOptionsMiddleware",
 ]
+
+if DEBUG:
+    MIDDLEWARE.insert(2, "debug_toolbar.middleware.DebugToolbarMiddleware")
 
 ROOT_URLCONF = "rcos_io.urls"
 
