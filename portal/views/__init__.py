@@ -3,6 +3,7 @@ from django.contrib import messages
 from django.contrib.auth.mixins import UserPassesTestMixin
 from django.contrib.postgres.search import SearchQuery, SearchRank, SearchVector
 from django.core.cache import cache
+from django.db.models import F
 from django.http import Http404, HttpRequest
 from django.shortcuts import get_object_or_404, redirect
 from django.urls import reverse
@@ -175,8 +176,8 @@ class SearchableListView(ListView):
             if self.search_vector_field:
                 query = SearchQuery(self.search)
                 queryset = queryset.annotate(
-                    rank=SearchRank(self.search_vector_field, query)
-                ).filter(**{f"{self.search_vector_field}__search": query}).order_by(
+                    rank=SearchRank(F(self.search_vector_field), query)
+                ).filter(**{self.search_vector_field: query}).order_by(
                     "-rank"
                 )
             else:
