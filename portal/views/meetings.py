@@ -96,7 +96,7 @@ def meetings_index(request: HttpRequest) -> HttpResponse:
         "ongoing_meeting": ongoing_meeting,
         "upcoming_meetings": upcoming_meetings,
         "next_meeting": next_meeting,
-        "is_enrolled": bool(request.user.enrollments.filter(semester=active_semester).first()) if request.user.is_authenticated else False,
+        "is_enrolled": request.user.enrollments.filter(semester=active_semester).exists() if request.user.is_authenticated else False,
         "can_schedule_workshops_check": CheckUserCanScheduleWorkshop().check(request.user, active_semester)
     })
 
