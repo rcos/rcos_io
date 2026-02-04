@@ -364,39 +364,30 @@ class User(AbstractUser, TimestampedModel):
             active_enrollment = self.get_active_enrollment()
             return active_enrollment and active_enrollment.is_mentor
 
-        return (
-            self.enrollments.filter(
-                is_mentor=True,
-                semester=semester,
-            ).count()
-            > 0
-        )
+        return self.enrollments.filter(
+            is_mentor=True,
+            semester=semester,
+        ).exists()
 
     def is_coordinator(self, semester=None):
         if semester is None:
             active_enrollment = self.get_active_enrollment()
             return active_enrollment and active_enrollment.is_coordinator
 
-        return (
-            self.enrollments.filter(
-                is_coordinator=True,
-                semester=semester,
-            ).count()
-            > 0
-        )
+        return self.enrollments.filter(
+            is_coordinator=True,
+            semester=semester,
+        ).exists()
 
     def is_faculty_advisor(self, semester=None):
         if semester is None:
             active_enrollment = self.get_active_enrollment()
             return active_enrollment and active_enrollment.is_faculty_advisor
 
-        return (
-            self.enrollments.filter(
-                is_faculty_advisor=True,
-                semester=semester,
-            ).count()
-            > 0
-        )
+        return self.enrollments.filter(
+            is_faculty_advisor=True,
+            semester=semester,
+        ).exists()
 
     @property
     def discord_mention(self):
@@ -1068,6 +1059,10 @@ class Enrollment(TimestampedModel):
             models.Index(fields=["user"]),
             models.Index(fields=["semester"]),
             models.Index(fields=["semester", "project"]),
+            models.Index(fields=["semester", "is_mentor"]),
+            models.Index(fields=["semester", "is_coordinator"]),
+            models.Index(fields=["semester", "is_project_lead"]),
+            models.Index(fields=["project", "semester"]),
         ]
         constraints = [
             models.UniqueConstraint(
@@ -1399,6 +1394,8 @@ class MeetingAttendance(TimestampedModel):
         indexes = [
             models.Index(fields=["meeting"]),
             models.Index(fields=["user"]),
+            models.Index(fields=["meeting", "is_verified"]),
+            models.Index(fields=["meeting", "user"]),
         ]
 
     objects = MeetingAttendanceManager()
@@ -1497,12 +1494,9 @@ class SmallGroup(TimestampedModel):
         return User.objects.filter(enrollments__in=self.get_enrollments())
 
     def has_user(self, user):
-        return (
-            self.projects.filter(
-                enrollments__user=user, enrollments__semester=self.semester
-            ).count()
-            > 0
-        )
+        return self.projects.filter(
+            enrollments__user=user, enrollments__semester=self.semester
+        ).exists()
 
     def __str__(self) -> str:
         return self.display_name
