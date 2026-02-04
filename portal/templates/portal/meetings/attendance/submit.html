@@ -2,17 +2,29 @@
 {% load crispy_forms_tags %}
 
 {% block content %}
-<section class="section">
-    <div class="container">
+  {% if is_among_us %}
+    <section class="section"
+             style="background: radial-gradient(circle at top left, #ff3860, #111); min-height: 100vh;">
+      <div class="container">
+        <div class="box has-text-centered"
+             style="box-shadow: 0 0 40px rgba(255,56,96,0.7); transform: rotate(-1deg);">
+          <h1 class="title has-text-danger">AMONG US?</h1>
+          <p class="subtitle">
+            You found a sus code. This will not count for attendance.
+          </p>
+          <p>Try entering a real attendance code below.</p>
+
+          {% crispy form %}
+        </div>
+      </div>
+    </section>
+  {% else %}
+    <section class="section">
+      <div class="container">
         <h1 class="title">Submit Attendance</h1>
-
         {% crispy form %}
-        <!-- <form method="post">
-            {% csrf_token %}
-
-
-            <button class="button" type="submit">Submit</button>
-        </form> -->
-    </div>
-</section>
+      </div>
+    </section>
+  {% endif %}
 {% endblock %}
+
