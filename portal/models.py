@@ -775,7 +775,7 @@ class Project(TimestampedModel):
         return repositories
 
     def get_semester_team(self, semester: Semester):
-        """Fetches enrollments for a given semester with user data prefetched."""
+        """Fetches enrollments for a given semester with user data eagerly loaded via select_related."""
         return Enrollment.objects.filter(
             semester=semester, project=self
         ).select_related("user").order_by("-is_project_lead", "user__first_name")
@@ -786,7 +786,7 @@ class Project(TimestampedModel):
         enrollments = self.enrollments.select_related(
             "semester", "user"
         ).order_by("-semester__start_date", "-is_project_lead", "user__first_name")
-        
+
         for enrollment in enrollments:
             enrollments_by_semester[enrollment.semester].append(enrollment)
         return dict(enrollments_by_semester)
