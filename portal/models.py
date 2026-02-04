@@ -356,8 +356,11 @@ class User(AbstractUser, TimestampedModel):
 
     def get_active_enrollment(self) -> Optional["Enrollment"]:
         active_semester = cache.get("active_semester")
-        queryset = self.enrollments.filter(semester=active_semester)
-        return queryset.first()
+        if not active_semester:
+            return None
+        return self.enrollments.filter(
+            semester=active_semester
+        ).select_related("project", "semester").first()
 
     def is_mentor(self, semester=None):
         if semester is None:
@@ -772,15 +775,19 @@ class Project(TimestampedModel):
         return repositories
 
     def get_semester_team(self, semester: Semester):
-        """Fetches enrollments for a given semester."""
+        """Fetches enrollments for a given semester with user data prefetched."""
         return Enrollment.objects.filter(
             semester=semester, project=self
-        ).order_by("-is_project_lead")
+        ).select_related("user").order_by("-is_project_lead", "user__first_name")
 
     def get_all_teams(self):
-        """Fetches teams for each semester."""
+        """Fetches teams for each semester, grouped by semester."""
         enrollments_by_semester = defaultdict(list)
-        for enrollment in self.enrollments.order_by("-is_project_lead").all():
+        enrollments = self.enrollments.select_related(
+            "semester", "user"
+        ).order_by("-semester__start_date", "-is_project_lead", "user__first_name")
+        
+        for enrollment in enrollments:
             enrollments_by_semester[enrollment.semester].append(enrollment)
         return dict(enrollments_by_semester)
 
@@ -1485,10 +1492,11 @@ class SmallGroup(TimestampedModel):
         return reverse("small_groups_detail", args=[str(self.id)])
 
     def get_enrollments(self):
+        """Get all enrollments for projects in this small group."""
         return Enrollment.objects.filter(
-            semester=self.semester,
-            project__in=self.projects.values_list("pk", flat=True),
-        )
+            semester_id=self.semester_id,
+            project__in=self.projects.all()
+        ).select_related("user", "project")
 
     def get_users(self):
         return User.objects.filter(enrollments__in=self.get_enrollments())
