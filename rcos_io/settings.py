@@ -149,6 +149,14 @@ DATABASES = {
     }
 }
 
+if os.environ.get("ENV") == "development":
+    DATABASES = {
+        "default": {
+            "ENGINE": "django.db.backends.sqlite3",
+            "NAME": BASE_DIR / "db.sqlite3",
+        }
+    }
+
 AUTH_USER_MODEL = "portal.User"
 
 AUTHENTICATION_BACKENDS = (
@@ -321,12 +329,29 @@ MESSAGE_TAGS = {
 #         }
 #     }
 # else:
-CACHES = {
-    "default": {
-        "BACKEND": "django.core.cache.backends.redis.RedisCache",
-        "LOCATION": os.environ["REDIS_URL"],
+#CACHES = {
+#    "default": {
+#        "BACKEND": "django.core.cache.backends.redis.RedisCache",
+#        "LOCATION": os.environ["REDIS_URL"],
+#    }
+#}
+
+if os.environ.get("ENV") == "development":
+    # Simple in-memory cache for local dev
+    CACHES = {
+        "default": {
+            "BACKEND": "django.core.cache.backends.locmem.LocMemCache",
+            "LOCATION": "unique-dev-cache",
+        }
     }
-}
+else:
+    CACHES = {
+        "default": {
+            "BACKEND": "django.core.cache.backends.redis.RedisCache",
+            "LOCATION": os.environ["REDIS_URL"],
+        }
+    }
+
 
 LOGGING = {
     "version": 1,
