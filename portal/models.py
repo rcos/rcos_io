@@ -244,12 +244,6 @@ class RPIUserManager(BaseUserManager):
             .filter(role=User.RPI, is_active=True, is_approved=True)
         )
 
-
-class User(AbstractUser, TimestampedModel):
-    USERNAME_FIELD = "email"
-    REQUIRED_FIELDS = []  # email is already the USERNAME_FIELD, don't list it here
-    username = None  # remove the username field
-
 class User(AbstractUser, TimestampedModel):
     """Represents an RCOS member, either an active RPI student/faculty with an RCS ID or an external user."""
 
