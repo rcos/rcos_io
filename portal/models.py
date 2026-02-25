@@ -1133,6 +1133,7 @@ class Meeting(TimestampedModel):
         blank=True,
         on_delete=models.SET_NULL,
         help_text="Optional host for the meeting (e.g. mentor hosting a workshop)",
+        limit_choices_to=Q(role=User.RPI)
     )
     type = models.CharField(choices=TYPE_CHOICES, max_length=100, default=SMALL_GROUP)
     is_published = models.BooleanField(
