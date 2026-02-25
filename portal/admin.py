@@ -4,6 +4,7 @@ from time import sleep
 from typing import Any
 
 from django.contrib import admin
+from django.contrib.admin import SimpleListFilter
 from django.contrib.auth.admin import UserAdmin
 from django.db.models.query import QuerySet
 from django.http import HttpResponse
@@ -303,6 +304,21 @@ class OrganizationAdmin(admin.ModelAdmin):
     list_select_related = True
 
 
+class NeverLoggedInFilter(SimpleListFilter):
+    title = "login status"
+    parameter_name = "login_status"
+
+    def lookups(self, request, model_admin):
+        return (
+            ("never", "Never logged in"),
+        )
+
+    def queryset(self, request, queryset):
+        if self.value() == "never":
+            return queryset.filter(last_login__isnull=True)
+        return queryset
+
+
 @admin.register(User)
 class UserAdmin(UserAdmin):
     list_display = ("display_name", "role", "is_approved")
@@ -314,7 +330,7 @@ class UserAdmin(UserAdmin):
         "discord_user_id",
         "github_username",
     )
-    list_filter = ("role", "organization", "is_approved", "enrollments__semester__name")
+    list_filter = ("role", "organization", "is_approved", "enrollments__semester__name", NeverLoggedInFilter)
     exclude = ("username",)
     fieldsets = (
         (
