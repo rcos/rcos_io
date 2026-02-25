@@ -31,7 +31,7 @@ dependencies = [
 [dependency-groups]
 dev = [
     "ruff>=0.7.0,<0.8",
-    "faker>=37.0.0,<38",
+    "faker>=40.5.1,<41",
 ]
 
 [tool.hatch.build.targets.sdist]
