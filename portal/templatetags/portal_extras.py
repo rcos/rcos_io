@@ -64,23 +64,23 @@ def project_small_group(project, semester) -> dict[str, Any]:
 
 @register.simple_tag(takes_context=True)
 def target_semester_query(context):
-    if "target_semester" in context and context["target_semester"]:
+    if context.get("target_semester"):
         return "?semester=" + context["target_semester"].id
     return ""
 
 
 @register.simple_tag(takes_context=True)
 def active_semester_query(context):
-    if "active_semester" in context and context["active_semester"]:
+    if context.get("active_semester"):
         return "?semester=" + context["active_semester"].id
     return ""
 
 
 @register.simple_tag(takes_context=True)
 def target_or_active_semester_query(context):
-    if "target_semester" in context and context["target_semester"]:
+    if context.get("target_semester"):
         return "?semester=" + context["target_semester"].id
-    if "active_semester" in context and context["active_semester"]:
+    if context.get("active_semester"):
         return "?semester=" + context["active_semester"].id
     return ""
 

@@ -8,16 +8,17 @@ https://docs.djangoproject.com/en/4.1/topics/settings/
 For the full list of settings and their values, see
 https://docs.djangoproject.com/en/4.1/ref/settings/
 """
+
 import os
 from pathlib import Path
 
+import sentry_sdk
 from django.contrib.messages import constants as messages
 from dotenv import load_dotenv
 from sentry_sdk.integrations.django import DjangoIntegration
 
 load_dotenv()
 
-import sentry_sdk
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
@@ -55,14 +56,14 @@ ALLOWED_HOSTS = [
     "rcos.up.railway.app",
     "rcos-staging.up.railway.app",
     "new.rcos.io",
-    "rcos.io"
+    "rcos.io",
 ]
 
 CSRF_TRUSTED_ORIGINS = [
     "https://rcos.up.railway.app",
     "https://rcos-staging.up.railway.app",
     "https://new.rcos.io",
-    "https://rcos.io"
+    "https://rcos.io",
 ]
 
 PUBLIC_BASE_URL = os.environ["PUBLIC_BASE_URL"]
@@ -274,7 +275,7 @@ MAGICLINK_LOGIN_SENT_TEMPLATE_NAME = "portal/magiclink/login_sent.html"
 
 MAGICLINK_LOGIN_FAILED_TEMPLATE_NAME = "portal/magiclink/login_failed.html"
 
-MAGICLINK_AUTH_TIMEOUT = 60 * 60 * 24 # 1 day
+MAGICLINK_AUTH_TIMEOUT = 60 * 60 * 24  # 1 day
 
 MAGICLINK_TOKEN_USES = 5
 
@@ -352,8 +353,6 @@ LOGGING = {
 CELERY_BROKER_URL = os.environ["REDIS_URL"]
 CELERY_RESULT_BACKEND = os.environ["REDIS_URL"]
 
-DEBUG_TOOLBAR_CONFIG = {
-    'RESULTS_CACHE_SIZE': 100
-}
+DEBUG_TOOLBAR_CONFIG = {"RESULTS_CACHE_SIZE": 100}
 
 DATA_UPLOAD_MAX_NUMBER_FIELDS = 20_000

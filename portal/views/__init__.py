@@ -13,11 +13,14 @@ from ..models import Organization, Semester
 
 
 def load_semesters(request):
-    semesters = cache.get_or_set(
-        "semesters",
-        lambda: list(Semester.objects.all()),
-        60 * 60 * 24,
-    ) or []
+    semesters = (
+        cache.get_or_set(
+            "semesters",
+            lambda: list(Semester.objects.all()),
+            60 * 60 * 24,
+        )
+        or []
+    )
     active_semester = cache.get_or_set(
         "active_semester",
         lambda: next(
@@ -28,6 +31,7 @@ def load_semesters(request):
 
     return {"semesters": semesters, "active_semester": active_semester}
 
+
 def target_semester_context(request: HttpRequest, default_to_active_semester=False):
     target_semester = None
 
@@ -37,7 +41,7 @@ def target_semester_context(request: HttpRequest, default_to_active_semester=Fal
     elif default_to_active_semester:
         target_semester = Semester.get_active()
 
-    return { "target_semester": target_semester } if target_semester else {}
+    return {"target_semester": target_semester} if target_semester else {}
 
 
 class SemesterFilteredDetailView(DetailView):
@@ -111,6 +115,7 @@ class SemesterFilteredListView(ListView):
         data["target_semester"] = self.target_semester
         return data
 
+
 class OrganizationFilteredListView(ListView):
     """Render some list of objects, set by self.model or self.queryset. self.queryset can actually be any iterable of items, not just a queryset.
 
@@ -131,9 +136,7 @@ class OrganizationFilteredListView(ListView):
             self.organization = get_object_or_404(Organization, pk=org_id)
 
         if self.organization:
-            queryset = queryset.filter(
-                organization_id=org_id
-            )
+            queryset = queryset.filter(organization_id=org_id)
 
         return queryset
 
@@ -175,10 +178,12 @@ class SearchableListView(ListView):
         if self.search:
             if self.search_vector_field:
                 query = SearchQuery(self.search)
-                queryset = queryset.annotate(
-                    rank=SearchRank(F(self.search_vector_field), query)
-                ).filter(**{self.search_vector_field: query}).order_by(
-                    "-rank"
+                queryset = (
+                    queryset.annotate(
+                        rank=SearchRank(F(self.search_vector_field), query)
+                    )
+                    .filter(**{self.search_vector_field: query})
+                    .order_by("-rank")
                 )
             else:
                 queryset = queryset.annotate(

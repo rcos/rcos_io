@@ -1,4 +1,4 @@
-from django.core.management.base import BaseCommand, CommandError
+from django.core.management.base import BaseCommand
 
 from portal.models import User
 
@@ -28,11 +28,17 @@ class Command(BaseCommand):
         count = unverified_users.count()
 
         if count == 0:
-            self.stdout.write(self.style.SUCCESS("No unverified users found. Nothing to do."))
+            self.stdout.write(
+                self.style.SUCCESS("No unverified users found. Nothing to do.")
+            )
             return
 
         if options["dry_run"]:
-            self.stdout.write(self.style.WARNING(f"[DRY RUN] Would delete {count} unverified user(s)."))
+            self.stdout.write(
+                self.style.WARNING(
+                    f"[DRY RUN] Would delete {count} unverified user(s)."
+                )
+            )
             return
 
         if not options["no_input"]:
@@ -45,4 +51,8 @@ class Command(BaseCommand):
                 return
 
         deleted_count, _ = unverified_users.delete()
-        self.stdout.write(self.style.SUCCESS(f"Successfully deleted {deleted_count} unverified user(s)."))
+        self.stdout.write(
+            self.style.SUCCESS(
+                f"Successfully deleted {deleted_count} unverified user(s)."
+            )
+        )

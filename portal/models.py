@@ -40,6 +40,7 @@ def clear_semester_cache(sender, instance, created, *args, **kwargs):
     cache.delete("semesters")
     cache.delete("active_semester")
 
+
 class TimestampedModel(models.Model):
     """A base model that all other models should inherit from. It adds timestamps for creation and updating."""
 
@@ -145,9 +146,11 @@ class Semester(TimestampedModel):
         return self.start_date <= now <= self.end_date
 
     def get_admins(self):
-        return self.enrollments.filter(
-            Q(is_coordinator=True) | Q(is_faculty_advisor=True)
-        ).order_by("is_faculty_advisor").select_related("user")
+        return (
+            self.enrollments.filter(Q(is_coordinator=True) | Q(is_faculty_advisor=True))
+            .order_by("is_faculty_advisor")
+            .select_related("user")
+        )
 
     def __str__(self) -> str:
         return self.name
@@ -239,6 +242,7 @@ class UserManager(BaseUserManager):
     def approved(self):
         return self.filter(is_active=True, is_approved=True)
 
+
 class RPIUserManager(BaseUserManager):
     def get_queryset(self):
         return (
@@ -309,7 +313,9 @@ class User(AbstractUser, TimestampedModel):
     )
 
     # Damn it people
-    is_name_public = models.BooleanField(default=True, help_text="Is the user's name and RCS ID publicly visible?")
+    is_name_public = models.BooleanField(
+        default=True, help_text="Is the user's name and RCS ID publicly visible?"
+    )
 
     search_vector = SearchVectorField(null=True, editable=False)
 
@@ -358,9 +364,11 @@ class User(AbstractUser, TimestampedModel):
         active_semester = cache.get("active_semester")
         if not active_semester:
             return None
-        return self.enrollments.filter(
-            semester=active_semester
-        ).select_related("project", "semester").first()
+        return (
+            self.enrollments.filter(semester=active_semester)
+            .select_related("project", "semester")
+            .first()
+        )
 
     def is_mentor(self, semester=None):
         if semester is None:
@@ -414,7 +422,9 @@ class User(AbstractUser, TimestampedModel):
     def send_message(self, message_content: str):
         """Send a direct message to the user via Discord. If Discord is not linked or it fails, sends an email."""
         if settings.DEBUG:
-            logger.info(f"Intercepted message to user {self} with content '{message_content}'")
+            logger.info(
+                f"Intercepted message to user {self} with content '{message_content}'"
+            )
             return
 
         sent = False
@@ -533,6 +543,7 @@ class ProjectQuerySet(models.QuerySet):
     def approved(self):
         return self.filter(is_approved=True)
 
+
 class Project(TimestampedModel):
     """Represents an open source project in RCOS."""
 
@@ -581,7 +592,12 @@ class Project(TimestampedModel):
         help_text="Optional URL to a logo for the project",
     )
 
-    tags = models.ManyToManyField(ProjectTag, blank=True, related_name="projects", help_text="Use Ctrl or Cmd to select multiple tags that apply to your project.")
+    tags = models.ManyToManyField(
+        ProjectTag,
+        blank=True,
+        related_name="projects",
+        help_text="Use Ctrl or Cmd to select multiple tags that apply to your project.",
+    )
 
     discord_role_id = models.CharField(max_length=200, blank=True)
 
@@ -776,16 +792,18 @@ class Project(TimestampedModel):
 
     def get_semester_team(self, semester: Semester):
         """Fetches enrollments for a given semester with user data eagerly loaded via select_related."""
-        return Enrollment.objects.filter(
-            semester=semester, project=self
-        ).select_related("user").order_by("-is_project_lead", "user__first_name")
+        return (
+            Enrollment.objects.filter(semester=semester, project=self)
+            .select_related("user")
+            .order_by("-is_project_lead", "user__first_name")
+        )
 
     def get_all_teams(self):
         """Fetches teams for each semester, grouped by semester."""
         enrollments_by_semester = defaultdict(list)
-        enrollments = self.enrollments.select_related(
-            "semester", "user"
-        ).order_by("-semester__start_date", "-is_project_lead", "user__first_name")
+        enrollments = self.enrollments.select_related("semester", "user").order_by(
+            "-semester__start_date", "-is_project_lead", "user__first_name"
+        )
 
         for enrollment in enrollments:
             enrollments_by_semester[enrollment.semester].append(enrollment)
@@ -828,10 +846,11 @@ class ProjectRepository(TimestampedModel):
 
     @property
     def short_name(self):
-        return self.url.lower().lstrip('https://github.com/')
+        return self.url.lower().lstrip("https://github.com/")
 
     def __str__(self) -> str:
         return self.url
+
 
 class ProjectPitch(TimestampedModel):
     semester = models.ForeignKey(
@@ -863,7 +882,10 @@ class ProjectProposal(TimestampedModel):
     project = models.ForeignKey(
         Project, on_delete=models.CASCADE, related_name="proposals"
     )
-    url = models.URLField("Proposal Document URL", help_text="Link to the proposal document, typically a Google Doc. Make sure it is publicly viewable!")
+    url = models.URLField(
+        "Proposal Document URL",
+        help_text="Link to the proposal document, typically a Google Doc. Make sure it is publicly viewable!",
+    )
 
     grade = models.DecimalField(
         max_digits=3,
@@ -1133,7 +1155,7 @@ class Meeting(TimestampedModel):
         blank=True,
         on_delete=models.SET_NULL,
         help_text="Optional host for the meeting (e.g. mentor hosting a workshop)",
-        limit_choices_to=Q(role=User.RPI)
+        limit_choices_to=Q(role=User.RPI),
     )
     type = models.CharField(choices=TYPE_CHOICES, max_length=100, default=SMALL_GROUP)
     is_published = models.BooleanField(
@@ -1146,7 +1168,13 @@ class Meeting(TimestampedModel):
     )
     starts_at = models.DateTimeField(help_text="When the meeting starts")
     ends_at = models.DateTimeField(help_text="When the meeting ends")
-    room = models.ForeignKey(Room, on_delete=models.RESTRICT, blank=True, null=True, help_text="Physical location of the meeting, or blank if on Discord")
+    room = models.ForeignKey(
+        Room,
+        on_delete=models.RESTRICT,
+        blank=True,
+        null=True,
+        help_text="Physical location of the meeting, or blank if on Discord",
+    )
     description_markdown = models.TextField(
         max_length=10000,
         blank=True,
@@ -1177,7 +1205,10 @@ class Meeting(TimestampedModel):
 
     # Relationships
     attendances = models.ManyToManyField(
-        User, through="MeetingAttendance", related_name="meeting_attendances", through_fields=("meeting", "user")
+        User,
+        through="MeetingAttendance",
+        related_name="meeting_attendances",
+        through_fields=("meeting", "user"),
     )
 
     objects = models.Manager()
@@ -1258,7 +1289,9 @@ class Meeting(TimestampedModel):
             expected_users = expected_users.filter(pk__in=small_group_user_ids)
             query["user__in"] = small_group_user_ids
 
-        submitted_attendances = MeetingAttendance.objects.filter(**query).select_related("user", "submitted_by")
+        submitted_attendances = MeetingAttendance.objects.filter(
+            **query
+        ).select_related("user", "submitted_by")
 
         needs_verification_attendances = []
         attendances = []
@@ -1382,16 +1415,24 @@ class Meeting(TimestampedModel):
 # post_save.connect(sync_discord, sender=Meeting)
 # post_delete.connect(sync_discord_on_delete, sender=Meeting)
 
+
 class MeetingAttendanceManager(models.Manager):
     def get_queryset(self) -> models.QuerySet:
         return super().get_queryset().select_related("user")
+
 
 class MeetingAttendance(TimestampedModel):
     meeting = models.ForeignKey(Meeting, on_delete=models.CASCADE)
     user = models.ForeignKey(User, on_delete=models.CASCADE)
     is_verified = models.BooleanField(default=True)
-    submitted_by = models.ForeignKey(User, blank=True, null=True, on_delete=models.SET_NULL, help_text="The user that submitted the attendance for user (either them or an administrator).", related_name="submitted_attendances")
-
+    submitted_by = models.ForeignKey(
+        User,
+        blank=True,
+        null=True,
+        on_delete=models.SET_NULL,
+        help_text="The user that submitted the attendance for user (either them or an administrator).",
+        related_name="submitted_attendances",
+    )
 
     class Meta:
         constraints = [
@@ -1443,7 +1484,9 @@ class MentorApplication(TimestampedModel):
         )
 
         # Notify user
-        self.user.send_message("✅ Your RCOS Mentor application has been **accepted**. You'll be contacted shortly by the Coordinators. Welcome to the team!")
+        self.user.send_message(
+            "✅ Your RCOS Mentor application has been **accepted**. You'll be contacted shortly by the Coordinators. Welcome to the team!"
+        )
 
         # TODO: Add Mentors Discord role
 
@@ -1495,8 +1538,7 @@ class SmallGroup(TimestampedModel):
     def get_enrollments(self):
         """Get all enrollments for projects in this small group."""
         return Enrollment.objects.filter(
-            semester_id=self.semester_id,
-            project__in=self.projects.all()
+            semester_id=self.semester_id, project__in=self.projects.all()
         ).select_related("user", "project")
 
     def get_users(self):
@@ -1620,12 +1662,13 @@ class StatusUpdateSubmission(TimestampedModel):
     class Meta:
         ordering = ["created_at"]
 
+
 class ShortLink(TimestampedModel):
     code = models.CharField(max_length=20, primary_key=True)
     url = models.URLField()
 
     def __str__(self) -> str:
-        return f'{settings.PUBLIC_BASE_URL}/{self.code}'
+        return f"{settings.PUBLIC_BASE_URL}/{self.code}"
 
     class Meta:
         indexes = [

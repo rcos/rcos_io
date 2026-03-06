@@ -18,7 +18,9 @@ from . import (
 )
 
 
-class UserIndexView(SearchableListView, OrganizationFilteredListView, SemesterFilteredListView):
+class UserIndexView(
+    SearchableListView, OrganizationFilteredListView, SemesterFilteredListView
+):
     template_name = "portal/users/index.html"
     context_object_name = "users"
     paginate_by = 50
@@ -95,11 +97,14 @@ def user_detail(request: HttpRequest, pk: int) -> HttpResponse:
     } | target_semester_context(request)
 
     if "target_semester" in context:
-        context["enrollment"] = Enrollment.objects.filter(semester_id=context["target_semester"].pk, user_id=user.pk).first()
+        context["enrollment"] = Enrollment.objects.filter(
+            semester_id=context["target_semester"].pk, user_id=user.pk
+        ).first()
     else:
         context["enrollments"] = user.enrollments.select_related("semester", "project")
 
     return TemplateResponse(request, "portal/users/detail.html", context)
+
 
 @login_required
 def enroll_user(request, pk: str):
@@ -129,7 +134,11 @@ def enroll_user(request, pk: str):
         enrollment, is_new = Enrollment.objects.update_or_create(
             user=user,
             semester=semester,
-            defaults={"project": project, "credits": credits, "is_project_lead": is_project_lead},
+            defaults={
+                "project": project,
+                "credits": credits,
+                "is_project_lead": is_project_lead,
+            },
         )
 
     return redirect("/")

@@ -5,22 +5,27 @@ from django.db import migrations
 
 
 class Migration(migrations.Migration):
-
     dependencies = [
-        ('portal', '0037_alter_meeting_semester'),
+        ("portal", "0037_alter_meeting_semester"),
     ]
 
     operations = [
         migrations.AlterModelOptions(
-            name='smallgroup',
-            options={'ordering': ['semester', django.db.models.functions.text.Lower('name'), 'room']},
+            name="smallgroup",
+            options={
+                "ordering": [
+                    "semester",
+                    django.db.models.functions.text.Lower("name"),
+                    "room",
+                ]
+            },
         ),
         migrations.RemoveField(
-            model_name='meeting',
-            name='location',
+            model_name="meeting",
+            name="location",
         ),
         migrations.RemoveField(
-            model_name='smallgroup',
-            name='location',
+            model_name="smallgroup",
+            name="location",
         ),
     ]

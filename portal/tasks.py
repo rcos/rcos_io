@@ -19,6 +19,7 @@ def delete_discord_channels(channel_ids: list[str]):
             print(e, e.response)
         time.sleep(2)
 
+
 @shared_task
 def meetings_alert():
     today = timezone.now().date()
@@ -29,6 +30,9 @@ def meetings_alert():
     for meeting in todays_meetings:
         if not meeting.presentation_url:
             # Meeting today is missing presentation URL, alert!
-            discord.send_message(os.environ["DISCORD_ALERTS_CHANNEL_ID"], {
-                "content": f"Meeting **{meeting}** does not have presentation slides added yet!"
-            })
+            discord.send_message(
+                os.environ["DISCORD_ALERTS_CHANNEL_ID"],
+                {
+                    "content": f"Meeting **{meeting}** does not have presentation slides added yet!"
+                },
+            )

@@ -4,14 +4,13 @@ from django.db import migrations
 
 
 class Migration(migrations.Migration):
-
     dependencies = [
-        ('portal', '0043_meetingattendance_submitted_by_alter_project_tags'),
+        ("portal", "0043_meetingattendance_submitted_by_alter_project_tags"),
     ]
 
     operations = [
         migrations.RemoveField(
-            model_name='meetingattendance',
-            name='is_added_by_admin',
+            model_name="meetingattendance",
+            name="is_added_by_admin",
         ),
     ]

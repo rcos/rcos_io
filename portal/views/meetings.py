@@ -1,5 +1,4 @@
 import csv
-from datetime import datetime
 import logging
 import random
 import re
@@ -66,39 +65,54 @@ def meeting_to_event(meeting: Meeting) -> dict[str, Any]:
         "color": meeting.color,
     }
 
+
 def meetings_index(request: HttpRequest) -> HttpResponse:
     now = timezone.now()
     active_semester = Semester.get_active()
 
-    ongoing_meetings = Meeting.get_user_queryset(request.user) \
-            .filter(starts_at__lte=now) \
-            .filter(ends_at__gte=now) \
-            .order_by("starts_at") \
-            .select_related("room", "host")[:3]
+    ongoing_meetings = (
+        Meeting.get_user_queryset(request.user)
+        .filter(starts_at__lte=now)
+        .filter(ends_at__gte=now)
+        .order_by("starts_at")
+        .select_related("room", "host")[:3]
+    )
 
     ongoing_meeting = None
     if len(ongoing_meetings) > 0:
         ongoing_meeting = ongoing_meetings[0]
 
-    upcoming_meetings = Meeting.get_user_queryset(request.user) \
-            .filter(starts_at__gte=now) \
-            .order_by("starts_at") \
-            .prefetch_related() \
-            .select_related("room", "host")[:3]
+    upcoming_meetings = (
+        Meeting.get_user_queryset(request.user)
+        .filter(starts_at__gte=now)
+        .order_by("starts_at")
+        .prefetch_related()
+        .select_related("room", "host")[:3]
+    )
 
     next_meeting = None
     if len(upcoming_meetings) > 0:
         next_meeting = upcoming_meetings[0]
-    
 
-    return TemplateResponse(request, "portal/meetings/index.html", {
-        "ongoing_meetings":  ongoing_meetings,
-        "ongoing_meeting": ongoing_meeting,
-        "upcoming_meetings": upcoming_meetings,
-        "next_meeting": next_meeting,
-        "is_enrolled": request.user.enrollments.filter(semester=active_semester).exists() if request.user.is_authenticated else False,
-        "can_schedule_workshops_check": CheckUserCanScheduleWorkshop().check(request.user, active_semester)
-    })
+    return TemplateResponse(
+        request,
+        "portal/meetings/index.html",
+        {
+            "ongoing_meetings": ongoing_meetings,
+            "ongoing_meeting": ongoing_meeting,
+            "upcoming_meetings": upcoming_meetings,
+            "next_meeting": next_meeting,
+            "is_enrolled": request.user.enrollments.filter(
+                semester=active_semester
+            ).exists()
+            if request.user.is_authenticated
+            else False,
+            "can_schedule_workshops_check": CheckUserCanScheduleWorkshop().check(
+                request.user, active_semester
+            ),
+        },
+    )
+
 
 class MeetingDetailView(DetailView):
     object: Meeting
@@ -163,7 +177,9 @@ class MeetingDetailView(DetailView):
             data["can_manage_attendance"] = True
 
             if self.request.user.is_superuser:
-                data["small_groups"] = SmallGroup.objects.filter(semester_id=self.object.semester_id)
+                data["small_groups"] = SmallGroup.objects.filter(
+                    semester_id=self.object.semester_id
+                )
             else:
                 data["small_groups"] = self.request.user.mentored_small_groups.filter(
                     semester_id=self.object.semester_id
@@ -353,9 +369,7 @@ def manually_add_or_verify_attendance(request: HttpRequest) -> HttpResponse:
         else:
             users = User.objects.filter(rcs_id__in=rcs_ids)
 
-        submitter_enrollment = request.user.enrollments.get(
-            semester=meeting.semester
-        )
+        submitter_enrollment = request.user.enrollments.get(semester=meeting.semester)
         for user in users:
             try:
                 # Only allow Mentors or above AND meeting hosts to add/verify attendances
@@ -368,7 +382,7 @@ def manually_add_or_verify_attendance(request: HttpRequest) -> HttpResponse:
                 ):
                     return redirect(reverse("meetings_index"))
 
-                # Don't let Mentors add attendances for Mentor meetings 
+                # Don't let Mentors add attendances for Mentor meetings
                 if (
                     not request.user.is_superuser
                     and not submitter_enrollment.is_coordinator
@@ -413,7 +427,9 @@ def manually_add_or_verify_attendance(request: HttpRequest) -> HttpResponse:
 
                 # Submit attendance for submitter themselves
                 try:
-                    MeetingAttendance(user=request.user, meeting=meeting, submitted_by=request.user).save()
+                    MeetingAttendance(
+                        user=request.user, meeting=meeting, submitted_by=request.user
+                    ).save()
 
                 except IntegrityError:
                     pass
@@ -534,6 +550,7 @@ def export_meeting_attendance(request: HttpRequest, pk: Any) -> HttpResponse:
 
     return response
 
+
 @login_required
 def schedule_workshop(request: HttpRequest) -> HttpResponse:
     active_semester = Semester.get_active()
@@ -542,10 +559,10 @@ def schedule_workshop(request: HttpRequest) -> HttpResponse:
     check = CheckUserCanScheduleWorkshop().check(request.user, active_semester)
     if not check.passed:
         messages.error(
-            request, f"You are not currently eligible to schedule meetings: {check.fail_reason} {check.fix}"
+            request,
+            f"You are not currently eligible to schedule meetings: {check.fail_reason} {check.fix}",
         )
         return redirect(reverse("projects_index"))
-
 
     if request.method == "POST":
         form = WorkshopCreateForm(request.POST)
@@ -553,8 +570,12 @@ def schedule_workshop(request: HttpRequest) -> HttpResponse:
         form.instance.type = Meeting.WORKSHOP
         form.instance.host = request.user
         # e.g. 2023-08-27T14:00
-        form.instance.starts_at = timezone.datetime.strptime(request.POST["starts_at"], "%Y-%m-%dT%H:%M")
-        form.instance.ends_at = timezone.datetime.strptime(request.POST["ends_at"], "%Y-%m-%dT%H:%M")
+        form.instance.starts_at = timezone.datetime.strptime(
+            request.POST["starts_at"], "%Y-%m-%dT%H:%M"
+        )
+        form.instance.ends_at = timezone.datetime.strptime(
+            request.POST["ends_at"], "%Y-%m-%dT%H:%M"
+        )
 
         if form.is_valid():
             form.save()
@@ -563,6 +584,6 @@ def schedule_workshop(request: HttpRequest) -> HttpResponse:
     else:
         form = WorkshopCreateForm()
         form.fields["room"].queryset = active_semester.rooms
-    return TemplateResponse(request, "portal/meetings/schedule_workshop.html", {
-        "form": form
-    })
+    return TemplateResponse(
+        request, "portal/meetings/schedule_workshop.html", {"form": form}
+    )

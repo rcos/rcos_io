@@ -20,15 +20,16 @@ RCOS has to handle the data of typically 350+ students each semester. Data inclu
 
 - >= Python 3.11
 - [uv](https://docs.astral.sh/uv/getting-started/installation/)
+- Docker
+- make
 
 ### Setup
 
 1. Clone repository
-2. `sudo apt install libpq-dev`
-2. Install dependencies `uv sync`
-3. Create a `.env` file (not the placement of the `.`) and add environment values
-    - see `.env.example` for the expected variables
-4. Setup database `uv run ./manage.py migrate` OR ask maintainers for test data DB file
+2. `docker compose -f dev-docker-compose.yml up -d`
+    - Spins up Postgres and Redis locally
+2. Run setup script with `make setup`
+4. 
 5. Setup cache table in database `uv run ./manage.py createcachetable`
 6. Create a superuser for testing `uv run ./manage.py createsuperuser`
 

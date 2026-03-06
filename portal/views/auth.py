@@ -1,4 +1,5 @@
 """Views relating to user actions."""
+
 from django.conf import settings
 from django.contrib import messages
 from django.contrib.auth import login
@@ -21,14 +22,22 @@ from portal.services import discord, github
 def profile(request: HttpRequest) -> HttpResponse:
     """Renders the logged in user's profile and saves changes when edited."""
     if request.method == "POST":
-        form = ExternalUserProfileForm(request.POST, instance=request.user) if request.user.role == User.EXTERNAL else RPIUserProfileForm(request.POST, instance=request.user)
+        form = (
+            ExternalUserProfileForm(request.POST, instance=request.user)
+            if request.user.role == User.EXTERNAL
+            else RPIUserProfileForm(request.POST, instance=request.user)
+        )
 
         if form.is_valid():
             messages.success(request, "Your profile was updated.")
             form.save()
             return redirect(reverse("profile"))
     else:
-        form = ExternalUserProfileForm(instance=request.user) if request.user.role == User.EXTERNAL else RPIUserProfileForm(instance=request.user)
+        form = (
+            ExternalUserProfileForm(instance=request.user)
+            if request.user.role == User.EXTERNAL
+            else RPIUserProfileForm(instance=request.user)
+        )
 
     return TemplateResponse(
         request,

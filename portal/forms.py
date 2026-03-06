@@ -1,4 +1,5 @@
 import datetime
+
 from crispy_forms.helper import FormHelper
 from crispy_forms.layout import Submit
 from django import forms
@@ -6,7 +7,6 @@ from django import forms
 from portal.models import Meeting, MentorApplication, Project, Semester, User
 
 # Inputs
-
 
 
 # Base Forms
@@ -24,10 +24,12 @@ class ExternalUserProfileForm(forms.ModelForm):
         model = User
         fields = ["first_name", "last_name", "organization"]
 
+
 class RPIUserProfileForm(forms.ModelForm):
     class Meta:
         model = User
         fields = ["first_name", "last_name", "graduation_year"]
+
 
 class ProjectCreateForm(forms.ModelForm):
     class Meta:
@@ -40,6 +42,7 @@ class ProjectCreateForm(forms.ModelForm):
             "logo_url",
             "homepage_url",
         ]
+
 
 class ProjectEditForm(forms.ModelForm):
     class Meta:
@@ -63,11 +66,23 @@ class WorkshopCreateForm(forms.ModelForm):
             "ends_at",
             "room",
             "description_markdown",
-            "presentation_url"
+            "presentation_url",
         ]
-    starts_at = forms.DateField(initial=datetime.datetime.now().isoformat(timespec="minutes"),
-        widget=forms.widgets.DateTimeInput(attrs={'type': 'datetime-local'}))
-    ends_at = forms.DateField(widget=forms.DateTimeInput(attrs={'min': datetime.datetime.now().isoformat(timespec="minutes"), 'type': 'datetime-local'}), required=True)
+
+    starts_at = forms.DateField(
+        initial=datetime.datetime.now().isoformat(timespec="minutes"),
+        widget=forms.widgets.DateTimeInput(attrs={"type": "datetime-local"}),
+    )
+    ends_at = forms.DateField(
+        widget=forms.DateTimeInput(
+            attrs={
+                "min": datetime.datetime.now().isoformat(timespec="minutes"),
+                "type": "datetime-local",
+            }
+        ),
+        required=True,
+    )
+
 
 class SubmitAttendanceForm(forms.Form):
     code = forms.CharField(
@@ -84,6 +99,7 @@ class SubmitAttendanceForm(forms.Form):
 class SemesterCSVUploadForm(SemesterForm):
     csv = forms.FileField()
 
+
 class MentorApplicationForm(forms.ModelForm):
     class Meta:
         model = MentorApplication
@@ -91,4 +107,3 @@ class MentorApplicationForm(forms.ModelForm):
             "why",
             "skills",
         ]
-
