@@ -1,6 +1,7 @@
 """Views related to projects."""
+
 import logging
-import re
+from collections import defaultdict
 from typing import Any
 
 from django.conf import settings
@@ -10,7 +11,6 @@ from django.contrib.auth.mixins import LoginRequiredMixin
 from django.contrib.messages.views import SuccessMessageMixin
 from django.core.cache import cache
 from django.core.paginator import EmptyPage, InvalidPage, PageNotAnInteger, Paginator
-from django.db.models.functions import Lower
 from django.http import (
     HttpRequest,
     HttpResponse,
@@ -21,7 +21,6 @@ from django.shortcuts import get_object_or_404, redirect
 from django.template.response import TemplateResponse
 from django.urls import reverse
 from django.views.generic.edit import CreateView
-from gql.transport.exceptions import TransportServerError
 
 from portal.checks import (
     CheckUserCanCreateProject,
@@ -52,6 +51,7 @@ from . import (
 )
 
 logger = logging.getLogger(__name__)
+
 
 @login_required
 def project_lead_index(request: HttpRequest) -> HttpResponse:
@@ -93,6 +93,7 @@ class ProjectIndexView(
         "description",
         "tags__name",
     )
+    search_vector_field = "search_vector"
 
     def get_queryset(self):
         """Apply filters (semester is already handled)."""
@@ -127,31 +128,30 @@ class ProjectIndexView(
 
         projects_rows = []
         enrollments = Enrollment.objects.filter(project__in=projects).select_related(
-            "user"
+            "user", "semester"
         )
         if self.target_semester:
-            enrollments = enrollments.filter(
-                semester=self.target_semester
-            ).select_related("semester")
+            enrollments = enrollments.filter(semester=self.target_semester)
 
             if self.request.user.is_authenticated:
                 data["can_create_project_check"] = CheckUserCanCreateProject().check(
                     self.request.user, self.target_semester
                 )
 
+        enrollments_by_project: dict[int, list[Enrollment]] = defaultdict(list)
+        leads_by_project: dict[int, list[Enrollment]] = defaultdict(list)
+        for enrollment in enrollments:
+            enrollments_by_project[enrollment.project_id].append(enrollment)
+            if self.target_semester and enrollment.is_project_lead:
+                leads_by_project[enrollment.project_id].append(enrollment)
+
         for project in projects:
             projects_row = {
                 "project": project,
-                "enrollments": len(
-                    [e for e in enrollments if e.project_id == project.pk]
-                ),
+                "enrollments": len(enrollments_by_project.get(project.pk, [])),
             }
             if self.target_semester:
-                projects_row["leads"] = [
-                    e
-                    for e in enrollments
-                    if e.project_id == project.pk and e.is_project_lead is True
-                ]
+                projects_row["leads"] = leads_by_project.get(project.pk, [])
                 projects_row["pitch"] = next(
                     (
                         pitch
@@ -182,8 +182,12 @@ def project_detail(request: HttpRequest, slug: str) -> HttpResponse:
     if request.user.is_authenticated:
         active_enrollment = request.user.get_active_enrollment()
         context["active_enrollment"] = active_enrollment
-        
-        if active_enrollment and active_enrollment.project == project and active_enrollment.is_project_lead:
+
+        if (
+            active_enrollment
+            and active_enrollment.project == project
+            and active_enrollment.is_project_lead
+        ):
             is_owner_or_lead = True
         elif project.owner == request.user:
             is_owner_or_lead = True
@@ -194,16 +198,18 @@ def project_detail(request: HttpRequest, slug: str) -> HttpResponse:
 
         # Populate all enrolled students RCS IDs for easy adding team members
         if is_owner_or_lead and active_enrollment:
-            context[
-                "enrolled_rcs_ids"
-            ] = active_enrollment.semester.students.values_list("rcs_id", flat=True)
+            context["enrolled_rcs_ids"] = (
+                active_enrollment.semester.students.values_list("rcs_id", flat=True)
+            )
 
     # Fetch enrollments for either target semester or teams across semesters
     if "target_semester" in context:
         context["target_semester_enrollments"] = project.get_semester_team(
             context["target_semester"]
         )
-        context["can_enroll"] = CheckUserCanEnroll().passes(request.user, context["target_semester"], None) and (active_enrollment is None or active_enrollment.project is None)
+        context["can_enroll"] = CheckUserCanEnroll().passes(
+            request.user, context["target_semester"], None
+        ) and (active_enrollment is None or active_enrollment.project is None)
     else:
         context["enrollments_by_semester"] = project.get_all_teams()
 
@@ -232,9 +238,13 @@ def edit_project(request: HttpRequest, slug: str) -> HttpResponse:
     context: dict[str, Any] = {"project": project}
 
     # Check permission to edit project
-    check = CheckUserIsProjectLeadOrOwner().check(request.user, Semester.get_active(), project)
+    check = CheckUserIsProjectLeadOrOwner().check(
+        request.user, Semester.get_active(), project
+    )
     if not check.passed:
-        messages.error(request, f"You cannot edit this project: {check.fail_reason} {check.fix}")
+        messages.error(
+            request, f"You cannot edit this project: {check.fail_reason} {check.fix}"
+        )
         return redirect(project.get_absolute_url())
 
     # Handle form
@@ -242,18 +252,27 @@ def edit_project(request: HttpRequest, slug: str) -> HttpResponse:
         form = ProjectEditForm(request.POST, instance=project)
 
         # Attempt to parse repository URLs
-        repository_urls = [url.strip().lower() for url in request.POST.get("repositories", "").split(",")]
-        ProjectRepository.objects.filter(project=project).exclude(url__in=repository_urls).delete()
+        repository_urls = [
+            url.strip().lower()
+            for url in request.POST.get("repositories", "").split(",")
+        ]
+        ProjectRepository.objects.filter(project=project).exclude(
+            url__in=repository_urls
+        ).delete()
         for url in repository_urls:
             if url:
                 # Check if valid GitHub repository URL
                 if github.GITHUB_REPO_REGEX.match(url):
                     try:
-                        ProjectRepository.objects.get_or_create(url=url, project=project)
+                        ProjectRepository.objects.get_or_create(
+                            url=url, project=project
+                        )
                     except:
                         messages.warning(request, f"Couldn't add repository '{url}'")
                 else:
-                    messages.warning(request, f"Invalid GitHub repository url, ignoring!")
+                    messages.warning(
+                        request, "Invalid GitHub repository url, ignoring!"
+                    )
 
         if form.is_valid():
             messages.success(request, f"{project.name} was updated.")
@@ -265,6 +284,7 @@ def edit_project(request: HttpRequest, slug: str) -> HttpResponse:
     context["form"] = form
 
     return TemplateResponse(request, "portal/projects/edit.html", context)
+
 
 @login_required
 def modify_project_team(request: HttpRequest, slug: str) -> HttpResponse:
@@ -293,7 +313,7 @@ def modify_project_team(request: HttpRequest, slug: str) -> HttpResponse:
 
         if not rcs_id and not user_id:
             raise HttpResponseBadRequest("No RCS ID or user ID provided.")
-        
+
         # Find user either by RCS ID or ID
         if rcs_id:
             user: User = get_object_or_404(User.rpi, rcs_id=rcs_id)
@@ -308,11 +328,15 @@ def modify_project_team(request: HttpRequest, slug: str) -> HttpResponse:
             )
             messages.success(request, f"{user} was added to the team for {semester}.")
             # Notify user
-            user.send_message(f"{request.user.discord_mention} added you to the **{project}** team on RCOS IO! {settings.PUBLIC_BASE_URL}{project.get_absolute_url()}?semester={semester_id}")
+            user.send_message(
+                f"{request.user.discord_mention} added you to the **{project}** team on RCOS IO! {settings.PUBLIC_BASE_URL}{project.get_absolute_url()}?semester={semester_id}"
+            )
         elif action == "remove":
             user.enrollments.filter(semester=semester_id).update(project=None)
             # Notify user
-            user.send_message(f"{request.user.discord_mention} removed you from the **{project}** team on RCOS IO.")
+            user.send_message(
+                f"{request.user.discord_mention} removed you from the **{project}** team on RCOS IO."
+            )
             messages.info(request, f"{user} was removed from the team for {semester}.")
         else:
             raise HttpResponseBadRequest()
@@ -347,7 +371,9 @@ class ProjectCreateView(
 
     def form_valid(self, form):
         active_semester = Semester.get_active()
-        if not CheckUserCanCreateProject().passes(self.request.user, active_semester, None):
+        if not CheckUserCanCreateProject().passes(
+            self.request.user, active_semester, None
+        ):
             messages.error(
                 self.request, "You are not currently eligible to create new projects."
             )

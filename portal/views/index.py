@@ -45,7 +45,7 @@ class IndexView(TemplateView):
                 data["enrollment"]
                 .project.enrollments.filter(semester=active_semester)
                 .select_related("user")
-                .order_by('-is_project_lead', '-credits', '-user__first_name')
+                .order_by("-is_project_lead", "-credits", "-user__first_name")
                 if data["enrollment"] and data["enrollment"].project
                 else []
             )

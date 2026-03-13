@@ -6,7 +6,7 @@ from typing import Any, TypedDict
 
 from django.contrib import messages
 from django.contrib.auth.decorators import login_required, user_passes_test
-from django.db.models import Q, Count
+from django.db.models import Count, Q
 from django.http import HttpResponse
 from django.shortcuts import render
 
@@ -304,18 +304,20 @@ def export_semester_projects(request):
             # Set the appropriate response headers so the browser expects a CSV file download
             response = HttpResponse(
                 content_type="text/csv",
-                headers={"Content-Disposition": f'attachment; filename="{filename}.csv"'},
+                headers={
+                    "Content-Disposition": f'attachment; filename="{filename}.csv"'
+                },
             )
 
             # Create a CSV writer that writes to the response
             writer = csv.writer(response)
 
             # Write the headers
-            writer.writerow(
-                ["semester", "project name", "enrollments"]
-            )
+            writer.writerow(["semester", "project name", "enrollments"])
 
-            for result in semester.projects.annotate(enrollment_count=Count("enrollments")):
+            for result in semester.projects.annotate(
+                enrollment_count=Count("enrollments")
+            ):
                 writer.writerow(
                     [
                         semester,

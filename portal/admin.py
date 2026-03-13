@@ -4,6 +4,7 @@ from time import sleep
 from typing import Any
 
 from django.contrib import admin
+from django.contrib.admin import SimpleListFilter
 from django.contrib.auth.admin import UserAdmin
 from django.db.models.query import QuerySet
 from django.http import HttpResponse
@@ -24,17 +25,19 @@ from portal.models import (
     ProjectTag,
     Room,
     Semester,
+    ShortLink,
     SmallGroup,
     StatusUpdateSubmission,
     User,
-    ShortLink,
 )
+
 
 @admin.register(ShortLink)
 class ShortLinkAdmin(admin.ModelAdmin):
     list_display = ("code", "url", "created_at")
     search_fields = ("code", "url")
     list_filter = ("created_at",)
+
 
 logger = logging.getLogger(__name__)
 
@@ -43,6 +46,7 @@ admin.site.site_header = "RCOS IO Administration"
 admin.site.site_title = "RCOS IO"
 
 # Actions
+
 
 def export_enrollments_to_csv(modeladmin, request, queryset):
     filename = "RCOS Enrollments"
@@ -61,7 +65,7 @@ def export_enrollments_to_csv(modeladmin, request, queryset):
         ["semester", "rcsid", "email", "given name", "family name", "project"]
     )
 
-    for enrollment in queryset.filter(user__role = User.RPI):
+    for enrollment in queryset.filter(user__role=User.RPI):
         writer.writerow(
             [
                 enrollment.semester,
@@ -77,6 +81,7 @@ def export_enrollments_to_csv(modeladmin, request, queryset):
 
 
 export_enrollments_to_csv.short_description = "Export to CSV"  # short description
+
 
 @admin.action(description="Mark selected as approved")
 def make_approved(modeladmin, request, queryset):
@@ -126,7 +131,7 @@ class MeetingAttendanceInline(admin.TabularInline):
     classes = ["collapse"]
     model = MeetingAttendance
     extra = 1
-    
+
     # def get_queryset(self, request: HttpRequest) -> QuerySet[Any]:
     #     print(super().get_queryset(request).explain())
     #     return super().get_queryset(request).select_related()
@@ -227,7 +232,9 @@ class SemesterAdmin(admin.ModelAdmin):
     actions = ("export_projects_to_csv",)
 
     @admin.action(description="Export projects to CSV (title, leads, member count)")
-    def export_projects_to_csv(self, request: HttpRequest, queryset: QuerySet[Semester]):
+    def export_projects_to_csv(
+        self, request: HttpRequest, queryset: QuerySet[Semester]
+    ):
         semesters = list(queryset.order_by("-start_date"))
 
         if not semesters:
@@ -235,17 +242,18 @@ class SemesterAdmin(admin.ModelAdmin):
 
         response = HttpResponse(
             content_type="text/csv",
-            headers={"Content-Disposition": 'attachment; filename="semester-projects.csv"'},
+            headers={
+                "Content-Disposition": 'attachment; filename="semester-projects.csv"'
+            },
         )
         writer = csv.writer(response)
         writer.writerow(
             ["semester title", "project title", "project lead(s)", "project team size"]
         )
 
-        enrollments = (
-            Enrollment.objects.filter(semester__in=semesters, project__isnull=False)
-            .select_related("semester", "project", "user")
-        )
+        enrollments = Enrollment.objects.filter(
+            semester__in=semesters, project__isnull=False
+        ).select_related("semester", "project", "user")
 
         data_by_semester: dict[str, dict[int, dict[str, Any]]] = {}
 
@@ -280,7 +288,9 @@ class SemesterAdmin(admin.ModelAdmin):
             )
 
             for entry in project_entries:
-                leads_display = " & ".join(sorted(entry["leads"])) if entry["leads"] else ""
+                leads_display = (
+                    " & ".join(sorted(entry["leads"])) if entry["leads"] else ""
+                )
                 writer.writerow(
                     [
                         entry["semester"].name,
@@ -303,6 +313,19 @@ class OrganizationAdmin(admin.ModelAdmin):
     list_select_related = True
 
 
+class NeverLoggedInFilter(SimpleListFilter):
+    title = "login status"
+    parameter_name = "login_status"
+
+    def lookups(self, request, model_admin):
+        return (("never", "Never logged in"),)
+
+    def queryset(self, request, queryset):
+        if self.value() == "never":
+            return queryset.filter(last_login__isnull=True)
+        return queryset
+
+
 @admin.register(User)
 class UserAdmin(UserAdmin):
     list_display = ("display_name", "role", "is_approved")
@@ -314,7 +337,13 @@ class UserAdmin(UserAdmin):
         "discord_user_id",
         "github_username",
     )
-    list_filter = ("role", "organization", "is_approved", "enrollments__semester__name")
+    list_filter = (
+        "role",
+        "organization",
+        "is_approved",
+        "enrollments__semester__name",
+        NeverLoggedInFilter,
+    )
     exclude = ("username",)
     fieldsets = (
         (
@@ -325,7 +354,7 @@ class UserAdmin(UserAdmin):
                     "role",
                     "rcs_id",
                     "graduation_year",
-                    "is_name_public"
+                    "is_name_public",
                 )
             },
         ),
@@ -346,6 +375,21 @@ class UserAdmin(UserAdmin):
             {
                 "classes": ["collapse"],
                 "fields": ("is_active", "is_staff", "is_superuser"),
+            },
+        ),
+    )
+    add_fieldsets = (
+        (
+            None,
+            {
+                "classes": ("wide",),
+                "fields": (
+                    "email",
+                    "first_name",
+                    "last_name",
+                    "password1",
+                    "password2",
+                ),
             },
         ),
     )

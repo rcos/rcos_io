@@ -1,7 +1,7 @@
 import json
 from random import choice, randint, random
-from django.utils.text import slugify
 
+from django.utils.text import slugify
 from faker import Faker
 
 f = Faker()
@@ -39,17 +39,17 @@ tags = [
     for index, tag in enumerate(tags_raw)
 ]
 
-semester_ids = ["202201", "202208", "202301"]
+semester_ids = ["202501", "202508", "202601"]
 semesters = [
     {
         "model": "portal.Semester",
         "pk": semester_id,
         "fields": {
             "name": semester_id,
-            "start_date": "2023-12-29",
-            "end_date": "2024-12-29",
-            "updated_at": "2022-12-29",
-            "created_at": "2022-12-29",
+            "start_date": "2025-12-29",
+            "end_date": "2026-12-29",
+            "updated_at": "2025-12-29",
+            "created_at": "2025-12-29",
         },
     }
     for semester_id in semester_ids
@@ -68,9 +68,9 @@ for i in range(2, 50):
                 "is_approved": random() > 0.1,
                 "role": "rpi",
                 "rcs_id": f"student{i}",
-                "graduation_year": randint(2022, 2025),
-                "updated_at": "2022-12-29T02:30:00+0000",
-                "created_at": "2022-12-29T02:30:00+0000",
+                "graduation_year": randint(2025, 2028),
+                "updated_at": "2025-12-29T02:30:00+0000",
+                "created_at": "2025-12-29T02:30:00+0000",
             },
         }
     )
@@ -90,8 +90,8 @@ for i in range(30):
                 "owner": choice(users)["pk"],
                 "is_approved": random() > 0.2,
                 "description": f.sentence(),
-                "updated_at": "2022-12-29T02:30:00+0000",
-                "created_at": "2022-12-29T02:30:00+0000",
+                "updated_at": "2025-12-29T02:30:00+0000",
+                "created_at": "2025-12-29T02:30:00+0000",
             },
         }
     )
@@ -104,13 +104,13 @@ for user in users:
             "model": "portal.Enrollment",
             "pk": pk,
             "fields": {
-                "semester": "202301",
+                "semester": "202601",
                 "user": user["pk"],
                 "project": choice(projects)["pk"],
                 "credits": randint(0, 4),
                 "is_project_lead": random() > 0.7,
-                "updated_at": "2022-12-29T02:30:00+0000",
-                "created_at": "2022-12-29T02:30:00+0000",
+                "updated_at": "2025-12-29T02:30:00+0000",
+                "created_at": "2025-12-29T02:30:00+0000",
             },
         }
     )
@@ -120,13 +120,13 @@ for user in users:
             "model": "portal.Enrollment",
             "pk": pk,
             "fields": {
-                "semester": "202208",
+                "semester": "202508",
                 "user": user["pk"],
                 "project": choice(projects)["pk"],
                 "credits": randint(0, 4),
                 "is_project_lead": random() > 0.7,
-                "updated_at": "2022-12-29T02:30:00+0000",
-                "created_at": "2022-12-29T02:30:00+0000",
+                "updated_at": "2025-12-29T02:30:00+0000",
+                "created_at": "2025-12-29T02:30:00+0000",
             },
         }
     )
@@ -136,13 +136,13 @@ for user in users:
             "model": "portal.Enrollment",
             "pk": pk,
             "fields": {
-                "semester": "202201",
+                "semester": "202501",
                 "user": user["pk"],
                 "project": choice(projects)["pk"],
                 "credits": randint(0, 4),
                 "is_project_lead": random() > 0.7,
-                "updated_at": "2022-12-29T02:30:00+0000",
-                "created_at": "2022-12-29T02:30:00+0000",
+                "updated_at": "2025-12-29T02:30:00+0000",
+                "created_at": "2025-12-29T02:30:00+0000",
             },
         }
     )

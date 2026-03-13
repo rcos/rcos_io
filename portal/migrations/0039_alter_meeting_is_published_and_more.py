@@ -6,25 +6,43 @@ from django.db import migrations, models
 
 
 class Migration(migrations.Migration):
-
     dependencies = [
-        ('portal', '0038_alter_smallgroup_options_remove_meeting_location_and_more'),
+        ("portal", "0038_alter_smallgroup_options_remove_meeting_location_and_more"),
     ]
 
     operations = [
         migrations.AlterField(
-            model_name='meeting',
-            name='is_published',
-            field=models.BooleanField(default=True, help_text='Whether the meeting is visible to users', verbose_name='published?'),
+            model_name="meeting",
+            name="is_published",
+            field=models.BooleanField(
+                default=True,
+                help_text="Whether the meeting is visible to users",
+                verbose_name="published?",
+            ),
         ),
         migrations.AlterField(
-            model_name='user',
-            name='graduation_year',
-            field=models.PositiveIntegerField(blank=True, help_text='If you are a student, your graduation year.', null=True, validators=[django.core.validators.MaxValueValidator(2028), django.core.validators.MinValueValidator(1950)]),
+            model_name="user",
+            name="graduation_year",
+            field=models.PositiveIntegerField(
+                blank=True,
+                help_text="If you are a student, your graduation year.",
+                null=True,
+                validators=[
+                    django.core.validators.MaxValueValidator(2028),
+                    django.core.validators.MinValueValidator(1950),
+                ],
+            ),
         ),
         migrations.AlterField(
-            model_name='user',
-            name='organization',
-            field=models.ForeignKey(blank=True, help_text='The organization you represent.', null=True, on_delete=django.db.models.deletion.SET_NULL, related_name='users', to='portal.organization'),
+            model_name="user",
+            name="organization",
+            field=models.ForeignKey(
+                blank=True,
+                help_text="The organization you represent.",
+                null=True,
+                on_delete=django.db.models.deletion.SET_NULL,
+                related_name="users",
+                to="portal.organization",
+            ),
         ),
     ]

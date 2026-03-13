@@ -1,8 +1,9 @@
 from django.conf import settings
 from django.contrib import messages
 from django.contrib.auth.mixins import UserPassesTestMixin
-from django.contrib.postgres.search import SearchVector
+from django.contrib.postgres.search import SearchQuery, SearchRank, SearchVector
 from django.core.cache import cache
+from django.db.models import F
 from django.http import Http404, HttpRequest
 from django.shortcuts import get_object_or_404, redirect
 from django.urls import reverse
@@ -12,15 +13,24 @@ from ..models import Organization, Semester
 
 
 def load_semesters(request):
-    semesters = Semester.objects.all()
-    active_semester = (
-        next((semester for semester in semesters if semester.is_active), None)
-        if semesters
-        else None
+    semesters = (
+        cache.get_or_set(
+            "semesters",
+            lambda: list(Semester.objects.all()),
+            60 * 60 * 24,
+        )
+        or []
     )
-    cache.set("active_semester", active_semester, 60 * 60 * 24)
+    active_semester = cache.get_or_set(
+        "active_semester",
+        lambda: next(
+            (semester for semester in (semesters or []) if semester.is_active), None
+        ),
+        60 * 60 * 24,
+    )
 
     return {"semesters": semesters, "active_semester": active_semester}
+
 
 def target_semester_context(request: HttpRequest, default_to_active_semester=False):
     target_semester = None
@@ -31,7 +41,7 @@ def target_semester_context(request: HttpRequest, default_to_active_semester=Fal
     elif default_to_active_semester:
         target_semester = Semester.get_active()
 
-    return { "target_semester": target_semester } if target_semester else {}
+    return {"target_semester": target_semester} if target_semester else {}
 
 
 class SemesterFilteredDetailView(DetailView):
@@ -105,6 +115,7 @@ class SemesterFilteredListView(ListView):
         data["target_semester"] = self.target_semester
         return data
 
+
 class OrganizationFilteredListView(ListView):
     """Render some list of objects, set by self.model or self.queryset. self.queryset can actually be any iterable of items, not just a queryset.
 
@@ -125,9 +136,7 @@ class OrganizationFilteredListView(ListView):
             self.organization = get_object_or_404(Organization, pk=org_id)
 
         if self.organization:
-            queryset = queryset.filter(
-                organization_id=org_id
-            )
+            queryset = queryset.filter(organization_id=org_id)
 
         return queryset
 
@@ -159,6 +168,7 @@ class SearchableListView(ListView):
     """
 
     search_fields = tuple()
+    search_vector_field: str | None = None
 
     def get_queryset(self):
         """Apply search."""
@@ -166,9 +176,19 @@ class SearchableListView(ListView):
 
         self.search = self.request.GET.get("search")
         if self.search:
-            queryset = queryset.annotate(
-                search=SearchVector(*self.search_fields),
-            ).filter(search=self.search)
+            if self.search_vector_field:
+                query = SearchQuery(self.search)
+                queryset = (
+                    queryset.annotate(
+                        rank=SearchRank(F(self.search_vector_field), query)
+                    )
+                    .filter(**{self.search_vector_field: query})
+                    .order_by("-rank")
+                )
+            else:
+                queryset = queryset.annotate(
+                    search=SearchVector(*self.search_fields),
+                ).filter(search=self.search)
 
         return queryset.distinct()
 

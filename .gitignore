@@ -87,9 +87,6 @@ coverage.xml
 # Jupyter Notebook 
 .ipynb_checkpoints 
 
-# pyenv 
-.python-version 
-
 # celery 
 celerybeat-schedule.* 
 
@@ -142,5 +139,3 @@ fake.py
 *.rdb
 db.json
 portal/.DS_Store
-
-docker-compose.yml

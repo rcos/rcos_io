@@ -6,20 +6,32 @@ from django.db import migrations, models
 
 
 class Migration(migrations.Migration):
-
     dependencies = [
-        ('portal', '0046_meetingattendance_portal_meet_meeting_88d7ac_idx_and_more'),
+        ("portal", "0046_meetingattendance_portal_meet_meeting_88d7ac_idx_and_more"),
     ]
 
     operations = [
         migrations.AlterField(
-            model_name='meeting',
-            name='attendances',
-            field=models.ManyToManyField(related_name='meeting_attendances', through='portal.MeetingAttendance', through_fields=('meeting', 'user'), to=settings.AUTH_USER_MODEL),
+            model_name="meeting",
+            name="attendances",
+            field=models.ManyToManyField(
+                related_name="meeting_attendances",
+                through="portal.MeetingAttendance",
+                through_fields=("meeting", "user"),
+                to=settings.AUTH_USER_MODEL,
+            ),
         ),
         migrations.AlterField(
-            model_name='user',
-            name='graduation_year',
-            field=models.PositiveIntegerField(blank=True, help_text='If you are a student, your graduation year.', null=True, validators=[django.core.validators.MaxValueValidator(2038), django.core.validators.MinValueValidator(1950)]),
+            model_name="user",
+            name="graduation_year",
+            field=models.PositiveIntegerField(
+                blank=True,
+                help_text="If you are a student, your graduation year.",
+                null=True,
+                validators=[
+                    django.core.validators.MaxValueValidator(2038),
+                    django.core.validators.MinValueValidator(1950),
+                ],
+            ),
         ),
     ]

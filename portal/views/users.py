@@ -1,3 +1,4 @@
+from collections import defaultdict
 from typing import Any
 
 from django.contrib import messages
@@ -17,7 +18,9 @@ from . import (
 )
 
 
-class UserIndexView(SearchableListView, OrganizationFilteredListView, SemesterFilteredListView):
+class UserIndexView(
+    SearchableListView, OrganizationFilteredListView, SemesterFilteredListView
+):
     template_name = "portal/users/index.html"
     context_object_name = "users"
     paginate_by = 50
@@ -33,6 +36,7 @@ class UserIndexView(SearchableListView, OrganizationFilteredListView, SemesterFi
         "graduation_year",
         "enrollments__project__name",
     )
+    search_vector_field = "search_vector"
 
     def get_context_data(self, **kwargs):
         data = super().get_context_data(**kwargs)
@@ -58,6 +62,10 @@ class UserIndexView(SearchableListView, OrganizationFilteredListView, SemesterFi
         if self.target_semester:
             enrollments = enrollments.filter(semester=self.target_semester)
 
+        enrollments_by_user: dict[int, list[Enrollment]] = defaultdict(list)
+        for enrollment in enrollments:
+            enrollments_by_user[enrollment.user_id].append(enrollment)
+
         user_rows = []
         for user in users:
             user_row = {
@@ -66,15 +74,13 @@ class UserIndexView(SearchableListView, OrganizationFilteredListView, SemesterFi
 
             if self.target_semester:
                 user_row["enrollment"] = next(
-                    (e for e in enrollments if e.user_id == user.pk), None
+                    (e for e in enrollments_by_user.get(user.pk, [])), None
                 )
                 user_row["project"] = (
                     user_row["enrollment"].project if user_row["enrollment"] else None
                 )
             else:
-                user_row["enrollments"] = [
-                    e for e in enrollments if e.user_id == user.pk
-                ]
+                user_row["enrollments"] = enrollments_by_user.get(user.pk, [])
 
             user_rows.append(user_row)
 
@@ -91,11 +97,14 @@ def user_detail(request: HttpRequest, pk: int) -> HttpResponse:
     } | target_semester_context(request)
 
     if "target_semester" in context:
-        context["enrollment"] = Enrollment.objects.filter(semester_id=context["target_semester"].pk, user_id=user.pk).first()
+        context["enrollment"] = Enrollment.objects.filter(
+            semester_id=context["target_semester"].pk, user_id=user.pk
+        ).first()
     else:
         context["enrollments"] = user.enrollments.select_related("semester", "project")
 
     return TemplateResponse(request, "portal/users/detail.html", context)
+
 
 @login_required
 def enroll_user(request, pk: str):
@@ -125,7 +134,11 @@ def enroll_user(request, pk: str):
         enrollment, is_new = Enrollment.objects.update_or_create(
             user=user,
             semester=semester,
-            defaults={"project": project, "credits": credits, "is_project_lead": is_project_lead},
+            defaults={
+                "project": project,
+                "credits": credits,
+                "is_project_lead": is_project_lead,
+            },
         )
 
     return redirect("/")

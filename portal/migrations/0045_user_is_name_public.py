@@ -4,15 +4,17 @@ from django.db import migrations, models
 
 
 class Migration(migrations.Migration):
-
     dependencies = [
-        ('portal', '0044_remove_meetingattendance_is_added_by_admin'),
+        ("portal", "0044_remove_meetingattendance_is_added_by_admin"),
     ]
 
     operations = [
         migrations.AddField(
-            model_name='user',
-            name='is_name_public',
-            field=models.BooleanField(default=True, help_text="Is the user's name and RCS ID publicly visible?"),
+            model_name="user",
+            name="is_name_public",
+            field=models.BooleanField(
+                default=True,
+                help_text="Is the user's name and RCS ID publicly visible?",
+            ),
         ),
     ]

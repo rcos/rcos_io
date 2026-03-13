@@ -4,18 +4,17 @@ from django.db import migrations
 
 
 class Migration(migrations.Migration):
-
     dependencies = [
-        ('portal', '0048_shortlink'),
+        ("portal", "0048_shortlink"),
     ]
 
     operations = [
         migrations.RemoveIndex(
-            model_name='shortlink',
-            name='portal_shor_user_id_8fd83e_idx',
+            model_name="shortlink",
+            name="portal_shor_user_id_8fd83e_idx",
         ),
         migrations.RemoveField(
-            model_name='shortlink',
-            name='user',
+            model_name="shortlink",
+            name="user",
         ),
     ]

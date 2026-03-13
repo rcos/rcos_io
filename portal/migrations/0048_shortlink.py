@@ -6,23 +6,37 @@ from django.db import migrations, models
 
 
 class Migration(migrations.Migration):
-
     dependencies = [
-        ('portal', '0047_alter_meeting_attendances_alter_user_graduation_year'),
+        ("portal", "0047_alter_meeting_attendances_alter_user_graduation_year"),
     ]
 
     operations = [
         migrations.CreateModel(
-            name='ShortLink',
+            name="ShortLink",
             fields=[
-                ('created_at', models.DateTimeField(auto_now_add=True)),
-                ('updated_at', models.DateTimeField(auto_now=True)),
-                ('code', models.CharField(max_length=20, primary_key=True, serialize=False)),
-                ('url', models.URLField()),
-                ('user', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, related_name='short_links', to=settings.AUTH_USER_MODEL)),
+                ("created_at", models.DateTimeField(auto_now_add=True)),
+                ("updated_at", models.DateTimeField(auto_now=True)),
+                (
+                    "code",
+                    models.CharField(max_length=20, primary_key=True, serialize=False),
+                ),
+                ("url", models.URLField()),
+                (
+                    "user",
+                    models.ForeignKey(
+                        on_delete=django.db.models.deletion.CASCADE,
+                        related_name="short_links",
+                        to=settings.AUTH_USER_MODEL,
+                    ),
+                ),
             ],
             options={
-                'indexes': [models.Index(fields=['code'], name='portal_shor_code_b51b7c_idx'), models.Index(fields=['user'], name='portal_shor_user_id_8fd83e_idx')],
+                "indexes": [
+                    models.Index(fields=["code"], name="portal_shor_code_b51b7c_idx"),
+                    models.Index(
+                        fields=["user"], name="portal_shor_user_id_8fd83e_idx"
+                    ),
+                ],
             },
         ),
     ]
