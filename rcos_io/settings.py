@@ -375,12 +375,18 @@ LOGGING = {
     },
 }
 
-CELERY_BROKER_URL = os.environ["REDIS_URL"]
-CELERY_RESULT_BACKEND = os.environ["REDIS_URL"]
+if os.environ.get("ENV") == "development":
+    # In development, REDIS_URL may be unset; avoid KeyError.
+    _redis_url = os.environ.get("REDIS_URL")
+    if _redis_url:
+        CELERY_BROKER_URL = _redis_url
+        CELERY_RESULT_BACKEND = _redis_url
+else:
+    CELERY_BROKER_URL = os.environ["REDIS_URL"]
+    CELERY_RESULT_BACKEND = os.environ["REDIS_URL"]
 
 DEBUG_TOOLBAR_CONFIG = {
     'RESULTS_CACHE_SIZE': 100
 }
-DEBUG_TOOLBAR_CONFIG = {"RESULTS_CACHE_SIZE": 100}
 
 DATA_UPLOAD_MAX_NUMBER_FIELDS = 20_000
