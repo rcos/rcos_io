@@ -2,17 +2,11 @@
 {% load crispy_forms_tags %}
 
 {% block content %}
-<section class="section">
+  <section class="section">
     <div class="container">
-        <h1 class="title">Submit Attendance</h1>
-
-        {% crispy form %}
-        <!-- <form method="post">
-            {% csrf_token %}
-
-
-            <button class="button" type="submit">Submit</button>
-        </form> -->
+      <h1 class="title">Submit Attendance</h1>
+      {% crispy form %}
     </div>
-</section>
+  </section>
 {% endblock %}
+

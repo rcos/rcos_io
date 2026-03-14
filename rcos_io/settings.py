@@ -150,6 +150,14 @@ DATABASES = {
     }
 }
 
+if os.environ.get("ENV") == "development":
+    DATABASES = {
+        "default": {
+            "ENGINE": "django.db.backends.sqlite3",
+            "NAME": BASE_DIR / "db.sqlite3",
+        }
+    }
+
 AUTH_USER_MODEL = "portal.User"
 
 AUTHENTICATION_BACKENDS = (
@@ -322,12 +330,29 @@ MESSAGE_TAGS = {
 #         }
 #     }
 # else:
-CACHES = {
-    "default": {
-        "BACKEND": "django.core.cache.backends.redis.RedisCache",
-        "LOCATION": os.environ["REDIS_URL"],
+#CACHES = {
+#    "default": {
+#        "BACKEND": "django.core.cache.backends.redis.RedisCache",
+#        "LOCATION": os.environ["REDIS_URL"],
+#    }
+#}
+
+if os.environ.get("ENV") == "development":
+    # Simple in-memory cache for local dev
+    CACHES = {
+        "default": {
+            "BACKEND": "django.core.cache.backends.locmem.LocMemCache",
+            "LOCATION": "unique-dev-cache",
+        }
     }
-}
+else:
+    CACHES = {
+        "default": {
+            "BACKEND": "django.core.cache.backends.redis.RedisCache",
+            "LOCATION": os.environ["REDIS_URL"],
+        }
+    }
+
 
 LOGGING = {
     "version": 1,
@@ -350,9 +375,18 @@ LOGGING = {
     },
 }
 
-CELERY_BROKER_URL = os.environ["REDIS_URL"]
-CELERY_RESULT_BACKEND = os.environ["REDIS_URL"]
+if os.environ.get("ENV") == "development":
+    # In development, REDIS_URL may be unset; avoid KeyError.
+    _redis_url = os.environ.get("REDIS_URL")
+    if _redis_url:
+        CELERY_BROKER_URL = _redis_url
+        CELERY_RESULT_BACKEND = _redis_url
+else:
+    CELERY_BROKER_URL = os.environ["REDIS_URL"]
+    CELERY_RESULT_BACKEND = os.environ["REDIS_URL"]
 
-DEBUG_TOOLBAR_CONFIG = {"RESULTS_CACHE_SIZE": 100}
+DEBUG_TOOLBAR_CONFIG = {
+    'RESULTS_CACHE_SIZE': 100
+}
 
 DATA_UPLOAD_MAX_NUMBER_FIELDS = 20_000
