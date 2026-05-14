@@ -14,6 +14,112 @@
     {% endif %}
 </footer>
 
+{% if request.user.is_authenticated %}
+<style>
+    #help-man {
+        position: fixed;
+        bottom: -10rem;
+        right: 5rem;
+        width: 10rem;
+        height: 10rem;
+        z-index: 10000;
+    }
+
+    #hide-help-man {
+        position: fixed;
+        bottom: 1rem;
+        right: 5rem;
+        font-size: 2rem;
+        color: navy;
+        z-index: 10001;
+    }
+
+    #help-man-speech-bubble {
+        background-color: white;
+        border-radius: 5px;
+        outline: 1px solid black;
+        position: fixed;
+        top: calc(100vh - 13rem);
+        right: 3rem;
+        padding: 5px;
+        width: 13rem;
+    }
+
+    .help-man-link {
+        position: fixed;
+        width: 3rem;
+        z-index: 10002;
+    }
+
+    #help-man-issue {
+        bottom: 1rem;
+        right: 13rem;
+    }
+
+    #help-man-discord {
+        bottom: 4rem;
+        right: 13rem;
+    }
+</style>
+
+<div id="help-man" class="is-hidden">
+    <div id="help-man-speech-bubble" class="is-hidden"></div>
+    <img src="https://raw.githubusercontent.com/rcos/rcos_io/extra/staticfiles/pixelfrank.png" />
+    <i id="hide-help-man" class="fa-solid fa-arrow-down is-hidden"></i>
+    <a id="help-man-discord" class="help-man-link is-hidden" href="discord://discordapp.com/channels/738593165438746634/743943811947954277"><img src="https://raw.githubusercontent.com/rcos/rcos_io/extra/staticfiles/pixeldiscord.png" /></a>
+    <a id="help-man-issue" class="help-man-link is-hidden" href="https://github.com/rcos/rcos_io/issues/new"><img src="https://raw.githubusercontent.com/rcos/rcos_io/extra/staticfiles/pixelgithub.png" /></a>
+</div>
+
+<script type="text/javascript">
+    const helper_frank = document.getElementById('help-man');
+    const speech_bubble = document.getElementById('help-man-speech-bubble');
+    const hide_button = document.getElementById('hide-help-man');
+    const helper_buttons = [...document.getElementsByClassName('help-man-link')];
+
+    const monologue = "Hi! It's PixelFrank! Having trouble? Let us know!";
+
+    setTimeout(() => {
+        helper_frank.classList.remove('is-hidden');
+        
+        for(let i = -9; i <= 0; i++){
+            setTimeout(() => {
+                helper_frank.style.bottom = i + 'rem';
+            }, (i + 9) * 100);
+        }
+
+        setTimeout(() => {
+            hide_button.classList.remove('is-hidden');
+            helper_buttons.forEach((e) => {
+                e.classList.remove('is-hidden');
+            })
+        }, 900);
+    }, 2000);
+
+    setTimeout(() => {
+        speech_bubble.classList.remove('is-hidden');
+        for(let i = 1; i <= monologue.length; i++){
+            setTimeout(() => {
+                speech_bubble.innerText = monologue.slice(0,i);
+            }, (i - 1) * 20);
+        }
+    }, 3500);
+
+    hide_button.addEventListener('click', () => {
+        hide_button.classList.add('is-hidden');
+        speech_bubble.classList.add('is-hidden');
+        helper_buttons.forEach((e) => {
+            e.classList.add('is-hidden');
+        })
+
+        for(let i = -1; i >= -10; i--){
+            setTimeout(() => {
+                helper_frank.style.bottom = i + 'rem';
+            }, (-i - 1) * 100);
+        }
+    })
+</script>
+{% endif %}
+
 <script type="text/javascript">
     const heart = document.getElementById("heart");
 
