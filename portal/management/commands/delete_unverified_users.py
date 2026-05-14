@@ -1,10 +1,13 @@
+from datetime import timedelta
+
 from django.core.management.base import BaseCommand
+from django.utils import timezone
 
 from portal.models import User
 
 
 class Command(BaseCommand):
-    help = "Delete all non-verified (unapproved) users that have never logged in. Staff and superusers are never deleted."
+    help = "Delete all non-verified (unapproved) users that have never logged in and signed up 7+ days ago. Staff and superusers are never deleted."
 
     def add_arguments(self, parser):
         parser.add_argument(
@@ -24,6 +27,7 @@ class Command(BaseCommand):
             is_staff=False,
             is_superuser=False,
             last_login__isnull=True,
+            date_joined__lt=timezone.now() - timedelta(days=7),
         )
         count = unverified_users.count()
 
