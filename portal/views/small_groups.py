@@ -15,7 +15,9 @@ class SmallGroupIndexView(SearchableListView, SemesterFilteredListView):
     require_semester = True
     template_name = "portal/small_groups/index.html"
     context_object_name = "small_groups"
-    queryset = SmallGroup.objects.select_related()
+    queryset = SmallGroup.objects.select_related("semester", "room").prefetch_related(
+        "mentors", "projects"
+    )
     search_fields = (
         "name",
         "projects__name",

@@ -361,14 +361,20 @@ class User(AbstractUser, TimestampedModel):
         )
 
     def get_active_enrollment(self) -> Optional["Enrollment"]:
-        active_semester = cache.get("active_semester")
-        if not active_semester:
-            return None
-        return (
-            self.enrollments.filter(semester=active_semester)
-            .select_related("project", "semester")
-            .first()
-        )
+        # Memoized per instance: this is called repeatedly within a single
+        # request (e.g. via Meeting.get_user_queryset / get_ongoing), and the
+        # result doesn't change over the lifetime of a request.
+        if not hasattr(self, "_active_enrollment"):
+            active_semester = cache.get("active_semester")
+            if not active_semester:
+                self._active_enrollment = None
+            else:
+                self._active_enrollment = (
+                    self.enrollments.filter(semester=active_semester)
+                    .select_related("project", "semester")
+                    .first()
+                )
+        return self._active_enrollment
 
     def is_mentor(self, semester=None):
         if semester is None:
@@ -547,7 +553,7 @@ class ProjectQuerySet(models.QuerySet):
 class Project(TimestampedModel):
     """Represents an open source project in RCOS."""
 
-    slug = models.SlugField()
+    slug = models.SlugField(unique=True)
     name = models.CharField(
         max_length=100, unique=True, help_text="The project's unique name"
     )
@@ -812,9 +818,29 @@ class Project(TimestampedModel):
     def is_seeking_members(self, semester: Semester) -> Optional["ProjectPitch"]:
         return self.pitches.filter(semester=semester, project=self).first()
 
+    def _generate_unique_slug(self, base: str) -> str:
+        """Return `base`, suffixed with `-2`, `-3`, ... if needed so the slug is
+        unique across projects. `slugify` is lossy (e.g. "C++" and "C#" both
+        become "c"), so distinct project names can otherwise collide on slug."""
+        max_length = self._meta.get_field("slug").max_length
+        siblings = Project.objects.exclude(pk=self.pk) if self.pk else Project.objects
+        slug = base[:max_length] or "project"
+        suffix = 2
+        while siblings.filter(slug=slug).exists():
+            tail = f"-{suffix}"
+            slug = f"{base[: max_length - len(tail)]}{tail}"
+            suffix += 1
+        return slug
+
     def save(self, *args, **kwargs):
-        if not self.slug or self.slug != slugify(self.name):
-            self.slug = slugify(self.name)
+        base = slugify(self.name) or "project"
+        # (Re)generate the slug only when it is missing or no longer derived
+        # from the name. A stable slug is either the base itself or the base
+        # plus a `-N` de-duplication suffix; matching both avoids needlessly
+        # regenerating (and re-querying) on every save -- including for names
+        # whose own slug ends in a number, e.g. "Section 2" -> "section-2".
+        if not self.slug or not re.fullmatch(rf"{re.escape(base)}(-\d+)?", self.slug):
+            self.slug = self._generate_unique_slug(base)
         saved = super().save(*args, **kwargs)
         Project.objects.filter(pk=self.pk).update(
             search_vector=SearchVector("name", "description")

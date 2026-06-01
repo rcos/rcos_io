@@ -112,8 +112,9 @@ class ProjectIndexView(
         data["is_seeking_members"] = self.is_seeking_members
 
         queryset = self.get_queryset()
-        data["total_count"] = queryset.count()
         paginator = Paginator(queryset, self.paginate_by)
+        # Reuse the paginator's count instead of issuing a separate COUNT query.
+        data["total_count"] = paginator.count
 
         page = self.request.GET.get("page")
         if page is None:
@@ -159,6 +160,19 @@ class ProjectIndexView(
                         if pitch.semester_id == self.target_semester.pk
                     ),
                     None,
+                )
+            else:
+                # Derive the project's active semesters from the enrollments
+                # already loaded above (select_related("semester")) instead of
+                # querying Project.get_active_semesters() once per row.
+                semesters_by_id = {
+                    enrollment.semester_id: enrollment.semester
+                    for enrollment in enrollments_by_project.get(project.pk, [])
+                }
+                projects_row["active_semesters"] = sorted(
+                    semesters_by_id.values(),
+                    key=lambda semester: semester.start_date,
+                    reverse=True,
                 )
             projects_rows.append(projects_row)
 

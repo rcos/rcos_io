@@ -42,9 +42,10 @@ class UserIndexView(
         data = super().get_context_data(**kwargs)
 
         data["organizations"] = Organization.objects.all()
-        data["total_count"] = self.get_queryset().count()
 
         paginator = Paginator(self.get_queryset(), self.paginate_by)
+        # Reuse the paginator's count instead of issuing a separate COUNT query.
+        data["total_count"] = paginator.count
 
         page = self.request.GET.get("page")
 
@@ -56,7 +57,7 @@ class UserIndexView(
             users = paginator.page(paginator.num_pages)
 
         enrollments = Enrollment.objects.filter(user__in=users).select_related(
-            "semester", "project"
+            "semester", "project", "user"
         )
 
         if self.target_semester:

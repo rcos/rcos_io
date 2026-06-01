@@ -78,15 +78,25 @@ for i in range(2, 50):
 # print(json.dumps(users))
 
 projects = []
+used_slugs: set[str] = set()
 for i in range(30):
     name = f.unique.word("adjective").capitalize() + " Project"
+    # Project.slug is unique, but loaddata bypasses Project.save() (which
+    # de-dupes), so ensure uniqueness here too -- distinct names can slugify
+    # to the same value.
+    slug = base_slug = slugify(name)
+    n = 2
+    while slug in used_slugs:
+        slug = f"{base_slug}-{n}"
+        n += 1
+    used_slugs.add(slug)
     projects.append(
         {
             "model": "portal.Project",
             "pk": i,
             "fields": {
                 "name": name,
-                "slug": slugify(name),
+                "slug": slug,
                 "owner": choice(users)["pk"],
                 "is_approved": random() > 0.2,
                 "description": f.sentence(),
