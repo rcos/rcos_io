@@ -1,14 +1,16 @@
 import csv
 import logging
+from datetime import timedelta
 from time import sleep
 from typing import Any
 
-from django.contrib import admin
+from django.contrib import admin, messages
 from django.contrib.admin import SimpleListFilter
 from django.contrib.auth.admin import UserAdmin
 from django.db.models.query import QuerySet
 from django.http import HttpResponse
 from django.http.request import HttpRequest
+from django.utils import timezone
 
 from portal.models import (
     Enrollment,
@@ -108,6 +110,22 @@ def sync_discord(modeladmin, request, queryset):
 @admin.action(description="Mark selected as published")
 def make_published(modeladmin, request, queryset):
     queryset.update(is_published=True)
+
+
+@admin.action(description="Delete bogus bot sign-ups (never logged in, 7+ days old)")
+def delete_bogus_signups(modeladmin, request, queryset):
+    bogus = queryset.filter(
+        is_approved=False,
+        is_staff=False,
+        is_superuser=False,
+        last_login__isnull=True,
+        date_joined__lt=timezone.now() - timedelta(days=7),
+    )
+    deleted_count, _ = bogus.delete()
+    if deleted_count == 0:
+        messages.info(request, "No bogus sign-ups matched in selection.")
+    else:
+        messages.success(request, f"Deleted {deleted_count} bogus sign-up(s).")
 
 
 # Inlines
@@ -395,7 +413,7 @@ class UserAdmin(UserAdmin):
     )
     ordering = ("first_name",)
     inlines = (EnrollmentInline,)
-    actions = (make_approved,)
+    actions = (make_approved, delete_bogus_signups)
     list_select_related = True
 
 
