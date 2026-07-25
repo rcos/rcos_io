@@ -541,8 +541,15 @@ def export_meeting_attendance(request: HttpRequest, pk: Any) -> HttpResponse:
     # Create a CSV writer that writes to the response
     writer = csv.writer(response)
 
-    # Write the headers
-    writer.writerow(["user id", "given name", "family name", "grade1", "totalgrade"])
+    # The grade column's header MUST match the column name shown in the Submitty
+    # gradeable's grading table, so it is entered by the exporting admin.
+    grade_column = request.GET.get("grade_column", "").strip() or "grade1"
+
+    # Write the headers Submitty's "Upload Numeric Grade CSV" expects.
+    # "User ID" is mandatory; "Given Name"/"Family Name" are for readability and
+    # ignored on upload; "Total" is ignored and recalculated by Submitty. Only the
+    # grade column is actually imported.
+    writer.writerow(["User ID", "Given Name", "Family Name", grade_column, "Total"])
 
     # Iterate through every **verified** attendance and write a CSV row
     for user in meeting.attendances.filter(meetingattendance__is_verified=True):

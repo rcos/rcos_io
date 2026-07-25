@@ -338,9 +338,18 @@
             </div>
 
             {% if meeting.is_over %}
-            <div class="buttons my-5">
-                <a href="{% url 'export_meeting_attendance' meeting.pk %}" class="button is-info is-light is-fullwidth">Export Attendance in Submitty Format (.csv)</a>
-            </div>
+            <form method="get" action="{% url 'export_meeting_attendance' meeting.pk %}" class="my-5">
+                <label for="grade-column" class="label">Submitty Grade Column Name</label>
+                <div class="field has-addons">
+                    <div class="control is-flex-grow-1">
+                        <input type="text" id="grade-column" name="grade_column" value="grade1" required placeholder="e.g. grade1" class="input">
+                    </div>
+                    <div class="control">
+                        <button type="submit" class="button is-info is-light">Export Attendance in Submitty Format (.csv)</button>
+                    </div>
+                </div>
+                <p class="help">Must match the column name shown in the Submitty gradeable's grading table.</p>
+            </form>
             {% endif %}
             
             {% if meeting.is_over and small_group_attendance_ratios %}
