@@ -262,16 +262,17 @@ wheels = [
 
 [[package]]
 name = "django-anymail"
-version = "13.0.1"
+version = "15.1"
 source = { registry = "https://pypi.org/simple" }
 dependencies = [
     { name = "django" },
+    { name = "idna" },
     { name = "requests" },
     { name = "urllib3" },
 ]
-sdist = { url = "https://files.pythonhosted.org/packages/08/c4/db9dc7d869575b3c086ac778250341638aa1370984aff17de050b6ba38d1/django_anymail-13.0.1.tar.gz", hash = "sha256:fd93b36c167eb968bd68a351218c29ae23a68682e67340ae8554478cf27f9d56", size = 94611, upload-time = "2025-07-25T17:40:17.77Z" }
+sdist = { url = "https://files.pythonhosted.org/packages/f9/69/c4e075a39e69efc928ad63e2cad9b720c6414d9faf9b90d2342207a8feb8/django_anymail-15.1.tar.gz", hash = "sha256:299fb12a21ac4101e9706c2ade461d18deacbb6bc3750cfa6ca08aeea1fc9442", size = 107700, upload-time = "2026-07-30T22:30:27.794Z" }
 wheels = [
-    { url = "https://files.pythonhosted.org/packages/c9/4d/461912648ebd16d1c5c42eba3f8320671daa3a3913a8bcb0e27c0ba675e8/django_anymail-13.0.1-py3-none-any.whl", hash = "sha256:f2c20c9f240d93789aa8da2ee54d701c6b0345d101133d65d67e9355a914af81", size = 130712, upload-time = "2025-07-25T17:40:16.396Z" },
+    { url = "https://files.pythonhosted.org/packages/a2/bb/3fbac63312c87620986ac00c7b27d11ef1a7c07ffb5718ca5bd5c60e2f5f/django_anymail-15.1-py3-none-any.whl", hash = "sha256:cb482b0e2b0aea665c83d49e3f13bb0673210aa0de285b1748a3b5e6277fc826", size = 147352, upload-time = "2026-07-30T22:30:26.359Z" },
 ]
 
 [[package]]
@@ -728,7 +729,7 @@ requires-dist = [
     { name = "celery", specifier = ">=5.2.7,<6" },
     { name = "crispy-bulma", specifier = ">=0.11.0,<0.12" },
     { name = "django", specifier = ">=5.0.2,<6" },
-    { name = "django-anymail", specifier = ">=13.0.0,<14" },
+    { name = "django-anymail", specifier = ">=15.1,<16" },
     { name = "django-crispy-forms", specifier = "~=2.0" },
     { name = "django-debug-toolbar", specifier = ">=6.0.0,<7" },
     { name = "django-magiclink", specifier = ">=1.2.0,<2" },
