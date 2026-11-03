@@ -1106,7 +1106,7 @@ class Enrollment(TimestampedModel):
         return (
             reverse("users_detail", args=[str(self.user_id)])
             + "?semester="
-            + self.semester.id
+            + str(self.semester_id)
         )
 
     def __str__(self) -> str:
