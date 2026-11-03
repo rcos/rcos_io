@@ -1,6 +1,7 @@
 import logging
 import re
 from collections import defaultdict
+from datetime import timedelta
 from decimal import Decimal
 from time import sleep
 from typing import Optional
@@ -24,6 +25,9 @@ from requests import HTTPError
 from sentry_sdk import capture_exception
 
 from portal.services import discord, github
+
+# How long after a meeting ends its attendance codes are still accepted
+ATTENDANCE_CODE_GRACE_PERIOD = timedelta(minutes=30)
 
 logger = logging.getLogger(__name__)
 
@@ -1283,6 +1287,12 @@ class Meeting(TimestampedModel):
         return self.starts_at < now < self.ends_at
 
     @property
+    def is_accepting_attendance_codes(self):
+        """Attendance codes are accepted from the start of the meeting until a grace period after it ends."""
+        now = timezone.now()
+        return self.starts_at < now < self.ends_at + ATTENDANCE_CODE_GRACE_PERIOD
+
+    @property
     def expected_attendance_users(self):
         # Get expected users based on meeting type and desired small group
         if self.type == Meeting.COORDINATOR:
@@ -1597,7 +1607,7 @@ class MeetingAttendanceCode(TimestampedModel):
 
     @property
     def is_valid(self):
-        return self.meeting.is_ongoing
+        return self.meeting.is_accepting_attendance_codes
 
     def __str__(self) -> str:
         return self.code or "Unknown Attendance Code"

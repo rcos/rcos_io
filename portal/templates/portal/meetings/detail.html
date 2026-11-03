@@ -97,7 +97,7 @@
                 </div>
 
                 {% if request.user.is_authenticated and request.user.is_rpi and not user_attendance %}
-                    {% if meeting.is_ongoing %}
+                    {% if meeting.is_accepting_attendance_codes %}
                     {% crispy submit_attendance_form %}
                     {% elif meeting.is_upcoming %}
                     <small class="has-text-grey">Attendance can be submitted here during the meeting. <a href="#" onclick="window.location.reload()">Refresh</a> the page when the meeting starts.</small>
@@ -176,6 +176,9 @@
                     </details>
                     {% if not target_small_group and meeting.type == "small_group" %}
                     <p class="has-text-grey">Do not show this during Small Group meetings. Use your Small Group's.</p>
+                    {% endif %}
+                    {% if meeting.is_over %}
+                    <p class="has-text-grey">The meeting has ended, but this code is still accepted for a short time.</p>
                     {% endif %}
                 {% else %}
                     <p class="has-text-grey">
