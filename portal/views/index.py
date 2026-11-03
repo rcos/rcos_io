@@ -55,18 +55,21 @@ class IndexView(TemplateView):
             # Fetch and cache ongoing meeting and stats for the splash page
             # We cache it since it doesn't matter if it's slightly outdated
             data["ongoing_meeting"] = None
+            # Pass callables so the queries only run on a cache miss.
             data["enrollment_count"] = cache.get_or_set(
-                "enrollment_count", Enrollment.objects.count(), 60 * 60 * 24
+                "enrollment_count", lambda: Enrollment.objects.count(), 60 * 60 * 24
             )
             data["project_count"] = cache.get_or_set(
-                "project_count", Project.objects.count(), 60 * 60 * 24
+                "project_count", lambda: Project.objects.count(), 60 * 60 * 24
             )
             data["active_semester_admins"] = cache.get_or_set(
-                "active_semester_admins",
-                Enrollment.objects.filter(
-                    Q(is_faculty_advisor=True) | Q(is_coordinator=True),
-                    semester=active_semester,
-                ).select_related("user"),
+                f"active_semester_admins:{active_semester.pk if active_semester else 'none'}",
+                lambda: list(
+                    Enrollment.objects.filter(
+                        Q(is_faculty_advisor=True) | Q(is_coordinator=True),
+                        semester=active_semester,
+                    ).select_related("user")
+                ),
                 60 * 60 * 24,
             )
 

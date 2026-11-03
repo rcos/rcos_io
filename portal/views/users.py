@@ -3,7 +3,6 @@ from typing import Any
 
 from django.contrib import messages
 from django.contrib.auth.decorators import login_required
-from django.core.paginator import EmptyPage, InvalidPage, PageNotAnInteger, Paginator
 from django.http import HttpRequest, HttpResponse
 from django.shortcuts import get_object_or_404, redirect
 from django.template.response import TemplateResponse
@@ -11,6 +10,7 @@ from django.urls import reverse
 
 from ..models import Enrollment, Organization, Project, Semester, User
 from . import (
+    LenientPaginationMixin,
     OrganizationFilteredListView,
     SearchableListView,
     SemesterFilteredListView,
@@ -19,7 +19,10 @@ from . import (
 
 
 class UserIndexView(
-    SearchableListView, OrganizationFilteredListView, SemesterFilteredListView
+    LenientPaginationMixin,
+    SearchableListView,
+    OrganizationFilteredListView,
+    SemesterFilteredListView,
 ):
     template_name = "portal/users/index.html"
     context_object_name = "users"
@@ -43,18 +46,9 @@ class UserIndexView(
 
         data["organizations"] = Organization.objects.all()
 
-        paginator = Paginator(self.get_queryset(), self.paginate_by)
-        # Reuse the paginator's count instead of issuing a separate COUNT query.
-        data["total_count"] = paginator.count
-
-        page = self.request.GET.get("page")
-
-        try:
-            users = paginator.page(page)
-        except PageNotAnInteger:
-            users = paginator.page(1)
-        except (EmptyPage, InvalidPage):
-            users = paginator.page(paginator.num_pages)
+        # ListView has already paginated (and counted) the queryset; reuse it.
+        data["total_count"] = data["paginator"].count
+        users = list(data["page_obj"].object_list)
 
         enrollments = Enrollment.objects.filter(user__in=users).select_related(
             "semester", "project", "user"

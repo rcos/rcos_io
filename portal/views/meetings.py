@@ -271,12 +271,15 @@ class SubmitAttendanceFormView(LoginRequiredMixin, UserRequiresSetupMixin, FormV
         code = form.cleaned_data["code"]
         user = self.request.user
 
-        # Search for attendance code
+        # Search for attendance code. Generated codes are uppercase, so an exact
+        # match on the uppercased input can use the primary key index. Fall back
+        # to a case-insensitive match for any codes entered by hand in the admin.
+        codes = MeetingAttendanceCode.objects.select_related("meeting", "small_group")
         try:
-            meeting_attendance_code = MeetingAttendanceCode.objects.select_related(
-                "meeting", "small_group"
-            ).get(pk__iexact=code)
+            meeting_attendance_code = codes.get(pk=code.strip().upper())
         except MeetingAttendanceCode.DoesNotExist:
+            meeting_attendance_code = codes.filter(pk__iexact=code.strip()).first()
+        if meeting_attendance_code is None:
             messages.error(
                 self.request,
                 "Attendance code not recognized. Your attendance was not recorded.",
