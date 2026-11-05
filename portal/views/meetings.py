@@ -271,6 +271,17 @@ class SubmitAttendanceFormView(LoginRequiredMixin, UserRequiresSetupMixin, FormV
         code = form.cleaned_data["code"]
         user = self.request.user
 
+        # Among Us Mode
+        if code.upper() == "AMONG US":
+            # Re-render page to special "Among Us" theme
+            return render(
+                self.request,
+                "portal/meetings/attendance/among_us.html",
+                {"code": code},
+            )
+
+
+        # Search for attendance code
         # Search for attendance code. Generated codes are uppercase, so an exact
         # match on the uppercased input can use the primary key index. Fall back
         # to a case-insensitive match for any codes entered by hand in the admin.
