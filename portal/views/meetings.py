@@ -11,6 +11,7 @@ from django.contrib.auth.mixins import LoginRequiredMixin
 from django.core.cache import cache
 from django.db import IntegrityError
 from django.http import (
+    Http404,
     HttpRequest,
     HttpResponse,
     HttpResponseForbidden,
@@ -32,7 +33,6 @@ from portal.views import UserRequiresSetupMixin
 from portal.views.admin import is_admin
 
 from ..models import (
-    Enrollment,
     Meeting,
     MeetingAttendance,
     MeetingAttendanceCode,
@@ -52,6 +52,32 @@ def generate_code(code_length: int = 5):
         code += random.choice(string.ascii_uppercase)
 
     return code
+
+
+def user_can_manage_attendance(user: User, meeting: Meeting) -> bool:
+    """Whether a user can view attendance codes and add/verify/remove attendances for a meeting."""
+    if not user.is_authenticated:
+        return False
+
+    if user.is_superuser:
+        return True
+
+    # Meeting hosts can manage attendance
+    if meeting.host_id is not None and meeting.host_id == user.pk:
+        return True
+
+    enrollment = user.enrollments.filter(semester_id=meeting.semester_id).first()
+    if not enrollment:
+        return False
+
+    if enrollment.is_faculty_advisor or enrollment.is_coordinator:
+        return True
+
+    # Mentors can manage general meeting attendance except mentor and coordinator meetings
+    return enrollment.is_mentor and meeting.type not in (
+        Meeting.MENTOR,
+        Meeting.COORDINATOR,
+    )
 
 
 def meeting_to_event(meeting: Meeting) -> dict[str, Any]:
@@ -122,29 +148,7 @@ class MeetingDetailView(DetailView):
     context_object_name = "meeting"
 
     def can_manage_attendance(self):
-        if not self.request.user.is_authenticated:
-            return False
-
-        active_enrollment = self.request.user.enrollments.filter(
-            semester_id=self.object.semester_id
-        ).first()
-
-        if self.request.user.is_superuser:
-            return True
-
-        # Mentors can manage general meeting attendance except mentor and coordinator meetings
-        if (
-            active_enrollment
-            and active_enrollment.is_mentor
-            and self.object.type not in (Meeting.MENTOR, Meeting.COORDINATOR)
-        ):
-            return True
-
-        # Meeting hosts also can manage attendance
-        if self.object.host == self.request.user:
-            return True
-
-        return False
+        return user_can_manage_attendance(self.request.user, self.object)
 
     def get_context_data(self, **kwargs):
         data = super().get_context_data(**kwargs)
@@ -164,16 +168,7 @@ class MeetingDetailView(DetailView):
 
         data["can_manage_attendance"] = False
 
-        if self.request.user.is_authenticated:
-            can_manage_attendance = cache.get_or_set(
-                f"can_manage_attendance:{self.object.pk}:{self.request.user.pk}",
-                default=self.can_manage_attendance(),
-                timeout=60 * 60 * 24,
-            )
-        else:
-            can_manage_attendance = False
-
-        if can_manage_attendance:
+        if self.can_manage_attendance():
             data["can_manage_attendance"] = True
 
             if self.request.user.is_superuser:
@@ -188,7 +183,10 @@ class MeetingDetailView(DetailView):
             small_group_pk = self.request.GET.get("small_group")
             small_group = None
             if small_group_pk:
-                small_group = SmallGroup.objects.get(pk=small_group_pk)
+                try:
+                    small_group = data["small_groups"].get(pk=int(small_group_pk))
+                except (ValueError, SmallGroup.DoesNotExist) as err:
+                    raise Http404("Small Group not found") from err
                 data["target_small_group"] = small_group
 
             query = {}
@@ -199,10 +197,21 @@ class MeetingDetailView(DetailView):
 
             def get_or_create_attendance_code():
                 try:
-                    code, is_code_new = self.object.attendance_codes.get_or_create(
-                        **query,
-                        defaults={"code": generate_code(), "small_group": small_group},
-                    )
+                    # Codes are primary keys shared across all meetings, so a newly
+                    # generated code can collide with an existing one. Retry with a new code.
+                    for attempt in range(5):
+                        try:
+                            code, _ = self.object.attendance_codes.get_or_create(
+                                **query,
+                                defaults={
+                                    "code": generate_code(),
+                                    "small_group": small_group,
+                                },
+                            )
+                            break
+                        except IntegrityError:
+                            if attempt == 4:
+                                raise
                 except MeetingAttendanceCode.MultipleObjectsReturned as err:
                     logger.warning(
                         f"Two or more global attendance codes found for meeting {self.object.pk}"
@@ -216,7 +225,7 @@ class MeetingDetailView(DetailView):
                     )
                 return code
 
-            if self.object.is_ongoing:
+            if self.object.is_accepting_attendance_codes:
                 code = cache.get_or_set(
                     f"attendance_codes:{self.object.pk}:{small_group.pk if small_group else 'none'}",
                     default=get_or_create_attendance_code,
@@ -273,20 +282,20 @@ class SubmitAttendanceFormView(LoginRequiredMixin, UserRequiresSetupMixin, FormV
 
 
         # Search for attendance code
+        # Search for attendance code. Generated codes are uppercase, so an exact
+        # match on the uppercased input can use the primary key index. Fall back
+        # to a case-insensitive match for any codes entered by hand in the admin.
+        codes = MeetingAttendanceCode.objects.select_related("meeting", "small_group")
         try:
-            meeting_attendance_code = MeetingAttendanceCode.objects.select_related(
-                "meeting", "small_group"
-            ).get(pk__iexact=code)
+            meeting_attendance_code = codes.get(pk=code.strip().upper())
         except MeetingAttendanceCode.DoesNotExist:
+            meeting_attendance_code = codes.filter(pk__iexact=code.strip()).first()
+        if meeting_attendance_code is None:
             messages.error(
                 self.request,
                 "Attendance code not recognized. Your attendance was not recorded.",
             )
             return super().form_valid(form)
-
-        user.enrollments.get_or_create(
-            semester_id=meeting_attendance_code.meeting.semester_id
-        )
 
         if meeting_attendance_code.is_valid:
             # Confirm user is in small group if it is for a small group
@@ -302,6 +311,10 @@ class SubmitAttendanceFormView(LoginRequiredMixin, UserRequiresSetupMixin, FormV
                     f"User {self.request.user} submitted attendance code {meeting_attendance_code} for meeting {meeting_attendance_code.meeting} from wrong Small Group"
                 )
                 return redirect(reverse("submit_attendance"))
+
+            user.enrollments.get_or_create(
+                semester_id=meeting_attendance_code.meeting.semester_id
+            )
 
             new_attendance = MeetingAttendance(
                 meeting=meeting_attendance_code.meeting,
@@ -348,8 +361,18 @@ class SubmitAttendanceFormView(LoginRequiredMixin, UserRequiresSetupMixin, FormV
 @login_required
 def manually_add_or_verify_attendance(request: HttpRequest) -> HttpResponse:
     if request.method == "POST":
-        meeting: Meeting = Meeting.objects.get(pk=request.POST["meeting"])
-        small_group_id = request.POST.get("small_group", None)
+        meeting: Meeting = get_object_or_404(Meeting, pk=request.POST.get("meeting"))
+        small_group_id = request.POST.get("small_group", "")
+        if not small_group_id.isdigit():
+            small_group_id = None
+
+        # Only allow Mentors or above AND meeting hosts to add/verify attendances
+        if not user_can_manage_attendance(request.user, meeting):
+            messages.error(
+                request,
+                "You must be an enrolled Faculty Advisor/Coordinator/Mentor or the meeting host to perform this action.",
+            )
+            return redirect(reverse("meetings_detail", args=(meeting.pk,)))
 
         action = request.POST.get("action", "accept")
 
@@ -379,39 +402,7 @@ def manually_add_or_verify_attendance(request: HttpRequest) -> HttpResponse:
         else:
             users = User.objects.filter(rcs_id__in=rcs_ids)
 
-        submitter_enrollment = request.user.enrollments.get(semester=meeting.semester)
         for user in users:
-            try:
-                # Only allow Mentors or above AND meeting hosts to add/verify attendances
-                if (
-                    not request.user.is_superuser
-                    and not submitter_enrollment.is_faculty_advisor
-                    and not submitter_enrollment.is_coordinator
-                    and not submitter_enrollment.is_mentor
-                    and not request.user.pk == meeting.host.pk
-                ):
-                    return redirect(reverse("meetings_index"))
-
-                # Don't let Mentors add attendances for Mentor meetings
-                if (
-                    not request.user.is_superuser
-                    and not submitter_enrollment.is_coordinator
-                    and submitter_enrollment.is_mentor
-                    and meeting.type == Meeting.MENTOR
-                ):
-                    messages.warning(
-                        request,
-                        "You cannot manually submit attendance for a Mentor meeting!",
-                    )
-                    return redirect(reverse("meetings_detail", args=(meeting.pk,)))
-            except Enrollment.DoesNotExist:
-                if not request.user.is_superuser:
-                    messages.error(
-                        request,
-                        "You must be an enrolled Faculty Advisor/Coordinator/Mentor or the meeting host to perform this action.",
-                    )
-                    return redirect(reverse("meetings_detail", args=(meeting.pk,)))
-
             user.enrollments.get_or_create(semester_id=meeting.semester_id)
 
             if action == "accept":
@@ -425,6 +416,7 @@ def manually_add_or_verify_attendance(request: HttpRequest) -> HttpResponse:
 
                         # Clear the cache of any record of this person previously failing verification
                         cache.delete(f"failed-verification:{user.pk}")
+                        messages.success(request, f"Verified attendance for {user}!")
                 except MeetingAttendance.DoesNotExist:
                     attendance = MeetingAttendance(
                         meeting=meeting,
@@ -551,8 +543,15 @@ def export_meeting_attendance(request: HttpRequest, pk: Any) -> HttpResponse:
     # Create a CSV writer that writes to the response
     writer = csv.writer(response)
 
-    # Write the headers
-    writer.writerow(["user id", "given name", "family name", "grade1", "totalgrade"])
+    # The grade column's header MUST match the column name shown in the Submitty
+    # gradeable's grading table, so it is entered by the exporting admin.
+    grade_column = request.GET.get("grade_column", "").strip() or "grade1"
+
+    # Write the headers Submitty's "Upload Numeric Grade CSV" expects.
+    # "User ID" is mandatory; "Given Name"/"Family Name" are for readability and
+    # ignored on upload; "Total" is ignored and recalculated by Submitty. Only the
+    # grade column is actually imported.
+    writer.writerow(["User ID", "Given Name", "Family Name", grade_column, "Total"])
 
     # Iterate through every **verified** attendance and write a CSV row
     for user in meeting.attendances.filter(meetingattendance__is_verified=True):

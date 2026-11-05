@@ -39,19 +39,18 @@
                 <h2 class="subtitle is-3 mb-1">
                     Projects
                 </h2>
-                <small class="has-text-grey mb-2">{{ small_group.projects.all|length }} total</small>
+                <small class="has-text-grey mb-2">{{ projects|length }} total</small>
                 
                 <div class="columns is-multiline mt-2">
-                    {% for project in small_group.projects.all %}
+                    {% for project in projects %}
                     <div class="column is-half">
                         <div class="card" style="height: 100%">
                             <div class="card-header">
-                                <p class="card-header-title"><a href="{{ project.get_absolute_url }}?semester={{ small_group.semester.pk }}">{{ project }}</a></p>
+                                <p class="card-header-title"><a href="{{ project.get_absolute_url }}?semester={{ small_group.semester_id }}">{{ project }}</a></p>
                             </div>
                             <div class="card-content">
                                 <div class="columns is-multiline">
-                                    {% project_enrollments project small_group.semester as enrollments %}
-                                    {% for enrollment in enrollments %}
+                                    {% for enrollment in project.semester_enrollments %}
                                     <div class="column is-half py-1">
                                         <a href="{{ enrollment.get_absolute_url }}">{{ enrollment.user }}</a>
                                     </div>

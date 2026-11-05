@@ -1,12 +1,13 @@
 """Views related to small groups."""
 
 from django.contrib.auth.decorators import login_required
+from django.db.models import Prefetch
 from django.http import HttpRequest, HttpResponse
 from django.shortcuts import get_object_or_404
 from django.template.response import TemplateResponse
 from django.utils.decorators import method_decorator
 
-from ..models import SmallGroup
+from ..models import Enrollment, SmallGroup
 from . import SearchableListView, SemesterFilteredListView
 
 
@@ -30,8 +31,25 @@ class SmallGroupIndexView(SearchableListView, SemesterFilteredListView):
 @login_required
 def small_group_detail(request: HttpRequest, pk: int) -> HttpResponse:
     """Fetches and displays an overview for a particular small group."""
+    small_group = get_object_or_404(
+        SmallGroup.objects.select_related("semester", "room").prefetch_related(
+            "mentors"
+        ),
+        pk=pk,
+    )
+    # Load every project's team for this semester up front instead of running
+    # a query per project (and per enrollment) from the template.
+    projects = small_group.projects.prefetch_related(
+        Prefetch(
+            "enrollments",
+            queryset=Enrollment.objects.filter(semester_id=small_group.semester_id)
+            .select_related("user")
+            .order_by("-is_project_lead", "user__first_name"),
+            to_attr="semester_enrollments",
+        )
+    )
     return TemplateResponse(
         request,
         "portal/small_groups/detail.html",
-        {"small_group": get_object_or_404(SmallGroup, pk=pk)},
+        {"small_group": small_group, "projects": list(projects)},
     )

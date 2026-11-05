@@ -97,7 +97,7 @@
                 </div>
 
                 {% if request.user.is_authenticated and request.user.is_rpi and not user_attendance %}
-                    {% if meeting.is_ongoing %}
+                    {% if meeting.is_accepting_attendance_codes %}
                     {% crispy submit_attendance_form %}
                     {% elif meeting.is_upcoming %}
                     <small class="has-text-grey">Attendance can be submitted here during the meeting. <a href="#" onclick="window.location.reload()">Refresh</a> the page when the meeting starts.</small>
@@ -176,6 +176,9 @@
                     </details>
                     {% if not target_small_group and meeting.type == "small_group" %}
                     <p class="has-text-grey">Do not show this during Small Group meetings. Use your Small Group's.</p>
+                    {% endif %}
+                    {% if meeting.is_over %}
+                    <p class="has-text-grey">The meeting has ended, but this code is still accepted for a short time.</p>
                     {% endif %}
                 {% else %}
                     <p class="has-text-grey">
@@ -338,9 +341,18 @@
             </div>
 
             {% if meeting.is_over %}
-            <div class="buttons my-5">
-                <a href="{% url 'export_meeting_attendance' meeting.pk %}" class="button is-info is-light is-fullwidth">Export Attendance in Submitty Format (.csv)</a>
-            </div>
+            <form method="get" action="{% url 'export_meeting_attendance' meeting.pk %}" class="my-5">
+                <label for="grade-column" class="label">Submitty Grade Column Name</label>
+                <div class="field has-addons">
+                    <div class="control is-flex-grow-1">
+                        <input type="text" id="grade-column" name="grade_column" value="grade1" required placeholder="e.g. grade1" class="input">
+                    </div>
+                    <div class="control">
+                        <button type="submit" class="button is-info is-light">Export Attendance in Submitty Format (.csv)</button>
+                    </div>
+                </div>
+                <p class="help">Must match the column name shown in the Submitty gradeable's grading table.</p>
+            </form>
             {% endif %}
             
             {% if meeting.is_over and small_group_attendance_ratios %}

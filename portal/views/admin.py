@@ -66,11 +66,11 @@ GoogleFormProjectPitchRow = TypedDict(
 AttendanceExportRow = TypedDict(
     "AttendanceExportRow",
     {
-        "user id": str,
-        "given name": str,
-        "family name": str,
+        "User ID": str,
+        "Given Name": str,
+        "Family Name": str,
         "grade1": float,
-        "totalgrade": float,
+        "Total": float,
     },
 )
 

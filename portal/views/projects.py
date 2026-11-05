@@ -10,7 +10,6 @@ from django.contrib.auth.decorators import login_required
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.contrib.messages.views import SuccessMessageMixin
 from django.core.cache import cache
-from django.core.paginator import EmptyPage, InvalidPage, PageNotAnInteger, Paginator
 from django.http import (
     HttpRequest,
     HttpResponse,
@@ -43,6 +42,7 @@ from ..models import (
     User,
 )
 from . import (
+    LenientPaginationMixin,
     OrganizationFilteredListView,
     SearchableListView,
     SemesterFilteredListView,
@@ -72,7 +72,10 @@ def project_lead_index(request: HttpRequest) -> HttpResponse:
 
 
 class ProjectIndexView(
-    SearchableListView, OrganizationFilteredListView, SemesterFilteredListView
+    LenientPaginationMixin,
+    SearchableListView,
+    OrganizationFilteredListView,
+    SemesterFilteredListView,
 ):
     template_name = "portal/projects/index.html"
     context_object_name = "projects"
@@ -111,21 +114,9 @@ class ProjectIndexView(
         data["organizations"] = Organization.objects.all()
         data["is_seeking_members"] = self.is_seeking_members
 
-        queryset = self.get_queryset()
-        paginator = Paginator(queryset, self.paginate_by)
-        # Reuse the paginator's count instead of issuing a separate COUNT query.
-        data["total_count"] = paginator.count
-
-        page = self.request.GET.get("page")
-        if page is None:
-            page = 1
-
-        try:
-            projects = paginator.page(page)
-        except PageNotAnInteger:
-            projects = paginator.page(1)
-        except (EmptyPage, InvalidPage):
-            projects = paginator.page(paginator.num_pages)
+        # ListView has already paginated (and counted) the queryset; reuse it.
+        data["total_count"] = data["paginator"].count
+        projects = list(data["page_obj"].object_list)
 
         projects_rows = []
         enrollments = Enrollment.objects.filter(project__in=projects).select_related(
