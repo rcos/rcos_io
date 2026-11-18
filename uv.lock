@@ -595,15 +595,14 @@ wheels = [
 
 [[package]]
 name = "markdownify"
-version = "0.14.1"
+version = "1.2.4"
 source = { registry = "https://pypi.org/simple" }
 dependencies = [
     { name = "beautifulsoup4" },
-    { name = "six" },
 ]
-sdist = { url = "https://files.pythonhosted.org/packages/1b/75/483a4bcca436fe88d02dc7686c372631d833848951b368700bdc0c770bb7/markdownify-0.14.1.tar.gz", hash = "sha256:a62a7a216947ed0b8dafb95b99b2ef4a0edd1e18d5653c656f68f03db2bfb2f1", size = 14332, upload-time = "2024-11-24T22:08:30.775Z" }
+sdist = { url = "https://files.pythonhosted.org/packages/98/29/5e46d8d7aa6c66c73809c0018a435b3271d01fa0f54f8215d634a6a92051/markdownify-1.2.4.tar.gz", hash = "sha256:3837f5eb4caa627473451f9ebb91e00d0f12120fc64d64246bea23934244bd01", size = 19301, upload-time = "2026-11-18T18:17:09.378Z" }
 wheels = [
-    { url = "https://files.pythonhosted.org/packages/65/0b/74cec93a7b05edf4fc3ea1c899fe8a37f041d7b9d303c75abf7a162924e0/markdownify-0.14.1-py3-none-any.whl", hash = "sha256:4c46a6c0c12c6005ddcd49b45a5a890398b002ef51380cd319db62df5e09bc2a", size = 11530, upload-time = "2024-11-24T22:08:29.005Z" },
+    { url = "https://files.pythonhosted.org/packages/df/37/9905803c2df99e10c69df1b0ecaad16a559d51cec20e2929006975d1bedc/markdownify-1.2.4-py3-none-any.whl", hash = "sha256:e0375484fdd2bb007e86779fe34c59673d0011b14f8299953aaf0bf092269220", size = 15852, upload-time = "2026-11-18T18:17:08.216Z" },
 ]
 
 [[package]]
@@ -1043,7 +1042,7 @@ requires-dist = [
     { name = "eventlet", specifier = ">=0.40.0,<0.41" },
     { name = "gql", specifier = ">=3.4.1,<4" },
     { name = "gunicorn", specifier = ">=23.0.0,<24" },
-    { name = "markdownify", specifier = ">=0.14.0,<0.15" },
+    { name = "markdownify", specifier = ">=1.2.4,<1.3" },
     { name = "psycopg2-binary", specifier = ">=2.9.6,<3" },
     { name = "python-dotenv", specifier = ">=1.0.0,<2" },
     { name = "redis", specifier = ">=6.4,<7" },
@@ -1133,15 +1132,6 @@ dependencies = [
 sdist = { url = "https://files.pythonhosted.org/packages/c5/3b/1e47acf2456781c26e12007379ecc154bf310b8f64d40390d78b791d55c3/sentry_sdk-2.73.0.tar.gz", hash = "sha256:4a2ab97b16e4693c325ab361c7bbbb346dbc7d0bc0150922d795a25bac8d5280", size = 1079078, upload-time = "2026-10-22T09:08:49.63Z" }
 wheels = [
     { url = "https://files.pythonhosted.org/packages/b2/88/cabf98d017d7b940720e514e5f8ee02e3e6f7495caf93c30735a38387ec4/sentry_sdk-2.73.0-py3-none-any.whl", hash = "sha256:0bcfa6928ea5adbb89591858b514d27adac27c7a3cccc31b20ed10e0b09eda9e", size = 549011, upload-time = "2026-10-22T09:08:47.88Z" },
-]
-
-[[package]]
-name = "six"
-version = "1.17.0"
-source = { registry = "https://pypi.org/simple" }
-sdist = { url = "https://files.pythonhosted.org/packages/94/e7/b2c673351809dca68a0e064b6af791aa332cf192da575fd474ed7d6f16a2/six-1.17.0.tar.gz", hash = "sha256:ff70335d468e7eb6ec65b95b99d3a2836546063f63acc5171de367e834932a81", size = 34031, upload-time = "2024-12-04T17:35:28.174Z" }
-wheels = [
-    { url = "https://files.pythonhosted.org/packages/b7/ce/149a00dd41f10bc29e5921b496af8b574d8413afcd5e30dfa0ed46c2cc5e/six-1.17.0-py2.py3-none-any.whl", hash = "sha256:4721f391ed90541fddacab5acf947aa0d3dc7d27b2e1e8eda2be8970586c3274", size = 11050, upload-time = "2024-12-04T17:35:26.475Z" },
 ]
 
 [[package]]
